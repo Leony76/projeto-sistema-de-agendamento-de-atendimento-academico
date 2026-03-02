@@ -1,0 +1,63 @@
+
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          Int       @id  @default(autoincrement())
+  name        String
+  email       String    @unique
+  password    String
+  ra          Int       @unique 
+  role        UserRole  @default(STUDENT)
+
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt      @map("updated_at")
+
+  appointments Appointment[]
+
+  @@map("users")
+}
+
+model Appointment {
+  id          Int       @id @default(autoincrement())
+  date        DateTime
+  subject     String
+  status      AppointmentStatus   @default(SCHEDULED) 
+  studentId   Int       @map("student_id")
+  student     User      @relation(fields: [studentId], references: [id])
+
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt      @map("updated_at")
+
+  history    History?   
+
+  @@map("appointments")
+}
+
+model History {
+  id              Int          @id       @default(autoincrement())
+  notes           String       @db.Text
+
+  appointmentId   Int          @unique   @map("appointment_id")
+  appointment     Appointment  @relation(fields: [appointmentId], references: [id])
+
+  @@map("histories")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CANCELED
+  DONE
+}
+
+enum UserRole {
+  ATTENDANT
+  STUDENT
+}

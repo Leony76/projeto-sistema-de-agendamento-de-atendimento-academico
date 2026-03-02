@@ -1,0 +1,29 @@
+.main_container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  background-color: skyblue;
+  min-height: 100vh;
+}
+
+.site_title {
+
+}
+
+.login_inputs {
+  background-color: darkblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 
+
+.form_container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 90%;
+}
+
+.input_container {
+  display: flex;
+  flex-direction: column;
+}
