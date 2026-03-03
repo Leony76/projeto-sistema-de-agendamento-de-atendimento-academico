@@ -12,12 +12,19 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^7.4.2",
+    "axios": "^1.13.6",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "datatime": "^1.0.0",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "prisma": "^7.4.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "nodemon": "^3.1.14"
   }
 }

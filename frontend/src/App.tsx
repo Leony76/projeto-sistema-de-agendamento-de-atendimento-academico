@@ -10,17 +10,20 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
-
         <Route 
-          path="/dashboard" 
-          element={isAuthenticated 
-            ? <Home /> 
-            : <Navigate to="/login" />
-          } 
+          path="/login" 
+          element={<Login />} 
         />
 
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route 
+          path="/home" 
+          element={<Home />} 
+        />
+
+        <Route 
+          path="*" 
+          element={<Navigate to="/login"/>} 
+        />
       </Routes>
     </BrowserRouter>
   );
