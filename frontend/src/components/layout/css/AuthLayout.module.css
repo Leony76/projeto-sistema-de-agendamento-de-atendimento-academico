@@ -1,0 +1,37 @@
+.header_nav_bar {
+  background-color: var(--secondary-color);
+  padding: 10px;
+}
+
+.header_nav_bar ul {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  height: 30px;
+}
+
+
+.header_nav_bar li {
+  margin-left: 30px;
+}
+
+.header_nav_bar .system_name {
+  flex: 1;
+  margin-left: 0px;
+}
+
+.logout {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  color: red;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.25s;
+} .logout:hover {
+  background-color: rgba(255, 255, 255, 0.228);
+} .logout:active {
+  background-color: transparent;
+}

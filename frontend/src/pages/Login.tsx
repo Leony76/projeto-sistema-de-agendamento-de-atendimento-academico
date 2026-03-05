@@ -8,12 +8,13 @@ import { useForm } from 'react-hook-form';
 import { ManagerPayload } from '../types/managerLoginPayload';
 import { StudentPayload } from '../types/studentLoginPayload';
 import { isStudentData } from '../types/guards/managerAndStudentGuard';
-import InputValidationError from '../components/input/InputValidationError';
 import Input from '../components/input/Input';
+import Button from '../components/button/Button';
 
 const Login = () => {
 
   const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const { 
@@ -31,6 +32,9 @@ const Login = () => {
   const handleLogin = async(
     data: StudentLoginFormSchema | ManagerLoginFormSchema
   ):Promise<void> => {
+
+    if (loading) return;
+    setLoading(true);
 
     const fetchURL:string = `http://localhost:3000/login/${tab.toLowerCase()}`;
     let payload: ManagerPayload | StudentPayload;
@@ -54,9 +58,10 @@ const Login = () => {
       navigate('/home')
 
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error || err.message || 'Houve um erro ao fazer login!';
-      
+      const errorMessage = err.response?.data?.error || err.message || 'Houve um erro ao fazer login!'; 
       alert(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,21 +79,25 @@ const Login = () => {
         </h1>
       </div>
       <div className={style.right_container}>
+        <h1>
+          Sistema de agendamento de atendimento acadêmico
+        </h1>
 
         <h2>
           Login
         </h2>
-        <h3>
-          {tab === 'STUDENT'
-            ? 'Aluno'
-            : 'Gestor'
-          }      
-        </h3>
 
         <form 
         onSubmit={handleSubmit(handleLogin)}
         className={style.form_container}
         >
+          <h3>
+            {tab === 'STUDENT'
+              ? 'Aluno'
+              : 'Gestor'
+            }      
+          </h3>
+
           <Input 
             label={tab === 'STUDENT' 
               ? 'RA:' 
@@ -123,13 +132,20 @@ const Login = () => {
             {...register('password')}
           />
 
-          <button className={style.submit_button}>
-            Entrar
-          </button>
-
-          <button
-          className={style.to_manager_login}
+          <Button 
+          type='submit'
+          buttonType='mainButton'
+          loading={loading}
+          >
+            {loading 
+              ? 'Entrando' 
+              : 'Entrar'
+            }
+          </Button>
+          
+          <Button
           type='button'
+          buttonType='tabSwitchButton'
           onClick={() => {
             switchTab(tab === 'STUDENT'
               ? 'MANAGER'
@@ -141,8 +157,8 @@ const Login = () => {
             {tab === 'STUDENT' 
               ? 'Entrar como gestor'
               : 'Entrar como aluno'
-            }         
-          </button>
+            } 
+          </Button>
         </form>
       </div>
     </main>
