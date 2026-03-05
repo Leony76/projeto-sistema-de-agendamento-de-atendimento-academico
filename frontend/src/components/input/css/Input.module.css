@@ -1,0 +1,42 @@
+.input_container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input_container label {
+  color: var(--tertiary-color);
+  font-weight: 500;
+  text-shadow: 1px 1px 1px rgb(173, 173, 173);
+}
+
+.input_container input {
+  background-color: transparent;
+  border: none;
+  color: var(--primary-color);
+  padding: 5px 0px;
+  border-bottom: 2px solid var(--tertiary-color);
+  transition: 0.25s;
+} .input_container .input_error {
+  border-bottom-color: rgb(255, 1, 1); 
+}
+
+.input_container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+} .input_container .input_error:focus {
+  border-bottom-color: rgb(255, 1, 1); 
+}
+
+.input_container input:-webkit-autofill,
+.input_container input:-webkit-autofill:hover,
+.input_container input:-webkit-autofill:focus,
+.input_container input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  -webkit-text-fill-color: var(--primary-color);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.input_container input::placeholder {
+  color: var(--primary-color);
+} 

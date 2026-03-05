@@ -3,10 +3,9 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css'
 import Login from './pages/Login';
 import Home from './pages/Home';
+import PrivateRoute from './components/middleware/PrivateRoute';
 
 const App = () => {
-  const isAuthenticated = false;
-
   return (
     <BrowserRouter>
       <Routes>
@@ -17,7 +16,11 @@ const App = () => {
 
         <Route 
           path="/home" 
-          element={<Home />} 
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          } 
         />
 
         <Route 

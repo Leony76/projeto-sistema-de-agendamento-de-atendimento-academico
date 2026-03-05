@@ -1,8 +1,10 @@
-import { app, prisma } from '..';
-
+import { Router } from 'express';
 import bcrypt from 'bcrypt';
+import { prisma } from '../lib/prisma';
 
-app.post('/register', async(req, res) => {
+const router = Router();
+
+router.post('/register', async(req, res) => {
   const {
     name,
     email,
@@ -10,16 +12,26 @@ app.post('/register', async(req, res) => {
     role
   } = req.body;
 
-  const hashedPassword = bcrypt.hash(password, 10);
+  const userExists = await prisma.user.findFirst({
+    where: { email }
+  });
 
-  const user = await prisma.user.create({
+  if (userExists) {
+    return res.status(400).json('Usuário já cadastrado com este e-mail ou RA');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.create({
     data: {
       name,
       email,
-      password: hashedPassword as unknown as string,
+      password: hashedPassword,
       role,
     },
   });
 
-  res.status(201).json(user);
+  res.status(201).json('Cadastro concluído');
 });
+
+export default router;

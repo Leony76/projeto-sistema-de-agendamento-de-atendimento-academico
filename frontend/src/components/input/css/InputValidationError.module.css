@@ -1,0 +1,10 @@
+.main_class {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgb(244, 10, 10);
+  font-size: 14px;
+  background-color: rgba(255, 164, 164, 0.237);
+  padding: 2px 5px;
+  border-radius: 10px;
+}

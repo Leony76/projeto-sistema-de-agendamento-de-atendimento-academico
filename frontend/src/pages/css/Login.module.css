@@ -7,8 +7,9 @@
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.1),
   rgba(255, 255, 255, 0.67)), 
-    url(/school.jpg);
+    url(aluno.avif);
   background-size: cover;
+  background-position: top top;
 }
 
 .main_container_manager {
@@ -16,7 +17,7 @@
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.1),
   rgba(255, 255, 255, 0.67)), 
-    url(/gestor-escolar-1.jpg);
+    url(/manager.webp);
 }
 
 .left_container {
@@ -75,35 +76,6 @@
   flex-direction: column;
   gap: 15px;
   width: 100%;
-}
-
-.input_container {
-  display: flex;
-  flex-direction: column;
-}
-
-.input_container label {
-  color: var(--tertiary-color);
-  font-weight: 500;
-  text-shadow: 1px 1px 1px rgb(173, 173, 173);
-}
-
-.input_container input {
-  background-color: transparent;
-  border: none;
-  color: var(--primary-color);
-  padding: 5px 0px;
-  border-bottom: 2px solid var(--tertiary-color);
-  transition: 0.25s;
-}
-
-.input_container input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-.input_container input::placeholder {
-  color: var(--primary-color);
 }
 
 .submit_button {

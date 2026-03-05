@@ -2,40 +2,67 @@ import { useState } from 'react';
 import style from './css/Login.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ManagerLoginFormSchema, managerSchema, StudentLoginFormSchema, studentSchema } from '../schemas/loginSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { ManagerPayload } from '../types/managerLoginPayload';
+import { StudentPayload } from '../types/studentLoginPayload';
+import { isStudentData } from '../types/guards/managerAndStudentGuard';
+import InputValidationError from '../components/input/InputValidationError';
+import Input from '../components/input/Input';
 
 const Login = () => {
 
   const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
   const navigate = useNavigate();
 
-  const handleLogin = async(e:React.SubmitEvent<HTMLFormElement>):Promise<void> => {
-    e.preventDefault();
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors },
+    reset 
+  } = useForm<StudentLoginFormSchema | ManagerLoginFormSchema>({
+    resolver: zodResolver(tab === 'STUDENT'
+      ? studentSchema
+      : managerSchema
+    ),
+  });
 
-    if (tab === 'STUDENT') {
-      const response = await axios.post('http:localhost:5173/login/student', {
-        ra,
-        password,
-      });
+  const handleLogin = async(
+    data: StudentLoginFormSchema | ManagerLoginFormSchema
+  ):Promise<void> => {
 
-      const { token } = response.data;
+    const fetchURL:string = `http://localhost:3000/login/${tab.toLowerCase()}`;
+    let payload: ManagerPayload | StudentPayload;
 
-      localStorage.setItem('token', token);
+    if (isStudentData(data)) {
+      payload = {
+        ra: data.ra,
+        password: data.password,
+      };
+    } else {
+      payload = {
+        email: data.email,
+        password: data.password,
+      };
+    }
 
-      navigate('/home');
-    } 
+    try {
 
-    const response = await axios.post('http:localhost:5173/login/manager', {
-      email,
-      password,
-    });
+      const response = await axios.post(fetchURL, payload);
+      localStorage.setItem('token', response.data.token);
+      navigate('/home')
 
-    const { token } = response.data;
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || err.message || 'Houve um erro ao fazer login!';
+      
+      alert(errorMessage);
+    }
+  };
 
-    localStorage.setItem('token', token);
+  const raError = (errors as any).ra;
+  const emailError = (errors as any).email;
 
-    navigate('/home');
-  }
-  
   return (
     <main className={style[`main_container_${tab === 'STUDENT' 
       ? 'student' 
@@ -59,55 +86,42 @@ const Login = () => {
         </h3>
 
         <form 
-        onSubmit={handleLogin}
+        onSubmit={handleSubmit(handleLogin)}
         className={style.form_container}
         >
-          <div className={style.input_container}>
-            <label htmlFor="ra">
-              {tab === 'STUDENT'
-                ? 'RA:'
-                : 'E-mail institucional'
-              }
-            </label>
-            <input 
-              name='ra'
-              id='ra'
-              type={tab === 'STUDENT'
-                ? 'number'
-                : 'email'
-              }
-              minLength={tab === 'STUDENT' 
-                ? 11
-                : 50
-              }
-              maxLength={tab === 'STUDENT' 
-                ? 11
-                : 50
-              }
-              max={99999999999}
-              min={0} 
-              required
-              placeholder={tab === 'STUDENT'
-                ? 'Insira o registro acadêmico'
-                : 'Insira o e-mail institucional'
-              }
-            />
-          </div>
+          <Input 
+            label={tab === 'STUDENT' 
+              ? 'RA:' 
+              : 'E-mail institucional'
+            } type={tab === 'STUDENT' 
+              ? 'text' 
+              : 'email'
+            } placeholder={tab === 'STUDENT' 
+              ? 'Insira o RA' 
+              : 'Insira o e-mail'
+            } error={tab === 'STUDENT' 
+              ? raError
+                ? (errors as any).ra.message
+                : ''
+              : emailError
+                ? (errors as any).email.message
+                : ''
+            } {...register(tab === 'STUDENT' 
+              ? "ra" 
+              : "email"
+            )}
+          />
 
-          <div className={style.input_container}>
-            <label htmlFor="password">
-              Senha:
-            </label>
-            <input 
-              name='password'
-              id='password'
-              type="password"
-              minLength={8}
-              maxLength={50}
-              required
-              placeholder='Insira a senha'
-            />
-          </div>
+          <Input 
+            label={'Senha'} 
+            type={'password'} 
+            placeholder={'Insira a senha'} 
+            error={errors.password 
+              ? errors.password.message?.toString() ?? 'Erro'
+              : ''
+            } 
+            {...register('password')}
+          />
 
           <button className={style.submit_button}>
             Entrar
@@ -116,10 +130,13 @@ const Login = () => {
           <button
           className={style.to_manager_login}
           type='button'
-          onClick={() => switchTab(tab === 'STUDENT'
-            ? 'MANAGER'
-            : 'STUDENT'
-          )}
+          onClick={() => {
+            switchTab(tab === 'STUDENT'
+              ? 'MANAGER'
+              : 'STUDENT'
+            );
+            reset();
+          }}
           >
             {tab === 'STUDENT' 
               ? 'Entrar como gestor'
@@ -133,3 +150,4 @@ const Login = () => {
 }
 
 export default Login
+
