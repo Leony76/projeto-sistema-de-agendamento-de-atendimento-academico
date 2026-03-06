@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma';
+import { prisma } from '../../lib/prisma';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { Router } from "express";
@@ -23,7 +23,7 @@ router.post('/login/student', async (req, res) => {
   if (await bcrypt.compare(password, user.password)) {
 
     const token = jwt.sign({ 
-      userId: user.id, 
+      id: user.id, 
       role: user.role 
     }, process.env.JWT_SECRET as string, { 
       expiresIn: '1d' 
@@ -40,7 +40,10 @@ router.post('/login/student', async (req, res) => {
 
 router.post('/login/manager', async (req, res) => {
   const { email, password } = req.body;
-  const user = await prisma.user.findUnique({ where: { email } });
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
 
   if (!user) {
     return res.status(401).json({ error: 'Credenciais inválidas' });
@@ -53,7 +56,7 @@ router.post('/login/manager', async (req, res) => {
   if (await bcrypt.compare(password, user.password)) {
 
     const token = jwt.sign({ 
-      userId: user.id, 
+      id: user.id, 
       role: user.role 
     }, process.env.JWT_SECRET as string, { 
       expiresIn: '1d' 

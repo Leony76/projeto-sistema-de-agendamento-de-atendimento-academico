@@ -5,21 +5,26 @@ interface AuthContextData {
   user: UserDTO | null;
   loading: boolean;
   signOut: () => void;
+  signIn: (
+    token: string,
+    userData: UserDTO,
+  ) => void; // Adicione isso
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }:{ children: React.ReactNode }) {
+
   const [user, setUser] = useState<UserDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadUser() {
-      const token = localStorage.getItem("@App:token");
+    const loadUser = async() => {
+      const token = localStorage.getItem("token");
 
       if (token) {
         try {
-          const response = await fetch("http://localhost:3000/api/me", {
+          const response = await fetch("http://localhost:3000/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -29,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const data = await response.json();
             setUser(data);
           } else {
-            localStorage.removeItem("@App:token"); // Token inválido ou expirado
+            localStorage.removeItem("token"); 
           }
         } catch (error) {
           console.error("Erro ao carregar usuário", error);
@@ -41,14 +46,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loadUser();
   }, []);
 
-  function signOut() {
-    localStorage.removeItem("@App:token");
+  const signIn = (token: string, userData: UserDTO) => {
+    localStorage.setItem("token", token);
+    setUser(userData); 
+  }
+
+  const signOut = () => {
+    localStorage.removeItem("token");
     setUser(null);
     window.location.href = "/login"; 
   }
   
   return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      signOut, 
+      signIn 
+    }}>
       {children}
     </AuthContext.Provider>
   );

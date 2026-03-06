@@ -1,10 +1,10 @@
-import { AppointmentStatus } from "../prismaEnums";
+import { AppointmentStatus } from "@prisma/client";
 
 export type AppointmentsHistory = {
   id: number;
   notes: string;
   appointmentId: number;
-};
+} | null;
 
 export type UserAppointmentDTO = {
   id: number;
@@ -14,7 +14,7 @@ export type UserAppointmentDTO = {
   createdAt: string;
   updatedAt: string;
   history: AppointmentsHistory;
-};
+} | null;
 
 export type UserBasePropsDTO = {
   id: number;
@@ -27,7 +27,7 @@ export type UserBasePropsDTO = {
 export type UserDTO = | UserBasePropsDTO & {
   role: 'STUDENT'
   ra: string;
-  appointments: UserAppointmentDTO[];
+  appointments?: UserAppointmentDTO[];
 } | UserBasePropsDTO & {
   role: 'MANAGER'
   email: string;

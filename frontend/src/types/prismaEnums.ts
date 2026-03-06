@@ -1,10 +1,10 @@
-export enum AppointmentStatus {
-  PENDING = "PENDING",
-  CONFIRMED = "CONFIRMED",
-  CANCELLED = "CANCELLED"
-}
+export type AppointmentStatus = 
+| "PENDING"
+| "CONFIRMED"
+| "CANCELLED"
+;
 
-export enum UserRole {
-  STUDENT = "STUDENT",
-  ADMIN = "ADMIN"
-}
+export type UserRole =
+| "STUDENT"
+| "ADMIN"
+;

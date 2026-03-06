@@ -1,9 +1,10 @@
 import { ButtonHTMLAttributes } from 'react';
 import style from './css/Button.module.css';
 import Spinner from '../ui/Spinner';
+import { ButtonType } from '../../types/buttons';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  buttonType: 'mainButton' | 'tabSwitchButton';
+  buttonType: ButtonType;
   loading?: boolean;
 };
 
@@ -13,14 +14,21 @@ const Button = ({
   loading,
   ...buttonAttributes
 }:Props) => {
+
+  const buttonStyle:string =
+    buttonType === 'mainButton'
+      ? style.main_button
+    : buttonType === 'modalProceedButton'
+      ? style.modal_proceed_button
+    : buttonType === 'modalReturnButton'
+      ? style.modal_return_button
+    :   style.tab_switch_button
+  ;
+
   return (
     <button 
     {...buttonAttributes}
-    className={
-      buttonType === 'mainButton'
-        ? style.main_button
-        : style.tab_switch_button
-    }
+    className={buttonStyle}
     >
       {loading &&
         <Spinner 

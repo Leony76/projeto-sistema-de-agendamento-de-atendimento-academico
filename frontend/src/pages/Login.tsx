@@ -10,12 +10,14 @@ import { StudentPayload } from '../types/studentLoginPayload';
 import { isStudentData } from '../types/guards/managerAndStudentGuard';
 import Input from '../components/input/Input';
 import Button from '../components/button/Button';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
 
   const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { signIn } = useAuth();
 
   const { 
     register, 
@@ -54,7 +56,7 @@ const Login = () => {
     try {
 
       const response = await axios.post(fetchURL, payload);
-      localStorage.setItem('token', response.data.token);
+      signIn(response.data.token, response.data.user);
       navigate('/home')
 
     } catch (err: any) {
