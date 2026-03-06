@@ -4,31 +4,34 @@ import './App.css'
 import Login from './pages/Login';
 import Home from './pages/Home';
 import PrivateRoute from './components/middleware/PrivateRoute';
+import { AuthProvider } from './contexts/AuthContext';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route 
-          path="/login" 
-          element={<Login />} 
-        />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route 
+            path="/login" 
+            element={<Login />} 
+          />
 
-        <Route 
-          path="/home" 
-          element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          } 
-        />
+          <Route 
+            path="/home" 
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            } 
+          />
 
-        <Route 
-          path="*" 
-          element={<Navigate to="/login"/>} 
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route 
+            path="*" 
+            element={<Navigate to="/login"/>} 
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
