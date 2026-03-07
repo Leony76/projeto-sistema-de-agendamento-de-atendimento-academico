@@ -8,7 +8,7 @@ interface AuthContextData {
   signIn: (
     token: string,
     userData: UserDTO,
-  ) => void; // Adicione isso
+  ) => void; 
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);

@@ -7,20 +7,26 @@ import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Modal from "../modal/Modal";
 import Button from "../button/Button";
+import { PiStudent } from "react-icons/pi";
+import { SystemTabs } from "../../types/systemTabs";
 
 type Props = {
   children: React.ReactNode;
+  tabSelected: SystemTabs;
 };
 
-const AuthLayout = ({children}:Props) => {
-  const { user, loading, signOut } = useAuth(); 
+const AuthLayout = ({
+  children,
+  tabSelected,
+}:Props) => {
+  const { user, signOut } = useAuth(); 
 
   const [activeModal, setActiveModal] = useState<ActiveModal | null>(null);
   const navigate = useNavigate();
 
   const handleLogout = async() => signOut();
 
-  const isStudent = user?.role;
+  const isStudent = user?.role === 'STUDENT';
 
   return (
     <>
@@ -31,14 +37,16 @@ const AuthLayout = ({children}:Props) => {
             <li className={style.system_name}>
               Agendamento acadêmico online
             </li>
-            <>
-              <li className={style.student_name}>
-                <span> Aluno: </span> {user?.name}
-              </li>
-              <li className={style.student_ra}>
-                <span> RA: </span> 20241180209
-              </li>
-            </>
+            {isStudent && (
+              <>
+                <li className={style.student_name}>
+                  <span> Aluno: </span> {user?.name}
+                </li>
+                <li className={style.student_ra}>
+                  <span> RA: </span> 20241180209
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </header>
@@ -46,14 +54,27 @@ const AuthLayout = ({children}:Props) => {
         <aside >
           <nav>
             <ul>
-              <Link to={'/home'}>
+              <Link className={tabSelected === 'HOME'
+                ? style.selected_tab : ''
+              } to={'/home'}>
                 <LuLayoutDashboard/>
                 Geral
               </Link>
-              <Link to={'/schedules'}>
+              <Link className={tabSelected === 'APPOINTMENTS'
+                ? style.selected_tab : ''
+              } to={'/schedules'}>
                 <TfiAgenda/>
                 Agendamentos
               </Link>
+              {!isStudent && (
+                <Link className={tabSelected === 'STUDENTS'
+                  ? style.selected_tab : ''
+                } to={'/students'}>
+                  <PiStudent />
+                  Alunos
+                </Link>
+              )}
+
               <button
               className={style.logout}
               onClick={() => setActiveModal("LOGOUT_CONFIRM")}
@@ -64,7 +85,7 @@ const AuthLayout = ({children}:Props) => {
             </ul>
           </nav>
         </aside>
-        <section>
+        <section style={{padding: '10px 15px'}}>
           {children}
         </section>
       </main>

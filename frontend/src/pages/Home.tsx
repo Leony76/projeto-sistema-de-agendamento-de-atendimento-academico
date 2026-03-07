@@ -2,8 +2,10 @@ import AuthLayout from "../components/layout/AuthLayout"
 
 const Home = () => {
   return (
-    <AuthLayout>
-      ds
+    <AuthLayout tabSelected="HOME">
+      <div>
+        
+      </div>
     </AuthLayout>
   )
 }

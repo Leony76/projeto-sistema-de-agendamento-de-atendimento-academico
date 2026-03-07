@@ -1,0 +1,39 @@
+.grid_container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  height: 100%;
+  column-gap: 10px;
+}
+
+.students_list_container {
+  background-color: var(--primary-color);
+  border-radius: 8px;
+  box-shadow: 0px 0px 5px rgba(128, 128, 128, 0.324);
+}
+
+.add_student_container {
+  background-color: rgba(135, 207, 235, 0.776);
+  composes: students_list_container;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.add_student_container h3 {
+  font-size: 26px;
+  color: var(--tertiary-color);
+  text-shadow: 0px 0px 2px gray;
+}
+
+.add_student_container p {
+  font-size: 15px;
+  color: var(--primary-color);
+  text-shadow: 0px 0px 2px gray;
+}
+
+.add_student_container form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

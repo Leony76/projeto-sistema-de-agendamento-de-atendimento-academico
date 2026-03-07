@@ -92,8 +92,13 @@ aside a {
   transition: 0.25s;
 } aside a:hover {
   color: var(--secondary-color);
+  background-color: rgba(255, 255, 255, 0.306);
 } aside a:active {
+  color: var(--dark-secondary-color);
+}
 
+aside a.selected_tab {
+  color: var(--secondary-color);
 }
 
 aside nav {

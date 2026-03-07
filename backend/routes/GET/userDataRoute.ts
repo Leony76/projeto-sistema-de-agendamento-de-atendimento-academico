@@ -1,4 +1,4 @@
-import { UserBasePropsDTO, UserDTO } from "../../@types/dto/userDTO";
+import { formattedUserDataResponse } from "../../@types/dto/userDTO";
 import { prisma } from "../../lib/prisma";
 import { Router } from "express";
 import { authenticate } from "../../middleware/authMiddleware";
@@ -24,40 +24,9 @@ router.get('/me', authenticate, async (req, res) => {
     return res.status(404).json({ message: "Usuário não encontrado" });
   }
 
-  const baseProps: UserBasePropsDTO = {
-    id: user.id,
-    name: user.name,
-    password: user.password,
-    createdAt: user.createdAt.toISOString(),
-    updatedAt: user.updatedAt.toISOString(),
-  };
+  const userData = formattedUserDataResponse(user);
 
-  let formattedUser: UserDTO;
-
-  if (user.role === 'STUDENT') {
-    formattedUser = {
-      ...baseProps,
-      role: 'STUDENT',
-      ra: user.ra || "",
-      appointments: user.appointments.map(app => ({
-        id: app.id,
-        date: app.date.toISOString(),
-        subject: app.subject,
-        status: app.status,
-        createdAt: app.createdAt.toISOString(),
-        updatedAt: app.updatedAt.toISOString(),
-        history: app.history
-      }))
-    };
-  } else {
-    formattedUser = {
-      ...baseProps,
-      role: 'MANAGER',
-      email: user.email || "",
-    };
-  }
-
-  return res.json(formattedUser);
+  return res.json(userData);
 });
 
 export default router;

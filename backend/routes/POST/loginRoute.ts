@@ -2,6 +2,7 @@ import { prisma } from '../../lib/prisma';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { Router } from "express";
+import { formattedUserDataResponse } from '../../@types/dto/userDTO';
 
 const router = Router();
 
@@ -10,30 +11,32 @@ const router = Router();
 router.post('/login/student', async (req, res) => {
 
   const { ra, password } = req.body;
-  const user = await prisma.user.findUnique({ where: { ra } });
+  const user = await prisma.user.findUnique({ 
+    where: { ra },
+    include: {
+      appointments: {
+        include: {
+          history: true,
+        },
+      },
+    },
+  });
   
-  if (!user) {
+  if (!user || user?.role !== 'STUDENT' || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ error: 'Credenciais inválidas' });
-  }
+  } 
 
-  if (user?.role !== 'STUDENT') {
-    return res.status(403).json({ error: 'Não autorizado'});
-  }
+  const token = jwt.sign({ 
+    id: user.id, 
+    role: user.role 
+  }, process.env.JWT_SECRET as string, { 
+    expiresIn: '1d' 
+  });
 
-  if (await bcrypt.compare(password, user.password)) {
-
-    const token = jwt.sign({ 
-      id: user.id, 
-      role: user.role 
-    }, process.env.JWT_SECRET as string, { 
-      expiresIn: '1d' 
-    });
-
-    return res.json({ 
-      token, 
-      role: user.role 
-    });
-  }
+  return res.json({ 
+    token, 
+    user: formattedUserDataResponse(user), 
+  });
 });
 
 // FOR MANAGER
@@ -45,30 +48,21 @@ router.post('/login/manager', async (req, res) => {
     where: { email },
   });
 
-  if (!user) {
+  if (!user || user?.role !== 'MANAGER' || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ error: 'Credenciais inválidas' });
   }
 
-  if (user?.role !== 'MANAGER') {
-    return res.status(403).json({ error: 'Não autorizado'});
-  }
+  const token = jwt.sign({ 
+    id: user.id, 
+    role: user.role 
+  }, process.env.JWT_SECRET as string, { 
+    expiresIn: '1d' 
+  });
 
-  if (await bcrypt.compare(password, user.password)) {
-
-    const token = jwt.sign({ 
-      id: user.id, 
-      role: user.role 
-    }, process.env.JWT_SECRET as string, { 
-      expiresIn: '1d' 
-    });
-
-    return res.json({ 
-      token, 
-      role: user.role 
-    });
-  }
-
-  res.status(401).json({ error: 'Credenciais inválidas' });
+  return res.json({ 
+    token, 
+    user: formattedUserDataResponse(user), 
+  });
 });
 
 export default router;
