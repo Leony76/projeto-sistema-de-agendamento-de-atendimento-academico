@@ -101,6 +101,7 @@ const Login = () => {
           </h3>
 
           <Input 
+            variant='FORM'
             label={tab === 'STUDENT' 
               ? 'RA:' 
               : 'E-mail institucional'
@@ -124,6 +125,7 @@ const Login = () => {
           />
 
           <Input 
+            variant='FORM'
             label={'Senha'} 
             type={'password'} 
             placeholder={'Insira a senha'} 
@@ -136,7 +138,11 @@ const Login = () => {
 
           <Button 
           type='submit'
-          buttonType='mainButton'
+          buttonStyle={{
+            border: "XL",
+            color: 'SECONDARY',
+            filled: true,
+          }}
           loading={loading}
           >
             {loading 
@@ -147,7 +153,11 @@ const Login = () => {
           
           <Button
           type='button'
-          buttonType='tabSwitchButton'
+          buttonStyle={{
+            border: "XL",
+            color: 'SECONDARY',
+            filled: true,
+          }}
           onClick={() => {
             switchTab(tab === 'STUDENT'
               ? 'MANAGER'

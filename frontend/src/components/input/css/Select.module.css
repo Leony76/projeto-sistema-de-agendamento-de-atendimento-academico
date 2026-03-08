@@ -1,0 +1,31 @@
+.select_container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--secondary-color);
+  border-radius: 20px;
+  padding: 0px 10px;
+  background-color: white;
+} .select_container:focus-within {
+  background-color: rgb(248, 248, 248);
+}
+
+.select_container select {
+  border: none;
+  cursor: pointer;
+  flex: 1;
+  padding: 5px 0px;
+  background-color: transparent;
+  color: var(--dark-secondary-color);
+} .select_container select:focus {
+  outline: none;
+}
+
+.select_container select option {
+  color: var(--dark-secondary-color);
+}
+
+.select_container svg {
+  color: var(--dark-secondary-color);
+  font-size: 14px;
+}

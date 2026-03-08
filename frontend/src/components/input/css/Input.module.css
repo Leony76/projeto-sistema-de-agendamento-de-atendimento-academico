@@ -1,3 +1,5 @@
+/* FORM (STANDART) */
+
 .input_container {
   display: flex;
   flex-direction: column;
@@ -12,6 +14,7 @@
 .input_container input {
   background-color: transparent;
   border: none;
+  flex: 1;
   color: var(--primary-color);
   padding: 5px 0px;
   border-bottom: 2px solid var(--tertiary-color);
@@ -38,7 +41,10 @@
 
 .input_container input::placeholder {
   color: var(--primary-color);
+  text-shadow: 0px 0px 2px rgba(128, 128, 128, 0.614);
 } 
+
+/* PASSWORD */
 
 .password_input_container {
   display: flex;
@@ -46,7 +52,6 @@
   border-bottom: 2px solid var(--tertiary-color);
 } .password_input_container input {
   border: none;
-  flex: 1;
 } .password_input_container button {
   background-color: transparent;
   border-radius: 8px;
@@ -61,4 +66,39 @@
   background-color: rgba(255, 255, 255, 0.167);
 } .password_input_container button:active {
   background-color: transparent;
+}
+
+/* SEARCH */
+
+.search_input_container {
+  border: 1px solid var(--secondary-color);
+  padding: 0px 8px 0px 11px;
+  gap: 5px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  background-color: white;
+} .search_input_container svg {
+  color: var(--dark-secondary-color);
+}.search_input_container:focus-within {
+  background-color: rgb(248, 248, 248);
+}
+
+.clear_search {
+  padding: 2.5px;
+  font-size: 20px;
+  cursor: pointer;
+}.clear_search:hover {
+  background-color: rgba(135, 207, 235, 0.153);
+  border-radius: 50%;
+}
+
+.search_input_container input {
+  border: none;
+  flex: 1;
+  padding: 5px 0px;
+}.search_input_container input:focus {
+  outline: none;
+}.search_input_container input::placeholder {
+  color: var(--dark-secondary-color);
 }
