@@ -108,13 +108,24 @@ const AuthLayout = ({
         justifyContent: 'space-between',
         gap: '10px',
       }}>
-        <Button buttonType={"modalProceedButton"}
+        <Button 
+        buttonStyle={{
+          fontSize: "MD",
+          border: "MD",
+          color: "SECONDARY",
+          filled: false
+        }}
         onClick={handleLogout}>
           Confirmar
         </Button>
         
         <Button 
-        buttonType={"modalReturnButton"}
+        buttonStyle={{  
+          fontSize: "MD",
+          border: "MD",
+          color: "PRIMARY",
+          filled: false
+        }}
         onClick={() => setActiveModal(null)}>
           Cancelar
         </Button>

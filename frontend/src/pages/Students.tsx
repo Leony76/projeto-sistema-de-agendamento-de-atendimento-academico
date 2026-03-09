@@ -5,8 +5,7 @@ import AuthLayout from '../components/layout/AuthLayout';
 import style from './css/Students.module.css';
 import { useState } from "react";
 import Select from "../components/input/Select";
-import { MdEdit } from "react-icons/md";
-import { FaTrashAlt } from "react-icons/fa";
+import StudentCard from "./components/Students/StudentCard";
 
 const Students = () => {
 
@@ -24,8 +23,9 @@ const Students = () => {
             <Button 
             className={style.add_student}
             buttonStyle={{
+              fontSize: 'MD',
               border: "XL",
-              color: 'SECONDARY',
+              color: 'PRIMARY',
               filled: true,
             }}
             icon={FaPlus}       
@@ -48,48 +48,19 @@ const Students = () => {
             />
           </div>
 
-          <div className={style.students_list}>
-   
-            <div className={style.student}>
-              <div className={style.left_container}>
-                <span className={style.name}>
-                  Leony Leandro Barros
-                </span>
-
-                <span className={style.ra}>
-                  RA: <span className={style.value}> 20241180209</span>
-                </span>
-
-                <span className={style.email}>
-                  E-mail institucional: <span className={style.value}> leonyleandrobarros@aluno.unifapce.edu.br</span>
-                </span>
-
-                <span className={style.register_data}>
-                  Data de cadastro: <span className={style.value}> 08/03/26, 17:00</span>
-                </span>
-              </div>
-
-              <div className={style.right_container}>
-                <Button
-                buttonStyle={{
-                  border: "MD",
-                  color: 'SECONDARY',
-                  filled: true,
-                }}
-                icon={MdEdit}>
-                  Editar informações
-                </Button>
-
-                <Button
-                buttonStyle={{
-                  border: "MD",
-                  color: 'SECONDARY',
-                  filled: true,
-                }}
-                icon={FaTrashAlt}>
-                  Remover aluno
-                </Button>
-              </div>
+          <div className={style.students_list}>  
+            <div className={style.overflow_container}>
+              {[0,1,2,3,4,5].map((index) => (
+                <StudentCard
+                  variant={'MAIN_LIST'}
+                  student={{
+                    name: 'Leony Leandro Barros',
+                    email: 'leonyleandrobarros@aluno.unifapce.edu.br',
+                    ra: '20241180209',
+                    registerDate: '09/03/26, 09:31'
+                  }}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -132,8 +103,9 @@ const Students = () => {
               }}>
                 <Button 
                 buttonStyle={{
+                  fontSize: 'XL',
                   border: "XL",
-                  color: 'PRIMARY',
+                  color: 'SECONDARY',
                   filled: true,
                 }}>
                   Cadastrar
@@ -148,10 +120,54 @@ const Students = () => {
         ) : (
           <div className={style.registered_students_today_container}>
             <div className={style.registered_students_today}>
+              <h3>
+                Registrados hoje
+              </h3>
 
+              <div className={style.registered_students_today_list}>
+                <div className={style.overflow_container}>
+                  {[0,1,2,3,4].map((index) => (
+                    <StudentCard
+                      variant="REGISTERED_TODAY"
+                      student={{
+                        name: 'Leony Leandro Barros',
+                        email: 'leonyleandrobarros@aluno.unifapce.edu.br',
+                        ra: '20241180209',
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className={style.registered_students_count}>
 
+            <div className={style.registered_students_count}>
+              <h3>
+                Estatísticas
+              </h3>
+
+              <div className={style.statistics_cards_container}>
+                <div className={style.statistic_card}>
+                  <div>
+                    <label>
+                      Alunos cadastrados hoje:
+                    </label>
+                    <span>
+                      232
+                    </span>
+                  </div>
+                </div>
+
+                <div className={style.statistic_card}>
+                  <div>
+                    <label>
+                      Alunos cadastrados:
+                    </label>
+                    <span>
+                      2322
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}

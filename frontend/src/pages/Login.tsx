@@ -102,6 +102,7 @@ const Login = () => {
 
           <Input 
             variant='FORM'
+            autoComplete="email"
             label={tab === 'STUDENT' 
               ? 'RA:' 
               : 'E-mail institucional'
@@ -126,8 +127,10 @@ const Login = () => {
 
           <Input 
             variant='FORM'
+            autoComplete="current-password"
             label={'Senha'} 
             type={'password'} 
+            
             placeholder={'Insira a senha'} 
             error={errors.password 
               ? errors.password.message?.toString() ?? 'Erro'
@@ -139,6 +142,7 @@ const Login = () => {
           <Button 
           type='submit'
           buttonStyle={{
+            fontSize: 'XL',
             border: "XL",
             color: 'SECONDARY',
             filled: true,
@@ -154,8 +158,9 @@ const Login = () => {
           <Button
           type='button'
           buttonStyle={{
+            fontSize: 'MD',
             border: "XL",
-            color: 'SECONDARY',
+            color: 'NEUTRAL',
             filled: true,
           }}
           onClick={() => {
