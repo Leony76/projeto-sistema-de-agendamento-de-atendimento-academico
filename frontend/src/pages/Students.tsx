@@ -6,6 +6,7 @@ import style from './css/Students.module.css';
 import { useState } from "react";
 import Select from "../components/input/Select";
 import StudentCard from "./components/Students/StudentCard";
+import AddStudentForm from "./components/Students/AddStudentForm";
 
 const Students = () => {
 
@@ -66,57 +67,9 @@ const Students = () => {
         </div>
 
         {addStudentForm ? (
-          <div className={style.add_student_container}>
-            <div className={style.title_switch_show_form_container}>
-              <h3>
-                Cadastrar aluno
-              </h3>
-
-              <FaChevronLeft onClick={() => showAddStudentForm(false)}/> 
-            </div>
-
-            <p>
-              Insira as informações que os campos abaixo pedem para cadastrar um aluno no sistema!
-            </p>
-
-            <form>
-              <Input 
-                label={'Nome do aluno'}
-                placeholder='hradsffs'
-                variant="FORM"
-              />
-              <Input 
-                label={'E-mail institucional'}
-                placeholder='hradsffs'
-                variant="FORM"
-              />
-              <Input 
-                label={'Resgistro Acandêmico (RA)'}
-                placeholder='hradsffs'
-                variant="FORM"
-              />
-
-              <div style={{
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: '12px'
-              }}>
-                <Button 
-                buttonStyle={{
-                  fontSize: 'XL',
-                  border: "XL",
-                  color: 'SECONDARY',
-                  filled: true,
-                }}>
-                  Cadastrar
-                </Button>
-
-                <p style={{fontSize: '11px'}}>
-                  Após o cadastro, o aluno cadastrado receberá um e-mail do primeiro acesso ao sistema e poderá acessá-lo com o RA cadastrado e uma senha provisória aleatóriamente gerada.
-                </p>
-              </div>
-            </form>
-          </div>
+          <AddStudentForm
+            onClick={{ toggleShowForm: () => showAddStudentForm(false) }}
+          />
         ) : (
           <div className={style.registered_students_today_container}>
             <div className={style.registered_students_today}>

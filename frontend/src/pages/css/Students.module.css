@@ -34,20 +34,33 @@
 
 .add_student_container h3 {
   font-size: 26px;
-  color: var(--tertiary-color);
-  text-shadow: 0px 0px 2px gray;
+  color: var(--dark-secondary-color);
 }
 
 .add_student_container p {
   font-size: 15px;
-  color: var(--primary-color);
-  text-shadow: 0px 0px 2px gray;
+  color: var(--secondary-color);
 }
 
 .add_student_container form {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.add_student_form label {
+  color: orange;
+  text-shadow: none;
+}
+
+.add_student_form input {
+  border-color: orange;
+  color: var(--secondary-color);
+} .add_student_form input:focus {
+  border-color: rgb(255, 206, 116);
+} .add_student_form input::placeholder {
+  color: rgba(128, 128, 128, 0.457);
+  text-shadow: none;
 }
 
 .title_switch_show_form_container {
@@ -58,14 +71,14 @@
 }
 
 .title_switch_show_form_container svg {
-  color: var(--tertiary-color);
+  color: var(--dark-secondary-color);
   font-size: 28px;
-  filter: drop-shadow(0px 0px 2px rgba(117, 117, 117, 0.5));
   padding: 4px;
   cursor: pointer;
+  transition: 0.25s;
 } .title_switch_show_form_container svg:hover {
-  background-color: rgba(255, 255, 255, 0.242);
-  border-radius: 50%;
+  background-color: rgba(135, 207, 235, 0.196);
+  border-radius: 25%;
 }
 
 .registered_students_today_container {
