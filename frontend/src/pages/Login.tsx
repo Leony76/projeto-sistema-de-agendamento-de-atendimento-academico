@@ -5,17 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import { ManagerLoginFormSchema, managerSchema, StudentLoginFormSchema, studentSchema } from '../schemas/loginSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ManagerPayload } from '../types/managerLoginPayload';
-import { StudentPayload } from '../types/studentLoginPayload';
+import { ManagerPayload } from '../types/payloads/managerLoginPayload';
+import { StudentPayload } from '../types/payloads/studentLoginPayload';
 import { isStudentData } from '../types/guards/managerAndStudentGuard';
 import Input from '../components/input/Input';
 import Button from '../components/button/Button';
 import { useAuth } from '../contexts/AuthContext';
+import { useLoadingState } from '../hooks/useLoadingState';
 
 const Login = () => {
 
   const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
-  const [loading, setLoading] = useState<boolean>(false);
+  const { loading, setLoading } = useLoadingState();
   const navigate = useNavigate();
   const { signIn } = useAuth();
 

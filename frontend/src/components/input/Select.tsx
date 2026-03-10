@@ -1,5 +1,5 @@
 import { forwardRef, SelectHTMLAttributes } from 'react'
-import { SelectVariants } from '../../types/selectVariants';
+import { SelectVariants } from '../../types/variants/selectVariants';
 import { SelectSchema } from '../../types/selectSchame';
 import { SELECT_SCHEMA_MAP } from '../../maps/selectSchema/selectSchemaMap';
 import { FiFilter } from "react-icons/fi";

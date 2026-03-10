@@ -50,8 +50,12 @@ const Button = ({
   };
 
   const SPINNER_COLOR: Record<ButtonColor, string> = {
-    PRIMARY: 'rgb(79, 158, 255)',
-    SECONDARY: 'rgb(255, 255, 255)',
+    PRIMARY: buttonStyle.filled 
+      ? 'var(--primary-color)' 
+      : 'var(--dark-secondary-color)',
+    SECONDARY: buttonStyle.filled 
+      ? 'rgb(255, 240, 209)' 
+      : 'orange',
     NEUTRAL: style.neutral,
   };
 

@@ -3,7 +3,7 @@ import style from './css/Input.module.css';
 import InputValidationError from './InputValidationError';
 import { LuEyeClosed } from "react-icons/lu";
 import { LuEye } from "react-icons/lu";
-import { InputVariants } from '../../types/inputVariants';
+import { InputVariants } from '../../types/variants/inputVariants';
 import { IoClose } from 'react-icons/io5';
 import { IoMdSearch } from 'react-icons/io';
 
@@ -64,24 +64,23 @@ const Input = forwardRef<HTMLInputElement, Props>(
           }
         </div>
       );
-    } return (
-      <div className={`${style.search_input_container}  ${className ?? ''}`}>
-        <IoMdSearch />
-
-        <input
-          {...rest}
-          ref={ref} 
-          type={showPassword 
-            ? 'text'
-            : 'password'
-          }
-          placeholder={placeholder}
-          className={error ? style.input_error : ''}
-        />
-
-        <IoClose className={style.clear_search}/>
-      </div>
-    );
+    } else if (variant === 'SEARCH') {
+      return (
+        <div className={`${style.search_input_container} ${className ?? ''}`}>
+          <IoMdSearch />
+  
+          <input
+            {...rest}
+            ref={ref} 
+            type={'text'}
+            placeholder={placeholder}
+            className={error ? style.input_error : ''}
+          />
+  
+          <IoClose className={style.clear_search}/>
+        </div>
+      );
+    } 
   }
 );
 

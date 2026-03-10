@@ -1,16 +1,42 @@
-import { FaChevronLeft, FaPlus } from "react-icons/fa6";
+import { FaArrowLeft, FaArrowRight, FaPlus } from "react-icons/fa6";
 import Button from '../components/button/Button';
 import Input from '../components/input/Input';
 import AuthLayout from '../components/layout/AuthLayout';
 import style from './css/Students.module.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "../components/input/Select";
 import StudentCard from "./components/Students/StudentCard";
 import AddStudentForm from "./components/Students/AddStudentForm";
+import { StudentListDTO } from "../types/dtos/studentListDTO";
+import axios from "axios";
+import { useToast } from "../contexts/ToastContext";
+import { dateTime } from "../utils/DateTime";
 
 const Students = () => {
 
   const [addStudentForm, showAddStudentForm] = useState<boolean>(false);
+  const [students, setStudents] = useState<StudentListDTO[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    const getRegisteredStudentsList = async () => {
+      try {
+        const response = await axios.get<{
+          studentsList: StudentListDTO[], 
+          totalPages: number 
+        }>(`http://localhost:3000/students-list?page=${currentPage}`);
+        
+        setStudents(response.data.studentsList);
+        setTotalPages(response.data.totalPages);
+      } catch (error: any) {
+        showToast('Erro ao carregar listagem', 'ERROR');
+      }
+    };
+
+    getRegisteredStudentsList();
+  }, [currentPage]); 
 
   return (
     <AuthLayout tabSelected='STUDENTS'>
@@ -32,7 +58,7 @@ const Students = () => {
             icon={FaPlus}       
             onClick={() => showAddStudentForm(true)}
             >
-              Adicionar aluno
+              Cadastrar aluno
             </Button>
 
             <Input 
@@ -51,17 +77,56 @@ const Students = () => {
 
           <div className={style.students_list}>  
             <div className={style.overflow_container}>
-              {[0,1,2,3,4,5].map((index) => (
+              {students.map((student) => (
                 <StudentCard
                   variant={'MAIN_LIST'}
                   student={{
-                    name: 'Leony Leandro Barros',
-                    email: 'leonyleandrobarros@aluno.unifapce.edu.br',
-                    ra: '20241180209',
-                    registerDate: '09/03/26, 09:31'
+                    name:         student.name,
+                    email:        student.email,
+                    ra:           student.ra,
+                    registerDate: dateTime(student.registeredAt),
                   }}
                 />
               ))}
+
+              {(totalPages > 1) && (
+                <div className={style.pagination_container}>
+                  {currentPage !== 1 &&
+                    <Button 
+                    className={style.return}
+                    onClick={() => setCurrentPage(prev => prev - 1)}
+                    buttonStyle={{
+                      border: "MD",
+                      fontSize: "MD",
+                      color: "PRIMARY",
+                      filled: false
+                    }}
+                    >
+                      <FaArrowLeft />
+                      Anterior
+                    </Button>
+                  }
+                  
+                  <span>
+                    {currentPage} / {totalPages}
+                  </span>
+
+                  <Button
+                  className={style.proceed}
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)} 
+                  buttonStyle={{
+                    border: "MD",
+                    fontSize: "MD",
+                    color: "PRIMARY",
+                    filled: false
+                  }}
+                  >
+                    Próximo
+                    <FaArrowRight />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -79,13 +144,13 @@ const Students = () => {
 
               <div className={style.registered_students_today_list}>
                 <div className={style.overflow_container}>
-                  {[0,1,2,3,4].map((index) => (
+                  {students.map((student) => (
                     <StudentCard
                       variant="REGISTERED_TODAY"
                       student={{
-                        name: 'Leony Leandro Barros',
-                        email: 'leonyleandrobarros@aluno.unifapce.edu.br',
-                        ra: '20241180209',
+                        name:  student.name,
+                        email: student.email,
+                        ra:    student.ra,
                       }}
                     />
                   ))}
@@ -105,7 +170,7 @@ const Students = () => {
                       Alunos cadastrados hoje:
                     </label>
                     <span>
-                      232
+                      {students.length}
                     </span>
                   </div>
                 </div>
@@ -116,7 +181,7 @@ const Students = () => {
                       Alunos cadastrados:
                     </label>
                     <span>
-                      2322
+                      {students.length}
                     </span>
                   </div>
                 </div>

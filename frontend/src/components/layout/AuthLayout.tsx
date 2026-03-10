@@ -2,7 +2,7 @@ import { IoIosLogOut } from "react-icons/io";
 import style from './css/AuthLayout.module.css';
 import { LuLayoutDashboard } from "react-icons/lu";
 import { TfiAgenda } from "react-icons/tfi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Modal from "../modal/Modal";
@@ -22,7 +22,6 @@ const AuthLayout = ({
   const { user, signOut } = useAuth(); 
 
   const [activeModal, setActiveModal] = useState<ActiveModal | null>(null);
-  const navigate = useNavigate();
 
   const handleLogout = async() => signOut();
 
@@ -43,7 +42,7 @@ const AuthLayout = ({
                   <span> Aluno: </span> {user?.name}
                 </li>
                 <li className={style.student_ra}>
-                  <span> RA: </span> 20241180209
+                  <span> RA: </span> {user.ra}
                 </li>
               </>
             )}

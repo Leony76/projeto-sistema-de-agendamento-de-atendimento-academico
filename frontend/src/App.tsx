@@ -7,38 +7,46 @@ import PrivateRoute from './components/middleware/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import Students from './pages/Students';
 import ManagerRoute from './components/middleware/ManagerRoute';
+import { ToastProvider } from './contexts/ToastContext';
 
 const App = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route 
-            path="/login" 
-            element={<Login />} 
-          />
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path='/'
+              element={<Login />}
+            />
 
-          <Route 
-            path="/home" 
-            element={
-              <PrivateRoute>
-                <Home />
-              </PrivateRoute>
-            } 
-          />
+            <Route 
+              path="/login" 
+              element={<Login />} 
+            />
 
-          <Route 
-            path="/students" 
-            element={
-              <PrivateRoute>
-                <ManagerRoute>
-                  <Students/>
-                </ManagerRoute>
-              </PrivateRoute>
-            } 
-          />   
-        </Routes>
-      </BrowserRouter>
+            <Route 
+              path="/home" 
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              } 
+            />
+
+            <Route 
+              path="/students" 
+              element={
+                <PrivateRoute>
+                  <ManagerRoute>
+                    <Students/>
+                  </ManagerRoute>
+                </PrivateRoute>
+              } 
+            />   
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   );
 }
