@@ -3,23 +3,38 @@ import style from './css/Input.module.css';
 import InputValidationError from './InputValidationError';
 import { LuEyeClosed } from "react-icons/lu";
 import { LuEye } from "react-icons/lu";
-import { InputVariants } from '../../types/variants/inputVariants';
 import { IoClose } from 'react-icons/io5';
 import { IoMdSearch } from 'react-icons/io';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+type BaseProps = | InputHTMLAttributes<HTMLInputElement> & {
   error?: string; 
-  variant: InputVariants;
   className?: string;
-}
+};
+
+type Props = | BaseProps & {
+  variant: 'FORM';
+  label: string;
+} | BaseProps & {
+  variant: 'SEARCH';
+};
 
 const Input = forwardRef<HTMLInputElement, Props>(
-  ({ label, variant, className, error, type, placeholder, ...rest }, ref) => {
+  (props, ref) => {
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    
+    if (props.variant === 'FORM') {
 
-    if (variant === 'FORM') {
+      const { 
+        variant, 
+        error, 
+        className, 
+        label, 
+        type, 
+        placeholder, 
+        ...rest 
+      } = props;
+
       return (
         <div className={`${style.input_container} ${className ?? ''}`}>
           <label htmlFor={rest.id || rest.name}>
@@ -64,7 +79,18 @@ const Input = forwardRef<HTMLInputElement, Props>(
           }
         </div>
       );
-    } else if (variant === 'SEARCH') {
+
+    } else if (props.variant === 'SEARCH') {
+
+      const { 
+        variant, 
+        error, 
+        className, 
+        type, 
+        placeholder, 
+        ...rest 
+      } = props;
+  
       return (
         <div className={`${style.search_input_container} ${className ?? ''}`}>
           <IoMdSearch />
@@ -77,10 +103,13 @@ const Input = forwardRef<HTMLInputElement, Props>(
             className={error ? style.input_error : ''}
           />
   
-          <IoClose className={style.clear_search}/>
+          <IoClose 
+            className={style.clear_search}
+            onClick={() => rest.onChange?.({ target: { value: '' } } as any)}
+          />
         </div>
       );
-    } 
+    }
   }
 );
 

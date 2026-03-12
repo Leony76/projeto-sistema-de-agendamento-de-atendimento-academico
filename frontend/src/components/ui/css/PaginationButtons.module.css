@@ -1,0 +1,14 @@
+div.pagination_container {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination_container button {
+  flex: none;
+}
+
+.pagination_container span {
+  color: var(--dark-secondary-color);
+}

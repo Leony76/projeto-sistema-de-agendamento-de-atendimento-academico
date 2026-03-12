@@ -1,42 +1,92 @@
-import { FaArrowLeft, FaArrowRight, FaPlus } from "react-icons/fa6";
-import Button from '../components/button/Button';
-import Input from '../components/input/Input';
-import AuthLayout from '../components/layout/AuthLayout';
-import style from './css/Students.module.css';
 import { useEffect, useState } from "react";
-import Select from "../components/input/Select";
-import StudentCard from "./components/Students/StudentCard";
-import AddStudentForm from "./components/Students/AddStudentForm";
-import { StudentListDTO } from "../types/dtos/studentListDTO";
-import axios from "axios";
+import { dateTime } from "../utils/dateTime";
 import { useToast } from "../contexts/ToastContext";
-import { dateTime } from "../utils/DateTime";
+import { StudentListDTO } from "../types/dtos/studentListDTO";
+import { FaClipboardQuestion, FaPlus } from "react-icons/fa6";
+import { StudentListPromise } from "../types/promises/studentsListPromise";
+import { SearchStudentsFilterValue } from "../maps/filters/searchStudentsFilter";
+import { StudentListRegisteredTodayDTO } from "../types/dtos/studentsListRegisteredTodayDTO";
+import { RegisteredTodayStudentsListPromise } from "../types/promises/registeredTodayStudentsListPromise";
+
+import NoAvailableContent from "../components/ui/NoAvailableContent";
+import PaginationButtons from "../components/ui/PaginationButtons";
+import { StudentForm } from "./components/Students/form";
+import StudentCard from "./components/Students/StudentCard";
+import AuthLayout from '../components/layout/AuthLayout';
+import Button from '../components/button/Button';
+import Select from "../components/input/Select";
+import Spinner from "../components/ui/Spinner";
+import Input from '../components/input/Input';
+import axios from "axios";
+
+import style from './css/Students.module.css';
+import { StudentToBeEdited } from "../types/studentToBeEdited";
 
 const Students = () => {
 
-  const [addStudentForm, showAddStudentForm] = useState<boolean>(false);
-  const [students, setStudents] = useState<StudentListDTO[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
   const { showToast } = useToast();
+  const [pageLoading, setPageloading] = useState<boolean>(true); 
+
+  // STUDENTS LIST
+  const [students, setStudents] = useState<StudentListDTO[]>([]);
+  const [studentsListCount, setStudentsListCount] = useState<number>(0);
+  const [currentStudentsListPage, setCurrentStudentsListPage] = useState<number>(1);
+  const [totalStudentsListPages, setTotalStudentsListPages] = useState<number>(1);
+
+  // STUDENTS REGISTERED TODAY LIST
+  const [studentsRegisteredToday, setStudentsRegisteredToday] = useState<StudentListRegisteredTodayDTO[]>([]);
+  const [registeredTodayStudentsCount, setRegisteredTodayStudentsCount] = useState<number>(0);
+  const [currentStudentsRegisteredTodayListPage, setCurrentStudentsRegisteredTodayListPage] = useState<number>(1);
+  const [totalStudentsRegisteredTodayListPages, setTotalStudentsRegisteredTodayListPages] = useState<number>(1);
+
+  const [studentToBeEdited, setStudentToBeEdited] = useState<StudentToBeEdited | null>(null);
+
+  const [search, setSearch] = useState<string>('');
+  const [filter, setFilter] = useState<SearchStudentsFilterValue>('unselected');
+
+  const [studentForm, showStudentForm] = useState<'REGISTER' | 'EDIT' | null>(null);
+
+  const fetchAllData = async():Promise<void> => {
+    setPageloading(true);
+
+    const studentsListFetchURL:string = `http://localhost:3000/students-list?page=${currentStudentsListPage}&search=${search}&filter=${filter}`;
+    const registeredTodaystudentsListFetchURL:string = `http://localhost:3000/registered-today-students-list?page=${currentStudentsRegisteredTodayListPage}&today=true`;
+
+    try {
+      const [
+        studentsResponse,
+        studentsRegisteredTodayResponse,
+      ] = await Promise.all([
+        axios.get<StudentListPromise>(studentsListFetchURL),
+        axios.get<RegisteredTodayStudentsListPromise>(registeredTodaystudentsListFetchURL),
+      ]);
+      
+      setStudents(studentsResponse.data.studentsList);
+      setTotalStudentsListPages(studentsResponse.data.totalPages);
+      setStudentsListCount(studentsResponse.data.total);
+
+      setStudentsRegisteredToday(studentsRegisteredTodayResponse.data.studentsRegisteredTodayList);
+      setTotalStudentsRegisteredTodayListPages(studentsRegisteredTodayResponse.data.totalStudentsRegisteredTodayPages);
+      setRegisteredTodayStudentsCount(studentsRegisteredTodayResponse.data.totalStudentsRegisteredTodayCount);
+    } catch (error: any) {
+      showToast('Erro ao carregar listagem', 'ERROR');
+    } finally {
+      setPageloading(false); 
+    }
+  };
 
   useEffect(() => {
-    const getRegisteredStudentsList = async () => {
-      try {
-        const response = await axios.get<{
-          studentsList: StudentListDTO[], 
-          totalPages: number 
-        }>(`http://localhost:3000/students-list?page=${currentPage}`);
-        
-        setStudents(response.data.studentsList);
-        setTotalPages(response.data.totalPages);
-      } catch (error: any) {
-        showToast('Erro ao carregar listagem', 'ERROR');
-      }
-    };
+    fetchAllData();
+  } , [
+    currentStudentsListPage, 
+    currentStudentsRegisteredTodayListPage, 
+    filter, 
+    search,
+  ]);
 
-    getRegisteredStudentsList();
-  }, [currentPage]); 
+  useEffect(() => {
+    setCurrentStudentsListPage(1);
+  }, [filter, search]); 
 
   return (
     <AuthLayout tabSelected='STUDENTS'>
@@ -51,110 +101,145 @@ const Students = () => {
             className={style.add_student}
             buttonStyle={{
               fontSize: 'MD',
-              border: "XL",
-              color: 'PRIMARY',
-              filled: true,
+              border:   "XL",
+              color:    'PRIMARY',
+              filled:    true,
             }}
             icon={FaPlus}       
-            onClick={() => showAddStudentForm(true)}
+            onClick={() => showStudentForm('REGISTER')}
             >
               Cadastrar aluno
             </Button>
 
             <Input 
-              label={"Perquisar"} 
               variant="SEARCH"
-              placeholder="Pesquisar"
+              placeholder="Pesquisar por nome ou RA"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className={style.search}
             />
 
             <Select 
               variant={"SEARCH"} 
               selectSchema={"SEARCH_STUDENTS_FILTER"}
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as SearchStudentsFilterValue)}
               className={style.filter}
             />
           </div>
 
           <div className={style.students_list}>  
             <div className={style.overflow_container}>
-              {students.map((student) => (
-                <StudentCard
-                  variant={'MAIN_LIST'}
-                  student={{
-                    name:         student.name,
-                    email:        student.email,
-                    ra:           student.ra,
-                    registerDate: dateTime(student.registeredAt),
-                  }}
-                />
-              ))}
-
-              {(totalPages > 1) && (
-                <div className={style.pagination_container}>
-                  {currentPage !== 1 &&
-                    <Button 
-                    className={style.return}
-                    onClick={() => setCurrentPage(prev => prev - 1)}
-                    buttonStyle={{
-                      border: "MD",
-                      fontSize: "MD",
-                      color: "PRIMARY",
-                      filled: false
-                    }}
-                    >
-                      <FaArrowLeft />
-                      Anterior
-                    </Button>
-                  }
-                  
-                  <span>
-                    {currentPage} / {totalPages}
-                  </span>
-
-                  <Button
-                  className={style.proceed}
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => prev + 1)} 
-                  buttonStyle={{
-                    border: "MD",
-                    fontSize: "MD",
-                    color: "PRIMARY",
-                    filled: false
-                  }}
-                  >
-                    Próximo
-                    <FaArrowRight />
-                  </Button>
+              {pageLoading ? (
+                <div className={style.loading_container}>
+                  <Spinner
+                    color="var(--secondary-color)"
+                  />
                 </div>
+              ) : students.length > 0 ? (
+                <>
+                  {students.map((student) => (
+                    <StudentCard
+                      key={student.ra}
+                      variant={'MAIN_LIST'}
+                      onClick={{ 
+                        setStudentToBeEdited,
+                        showEditStudentInfoForm: () => showStudentForm('EDIT'),
+                      }}
+                      student={{
+                        name:         student.name,
+                        email:        student.email,
+                        ra:           student.ra,
+                        registerDate: dateTime(student.registeredAt),
+                      }}
+                    />
+                  ))}
+
+                  {(totalStudentsListPages > 1) && (
+                    <PaginationButtons
+                      page={{
+                        current:  currentStudentsListPage,
+                        total:    totalStudentsListPages,
+                        next:     setCurrentStudentsListPage,
+                        previous: setCurrentStudentsListPage,
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                <NoAvailableContent
+                  icon={FaClipboardQuestion}
+                  message={search 
+                    ? `Nenhum resultado para '${search}'!` 
+                    : "Nenhum aluno cadastrado!"
+                  }
+                />
               )}
             </div>
           </div>
         </div>
 
-        {addStudentForm ? (
-          <AddStudentForm
-            onClick={{ toggleShowForm: () => showAddStudentForm(false) }}
+        {studentForm === 'REGISTER' ? (
+          <StudentForm.Register
+            onClick={{ closeForm: () => showStudentForm(null)}}
+            onSuccess={fetchAllData}
+          />
+        ) : (studentForm === 'EDIT' && studentToBeEdited) ? (
+          <StudentForm.Edit
+            onClick={{ closeForm: () => {
+              showStudentForm(null);
+              setStudentToBeEdited(null);
+            }}}
+            onSuccess={fetchAllData}
+            initialData={studentToBeEdited}
           />
         ) : (
           <div className={style.registered_students_today_container}>
             <div className={style.registered_students_today}>
               <h3>
-                Registrados hoje
+                Cadastrados hoje
               </h3>
 
               <div className={style.registered_students_today_list}>
                 <div className={style.overflow_container}>
-                  {students.map((student) => (
-                    <StudentCard
-                      variant="REGISTERED_TODAY"
-                      student={{
-                        name:  student.name,
-                        email: student.email,
-                        ra:    student.ra,
-                      }}
+                  {pageLoading ? (
+                    <div className={style.loading_container}>
+                    <Spinner
+                      color="var(--secondary-color)"
                     />
-                  ))}
-                </div>
+                  </div>
+                  ) : studentsRegisteredToday.length > 0 ? (
+                    <>
+                      {studentsRegisteredToday.map((student) => (
+                        <StudentCard
+                          key={student.ra}
+                          variant="REGISTERED_TODAY"
+                          student={{
+                            name:  student.name,
+                            email: student.email,
+                            ra:    student.ra,
+                          }}
+                        />
+                      ))}
+
+                      {totalStudentsRegisteredTodayListPages > 1 &&
+                        <PaginationButtons
+                          page={{
+                            current:  currentStudentsRegisteredTodayListPage,
+                            total:    totalStudentsRegisteredTodayListPages,
+                            next:     setCurrentStudentsRegisteredTodayListPage,
+                            previous: setCurrentStudentsRegisteredTodayListPage,
+                          }}
+                        />
+                      }
+                    </>              
+                  ) : (
+                    <NoAvailableContent
+                      icon={FaClipboardQuestion}
+                      message="Nenhum aluno cadastrado hoje!"
+                    />
+                  )}
+                </div>         
               </div>
             </div>
 
@@ -170,7 +255,7 @@ const Students = () => {
                       Alunos cadastrados hoje:
                     </label>
                     <span>
-                      {students.length}
+                      {registeredTodayStudentsCount}
                     </span>
                   </div>
                 </div>
@@ -181,7 +266,7 @@ const Students = () => {
                       Alunos cadastrados:
                     </label>
                     <span>
-                      {students.length}
+                      {studentsListCount}
                     </span>
                   </div>
                 </div>

@@ -1,0 +1,25 @@
+div.main_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: transparent !important;
+}
+
+div.icon_message_container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  color: var(--dark-secondary-color);
+  background-color: transparent !important;
+}
+
+.icon_message_container p {
+  font-size: 13px;
+}
+
+.icon_message_container svg {
+  font-size: 24px;
+}

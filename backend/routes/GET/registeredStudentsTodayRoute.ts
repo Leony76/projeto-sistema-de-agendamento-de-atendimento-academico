@@ -4,7 +4,7 @@ import { StudentListDTO } from "../../@types/dto/studentListDTO";
 
 const router = Router();
 
-router.get('/registerd-today-students-list', async(req, res) => {
+router.get('/registered-today-students-list', async(req, res) => {
 
   const page = Number(req.query.page) || 1;
   const onlyToday = req.query.today === 'true';
@@ -44,7 +44,7 @@ router.get('/registerd-today-students-list', async(req, res) => {
     })
   ]);
 
-  const registerdTodaystudentsList: StudentListDTO[] = studentsListQuery.map((student) => ({
+  const studentsRegisteredTodayList: StudentListDTO[] = studentsListQuery.map((student) => ({
     name:         student.name,
     email:        student.email ?? '[E-mail não registrado]',
     ra:           student.ra    ?? '[RA não registrado]',
@@ -52,9 +52,9 @@ router.get('/registerd-today-students-list', async(req, res) => {
   }));
 
   res.json({ 
-    registerdTodaystudentsList, 
-    total:      totalStudents,
-    totalPages: Math.ceil(totalStudents / limit) 
+    studentsRegisteredTodayList, 
+    totalStudentsRegisteredTodayCount:        totalStudents,
+    totalStudentsRegisteredTodayPages: Math.ceil(totalStudents / limit) 
   });
 });
 

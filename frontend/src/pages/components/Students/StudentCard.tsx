@@ -2,6 +2,7 @@ import { FaTrashAlt } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md';
 import Button from '../../../components/button/Button';
 import style from '../../css/Students.module.css';
+import { StudentToBeEdited } from '../../../types/studentToBeEdited';
 
 type RegistedStudentsTodayListProps = {
   name: string;
@@ -16,6 +17,10 @@ type MainStudentsListProps = | RegistedStudentsTodayListProps & {
 type Props = {
   variant: 'MAIN_LIST';
   student: MainStudentsListProps;
+  onClick: {
+    setStudentToBeEdited: React.Dispatch<React.SetStateAction<StudentToBeEdited  | null>>;
+    showEditStudentInfoForm: () => void;
+  };
 } | {
   variant: 'REGISTERED_TODAY';
   student: RegistedStudentsTodayListProps;
@@ -24,7 +29,7 @@ type Props = {
 const StudentCard = (props:Props) => {
 
   if (props.variant === 'MAIN_LIST') {
-    const { student } = props;
+    const { student, onClick } = props;
 
     return (
       <div className={style.student}>
@@ -48,6 +53,10 @@ const StudentCard = (props:Props) => {
   
         <div className={style.right_container}>
           <Button
+          onClick={() => {
+            onClick.setStudentToBeEdited(student);
+            onClick.showEditStudentInfoForm();
+          }}
           buttonStyle={{
             fontSize: 'MD',
             border: "MD",

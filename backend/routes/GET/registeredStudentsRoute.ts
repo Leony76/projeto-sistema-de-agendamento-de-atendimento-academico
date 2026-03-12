@@ -6,13 +6,37 @@ const router = Router();
 
 router.get('/students-list', async(req, res) => {
 
-  const page = Number(req.query.page) || 1;
+  const { 
+    page = 1, 
+    search = '', 
+    filter = '' 
+  } = req.query;
   const limit = 10;
-  const skip = (page - 1) * limit;
+  const skip = (Number(page) - 1) * limit;
+
+  const whereCondition:any = { 
+    role: 'STUDENT',
+    ...(search && {
+      OR: [
+        { name: { contains: String(search), mode: 'insensitive' }},
+        { ra:   { contains: String(search), mode: 'insensitive' }}
+      ],
+    }),
+  };
+
+  let orderBy: any = { createdAt: 'desc' };
+
+  switch (filter) {
+    case 'AZnames':               orderBy = { name:      'asc' }; break;
+    case 'ZAnames':               orderBy = { name:      'desc'}; break;
+    case 'mostRecentsRegistered': orderBy = { createdAt: 'desc'}; break;
+    case 'mostOldRegistered':     orderBy = { createdAt: 'asc' }; break;
+  };
 
   const [studentsListQuery, totalStudents] = await Promise.all([
+    // studentsListQuery
     prisma.user.findMany({
-      where: { role: 'STUDENT' },
+      where: whereCondition,
       select: { 
         name:      true, 
         email:     true, 
@@ -21,17 +45,19 @@ router.get('/students-list', async(req, res) => {
       },
       take: limit,
       skip: skip,
-      orderBy: { createdAt: 'desc' },
+      orderBy: orderBy,
     }),
+
+    // totalStudents
     prisma.user.count({ 
-      where: { role: 'STUDENT' } 
+      where: whereCondition 
     })
   ]);
 
   const studentsList: StudentListDTO[] = studentsListQuery.map((student) => ({
     name:         student.name,
-    email:        student.email ?? '[E-mail não registrado]',
-    ra:           student.ra    ?? '[RA não registrado]',
+    email:        student.email ??  '[E-mail não registrado]',
+    ra:           student.ra    ??  '[RA não registrado]',
     registeredAt: student.createdAt.toISOString(),
   }));
 
