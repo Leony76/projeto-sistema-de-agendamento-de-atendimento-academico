@@ -49,8 +49,8 @@ const Students = () => {
   const fetchAllData = async():Promise<void> => {
     setPageloading(true);
 
-    const studentsListFetchURL:string = `http://localhost:3000/students-list?page=${currentStudentsListPage}&search=${search}&filter=${filter}`;
-    const registeredTodaystudentsListFetchURL:string = `http://localhost:3000/registered-today-students-list?page=${currentStudentsRegisteredTodayListPage}&today=true`;
+    const studentsListFetchURL = `http://localhost:3000/api/students/list?page=${currentStudentsListPage}&search=${search}&filter=${filter}`;
+    const registeredTodaystudentsListFetchURL = `http://localhost:3000/api/students/registered-today-list?page=${currentStudentsRegisteredTodayListPage}`;
 
     try {
       const [
@@ -77,7 +77,7 @@ const Students = () => {
 
   const handleRemoveStudent = async(ra:string):Promise<void> => {
 
-    const fetchURL:string = `http://localhost:3000/students/remove-student/${ra}`;
+    const fetchURL = `http://localhost:3000/api/students/remove/${ra}`;
 
     try {
       const response = await axios.put(fetchURL, ra);

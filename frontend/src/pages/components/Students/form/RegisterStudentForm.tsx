@@ -37,7 +37,7 @@ const Register = ({
     if (loading) return; 
     setLoading(true);
     
-    const fetchURL:string = 'http://localhost:3000/students/register-student';
+    const fetchURL = "http://localhost:3000/api/auth/register/student";
     const payload:RegisterStudentPayload = {
       studentName: data.studentName,
       email: data.email,

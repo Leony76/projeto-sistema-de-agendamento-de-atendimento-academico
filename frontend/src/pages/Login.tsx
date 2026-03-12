@@ -39,7 +39,7 @@ const Login = () => {
     if (loading) return;
     setLoading(true);
 
-    const fetchURL:string = `http://localhost:3000/login/${tab.toLowerCase()}`;
+    const fetchURL:string = `http://localhost:3000/api/auth/login/${tab.toLowerCase()}`;
     let payload: ManagerPayload | StudentPayload;
 
     if (isStudentData(data)) {

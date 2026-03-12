@@ -37,7 +37,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   const handleUpdate = async (data: RegisterStudentSchema) => {
     setLoading(true);
 
-    const fetchURL:string = `http://localhost:3000/students/update-student/${initialData.ra}`;
+    const fetchURL = `http://localhost:3000/api/students/update/${initialData.ra}`;
 
     try {
       const response = await axios.put(fetchURL, data);
