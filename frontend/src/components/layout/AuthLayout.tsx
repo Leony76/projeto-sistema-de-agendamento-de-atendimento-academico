@@ -5,7 +5,7 @@ import { TfiAgenda } from "react-icons/tfi";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import Modal from "../modal/Modal";
+import Modal from "../modal/ModalWrapper";
 import Button from "../button/Button";
 import { PiStudent } from "react-icons/pi";
 import { SystemTabs } from "../../types/systemTabs";

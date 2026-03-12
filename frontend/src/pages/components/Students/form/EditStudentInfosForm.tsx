@@ -36,8 +36,11 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
 
   const handleUpdate = async (data: RegisterStudentSchema) => {
     setLoading(true);
+
+    const fetchURL:string = `http://localhost:3000/students/update-student/${initialData.ra}`;
+
     try {
-      const response = await axios.put(`http://localhost:3000/students/update-student/${initialData.ra}`, data);
+      const response = await axios.put(fetchURL, data);
       
       showToast(response.data.success, 'SUCCESS');
       

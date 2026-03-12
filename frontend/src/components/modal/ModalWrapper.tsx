@@ -10,7 +10,7 @@ type Props = {
   hasXClose?: boolean;
 };
 
-const Modal = ({
+const ModalWrapper = ({
   isOpen,
   title,
   message,
@@ -49,4 +49,4 @@ const Modal = ({
   )
 }
 
-export default Modal
+export default ModalWrapper

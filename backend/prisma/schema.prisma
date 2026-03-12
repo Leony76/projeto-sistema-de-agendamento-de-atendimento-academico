@@ -16,6 +16,7 @@ model User {
   updatedAt    DateTime      @updatedAt @map("updated_at")
   ra           String?       @unique
   appointments Appointment[]
+  status UserStatus          @default(ACTIVE)
 
   @@map("users")
 }
@@ -52,4 +53,9 @@ enum AppointmentStatus {
 enum UserRole {
   MANAGER
   STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  REMOVED
 }

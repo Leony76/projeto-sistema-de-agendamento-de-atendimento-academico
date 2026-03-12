@@ -75,6 +75,19 @@ const Students = () => {
     }
   };
 
+  const handleRemoveStudent = async(ra:string):Promise<void> => {
+
+    const fetchURL:string = `http://localhost:3000/students/remove-student/${ra}`;
+
+    try {
+      const response = await axios.put(fetchURL, ra);
+
+      showToast(response.data.success, 'SUCCESS');
+    } catch (error:any) {
+      showToast(error.response?.data?.error || 'Houve um erro ao remover o usuário!', 'ERROR');
+    }
+  };
+
   useEffect(() => {
     fetchAllData();
   } , [
@@ -145,6 +158,7 @@ const Students = () => {
                       onClick={{ 
                         setStudentToBeEdited,
                         showEditStudentInfoForm: () => showStudentForm('EDIT'),
+                        handleRemoveStudent,
                       }}
                       student={{
                         name:         student.name,
