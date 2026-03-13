@@ -1,12 +1,13 @@
 import { prisma } from "../prisma";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { formattedUserDataResponse } from "../../@types/dto/userDTO";
+import { formattedUserDataResponse } from "../../types/dto/userDTO";
 import { LoginAsStudentPromise } from "./types/auth/loginAsStudent.promise";
 import { LoginAsManagerPromise } from "./types/auth/loginAsManager.promise";
-import { provisoryPassword } from "../../utils/provisoryPassword";
+import { provisoryPassword } from "../utils/provisoryPassword";
 import { RegisterAsStudentPromise } from "./types/auth/registerAsStudent.promise";
 import { UserRole } from "@prisma/client";
+import { MailService } from "./mail.service";
 
 export class AuthService {
 
@@ -75,15 +76,21 @@ export class AuthService {
     ra          : string,
   ): Promise<RegisterAsStudentPromise> {
     try {   
+
+      const tempPassword = provisoryPassword(); 
+      const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
       const registerStudent = await prisma.user.create({
         data: {
           name:     studentName,
           email:    email,
           ra:       ra,
-          password: provisoryPassword(),
+          password: hashedPassword,
         },
       });
-    
+      
+      await MailService.sendWelcomeEmail(email, studentName, tempPassword, ra);
+
       return { 
         success: 'Aluno registrado com sucesso!',
         student: {
@@ -93,11 +100,9 @@ export class AuthService {
       };
     } catch(error:any) {
       console.error(error);
-      return { error: 'Erro ao cadastrar aluno. Verifique se o RA ou E-mail já existem.' };
+      throw new Error('Erro ao cadastrar aluno. Verifique se o RA ou E-mail já existem.');
     }
   }
-
-  //
 
   static async registerAsManager(
     name     : string,

@@ -1,4 +1,4 @@
-import { UserDTO } from "../../../../@types/dto/userDTO";
+import { UserDTO } from "../../../../types/dto/userDTO";
 
 export type LoginAsStudentPromise = {
   error: string;

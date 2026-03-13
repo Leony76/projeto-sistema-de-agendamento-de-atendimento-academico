@@ -1,5 +1,5 @@
 import { prisma } from "../prisma";
-import { formattedUserDataResponse } from "../../@types/dto/userDTO";
+import { formattedUserDataResponse } from "../../types/dto/userDTO";
 
 export class UserService {
 

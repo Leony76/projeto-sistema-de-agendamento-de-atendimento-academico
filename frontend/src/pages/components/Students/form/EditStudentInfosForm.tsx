@@ -12,6 +12,7 @@ import axios from "axios";
 import style from '../../../css/Students.module.css';
 import StudentPageFormsWrapper from "./StudentPageFormsWrapper";
 import { StudentToBeEdited } from "../../../../types/studentToBeEdited";
+import { StudentService } from "../../../../services/student.service";
 
 export type EditProps = RegisterProps & {
   initialData: StudentToBeEdited;
@@ -34,20 +35,18 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
     }
   });
 
-  const handleUpdate = async (data: RegisterStudentSchema) => {
+  const handleUpdate = async (data:RegisterStudentSchema) => {
     setLoading(true);
 
-    const fetchURL = `http://localhost:3000/api/students/update/${initialData.ra}`;
-
     try {
-      const response = await axios.put(fetchURL, data);
+      const response = await StudentService.edit(data, initialData.ra);
       
-      showToast(response.data.success, 'SUCCESS');
+      showToast(response, 'SUCCESS');
       
       await onSuccess();
       onClick.closeForm();
     } catch (error: any) {
-      showToast(error.response?.data?.error, 'ERROR');
+      showToast(error.response?.data?.error || 'Ocorreu um erro na edição!', 'ERROR');
     } finally {
       setLoading(false);
     }

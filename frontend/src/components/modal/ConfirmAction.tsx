@@ -6,6 +6,7 @@ type Props = {
   title:   string;
   message: string;
   isOpen:  boolean;
+  loading: boolean;
   onClick: {
     closeModal: () => void;
     confirm:        () => void;
@@ -17,6 +18,7 @@ const ConfirmAction = ({
   message,
   isOpen,
   onClick,
+  loading,
 }:Props) => {
 
   return (
@@ -33,6 +35,7 @@ const ConfirmAction = ({
         gap: '10px',
       }}>
         <Button 
+        loading={loading}
         buttonStyle={{
           fontSize: "MD",
           border: "MD",
@@ -40,7 +43,7 @@ const ConfirmAction = ({
           filled: false
         }}
         onClick={onClick.confirm}>
-          Confirmar
+          {loading ? 'Processando' : 'Confirmar'}
         </Button>
         
         <Button 

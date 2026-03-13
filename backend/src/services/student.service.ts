@@ -1,8 +1,10 @@
-import { StudentListDTO } from '../../@types/dto/studentListDTO';
+import { Prisma } from '@prisma/client';
+import { StudentListDTO } from '../../types/dto/studentListDTO';
 import { prisma } from '../prisma';
 import { EditPromise } from './types/student/edit.promise';
 import { ListPromise } from './types/student/list.promise';
 import { RegisteredTodayListPromise } from './types/student/registeredTodayList.promise';
+import { RemovePromise } from './types/student/remove.promise';
 
 export class StudentService {
 
@@ -14,8 +16,9 @@ export class StudentService {
     const limit = 10;
     const skip = (Number(page) - 1) * limit;
   
-    const whereCondition:any = { 
+    const whereCondition:Prisma.UserWhereInput = { 
       role: 'STUDENT',
+      status: 'ACTIVE',
       ...(search && {
         OR: [
           { name: { contains: String(search), mode: 'insensitive' }},
@@ -68,8 +71,6 @@ export class StudentService {
     }
   }
 
-  //
-
   static async registeredTodayList(
     page      : number,
     onlyToday : boolean
@@ -83,7 +84,9 @@ export class StudentService {
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
-    const whereCondition: any = { role: 'STUDENT' };
+    const whereCondition:Prisma.UserWhereInput = { 
+      role: 'STUDENT',
+    };
 
     if (onlyToday) {
       whereCondition.createdAt = {
@@ -124,35 +127,47 @@ export class StudentService {
     }
   }
 
-  //
-
   static async edit(
     ra          : string,
     studentName : string,
     email       : string,
   ):Promise<EditPromise>{
-    try {
-      const user = await prisma.user.findUnique({ where: { ra:ra } });
-      
-      if (!user) return { error: 'Usuário não encontrado para edição' };
+    const user = await prisma.user.findUnique({ where: { ra } });
+    
+    if (!user) throw new Error('Aluno não encontrado para edição');
 
-      const updateData = await prisma.user.update({
-        where: { ra },
-        data: {
-          name: studentName,
-          email,
-        },
-      });
+    const updateData = await prisma.user.update({
+      where: { ra },
+      data: {
+        name: studentName,
+        email,
+      },
+    });
 
-      return {
-        success: 'Edição efetuada com sucesso!',
-        newData: {
-          name:  updateData.name,
-          email: updateData.email,
-        },
-      };
-    } catch (error:any) {
-      return { error: 'Houve um erro ao processar a edição. Tente mais tarde!' };
+    return {
+      success: 'Edição efetuada com sucesso!',
+      newData: {
+        name:  updateData.name,
+        email: updateData.email,
+      },
+    };
+  }
+
+  static async remove(ra:string):Promise<RemovePromise> {
+    const user = await prisma.user.findUnique({ 
+      where: { ra } 
+    });
+
+    if (!user) throw new Error('Aluno não encontrado para ser removido');
+
+    const remove = await prisma.user.update({
+      where: { ra },
+      data: { status: 'REMOVED' },
+    });
+
+    return {
+      success: 'Aluno removido do sistema com sucesso!',
+      info: remove.ra,
     }
   }
 }

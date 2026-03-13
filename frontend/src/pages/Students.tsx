@@ -21,11 +21,17 @@ import axios from "axios";
 
 import style from './css/Students.module.css';
 import { StudentToBeEdited } from "../types/studentToBeEdited";
+import { StudentService } from "../services/student.service";
+import { useLoadingState } from "../hooks/useLoadingState";
+import { StudentsPageModal } from "../types/modals/studentsPage.modal";
+import { Modal } from "../components/modal";
+import { StudentToBeRemoved } from "../types/studentToBeRemoved";
 
 const Students = () => {
 
   const { showToast } = useToast();
   const [pageLoading, setPageloading] = useState<boolean>(true); 
+  const { loading, setLoading } = useLoadingState();
 
   // STUDENTS LIST
   const [students, setStudents] = useState<StudentListDTO[]>([]);
@@ -40,51 +46,53 @@ const Students = () => {
   const [totalStudentsRegisteredTodayListPages, setTotalStudentsRegisteredTodayListPages] = useState<number>(1);
 
   const [studentToBeEdited, setStudentToBeEdited] = useState<StudentToBeEdited | null>(null);
+  const [studentToBeRemoved, setStudentToBeRemoved] = useState<StudentToBeRemoved | null>(null);
 
   const [search, setSearch] = useState<string>('');
   const [filter, setFilter] = useState<SearchStudentsFilterValue>('unselected');
 
-  const [studentForm, showStudentForm] = useState<'REGISTER' | 'EDIT' | null>(null);
+  const [studentForm, showStudentForm] = useState<"REGISTER" | "EDIT" | null>(null);
+  const [activeModal, setActiveModal]  = useState<StudentsPageModal | null>(null);
 
   const fetchAllData = async():Promise<void> => {
     setPageloading(true);
 
-    const studentsListFetchURL = `http://localhost:3000/api/students/list?page=${currentStudentsListPage}&search=${search}&filter=${filter}`;
-    const registeredTodaystudentsListFetchURL = `http://localhost:3000/api/students/registered-today-list?page=${currentStudentsRegisteredTodayListPage}`;
-
     try {
       const [
         studentsResponse,
-        studentsRegisteredTodayResponse,
+        studentsRegisteredInTheDayResponse,
       ] = await Promise.all([
-        axios.get<StudentListPromise>(studentsListFetchURL),
-        axios.get<RegisteredTodayStudentsListPromise>(registeredTodaystudentsListFetchURL),
+        StudentService.list(currentStudentsListPage, search, filter),
+        StudentService.registeredInTheDayList(currentStudentsRegisteredTodayListPage),
       ]);
       
-      setStudents(studentsResponse.data.studentsList);
-      setTotalStudentsListPages(studentsResponse.data.totalPages);
-      setStudentsListCount(studentsResponse.data.total);
+      setStudents(studentsResponse.studentsList);
+      setTotalStudentsListPages(studentsResponse.totalPages);
+      setStudentsListCount(studentsResponse.total);
 
-      setStudentsRegisteredToday(studentsRegisteredTodayResponse.data.studentsRegisteredTodayList);
-      setTotalStudentsRegisteredTodayListPages(studentsRegisteredTodayResponse.data.totalStudentsRegisteredTodayPages);
-      setRegisteredTodayStudentsCount(studentsRegisteredTodayResponse.data.totalStudentsRegisteredTodayCount);
+      setStudentsRegisteredToday(studentsRegisteredInTheDayResponse.studentsRegisteredTodayList);
+      setTotalStudentsRegisteredTodayListPages(studentsRegisteredInTheDayResponse.totalStudentsRegisteredTodayPages);
+      setRegisteredTodayStudentsCount(studentsRegisteredInTheDayResponse.totalStudentsRegisteredTodayCount);
     } catch (error: any) {
-      showToast('Erro ao carregar listagem', 'ERROR');
+      showToast(error.response?.data?.error || 'Erro ao carregar listagem', 'ERROR');
     } finally {
       setPageloading(false); 
     }
   };
 
   const handleRemoveStudent = async(ra:string):Promise<void> => {
-
-    const fetchURL = `http://localhost:3000/api/students/remove/${ra}`;
+    if (loading) return;
+    setLoading(true);
 
     try {
-      const response = await axios.put(fetchURL, ra);
-
-      showToast(response.data.success, 'SUCCESS');
+      const response = await StudentService.remove(ra);
+      fetchAllData();
+      showToast(response, 'SUCCESS');
     } catch (error:any) {
       showToast(error.response?.data?.error || 'Houve um erro ao remover o usuário!', 'ERROR');
+    } finally {
+      setLoading(false);
+      setActiveModal(null);
     }
   };
 
@@ -156,9 +164,10 @@ const Students = () => {
                       key={student.ra}
                       variant={'MAIN_LIST'}
                       onClick={{ 
+                        setActiveModal,
                         setStudentToBeEdited,
+                        setStudentToBeRemoved,
                         showEditStudentInfoForm: () => showStudentForm('EDIT'),
-                        handleRemoveStudent,
                       }}
                       student={{
                         name:         student.name,
@@ -289,6 +298,22 @@ const Students = () => {
           </div>
         )}
       </div>
+
+      {studentToBeRemoved && (
+        <Modal.ConfimAction
+          title={'Remover aluno'}
+          message={`Tem certeza em remover ${studentToBeRemoved.name} do sistema?`}
+          isOpen={activeModal === 'REMOVE_STUDENT'}
+          loading={loading}
+          onClick={{
+            confirm    : () => handleRemoveStudent(studentToBeRemoved.ra),
+            closeModal : () => {
+              setActiveModal(null);
+              setStudentToBeRemoved(null);
+            }
+          }}
+        />
+      )}
     </AuthLayout>
   )
 }

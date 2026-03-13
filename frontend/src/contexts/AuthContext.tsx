@@ -21,10 +21,11 @@ export function AuthProvider({ children }:{ children: React.ReactNode }) {
   useEffect(() => {
     const loadUser = async() => {
       const token = localStorage.getItem("token");
+      const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
       if (token) {
         try {
-          const response = await fetch("http://localhost:3000/api/users/me", {
+          const response = await fetch(`${baseURL}/api/users/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

@@ -5,8 +5,8 @@ export type EditPromise = {
 } | {
   success: string;
   newData: {
-      name: string;
-      email: string | null;
+    name: string;
+    email: string | null;
   };
   error?: undefined;
 }

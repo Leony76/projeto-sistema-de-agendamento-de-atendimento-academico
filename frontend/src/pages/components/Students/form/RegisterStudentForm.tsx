@@ -37,7 +37,9 @@ const Register = ({
     if (loading) return; 
     setLoading(true);
     
-    const fetchURL = "http://localhost:3000/api/auth/register/student";
+    const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+
+    const fetchURL = `${baseURL}/api/auth/register/student`;
     const payload:RegisterStudentPayload = {
       studentName: data.studentName,
       email: data.email,

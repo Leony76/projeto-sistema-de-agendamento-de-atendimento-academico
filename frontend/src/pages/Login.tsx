@@ -39,7 +39,9 @@ const Login = () => {
     if (loading) return;
     setLoading(true);
 
-    const fetchURL:string = `http://localhost:3000/api/auth/login/${tab.toLowerCase()}`;
+    const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+
+    const fetchURL:string = `${baseURL}/api/auth/login/${tab.toLowerCase()}`;
     let payload: ManagerPayload | StudentPayload;
 
     if (isStudentData(data)) {
