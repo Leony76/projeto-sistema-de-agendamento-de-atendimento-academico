@@ -1,30 +1,31 @@
 import { useState } from 'react';
-import style from './css/Login.module.css';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { ManagerLoginFormSchema, managerSchema, StudentLoginFormSchema, studentSchema } from '../schemas/loginSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ManagerPayload } from '../types/payloads/managerLoginPayload';
-import { StudentPayload } from '../types/payloads/studentLoginPayload';
-import { isStudentData } from '../types/guards/managerAndStudentGuard';
-import Input from '../components/input/Input';
-import Button from '../components/button/Button';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AuthService } from '../services/auth.service';
 import { useLoadingState } from '../hooks/useLoadingState';
+import { ManagerLoginFormSchema, managerSchema, StudentLoginFormSchema, studentSchema } from '../schemas/loginSchema';
+
+import Button from '../components/button/Button';
+import Input from '../components/input/Input';
+
+import style from './css/Login.module.css';
 
 const Login = () => {
 
-  const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
   const { loading, setLoading } = useLoadingState();
-  const navigate = useNavigate();
   const { signIn } = useAuth();
+
+  const navigate = useNavigate();
+
+  const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
 
   const { 
     register, 
     handleSubmit, 
     formState: { errors },
-    reset 
+    reset ,
   } = useForm<StudentLoginFormSchema | ManagerLoginFormSchema>({
     resolver: zodResolver(tab === 'STUDENT'
       ? studentSchema
@@ -35,35 +36,17 @@ const Login = () => {
   const handleLogin = async(
     data: StudentLoginFormSchema | ManagerLoginFormSchema
   ):Promise<void> => {
-
     if (loading) return;
     setLoading(true);
 
-    const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
-
-    const fetchURL:string = `${baseURL}/api/auth/login/${tab.toLowerCase()}`;
-    let payload: ManagerPayload | StudentPayload;
-
-    if (isStudentData(data)) {
-      payload = {
-        ra: data.ra,
-        password: data.password,
-      };
-    } else {
-      payload = {
-        email: data.email,
-        password: data.password,
-      };
-    }
-
     try {
+      const { token, user } = await AuthService.login(data, tab);
 
-      const response = await axios.post(fetchURL, payload);
-      signIn(response.data.token, response.data.user);
-      navigate('/home')
+      signIn(token, user);
+      navigate('/home');
 
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.error || err.message || 'Houve um erro ao fazer login!'; 
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || error.message || 'Houve um erro ao fazer login!'; 
       alert(errorMessage);
     } finally {
       setLoading(false);

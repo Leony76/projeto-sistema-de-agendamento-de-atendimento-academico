@@ -25,7 +25,7 @@ const AuthLayout = ({
 
   const handleLogout = async() => signOut();
 
-  const isStudent = user?.role === 'STUDENT';
+  const isManager = user?.role === 'MANAGER';
 
   return (
     <>
@@ -36,13 +36,13 @@ const AuthLayout = ({
             <li className={style.system_name}>
               Agendamento acadêmico online
             </li>
-            {isStudent && (
+            {!isManager && (
               <>
                 <li className={style.student_name}>
-                  <span> Aluno: </span> {user?.name}
+                  <span> Aluno: </span> {user?.name ?? 'Carregando...'}
                 </li>
                 <li className={style.student_ra}>
-                  <span> RA: </span> {user.ra}
+                  <span> RA: </span> {user?.ra ?? 'Carregando...'}
                 </li>
               </>
             )}
@@ -65,7 +65,7 @@ const AuthLayout = ({
                 <TfiAgenda/>
                 Agendamentos
               </Link>
-              {!isStudent && (
+              {isManager && (
                 <Link className={tabSelected === 'STUDENTS'
                   ? style.selected_tab : ''
                 } to={'/students'}>

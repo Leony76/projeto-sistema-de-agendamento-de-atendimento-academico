@@ -1,10 +1,11 @@
 import { prisma } from "../prisma";
-import { formattedUserDataResponse } from "../../types/dto/userDTO";
+import { formattedUserDataResponse, UserDTO } from "../../types/dto/userDTO";
 
 export class UserService {
 
-  static async me(userId:number) {
-
+  static async me(
+    userId : number
+  ):Promise<UserDTO>{
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -22,5 +23,4 @@ export class UserService {
 
     return formattedUserDataResponse(user);
   }
-
 }

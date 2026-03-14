@@ -8,9 +8,9 @@ import { registerStudentSchema, RegisterStudentSchema } from '../../../../schema
 import Button from '../../../../components/button/Button';
 import Input from '../../../../components/input/Input';
 import StudentPageFormsWrapper from './StudentPageFormsWrapper';
-import axios from 'axios';
 
 import style from '../../../css/Students.module.css';
+import api from '../../../../api';
 
 export type RegisterProps = {
   onClick: { closeForm: () => void };
@@ -36,10 +36,8 @@ const Register = ({
   const handleRegisterStudent = async(data: RegisterStudentSchema):Promise<void> => {
     if (loading) return; 
     setLoading(true);
-    
-    const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
-    const fetchURL = `${baseURL}/api/auth/register/student`;
+    const fetchURL:string = `/auth/register/student`;
     const payload:RegisterStudentPayload = {
       studentName: data.studentName,
       email: data.email,
@@ -47,7 +45,7 @@ const Register = ({
     };
 
     try {
-      const response = await axios.post(fetchURL, payload);
+      const response = await api.post(fetchURL, payload);
 
       showToast(response.data.success, 'SUCCESS');
       reset();

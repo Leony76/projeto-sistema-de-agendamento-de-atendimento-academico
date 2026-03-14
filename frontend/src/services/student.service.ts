@@ -4,6 +4,7 @@ import { StudentListPromise } from "../types/promises/studentsListPromise";
 import { RegisterStudentPayload } from "../types/payloads/registerStudentPayload";
 import { RegisterStudentSchema } from "../schemas/registerStudentSchema";
 import { RegisteredTodayStudentsListPromise } from "../types/promises/registeredTodayStudentsListPromise";
+import api from "../api";
 
 export class StudentService {
 
@@ -14,9 +15,10 @@ export class StudentService {
     search : string,
     filter : SearchStudentsFilterValue,
   ):Promise<StudentListPromise> {
-    const URL = `${this.baseApiURL}/students/list?page=${page}&search=${search}&filter=${filter}`;
+
+    const URL:string = `/students/list?page=${page}&search=${search}&filter=${filter}`;
     
-    const response = await axios.get<StudentListPromise>(URL);
+    const response = await api.get<StudentListPromise>(URL);
 
     return response.data;
   };
@@ -24,9 +26,10 @@ export class StudentService {
   static async registeredInTheDayList(
     page : number,
   ):Promise<RegisteredTodayStudentsListPromise> {
-    const URL = `${this.baseApiURL}/students/registered-today-list?page=${page}&today=true`;
 
-    const response = await axios.get<RegisteredTodayStudentsListPromise>(URL);
+    const URL:string = `/students/registered-today-list?page=${page}&today=true`;
+
+    const response = await api.get<RegisteredTodayStudentsListPromise>(URL);
 
     return response.data;
   };
@@ -34,9 +37,10 @@ export class StudentService {
   static async remove(
     ra : string,
   ):Promise<string> {
-    const URL = `${this.baseApiURL}/students/remove/${ra}`;
 
-    const response = await axios.put(URL, ra);
+    const URL:string = `/students/remove/${ra}`;
+
+    const response = await api.put(URL, ra);
 
     return response.data.success;
   };
@@ -45,22 +49,27 @@ export class StudentService {
     data      : RegisterStudentSchema,
     studentRa : string,
   ):Promise<string> {
-    const URL = `${this.baseApiURL}/students/update/${studentRa}`;
 
-    const response = await axios.put(URL, data);
+    const URL:string = `/students/update/${studentRa}`;
+
+    const response = await api.put(URL, data);
 
     return response.data.success;
   };
 
-  static async register(data:RegisterStudentPayload):Promise<string> {
-    const URL = `${this.baseApiURL}/auth/register/student`;
+  static async register(
+    data : RegisterStudentPayload
+  ):Promise<string> {
+
+    const URL:string = `/auth/register/student`;
+
     const payload:RegisterStudentPayload = {
       studentName : data.studentName, 
       email       : data.email,      
       ra          : data.ra,          
     };
 
-    const response = await axios.post(URL, payload);
+    const response = await api.post(URL, payload);
 
     return response.data.success;
   };

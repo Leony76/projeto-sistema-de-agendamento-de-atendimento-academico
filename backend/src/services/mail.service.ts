@@ -29,7 +29,7 @@ export class MailService {
           <li><strong>Senha Provisória:</strong> ${password}</li>
         </ul>
         <p>Acesse o link abaixo para fazer login:</p>
-        <a href="${process.env.BASE_URL}">Fazer Login</a>
+        <a href="${process.env.VITE_FRONTEND_BASE_URL}/">Fazer Login</a>
       `,
     });
 

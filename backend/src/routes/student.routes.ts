@@ -1,11 +1,15 @@
 import { Router } from "express";
 import { StudentController } from "../controllers/student.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { authorize } from "../middleware/autorize.middleware";
 
 const router = Router();
 
-router.get('/list'                 , StudentController.list);
-router.get('/registered-today-list', StudentController.registeredTodayList);
-router.put('/update/:ra'           , StudentController.edit);
-router.put('/remove/:ra'           , StudentController.remove);
+router.use(authenticate);
+
+router.get('/list'                 , authorize(['MANAGER']), StudentController.list);
+router.get('/registered-today-list', authorize(['MANAGER']), StudentController.registeredTodayList);
+router.put('/update/:ra'           , authorize(['MANAGER']), StudentController.edit);
+router.put('/remove/:ra'           , authorize(['MANAGER']), StudentController.remove);
 
 export default router;

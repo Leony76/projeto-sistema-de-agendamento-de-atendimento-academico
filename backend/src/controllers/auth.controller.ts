@@ -3,58 +3,108 @@ import { Request, Response } from "express";
 
 export class AuthController {
 
-  static async loginAsStudent(req: Request, res: Response):Promise<Response>{
-
-    const { ra, password } = req.body;
-
-    const response = await AuthService.loginAsStudent(
-      ra, password
-    );
-
-    return res.json(response);
+  static async loginAsStudent(
+    req: Request, 
+    res: Response,
+  ):Promise<Response>{
+    try {
+      const { ra, password } = req.body;
+  
+      const response = await AuthService.loginAsStudent(
+        ra, password
+      );
+  
+      return res.status(200).json(response);
+    } catch (error:any) {
+      console.error(error);
+      const isExpectedError = error.message === 'Credenciais inválidas';
+      
+      return res.status(isExpectedError ? 401 : 500).json({
+        error: isExpectedError
+          ? error.message
+          : 'Houve um erro interno ao fazer login como estudante',
+      });
+    }
   }
 
   static async loginAsManager(
-    req: Request,
-    res: Response,
+    req : Request,
+    res : Response,
   ):Promise<Response>{
-    const { email, password } = req.body;
-
-    const response = await AuthService.loginAsManager(
-      email, password
-    )
-
-    return res.json(response);
+    try {
+      const { email, password } = req.body;
+  
+      const response = await AuthService.loginAsManager(
+        email, password
+      )
+  
+      return res.status(200).json(response);
+    } catch (error:any) {
+      console.error(error);
+      const isExpectedError = error.message === 'Credenciais inválidas';
+      
+      return res.status(isExpectedError ? 401 : 500).json({
+        error: isExpectedError
+          ? error.message
+          : 'Houve um erro interno ao fazer login como gestor',
+      });
+    }
   }
   
-  static async registerAsStudent(req: Request, res: Response):Promise<Response>{
-    const {
-      studentName,
-      email,
-      ra,
-    } = req.body;
+  static async registerAsStudent(
+    req : Request, 
+    res : Response,
+  ):Promise<Response>{
+    try {
+      const {
+        studentName,
+        email,
+        ra,
+      } = req.body;
+  
+      const response = await AuthService.registerAsStudent(
+        studentName, email, ra
+      );
+  
+      return res.status(200).json(response);
+    } catch (error:any) {
+      console.error(error);
+      const isExpectedError = error.message === 'Aluno já cadastrado com este e-mail ou RA';
 
-    const response = await AuthService.registerAsStudent(
-      studentName, email, ra
-    );
-
-    return res.json(response);
+      return res.status(isExpectedError ? 409 : 500).json({
+        error: isExpectedError
+          ? error.message
+          : 'Houve um erro ao cadastrar o aluno',
+      });
+    }
   };
 
-  //
+  static async registerAsManager(
+    req : Request, 
+    res : Response,
+  ):Promise<Response>{
+    try {     
+      const {
+        name,
+        email,
+        password,
+        role
+      } = req.body;
+  
+      const response = await AuthService.registerAsManager(
+        name, email, password, role
+      );
+  
+      return res.json(response);
+    } catch (error:any) {
+      console.error(error);
+      const isExpectedError = error.message === 'Gestor já cadastrado com estas credenciais';
 
-  static async registerAsManager(req: Request, res: Response):Promise<Response>{
-    const {
-      name,
-      email,
-      password,
-      role
-    } = req.body;
-
-    const response = await AuthService.registerAsManager(
-      name, email, password, role
-    );
-
-    return res.json(response);
+      return res.status(isExpectedError ? 409 : 500).json({
+        error: isExpectedError
+          ? error.message
+          : 'Houve um erro ao cadastrar o gestor',
+      });
+    }
   }
 }

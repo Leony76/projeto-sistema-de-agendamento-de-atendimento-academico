@@ -3,7 +3,10 @@ import { Response, Request } from "express";
 
 export class StudentController {
 
-  static async list(req:Request, res:Response):Promise<Response> {
+  static async list(
+    req : Request,
+    res : Response,
+  ):Promise<Response>{
     try {
       const page = Number(req.query.page) || 1;
       const search = String(req.query.search || '');
@@ -22,7 +25,10 @@ export class StudentController {
     } 
   }
 
-  static async registeredTodayList(req:Request, res:Response):Promise<Response> {
+  static async registeredTodayList(
+    req : Request, 
+    res : Response
+  ):Promise<Response>{
     try {
       const page = Number(req.query.page) || 1;
       const onlyToday = req.query.today === 'true';
@@ -40,7 +46,10 @@ export class StudentController {
     }
   }
 
-  static async edit(req:Request, res:Response):Promise<Response> {
+  static async edit(
+    req : Request, 
+    res : Response,
+  ):Promise<Response>{
     try {  
       const { ra } = req.params;
       const {
@@ -64,7 +73,10 @@ export class StudentController {
     }
   }
 
-  static async remove(req:Request, res:Response):Promise<Response> {
+  static async remove(
+    req : Request, 
+    res : Response,
+  ):Promise<Response>{
     try {
       const { ra } = req.params;
 

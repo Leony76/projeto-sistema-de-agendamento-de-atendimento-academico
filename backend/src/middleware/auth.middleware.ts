@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import { JwtUserPayload } from "../../types/express";
 
 export const authenticate = (
-  req: Request, 
-  res: Response, 
-  next: NextFunction
+  req  : Request, 
+  res  : Response, 
+  next : NextFunction
 ) => {
   const authHeader = req.headers.authorization;
 
@@ -28,9 +28,9 @@ export const authenticate = (
 
 
 export const authenticateToken = (
-  req: Request, 
-  res: Response, 
-  next: NextFunction,
+  req  : Request, 
+  res  : Response, 
+  next : NextFunction,
 ) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.sendStatus(401);

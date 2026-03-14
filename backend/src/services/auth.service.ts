@@ -15,6 +15,7 @@ export class AuthService {
     ra       : string,
     password : string,
   ):Promise<LoginAsStudentPromise>{
+    
     const user = await prisma.user.findUnique({ 
       where: { ra },
       include: {
@@ -27,7 +28,7 @@ export class AuthService {
     });
     
     if (!user || user?.role !== 'STUDENT' || !(await bcrypt.compare(password, user.password))) {
-      return { error: 'Credenciais inválidas' };
+      throw new Error('Credenciais inválidas');
     } 
   
     const token = jwt.sign({ 
@@ -36,25 +37,24 @@ export class AuthService {
     }, process.env.JWT_SECRET as string, { 
       expiresIn: '1d' 
     });
-  
+
     return { 
       token, 
       user: formattedUserDataResponse(user), 
     };
   }
 
-  //
-
   static async loginAsManager(
     email    : string,
     password : string,
-  ):Promise<LoginAsManagerPromise> {
+  ):Promise<LoginAsManagerPromise>{
+
     const user = await prisma.user.findUnique({
       where: { email },
     });
   
     if (!user || user?.role !== 'MANAGER' || !(await bcrypt.compare(password, user.password))) {
-      return { error: 'Credenciais inválidas' };
+      throw new Error('Credenciais inválidas');
     }
   
     const token = jwt.sign({ 
@@ -62,8 +62,8 @@ export class AuthService {
       role: user.role 
     }, process.env.JWT_SECRET as string, { 
       expiresIn: '1d' 
-    });
-  
+    }); 
+
     return { 
       token, 
       user: formattedUserDataResponse(user), 
@@ -74,34 +74,37 @@ export class AuthService {
     studentName : string,
     email       : string,
     ra          : string,
-  ): Promise<RegisterAsStudentPromise> {
-    try {   
+  ):Promise<RegisterAsStudentPromise>{
 
-      const tempPassword = provisoryPassword(); 
-      const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-      const registerStudent = await prisma.user.create({
-        data: {
-          name:     studentName,
-          email:    email,
-          ra:       ra,
-          password: hashedPassword,
-        },
-      });
-      
-      await MailService.sendWelcomeEmail(email, studentName, tempPassword, ra);
-
-      return { 
-        success: 'Aluno registrado com sucesso!',
-        student: {
-          name: registerStudent.name,
-          ra: registerStudent.ra,
-        },
-      };
-    } catch(error:any) {
-      console.error(error);
-      throw new Error('Erro ao cadastrar aluno. Verifique se o RA ou E-mail já existem.');
+    const userExists = await prisma.user.findFirst({
+      where: { ra }
+    });
+  
+    if (userExists) {
+      throw new Error('Aluno já cadastrado com este e-mail ou RA');
     }
+
+    const tempPassword = provisoryPassword(); 
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+    const registerStudent = await prisma.user.create({
+      data: {
+        name:     studentName,
+        email:    email,
+        ra:       ra,
+        password: hashedPassword,
+      },
+    });
+    
+    await MailService.sendWelcomeEmail(email, studentName, tempPassword, ra);
+
+    return { 
+      success: 'Aluno registrado com sucesso!',
+      student: {
+        name: registerStudent.name,
+        ra: registerStudent.ra,
+      },
+    };
   }
 
   static async registerAsManager(
@@ -115,7 +118,7 @@ export class AuthService {
     });
   
     if (userExists) {
-      throw new Error('Usuário já cadastrado com este e-mail ou RA');
+      throw new Error('Gestor já cadastrado com estas credenciais');
     }
   
     const hashedPassword = await bcrypt.hash(password, 10);

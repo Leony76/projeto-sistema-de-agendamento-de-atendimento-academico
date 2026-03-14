@@ -9,10 +9,11 @@ import { RemovePromise } from './types/student/remove.promise';
 export class StudentService {
 
   static async list(
-    page:   number, 
-    search: string, 
-    filter: string,
+    page   : number, 
+    search : string, 
+    filter : string,
   ):Promise<ListPromise>{
+    
     const limit = 10;
     const skip = (Number(page) - 1) * limit;
   
@@ -73,7 +74,7 @@ export class StudentService {
 
   static async registeredTodayList(
     page      : number,
-    onlyToday : boolean
+    onlyToday : boolean,
   ):Promise<RegisteredTodayListPromise>{
     const limit = 10;
     const skip = (page - 1) * limit;
@@ -153,7 +154,9 @@ export class StudentService {
     };
   }
 
-  static async remove(ra:string):Promise<RemovePromise> {
+  static async remove( 
+    ra : string 
+  ):Promise<RemovePromise>{
     const user = await prisma.user.findUnique({ 
       where: { ra } 
     });
