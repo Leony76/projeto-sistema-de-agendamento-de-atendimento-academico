@@ -9,6 +9,7 @@ import Modal from "../modal/ModalWrapper";
 import Button from "../button/Button";
 import { PiStudent } from "react-icons/pi";
 import { SystemTabs } from "../../types/systemTabs";
+import { FaChalkboardTeacher } from "react-icons/fa";
 
 type Props = {
   children: React.ReactNode;
@@ -54,24 +55,37 @@ const AuthLayout = ({
           <nav>
             <ul>
               <Link className={tabSelected === 'HOME'
-                ? style.selected_tab : ''
+                ? style.selected_tab 
+                : ''
               } to={'/home'}>
                 <LuLayoutDashboard/>
                 Geral
               </Link>
               <Link className={tabSelected === 'APPOINTMENTS'
-                ? style.selected_tab : ''
+                ? style.selected_tab 
+                : ''
               } to={'/schedules'}>
                 <TfiAgenda/>
                 Agendamentos
               </Link>
               {isManager && (
-                <Link className={tabSelected === 'STUDENTS'
-                  ? style.selected_tab : ''
-                } to={'/students'}>
-                  <PiStudent />
-                  Alunos
-                </Link>
+                <>
+                  <Link className={tabSelected === 'STUDENTS'
+                    ? style.selected_tab 
+                    : ''
+                  } to={'/students'}>
+                    <PiStudent />
+                    Alunos
+                  </Link>
+
+                  <Link className={tabSelected === 'PROFESSORS'
+                    ? style.selected_tab 
+                    : ''
+                  } to={'/professors'}>
+                    <FaChalkboardTeacher />
+                    Professores
+                  </Link>
+                </>
               )}
 
               <button

@@ -1,0 +1,58 @@
+.main_grid_container {
+  display: grid;
+  column-gap: 12px;
+  grid-template-columns: 3fr 1fr;
+  height: 100%;
+}
+
+.left_grid_container {
+  display: grid;
+  row-gap: 12px;
+  grid-template-rows: 67px 1fr;
+}
+
+.right_grid_container {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  row-gap: 12px;
+}
+
+.general_infos_container {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.container_base_style {
+  box-shadow: 0px 0px 3px rgba(128, 128, 128, 0.429);
+  padding: 8px;
+  border-radius: 8px;
+  background-color: var(--primary-color);
+}
+
+.appointments_list_container {
+  composes: container_base_style;
+  padding: 8px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.appointments_list_container h3 {
+  text-align: center;
+  color: var(--dark-secondary-color);
+}
+
+.calendar_container,
+.today_appointments_container {
+  composes: container_base_style;
+}
+
+.searchbar_filter_container {
+  display: flex;
+  gap: 8px;
+}
+
+.searchbar_filter_container .search {
+  flex: 1;
+}

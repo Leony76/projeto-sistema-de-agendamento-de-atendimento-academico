@@ -8,18 +8,24 @@ import { useLoadingState } from '../hooks/useLoadingState';
 import { ManagerLoginFormSchema, managerSchema, StudentLoginFormSchema, studentSchema } from '../schemas/loginSchema';
 
 import Button from '../components/button/Button';
-import Input from '../components/input/Input';
+import { Input } from '../components/input';
 
 import style from './css/Login.module.css';
+import { SystemRoles } from '../types/systemRoles';
+import { SYSTEM_ROLES } from '../maps/systemRolesMap';
+import { LOGIN_FIELDS_MAP } from '../maps/page/loginPageFieldsMap';
+import { useToast } from '../contexts/ToastContext';
+import InputValidationError from '../components/input/InputValidationError';
 
 const Login = () => {
 
   const { loading, setLoading } = useLoadingState();
   const { signIn } = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
-  const [tab, switchTab] = useState<'STUDENT' | 'MANAGER'>('STUDENT');
+  const [tab, switchTab] = useState<SystemRoles>('STUDENT');
 
   const { 
     register, 
@@ -36,6 +42,7 @@ const Login = () => {
   const handleLogin = async(
     data: StudentLoginFormSchema | ManagerLoginFormSchema
   ):Promise<void> => {
+    setError(null);
     if (loading) return;
     setLoading(true);
 
@@ -47,20 +54,16 @@ const Login = () => {
 
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || error.message || 'Houve um erro ao fazer login!'; 
-      alert(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  const raError = (errors as any).ra;
-  const emailError = (errors as any).email;
+  const selectedTab = LOGIN_FIELDS_MAP[tab];
 
   return (
-    <main className={style[`main_container_${tab === 'STUDENT' 
-      ? 'student' 
-      : 'manager'
-    }`]}>
+    <main className={style[`main_container_${SYSTEM_ROLES[tab]}`]}>
       <div className={style.left_container}>
         <h1>
           Sistema de agendamento de atendimento acadêmico
@@ -80,50 +83,20 @@ const Login = () => {
         className={style.form_container}
         >
           <h3>
-            {tab === 'STUDENT'
-              ? 'Aluno'
-              : 'Gestor'
-            }      
+            {selectedTab.title}      
           </h3>
 
-          <Input 
-            variant='FORM'
-            autoComplete="email"
-            label={tab === 'STUDENT' 
-              ? 'RA:' 
-              : 'E-mail institucional'
-            } type={tab === 'STUDENT' 
-              ? 'text' 
-              : 'email'
-            } placeholder={tab === 'STUDENT' 
-              ? 'Insira o RA' 
-              : 'Insira o e-mail'
-            } error={tab === 'STUDENT' 
-              ? raError
-                ? (errors as any).ra.message
-                : ''
-              : emailError
-                ? (errors as any).email.message
-                : ''
-            } {...register(tab === 'STUDENT' 
-              ? "ra" 
-              : "email"
-            )}
-          />
+          {selectedTab.fields.map((field) => (
+            <Input.Form
+              label={field.label} 
+              type={field.type} 
+              placeholder={field.placeholder} 
+              error={(errors as any)[field.name]?.message} 
+              {...register(field.name as any)}
+            />
+          ))}
 
-          <Input 
-            variant='FORM'
-            autoComplete="current-password"
-            label={'Senha'} 
-            type={'password'} 
-            
-            placeholder={'Insira a senha'} 
-            error={errors.password 
-              ? errors.password.message?.toString() ?? 'Erro'
-              : ''
-            } 
-            {...register('password')}
-          />
+          {error && <InputValidationError error={error}/>}
 
           <Button 
           type='submit'
@@ -141,27 +114,71 @@ const Login = () => {
             }
           </Button>
           
-          <Button
-          type='button'
-          buttonStyle={{
-            fontSize: 'MD',
-            border: "XL",
-            color: 'NEUTRAL',
-            filled: true,
-          }}
-          onClick={() => {
-            switchTab(tab === 'STUDENT'
-              ? 'MANAGER'
-              : 'STUDENT'
-            );
-            reset();
-          }}
-          >
-            {tab === 'STUDENT' 
-              ? 'Entrar como gestor'
-              : 'Entrar como aluno'
-            } 
-          </Button>
+          <div className={style.switch_tabs_container}>
+            <Button
+            type='button'
+            buttonStyle={{
+              fontSize: 'MD',
+              border: "XL",
+              color: 'NEUTRAL',
+              filled: true,
+            }}
+            onClick={() => {
+              switchTab(
+                tab === 'STUDENT' 
+                  ? 'PROFESSOR'
+                : tab === 'PROFESSOR' 
+                  ? 'STUDENT'
+                : 'STUDENT'
+              );
+              setError(null);
+              reset();
+            }}
+            >
+              {tab === 'STUDENT' 
+                ? 'Entrar como professor'
+              : tab === 'PROFESSOR'
+                ? 'Entrar como aluno'
+              : 'Entrar como professor'
+              } 
+            </Button>
+
+            {tab !== 'MANAGER' ? (
+              <Button
+              type='button'
+              buttonStyle={{
+                fontSize: 'MD',
+                border: "XL",
+                color: 'NEUTRAL',
+                filled: true,
+              }}
+              onClick={() => {
+                switchTab('MANAGER');
+                setError(null);
+                reset();
+              }}
+              >
+                Entrar como gestor
+              </Button>
+            ) : (
+              <Button
+              type='button'
+              buttonStyle={{
+                fontSize: 'MD',
+                border: "XL",
+                color: 'NEUTRAL',
+                filled: true,
+              }}
+              onClick={() => {
+                switchTab('STUDENT');
+                setError(null);
+                reset();
+              }}
+              >
+                Entrar como aluno
+              </Button>
+            )}
+          </div>
         </form>
       </div>
     </main>

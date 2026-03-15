@@ -10,5 +10,8 @@ export const managerSchema = z.object({
   password: z.string().min(8, "Sua senha deve conter ao menos 8 caracteres").max(50, "O máximo de caracteres para a senha é de 50"),
 });
 
+export const professorSchema = managerSchema;
+
 export type StudentLoginFormSchema = z.infer<typeof studentSchema>;
 export type ManagerLoginFormSchema = z.infer<typeof managerSchema>;
+export type ProfessorLoginFormSchema = z.infer<typeof professorSchema>;

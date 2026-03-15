@@ -3,73 +3,73 @@ import { dateTime } from "../utils/dateTime";
 import { useToast } from "../contexts/ToastContext";
 import { StudentListDTO } from "../types/dtos/studentListDTO";
 import { FaClipboardQuestion, FaPlus } from "react-icons/fa6";
-import { SearchStudentsFilterValue } from "../maps/filters/searchStudentsFilter";
-import { StudentListRegisteredTodayDTO } from "../types/dtos/studentsListRegisteredTodayDTO";
+import { SearchProfessorsFilterValue } from "../maps/filters/searchProfessorsFilter";
+import { ProfessorsListRegisteredTodayDTO } from "../types/dtos/professorsListRegisteredTodayDTO";
 
 import NoAvailableContent from "../components/ui/NoAvailableContent";
 import PaginationButtons from "../components/ui/PaginationButtons";
-import { StudentForm } from "./components/Students/form";
-import StudentCard from "./components/Students/StudentCard";
+import { ProfessorForm } from "./components/Professors/form";
+import ProfessorCard from "./components/Professors/ProfessorCard";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
 import Select from "../components/input/Select";
 import Spinner from "../components/ui/Spinner";
 import { Input } from "../components/input";
 
-import style from './css/Students.module.css';
+import style from './css/Professor.module.css';
 import { StudentToBeEdited } from "../types/studentToBeEdited";
-import { StudentService } from "../services/student.service";
+import { ProfessorService } from "../services/professor.service";
 import { useLoadingState } from "../hooks/useLoadingState";
-import { StudentsPageModal } from "../types/modals/studentsPage.modal";
+import { ProfessorPageModal } from "../types/modals/professorsPage.modal";
 import { Modal } from "../components/modal";
 import { StudentToBeRemoved } from "../types/studentToBeRemoved";
 
-const Students = () => {
+const Professors = () => {
 
   const { showToast } = useToast();
   const [pageLoading, setPageloading] = useState<boolean>(true); 
   const { loading, setLoading } = useLoadingState();
 
-  // STUDENTS LIST
-  const [students, setStudents] = useState<StudentListDTO[]>([]);
-  const [studentsListCount, setStudentsListCount] = useState<number>(0);
-  const [currentStudentsListPage, setCurrentStudentsListPage] = useState<number>(1);
-  const [totalStudentsListPages, setTotalStudentsListPages] = useState<number>(1);
+  // PROFESSORS LIST
+  const [professors, setProfessors] = useState<StudentListDTO[]>([]);
+  const [professorsListCount, setProfessorsListCount] = useState<number>(0);
+  const [currentProfessorsListPage, setCurrentProfessorsListPage] = useState<number>(1);
+  const [totalProfessorsListPages, setTotalProfessorsListPages] = useState<number>(1);
 
-  // STUDENTS REGISTERED TODAY LIST
-  const [studentsRegisteredToday, setStudentsRegisteredToday] = useState<StudentListRegisteredTodayDTO[]>([]);
-  const [registeredTodayStudentsCount, setRegisteredTodayStudentsCount] = useState<number>(0);
-  const [currentStudentsRegisteredTodayListPage, setCurrentStudentsRegisteredTodayListPage] = useState<number>(1);
-  const [totalStudentsRegisteredTodayListPages, setTotalStudentsRegisteredTodayListPages] = useState<number>(1);
+  // PROFESSORS REGISTERED TODAY LIST
+  const [professorsRegisteredToday, setProfessorsRegisteredToday] = useState<ProfessorsListRegisteredTodayDTO[]>([]);
+  const [registeredTodayProfessorsCount, setRegisteredTodayProfessorsCount] = useState<number>(0);
+  const [currentProfessorsRegisteredTodayListPage, setCurrentProfessorsRegisteredTodayListPage] = useState<number>(1);
+  const [totalProfessorsRegisteredTodayListPages, setTotalProfessorsRegisteredTodayListPages] = useState<number>(1);
 
   const [studentToBeEdited, setStudentToBeEdited] = useState<StudentToBeEdited | null>(null);
   const [studentToBeRemoved, setStudentToBeRemoved] = useState<StudentToBeRemoved | null>(null);
 
   const [search, setSearch] = useState<string>('');
-  const [filter, setFilter] = useState<SearchStudentsFilterValue>('unselected');
+  const [filter, setFilter] = useState<SearchProfessorsFilterValue>('unselected');
 
   const [studentForm, showStudentForm] = useState<"REGISTER" | "EDIT" | null>(null);
-  const [activeModal, setActiveModal]  = useState<StudentsPageModal | null>(null);
+  const [activeModal, setActiveModal]  = useState<ProfessorPageModal | null>(null);
 
   const fetchAllData = async():Promise<void> => {
     setPageloading(true);
 
     try {
       const [
-        studentsResponse,
-        studentsRegisteredInTheDayResponse,
+        professorsResponse,
+        professorsRegisteredInTheDayResponse,
       ] = await Promise.all([
-        StudentService.list(currentStudentsListPage, search, filter),
-        StudentService.registeredInTheDayList(currentStudentsRegisteredTodayListPage),
+        ProfessorService.list(currentProfessorsListPage, search, filter),
+        ProfessorService.registeredInTheDayList(currentProfessorsRegisteredTodayListPage),
       ]);
       
-      setStudents(studentsResponse.studentsList);
-      setTotalStudentsListPages(studentsResponse.totalPages);
-      setStudentsListCount(studentsResponse.total);
+      setProfessors(professorsResponse.professorsList);
+      setTotalProfessorsListPages(professorsResponse.totalPages);
+      setProfessorsListCount(professorsResponse.total);
 
-      setStudentsRegisteredToday(studentsRegisteredInTheDayResponse.studentsRegisteredTodayList);
-      setTotalStudentsRegisteredTodayListPages(studentsRegisteredInTheDayResponse.totalStudentsRegisteredTodayPages);
-      setRegisteredTodayStudentsCount(studentsRegisteredInTheDayResponse.totalStudentsRegisteredTodayCount);
+      setProfessorsRegisteredToday(professorsRegisteredInTheDayResponse.professorsRegisteredTodayList);
+      setTotalProfessorsRegisteredTodayListPages(professorsRegisteredInTheDayResponse.totalProfessorsRegisteredTodayPages);
+      setRegisteredTodayProfessorsCount(professorsRegisteredInTheDayResponse.totalProfessorsRegisteredTodayCount);
     } catch (error: any) {
       showToast(error.response?.data?.error || 'Erro ao carregar listagem', 'ERROR');
     } finally {
@@ -82,7 +82,7 @@ const Students = () => {
     setLoading(true);
 
     try {
-      const response = await StudentService.remove(ra);
+      const response = await ProfessorService.remove(ra);
       fetchAllData();
       showToast(response, 'SUCCESS');
     } catch (error:any) {
@@ -96,22 +96,22 @@ const Students = () => {
   useEffect(() => {
     fetchAllData();
   } , [
-    currentStudentsListPage, 
-    currentStudentsRegisteredTodayListPage, 
+    currentProfessorsListPage, 
+    currentProfessorsRegisteredTodayListPage, 
     filter, 
     search,
   ]);
 
   useEffect(() => {
-    setCurrentStudentsListPage(1);
+    setCurrentProfessorsListPage(1);
   }, [filter, search]); 
 
   return (
-    <AuthLayout tabSelected='STUDENTS'>
+    <AuthLayout tabSelected='PROFESSORS'>
       <div className={style.grid_container}>
-        <div className={style.students_list_container}>  
+        <div className={style.Professors_list_container}>  
           <h2>
-            Alunos
+            Professores
           </h2>
 
           <div className={style.search_filter_container}>
@@ -126,11 +126,11 @@ const Students = () => {
             icon={FaPlus}       
             onClick={() => showStudentForm('REGISTER')}
             >
-              Cadastrar aluno
+              Cadastrar professor
             </Button>
 
             <Input.Search
-              placeholder="Pesquisar por nome ou RA"
+              placeholder="Pesquisar por nome ou email"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={style.search}
@@ -138,14 +138,14 @@ const Students = () => {
 
             <Select 
               variant={"SEARCH"} 
-              selectSchema={"SEARCH_STUDENTS_FILTER"}
+              selectSchema={"SEARCH_PROFESSORS_FILTER"}
               value={filter}
-              onChange={(e) => setFilter(e.target.value as SearchStudentsFilterValue)}
+              onChange={(e) => setFilter(e.target.value as SearchProfessorsFilterValue)}
               className={style.filter}
             />
           </div>
 
-          <div className={style.students_list}>  
+          <div className={style.Professors_list}>  
             <div className={style.overflow_container}>
               {pageLoading ? (
                 <div className={style.loading_container}>
@@ -153,11 +153,11 @@ const Students = () => {
                     color="var(--secondary-color)"
                   />
                 </div>
-              ) : students.length > 0 ? (
+              ) : Professors.length > 0 ? (
                 <>
-                  {students.map((student) => (
-                    <StudentCard
-                      key={student.ra}
+                  {professors.map((professor) => (
+                    <ProfessorCard
+                      key={professor.ra}
                       variant={'MAIN_LIST'}
                       onClick={{ 
                         setActiveModal,
@@ -166,21 +166,21 @@ const Students = () => {
                         showEditStudentInfoForm: () => showStudentForm('EDIT'),
                       }}
                       student={{
-                        name:         student.name,
-                        email:        student.email,
-                        ra:           student.ra,
-                        registerDate: dateTime(student.registeredAt),
+                        name:         professor.name,
+                        email:        professor.email,
+                        ra:           professor.ra,
+                        registerDate: dateTime(professor.registeredAt),
                       }}
                     />
                   ))}
 
-                  {(totalStudentsListPages > 1) && (
+                  {(totalProfessorsListPages > 1) && (
                     <PaginationButtons
                       page={{
-                        current:  currentStudentsListPage,
-                        total:    totalStudentsListPages,
-                        next:     setCurrentStudentsListPage,
-                        previous: setCurrentStudentsListPage,
+                        current:  currentProfessorsListPage,
+                        total:    totalProfessorsListPages,
+                        next:     setCurrentProfessorsListPage,
+                        previous: setCurrentProfessorsListPage,
                       }}
                     />
                   )}
@@ -190,7 +190,7 @@ const Students = () => {
                   icon={FaClipboardQuestion}
                   message={search 
                     ? `Nenhum resultado para '${search}'!` 
-                    : "Nenhum aluno cadastrado!"
+                    : "Nenhum professor cadastrado!"
                   }
                 />
               )}
@@ -199,12 +199,12 @@ const Students = () => {
         </div>
 
         {studentForm === 'REGISTER' ? (
-          <StudentForm.Register
+          <ProfessorForm.Register
             onClick={{ closeForm: () => showStudentForm(null)}}
             onSuccess={fetchAllData}
           />
         ) : (studentForm === 'EDIT' && studentToBeEdited) ? (
-          <StudentForm.Edit
+          <ProfessorForm.Edit
             onClick={{ closeForm: () => {
               showStudentForm(null);
               setStudentToBeEdited(null);
@@ -213,13 +213,13 @@ const Students = () => {
             initialData={studentToBeEdited}
           />
         ) : (
-          <div className={style.registered_students_today_container}>
-            <div className={style.registered_students_today}>
+          <div className={style.registered_Professors_today_container}>
+            <div className={style.registered_Professors_today}>
               <h3>
                 Cadastrados hoje
               </h3>
 
-              <div className={style.registered_students_today_list}>
+              <div className={style.registered_Professors_today_list}>
                 <div className={style.overflow_container}>
                   {pageLoading ? (
                     <div className={style.loading_container}>
@@ -227,10 +227,10 @@ const Students = () => {
                       color="var(--secondary-color)"
                     />
                   </div>
-                  ) : studentsRegisteredToday.length > 0 ? (
+                  ) : professorsRegisteredToday.length > 0 ? (
                     <>
-                      {studentsRegisteredToday.map((student) => (
-                        <StudentCard
+                      {ProfessorsRegisteredToday.map((student) => (
+                        <ProfessorCard
                           key={student.ra}
                           variant="REGISTERED_TODAY"
                           student={{
@@ -241,13 +241,13 @@ const Students = () => {
                         />
                       ))}
 
-                      {totalStudentsRegisteredTodayListPages > 1 &&
+                      {totalProfessorsRegisteredTodayListPages > 1 &&
                         <PaginationButtons
                           page={{
-                            current:  currentStudentsRegisteredTodayListPage,
-                            total:    totalStudentsRegisteredTodayListPages,
-                            next:     setCurrentStudentsRegisteredTodayListPage,
-                            previous: setCurrentStudentsRegisteredTodayListPage,
+                            current:  currentProfessorsRegisteredTodayListPage,
+                            total:    totalProfessorsRegisteredTodayListPages,
+                            next:     setCurrentProfessorsRegisteredTodayListPage,
+                            previous: setCurrentProfessorsRegisteredTodayListPage,
                           }}
                         />
                       }
@@ -262,7 +262,7 @@ const Students = () => {
               </div>
             </div>
 
-            <div className={style.registered_students_count}>
+            <div className={style.registered_Professors_count}>
               <h3>
                 Estatísticas
               </h3>
@@ -271,10 +271,10 @@ const Students = () => {
                 <div className={style.statistic_card}>
                   <div>
                     <label>
-                      Alunos cadastrados hoje:
+                      Professores cadastrados hoje:
                     </label>
                     <span>
-                      {registeredTodayStudentsCount}
+                      {registeredTodayProfessorsCount}
                     </span>
                   </div>
                 </div>
@@ -282,10 +282,10 @@ const Students = () => {
                 <div className={style.statistic_card}>
                   <div>
                     <label>
-                      Alunos cadastrados:
+                      Professores cadastrados:
                     </label>
                     <span>
-                      {studentsListCount}
+                      {ProfessorsListCount}
                     </span>
                   </div>
                 </div>
@@ -314,4 +314,4 @@ const Students = () => {
   )
 }
 
-export default Students
+export default Professors

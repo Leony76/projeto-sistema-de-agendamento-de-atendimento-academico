@@ -7,7 +7,7 @@ import { registerStudentSchema, RegisterStudentSchema } from '../../../../schema
 
 import Button from '../../../../components/button/Button';
 import { Input } from '../../../../components/input';
-import StudentPageFormsWrapper from './StudentPageFormsWrapper';
+import StudentPageFormsWrapper from './ProfessorPageFormsWrapper';
 
 import style from '../../../css/Students.module.css';
 import api from '../../../../api';

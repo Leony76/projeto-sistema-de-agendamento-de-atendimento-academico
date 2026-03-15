@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { RegisterProps } from "./RegisterStudentForm";
+import { RegisterProps } from "./RegisterProfessorForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "../../../../contexts/ToastContext";
 import { useLoadingState } from "../../../../hooks/useLoadingState";
@@ -10,7 +10,7 @@ import { Input } from "../../../../components/input";
 import axios from "axios";
 
 import style from '../../../css/Students.module.css';
-import StudentPageFormsWrapper from "./StudentPageFormsWrapper";
+import StudentPageFormsWrapper from "./ProfessorPageFormsWrapper";
 import { StudentToBeEdited } from "../../../../types/studentToBeEdited";
 import { StudentService } from "../../../../services/student.service";
 

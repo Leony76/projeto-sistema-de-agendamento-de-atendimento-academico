@@ -18,6 +18,13 @@
   background-image:
     linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.67)),
     url(/manager.webp);
+  }
+  
+.main_container_professor {
+  composes: main_container_student;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.67)),
+    url(/school.jpg);
 }
 
 .right_container {
@@ -147,4 +154,9 @@
   .form_container {
     max-width: 400px;
   }
+}
+
+.switch_tabs_container {
+  display: flex;
+  justify-content: space-between;
 }

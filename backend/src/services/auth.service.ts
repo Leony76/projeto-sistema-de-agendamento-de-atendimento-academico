@@ -70,6 +70,32 @@ export class AuthService {
     };
   }
 
+  static async loginAsProfessor(
+    email    : string,
+    password : string,
+  ):Promise<LoginAsManagerPromise>{
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+  
+    if (!user || user?.role !== 'PROFESSOR' || !(await bcrypt.compare(password, user.password))) {
+      throw new Error('Credenciais inválidas');
+    }
+  
+    const token = jwt.sign({ 
+      id: user.id, 
+      role: user.role 
+    }, process.env.JWT_SECRET as string, { 
+      expiresIn: '1d' 
+    }); 
+
+    return { 
+      token, 
+      user: formattedUserDataResponse(user), 
+    };
+  }
+
   static async registerAsStudent(
     studentName : string,
     email       : string,
@@ -119,6 +145,34 @@ export class AuthService {
   
     if (userExists) {
       throw new Error('Gestor já cadastrado com estas credenciais');
+    }
+  
+    const hashedPassword = await bcrypt.hash(password, 10);
+  
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role,
+      },
+    });
+    
+    return { success: 'Cadastro concluído' };
+  }
+
+  static async registerAsProfessor(
+    name     : string,
+    email    : string,
+    password : string,
+    role     : UserRole,
+  ):Promise<{ success: string }>{
+    const userExists = await prisma.user.findFirst({
+      where: { email }
+    });
+  
+    if (userExists) {
+      throw new Error('Professor já cadastrado com estas credenciais');
     }
   
     const hashedPassword = await bcrypt.hash(password, 10);

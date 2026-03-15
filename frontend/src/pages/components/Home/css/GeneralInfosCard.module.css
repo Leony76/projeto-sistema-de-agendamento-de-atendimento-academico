@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0px 0px 3px rgba(128, 128, 128, 0.429);
+  border-radius: 8px;
+  padding: 8px;
+  background-color: var(--primary-color);
+}
+
+.container span {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--dark-secondary-color);
+  font-size: 13.5px;
+}
+
+.container h3 {
+  color: rgb(233, 151, 0);
+}

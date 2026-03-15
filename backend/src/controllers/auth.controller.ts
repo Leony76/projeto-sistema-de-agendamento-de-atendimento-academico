@@ -50,6 +50,30 @@ export class AuthController {
       });
     }
   }
+
+  static async loginAsProfessor(
+    req : Request,
+    res : Response,
+  ):Promise<Response>{
+    try {
+      const { email, password } = req.body;
+  
+      const response = await AuthService.loginAsProfessor(
+        email, password
+      )
+  
+      return res.status(200).json(response);
+    } catch (error:any) {
+      console.error(error);
+      const isExpectedError = error.message === 'Credenciais inválidas';
+      
+      return res.status(isExpectedError ? 401 : 500).json({
+        error: isExpectedError
+          ? error.message
+          : 'Houve um erro interno ao fazer login como professor',
+      });
+    }
+  }
   
   static async registerAsStudent(
     req : Request, 
@@ -104,6 +128,35 @@ export class AuthController {
         error: isExpectedError
           ? error.message
           : 'Houve um erro ao cadastrar o gestor',
+      });
+    }
+  }
+
+  static async registerAsProfessor(
+    req : Request, 
+    res : Response,
+  ):Promise<Response>{
+    try {     
+      const {
+        name,
+        email,
+        password,
+        role
+      } = req.body;
+  
+      const response = await AuthService.registerAsProfessor(
+        name, email, password, role
+      );
+  
+      return res.json(response);
+    } catch (error:any) {
+      console.error(error);
+      const isExpectedError = error.message === 'Professor já cadastrado com estas credenciais';
+
+      return res.status(isExpectedError ? 409 : 500).json({
+        error: isExpectedError
+          ? error.message
+          : 'Houve um erro ao cadastrar o professor',
       });
     }
   }

@@ -4,12 +4,13 @@ import { ManagerPayload } from "../types/payloads/managerLoginPayload";
 import { StudentPayload } from "../types/payloads/studentLoginPayload";
 import { LoginPromise } from "../types/promises/login.promise";
 import api from "../api";
+import { SystemRoles } from "../types/systemRoles";
 
 export class AuthService {
 
   static async login(
     data : StudentLoginFormSchema | ManagerLoginFormSchema,
-    role : 'STUDENT' | 'MANAGER',
+    role : SystemRoles,
   ):Promise<LoginPromise> {
     
     const fetchURL:string = `/auth/login/${role.toLowerCase()}`;

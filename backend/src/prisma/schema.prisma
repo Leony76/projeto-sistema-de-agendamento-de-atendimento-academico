@@ -53,6 +53,7 @@ enum AppointmentStatus {
 enum UserRole {
   MANAGER
   STUDENT
+  PROFESSOR
 }
 
 enum UserStatus {

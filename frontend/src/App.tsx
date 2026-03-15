@@ -8,6 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Students from './pages/Students';
 import ManagerRoute from './components/middleware/ManagerRoute';
 import { ToastProvider } from './contexts/ToastContext';
+import Professors from './pages/Professors';
 
 const App = () => {
   return (
@@ -40,6 +41,17 @@ const App = () => {
                 <PrivateRoute>
                   <ManagerRoute>
                     <Students/>
+                  </ManagerRoute>
+                </PrivateRoute>
+              } 
+            />   
+
+            <Route 
+              path="/professors" 
+              element={
+                <PrivateRoute>
+                  <ManagerRoute>
+                    <Professors/>
                   </ManagerRoute>
                 </PrivateRoute>
               } 
