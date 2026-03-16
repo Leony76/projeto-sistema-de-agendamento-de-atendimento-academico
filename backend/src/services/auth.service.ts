@@ -6,7 +6,7 @@ import { LoginAsStudentPromise } from "./types/auth/loginAsStudent.promise";
 import { LoginAsManagerPromise } from "./types/auth/loginAsManager.promise";
 import { provisoryPassword } from "../utils/provisoryPassword";
 import { RegisterAsStudentPromise } from "./types/auth/registerAsStudent.promise";
-import { UserRole } from "@prisma/client";
+import { ProfessorDiscipline, UserRole } from "@prisma/client";
 import { MailService } from "./mail.service";
 
 export class AuthService {
@@ -115,20 +115,26 @@ export class AuthService {
 
     const registerStudent = await prisma.user.create({
       data: {
-        name:     studentName,
-        email:    email,
-        ra:       ra,
-        password: hashedPassword,
+        name     : studentName,
+        email    : email,
+        ra       : ra,
+        password : hashedPassword,
       },
     });
     
-    await MailService.sendWelcomeEmail(email, studentName, tempPassword, ra);
+    await MailService.sendWelcomeEmail({
+      role     : 'STUDENT',
+      name     : studentName,
+      password : tempPassword,
+      ra       : ra,
+      to       : email,
+     });
 
     return { 
       success: 'Aluno registrado com sucesso!',
       student: {
-        name: registerStudent.name,
-        ra: registerStudent.ra,
+        name : registerStudent.name,
+        ra   : registerStudent.ra,
       },
     };
   }
@@ -162,11 +168,11 @@ export class AuthService {
   }
 
   static async registerAsProfessor(
-    name     : string,
-    email    : string,
-    password : string,
-    role     : UserRole,
+    name       : string,
+    email      : string,
+    discipline : string,
   ):Promise<{ success: string }>{
+    
     const userExists = await prisma.user.findFirst({
       where: { email }
     });
@@ -174,18 +180,28 @@ export class AuthService {
     if (userExists) {
       throw new Error('Professor já cadastrado com estas credenciais');
     }
-  
+    
+    const password = provisoryPassword();
+
     const hashedPassword = await bcrypt.hash(password, 10);
   
     await prisma.user.create({
       data: {
         name,
         email,
-        password: hashedPassword,
-        role,
+        password   : hashedPassword,
+        discipline : discipline as ProfessorDiscipline,
+        role       : 'PROFESSOR',
       },
     });
     
+    await MailService.sendWelcomeEmail({
+      role     : "PROFESSOR",
+      name     : name,
+      password : password,
+      to       : email,
+    });
+
     return { success: 'Cadastro concluído' };
   }
 }

@@ -98,7 +98,7 @@ const Register = ({
           color: 'SECONDARY',
           filled: false,
         }}>
-          {loading ? 'Cadastrando' : 'Casdastrar'}
+          {loading ? 'Cadastrando' : 'Cadastrar'}
         </Button>
 
         <p style={{fontSize: '11px'}}>

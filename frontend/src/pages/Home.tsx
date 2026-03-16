@@ -7,7 +7,7 @@ import { FaCalendarDay } from "react-icons/fa6";
 import style from './css/Home.module.css';
 import { PiStudentBold } from "react-icons/pi";
 import { Input } from "../components/input";
-import Select from "../components/input/Select";
+import Select from "../components/select/Select";
 
 const Home = () => {
 

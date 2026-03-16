@@ -1,3 +1,3 @@
 export type ProfessorPageModal = 
-| 'REMOVE_STUDENT'
+| 'REMOVE_PROFESSOR'
 ;

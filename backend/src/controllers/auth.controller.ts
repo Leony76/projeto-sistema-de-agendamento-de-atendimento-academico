@@ -140,12 +140,11 @@ export class AuthController {
       const {
         name,
         email,
-        password,
-        role
+        discipline,
       } = req.body;
   
       const response = await AuthService.registerAsProfessor(
-        name, email, password, role
+        name, email, discipline,
       );
   
       return res.json(response);

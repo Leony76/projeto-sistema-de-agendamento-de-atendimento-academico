@@ -1,7 +1,9 @@
 import { StudentListDTO } from "../../../../types/dto/studentListDTO";
 
-export type ListPromise = {
-  studentsList: StudentListDTO[];
-  total: number;
-  totalPages: number;
-}
+export type StudentsListPromise = {
+  students: {
+    list       : StudentListDTO[];
+    totalCount : number;
+    pages      : { total: number };
+  };
+};

@@ -1,5 +1,3 @@
-export type ProfessorsListRegisteredTodayDTO = {
-  name: string;
-  ra: string;
-  email: string;
-};
+import { ProfessorListDTO } from "./professorListDTO";
+
+export type ProfessorsListRegisteredTodayDTO = ProfessorListDTO;

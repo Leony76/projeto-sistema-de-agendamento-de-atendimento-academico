@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { dateTime } from "../utils/dateTime";
 import { useToast } from "../contexts/ToastContext";
-import { StudentListDTO } from "../types/dtos/studentListDTO";
 import { FaClipboardQuestion, FaPlus } from "react-icons/fa6";
 import { SearchProfessorsFilterValue } from "../maps/filters/searchProfessorsFilter";
 import { ProfessorsListRegisteredTodayDTO } from "../types/dtos/professorsListRegisteredTodayDTO";
@@ -12,17 +11,18 @@ import { ProfessorForm } from "./components/Professors/form";
 import ProfessorCard from "./components/Professors/ProfessorCard";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
-import Select from "../components/input/Select";
+import Select from "../components/select/Select";
 import Spinner from "../components/ui/Spinner";
 import { Input } from "../components/input";
 
 import style from './css/Professor.module.css';
-import { StudentToBeEdited } from "../types/studentToBeEdited";
 import { ProfessorService } from "../services/professor.service";
 import { useLoadingState } from "../hooks/useLoadingState";
 import { ProfessorPageModal } from "../types/modals/professorsPage.modal";
 import { Modal } from "../components/modal";
-import { StudentToBeRemoved } from "../types/studentToBeRemoved";
+import { ProfessorListDTO } from "../types/dtos/professorListDTO";
+import { ProfessorToBeEdited } from "../types/professorToBeEdited";
+import { ProfessorToBeRemoved } from "../types/professorToBeRemoved";
 
 const Professors = () => {
 
@@ -31,7 +31,7 @@ const Professors = () => {
   const { loading, setLoading } = useLoadingState();
 
   // PROFESSORS LIST
-  const [professors, setProfessors] = useState<StudentListDTO[]>([]);
+  const [professors, setProfessors] = useState<ProfessorListDTO[]>([]);
   const [professorsListCount, setProfessorsListCount] = useState<number>(0);
   const [currentProfessorsListPage, setCurrentProfessorsListPage] = useState<number>(1);
   const [totalProfessorsListPages, setTotalProfessorsListPages] = useState<number>(1);
@@ -42,13 +42,13 @@ const Professors = () => {
   const [currentProfessorsRegisteredTodayListPage, setCurrentProfessorsRegisteredTodayListPage] = useState<number>(1);
   const [totalProfessorsRegisteredTodayListPages, setTotalProfessorsRegisteredTodayListPages] = useState<number>(1);
 
-  const [studentToBeEdited, setStudentToBeEdited] = useState<StudentToBeEdited | null>(null);
-  const [studentToBeRemoved, setStudentToBeRemoved] = useState<StudentToBeRemoved | null>(null);
+  const [professorToBeEdited, setProfessorToBeEdited] = useState<ProfessorToBeEdited | null>(null);
+  const [professorToBeRemoved, setProfessorToBeRemoved] = useState<ProfessorToBeRemoved | null>(null);
 
   const [search, setSearch] = useState<string>('');
   const [filter, setFilter] = useState<SearchProfessorsFilterValue>('unselected');
 
-  const [studentForm, showStudentForm] = useState<"REGISTER" | "EDIT" | null>(null);
+  const [professorForm, showProfessorForm] = useState<"REGISTER" | "EDIT" | null>(null);
   const [activeModal, setActiveModal]  = useState<ProfessorPageModal | null>(null);
 
   const fetchAllData = async():Promise<void> => {
@@ -63,13 +63,13 @@ const Professors = () => {
         ProfessorService.registeredInTheDayList(currentProfessorsRegisteredTodayListPage),
       ]);
       
-      setProfessors(professorsResponse.professorsList);
-      setTotalProfessorsListPages(professorsResponse.totalPages);
-      setProfessorsListCount(professorsResponse.total);
+      setProfessors(professorsResponse.professors.list);
+      setTotalProfessorsListPages(professorsResponse.professors.pages.total);
+      setProfessorsListCount(professorsResponse.professors.totalCount);
 
-      setProfessorsRegisteredToday(professorsRegisteredInTheDayResponse.professorsRegisteredTodayList);
-      setTotalProfessorsRegisteredTodayListPages(professorsRegisteredInTheDayResponse.totalProfessorsRegisteredTodayPages);
-      setRegisteredTodayProfessorsCount(professorsRegisteredInTheDayResponse.totalProfessorsRegisteredTodayCount);
+      setProfessorsRegisteredToday(professorsRegisteredInTheDayResponse.professors.list);
+      setTotalProfessorsRegisteredTodayListPages(professorsRegisteredInTheDayResponse.professors.pages.total);
+      setRegisteredTodayProfessorsCount(professorsRegisteredInTheDayResponse.professors.totalCount);
     } catch (error: any) {
       showToast(error.response?.data?.error || 'Erro ao carregar listagem', 'ERROR');
     } finally {
@@ -77,12 +77,14 @@ const Professors = () => {
     }
   };
 
-  const handleRemoveStudent = async(ra:string):Promise<void> => {
+  const handleRemoveProfessor = async(
+    email : string,
+  ):Promise<void> => {
     if (loading) return;
     setLoading(true);
 
     try {
-      const response = await ProfessorService.remove(ra);
+      const response = await ProfessorService.remove(email);
       fetchAllData();
       showToast(response, 'SUCCESS');
     } catch (error:any) {
@@ -109,7 +111,7 @@ const Professors = () => {
   return (
     <AuthLayout tabSelected='PROFESSORS'>
       <div className={style.grid_container}>
-        <div className={style.Professors_list_container}>  
+        <div className={style.students_list_container}>  
           <h2>
             Professores
           </h2>
@@ -124,9 +126,9 @@ const Professors = () => {
               filled:    true,
             }}
             icon={FaPlus}       
-            onClick={() => showStudentForm('REGISTER')}
+            onClick={() => showProfessorForm('REGISTER')}
             >
-              Cadastrar professor
+              Cadastrar
             </Button>
 
             <Input.Search
@@ -145,7 +147,7 @@ const Professors = () => {
             />
           </div>
 
-          <div className={style.Professors_list}>  
+          <div className={style.students_list}>  
             <div className={style.overflow_container}>
               {pageLoading ? (
                 <div className={style.loading_container}>
@@ -153,23 +155,23 @@ const Professors = () => {
                     color="var(--secondary-color)"
                   />
                 </div>
-              ) : Professors.length > 0 ? (
+              ) : professors.length > 0 ? (
                 <>
                   {professors.map((professor) => (
                     <ProfessorCard
-                      key={professor.ra}
+                      key={professor.email}
                       variant={'MAIN_LIST'}
                       onClick={{ 
                         setActiveModal,
-                        setStudentToBeEdited,
-                        setStudentToBeRemoved,
-                        showEditStudentInfoForm: () => showStudentForm('EDIT'),
+                        setProfessorToBeEdited,
+                        setProfessorToBeRemoved,
+                        showEditProfessorInfoForm: () => showProfessorForm('EDIT'),
                       }}
-                      student={{
+                      professor={{
                         name:         professor.name,
                         email:        professor.email,
-                        ra:           professor.ra,
-                        registerDate: dateTime(professor.registeredAt),
+                        discipline:   professor.discipline,
+                        registeredAt: dateTime(professor.registeredAt),
                       }}
                     />
                   ))}
@@ -198,28 +200,28 @@ const Professors = () => {
           </div>
         </div>
 
-        {studentForm === 'REGISTER' ? (
+        {professorForm === 'REGISTER' ? (
           <ProfessorForm.Register
-            onClick={{ closeForm: () => showStudentForm(null)}}
+            onClick={{ closeForm: () => showProfessorForm(null)}}
             onSuccess={fetchAllData}
           />
-        ) : (studentForm === 'EDIT' && studentToBeEdited) ? (
+        ) : (professorForm === 'EDIT' && professorToBeEdited) ? (
           <ProfessorForm.Edit
             onClick={{ closeForm: () => {
-              showStudentForm(null);
-              setStudentToBeEdited(null);
+              showProfessorForm(null);
+              setProfessorToBeEdited(null);
             }}}
             onSuccess={fetchAllData}
-            initialData={studentToBeEdited}
+            initialData={professorToBeEdited}
           />
         ) : (
-          <div className={style.registered_Professors_today_container}>
-            <div className={style.registered_Professors_today}>
+          <div className={style.registered_students_today_container}>
+            <div className={style.registered_students_today}>
               <h3>
                 Cadastrados hoje
               </h3>
 
-              <div className={style.registered_Professors_today_list}>
+              <div className={style.registered_students_today_list}>
                 <div className={style.overflow_container}>
                   {pageLoading ? (
                     <div className={style.loading_container}>
@@ -229,14 +231,14 @@ const Professors = () => {
                   </div>
                   ) : professorsRegisteredToday.length > 0 ? (
                     <>
-                      {ProfessorsRegisteredToday.map((student) => (
+                      {professorsRegisteredToday.map((professor) => (
                         <ProfessorCard
-                          key={student.ra}
+                          key={professor.email}
                           variant="REGISTERED_TODAY"
-                          student={{
-                            name:  student.name,
-                            email: student.email,
-                            ra:    student.ra,
+                          professor={{
+                            name       : professor.name,
+                            email      : professor.email,
+                            discipline : professor.discipline,
                           }}
                         />
                       ))}
@@ -255,14 +257,14 @@ const Professors = () => {
                   ) : (
                     <NoAvailableContent
                       icon={FaClipboardQuestion}
-                      message="Nenhum aluno cadastrado hoje!"
+                      message="Nenhum professor cadastrado hoje!"
                     />
                   )}
                 </div>         
               </div>
             </div>
 
-            <div className={style.registered_Professors_count}>
+            <div className={style.registered_students_count}>
               <h3>
                 Estatísticas
               </h3>
@@ -271,7 +273,7 @@ const Professors = () => {
                 <div className={style.statistic_card}>
                   <div>
                     <label>
-                      Professores cadastrados hoje:
+                      Cadastrados hoje:
                     </label>
                     <span>
                       {registeredTodayProfessorsCount}
@@ -282,10 +284,10 @@ const Professors = () => {
                 <div className={style.statistic_card}>
                   <div>
                     <label>
-                      Professores cadastrados:
+                      Cadastrados:
                     </label>
                     <span>
-                      {ProfessorsListCount}
+                      {professorsListCount}
                     </span>
                   </div>
                 </div>
@@ -295,17 +297,19 @@ const Professors = () => {
         )}
       </div>
 
-      {studentToBeRemoved && (
+      {professorToBeRemoved && (
         <Modal.ConfimAction
           title={'Remover aluno'}
-          message={`Tem certeza em remover ${studentToBeRemoved.name} do sistema?`}
-          isOpen={activeModal === 'REMOVE_STUDENT'}
+          message={`Tem certeza em remover ${professorToBeRemoved.name} do sistema?`}
+          isOpen={activeModal === 'REMOVE_PROFESSOR'}
           loading={loading}
           onClick={{
-            confirm    : () => handleRemoveStudent(studentToBeRemoved.ra),
+            confirm : () => handleRemoveProfessor(
+              professorToBeRemoved.email, 
+            ),
             closeModal : () => {
               setActiveModal(null);
-              setStudentToBeRemoved(null);
+              setProfessorToBeRemoved(null);
             }
           }}
         />

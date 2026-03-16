@@ -3,14 +3,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '../../../../contexts/ToastContext';
 import { useLoadingState } from '../../../../hooks/useLoadingState';
 import { RegisterStudentPayload } from '../../../../types/payloads/registerStudentPayload';
-import { registerStudentSchema, RegisterStudentSchema } from '../../../../schemas/registerStudentSchema';
+import { RegisterStudentSchema } from '../../../../schemas/registerStudentSchema';
 
 import Button from '../../../../components/button/Button';
 import { Input } from '../../../../components/input';
-import StudentPageFormsWrapper from './ProfessorPageFormsWrapper';
+import ProfessorPageFormsWrapper from './ProfessorPageFormsWrapper';
 
 import style from '../../../css/Students.module.css';
 import api from '../../../../api';
+import { registerProfessorSchema, RegisterProfessorSchema } from '../../../../schemas/registerProfessorSchema';
+import { RegisterProfessorPayload } from '../../../../types/payloads/registerProfessorPayload';
+import { Select } from '../../../../components/select';
 
 export type RegisterProps = {
   onClick: { closeForm: () => void };
@@ -29,19 +32,21 @@ const Register = ({
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<RegisterStudentSchema>({
-    resolver: zodResolver(registerStudentSchema),
+  } = useForm<RegisterProfessorSchema>({
+    resolver: zodResolver(registerProfessorSchema),
   });
 
-  const handleRegisterStudent = async(data: RegisterStudentSchema):Promise<void> => {
+  const handleRegisterProfessor = async(
+    data : RegisterProfessorSchema
+  ):Promise<void> => {
     if (loading) return; 
     setLoading(true);
 
-    const fetchURL:string = `/auth/register/student`;
-    const payload:RegisterStudentPayload = {
-      studentName: data.studentName,
-      email: data.email,
-      ra: data.ra,
+    const fetchURL:string = `/auth/register/professor`;
+    const payload:RegisterProfessorPayload = {
+      discipline : data.discipline,
+      email      : data.email,
+      name       : data.professorName 
     };
 
     try {
@@ -61,32 +66,31 @@ const Register = ({
   };
 
   return (
-    <StudentPageFormsWrapper
-    description='Insira as informações que os campos abaixo pedem para cadastrar um aluno no sistema!'
-    title='Cadastrar aluno'
+    <ProfessorPageFormsWrapper
+    description='Insira as informações que os campos abaixo pedem para cadastrar um professor no sistema!'
+    title='Cadastrar professor'
     onClose={onClick.closeForm}
-    onSubmit={handleSubmit(handleRegisterStudent)}
+    onSubmit={handleSubmit(handleRegisterProfessor)}
     >
       <Input.Form 
-        {...register('studentName')}
-        error={errors.studentName?.message}
-        label={'Nome do aluno'}
-        placeholder='Insira o nome do aluno'
+        {...register('professorName')}
+        error={errors.professorName?.message}
+        label={'Nome do professor'}
+        placeholder='Insira o nome do professor'
         className={style.add_student_form}
       />
       <Input.Form 
         {...register('email')}
         error={errors.email?.message}
         label={'E-mail institucional'}
-        placeholder='Insira o e-mail institucional do aluno'
+        placeholder='Insira o e-mail institucional do professor'
         className={style.add_student_form}
       />
-      <Input.Form 
-        {...register('ra')}
-        error={errors.ra?.message}
-        label={'Resgistro Acandêmico (RA)'}
-        placeholder='Insira o registro acadêmico do aluno'
+      <Select.Form
+        {...register('discipline')}
+        error={errors.discipline?.message}
         className={style.add_student_form}
+        selectSchema={'PROFESSORS_DISCIPLINES_OPTIONS'}
       />
 
       <div className={style.register_student_submit_button_infos_container}>
@@ -98,14 +102,14 @@ const Register = ({
           color: 'SECONDARY',
           filled: false,
         }}>
-          {loading ? 'Cadastrando' : 'Casdastrar'}
+          {loading ? 'Cadastrando' : 'Cadastrar'}
         </Button>
 
         <p style={{fontSize: '11px'}}>
-          Após o cadastro, o aluno cadastrado receberá um e-mail do primeiro acesso ao sistema e poderá acessá-lo com o RA cadastrado e uma senha provisória aleatóriamente gerada.
+          Após o cadastro, o professor cadastrado receberá um e-mail do primeiro acesso ao sistema e poderá acessá-lo com o e-mail e uma senha provisória aleatóriamente gerada.
         </p>
       </div>
-    </StudentPageFormsWrapper>
+    </ProfessorPageFormsWrapper>
   );
 }
 

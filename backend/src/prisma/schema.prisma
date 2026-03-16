@@ -12,6 +12,7 @@ model User {
   email        String?       @unique
   password     String
   role         UserRole      @default(STUDENT)
+  discipline   ProfessorDiscipline?
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
   ra           String?       @unique
@@ -59,4 +60,13 @@ enum UserRole {
 enum UserStatus {
   ACTIVE
   REMOVED
+}
+
+enum ProfessorDiscipline {
+  PORTUGUESE
+  MATH
+  GEOGRAPHY
+  HISTORY
+  BIOLOGY
+  LITERATURE
 }

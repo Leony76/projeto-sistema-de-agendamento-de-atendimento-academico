@@ -12,7 +12,7 @@ import { StudentForm } from "./components/Students/form";
 import StudentCard from "./components/Students/StudentCard";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
-import Select from "../components/input/Select";
+import Select from "../components/select/Select";
 import Spinner from "../components/ui/Spinner";
 import { Input } from "../components/input";
 
@@ -63,13 +63,13 @@ const Students = () => {
         StudentService.registeredInTheDayList(currentStudentsRegisteredTodayListPage),
       ]);
       
-      setStudents(studentsResponse.studentsList);
-      setTotalStudentsListPages(studentsResponse.totalPages);
-      setStudentsListCount(studentsResponse.total);
+      setStudents(studentsResponse.students.list);
+      setTotalStudentsListPages(studentsResponse.students.pages.total);
+      setStudentsListCount(studentsResponse.students.totalCount);
 
-      setStudentsRegisteredToday(studentsRegisteredInTheDayResponse.studentsRegisteredTodayList);
-      setTotalStudentsRegisteredTodayListPages(studentsRegisteredInTheDayResponse.totalStudentsRegisteredTodayPages);
-      setRegisteredTodayStudentsCount(studentsRegisteredInTheDayResponse.totalStudentsRegisteredTodayCount);
+      setStudentsRegisteredToday(studentsRegisteredInTheDayResponse.students.list);
+      setTotalStudentsRegisteredTodayListPages(studentsRegisteredInTheDayResponse.students.pages.total);
+      setRegisteredTodayStudentsCount(studentsRegisteredInTheDayResponse.students.totalCount);
     } catch (error: any) {
       showToast(error.response?.data?.error || 'Erro ao carregar listagem', 'ERROR');
     } finally {
@@ -126,7 +126,7 @@ const Students = () => {
             icon={FaPlus}       
             onClick={() => showStudentForm('REGISTER')}
             >
-              Cadastrar aluno
+              Cadastrar
             </Button>
 
             <Input.Search
@@ -271,7 +271,7 @@ const Students = () => {
                 <div className={style.statistic_card}>
                   <div>
                     <label>
-                      Alunos cadastrados hoje:
+                      Cadastrados hoje:
                     </label>
                     <span>
                       {registeredTodayStudentsCount}
@@ -282,7 +282,7 @@ const Students = () => {
                 <div className={style.statistic_card}>
                   <div>
                     <label>
-                      Alunos cadastrados:
+                      Cadastrados:
                     </label>
                     <span>
                       {studentsListCount}

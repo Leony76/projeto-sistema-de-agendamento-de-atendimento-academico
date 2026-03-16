@@ -2,8 +2,8 @@ import { Prisma } from '@prisma/client';
 import { StudentListDTO } from '../../types/dto/studentListDTO';
 import { prisma } from '../prisma';
 import { EditPromise } from './types/student/edit.promise';
-import { ListPromise } from './types/student/list.promise';
-import { RegisteredTodayListPromise } from './types/student/registeredTodayList.promise';
+import { StudentsListPromise } from './types/student/list.promise';
+import { StudentsRegisteredTodayListPromise } from './types/student/registeredTodayList.promise';
 import { RemovePromise } from './types/student/remove.promise';
 
 export class StudentService {
@@ -12,7 +12,7 @@ export class StudentService {
     page   : number, 
     search : string, 
     filter : string,
-  ):Promise<ListPromise>{
+  ):Promise<StudentsListPromise>{
     
     const limit = 10;
     const skip = (Number(page) - 1) * limit;
@@ -66,16 +66,18 @@ export class StudentService {
     }));
     
     return {
-      studentsList, 
-      total:        totalStudents,
-      totalPages:   Math.ceil(totalStudents / limit) 
+      students: {
+        list: studentsList,
+        totalCount: totalStudents,
+        pages: { total: Math.ceil(totalStudents / limit) }
+      }
     }
   }
 
   static async registeredTodayList(
     page      : number,
     onlyToday : boolean,
-  ):Promise<RegisteredTodayListPromise>{
+  ):Promise<StudentsRegisteredTodayListPromise>{
     const limit = 10;
     const skip = (page - 1) * limit;
 
@@ -122,9 +124,11 @@ export class StudentService {
     }));
 
     return {
-      studentsRegisteredTodayList, 
-      totalStudentsRegisteredTodayCount: totalStudents,
-      totalStudentsRegisteredTodayPages: Math.ceil(totalStudents / limit) 
+      students: {
+        list       : studentsRegisteredTodayList,
+        totalCount : totalStudents,
+        pages      : { total: Math.ceil(totalStudents / limit) },
+      }
     }
   }
 

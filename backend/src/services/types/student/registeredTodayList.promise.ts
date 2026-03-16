@@ -1,7 +1,3 @@
-import { StudentListDTO } from "../../../../types/dto/studentListDTO";
+import { StudentsListPromise } from "./list.promise";
 
-export type RegisteredTodayListPromise = {
-  studentsRegisteredTodayList: StudentListDTO[];
-  totalStudentsRegisteredTodayCount: number;
-  totalStudentsRegisteredTodayPages: number;
-}
+export type StudentsRegisteredTodayListPromise = StudentsListPromise;

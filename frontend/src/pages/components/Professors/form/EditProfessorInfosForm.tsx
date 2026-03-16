@@ -3,19 +3,18 @@ import { RegisterProps } from "./RegisterProfessorForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "../../../../contexts/ToastContext";
 import { useLoadingState } from "../../../../hooks/useLoadingState";
-import { RegisterStudentSchema, registerStudentSchema } from "../../../../schemas/registerStudentSchema";
 
 import Button from "../../../../components/button/Button";
 import { Input } from "../../../../components/input";
-import axios from "axios";
 
 import style from '../../../css/Students.module.css';
-import StudentPageFormsWrapper from "./ProfessorPageFormsWrapper";
-import { StudentToBeEdited } from "../../../../types/studentToBeEdited";
-import { StudentService } from "../../../../services/student.service";
+import ProfessorPageFormsWrapper from "./ProfessorPageFormsWrapper";
+import { ProfessorToBeEdited } from "../../../../types/professorToBeEdited";
+import { registerProfessorSchema, RegisterProfessorSchema } from "../../../../schemas/registerProfessorSchema";
+import { ProfessorService } from "../../../../services/professor.service";
 
 export type EditProps = RegisterProps & {
-  initialData: StudentToBeEdited;
+  initialData: ProfessorToBeEdited;
 }
 
 const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
@@ -26,20 +25,22 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
     register, 
     handleSubmit, 
     formState: { errors } 
-  } = useForm<RegisterStudentSchema>({
-    resolver: zodResolver(registerStudentSchema),
+  } = useForm<RegisterProfessorSchema>({
+    resolver: zodResolver(registerProfessorSchema),
     values: {
-      studentName: initialData.name,
-      email: initialData.email,
-      ra: initialData.ra,
+      professorName : initialData.name,
+      email         : initialData.email,
+      discipline    : initialData.discipline,
     }
   });
 
-  const handleUpdate = async (data:RegisterStudentSchema) => {
+  const handleUpdate = async (
+    data : RegisterProfessorSchema
+  ):Promise<void> => {
     setLoading(true);
 
     try {
-      const response = await StudentService.edit(data, initialData.ra);
+      const response = await ProfessorService.edit(data, initialData.email);
       
       showToast(response, 'SUCCESS');
       
@@ -53,15 +54,15 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   };
 
   return (
-    <StudentPageFormsWrapper 
-    title="Editar aluno"
+    <ProfessorPageFormsWrapper 
+    title="Editar professor"
     onClose={onClick.closeForm}
     onSubmit={handleSubmit(handleUpdate)}
     description={`Editando informações de ${initialData.name}.`}
     >
       <Input.Form 
-        {...register('studentName')} 
-        error={errors.studentName?.message} 
+        {...register('professorName')} 
+        error={errors.professorName?.message} 
         label="Nome" 
         className={style.add_student_form} 
       />
@@ -72,11 +73,10 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
         className={style.add_student_form} 
       />
       <Input.Form 
-        {...register('ra')} 
-        error={errors.ra?.message} 
-        label="RA (Não alterável)" 
+        {...register('discipline')} 
+        error={errors.discipline?.message} 
+        label="Disciplina" 
         className={style.add_student_form} 
-        disabled 
       />
       
       <Button 
@@ -89,7 +89,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
       }}>
         {loading ? 'Salvando' : 'Salvar Alterações'}
       </Button>
-    </StudentPageFormsWrapper>
+    </ProfessorPageFormsWrapper>
   );
 };
 
