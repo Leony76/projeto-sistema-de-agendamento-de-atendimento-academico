@@ -52,7 +52,7 @@ const Home = () => {
 
             <div className={style.appointments_list}>
               <div className={style.list_overflow_y}>
-
+                
               </div>
             </div>
           </div>

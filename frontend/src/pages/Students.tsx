@@ -9,10 +9,10 @@ import { StudentListRegisteredTodayDTO } from "../types/dtos/studentsListRegiste
 import NoAvailableContent from "../components/ui/NoAvailableContent";
 import PaginationButtons from "../components/ui/PaginationButtons";
 import { StudentForm } from "./components/Students/form";
-import StudentCard from "./components/Students/StudentCard";
+import  ListCard from "../components/ui/ListCard";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
-import Select from "../components/select/Select";
+import { Select } from "../components/select";
 import Spinner from "../components/ui/Spinner";
 import { Input } from "../components/input";
 
@@ -136,8 +136,7 @@ const Students = () => {
               className={style.search}
             />
 
-            <Select 
-              variant={"SEARCH"} 
+            <Select.Default 
               selectSchema={"SEARCH_STUDENTS_FILTER"}
               value={filter}
               onChange={(e) => setFilter(e.target.value as SearchStudentsFilterValue)}
@@ -156,21 +155,26 @@ const Students = () => {
               ) : students.length > 0 ? (
                 <>
                   {students.map((student) => (
-                    <StudentCard
+                    <ListCard
+                      smTexts={false}
+                      crudActions
                       key={student.ra}
-                      variant={'MAIN_LIST'}
-                      onClick={{ 
-                        setActiveModal,
-                        setStudentToBeEdited,
-                        setStudentToBeRemoved,
-                        showEditStudentInfoForm: () => showStudentForm('EDIT'),
+                      onClick={{
+                        toEdit: () => { 
+                          setStudentToBeEdited(student);
+                          showStudentForm('EDIT');
+                        }, 
+                        toRemove: () => {
+                          setActiveModal('REMOVE_STUDENT');
+                          setStudentToBeRemoved({ra: student.ra, name: student.name});
+                        }
                       }}
-                      student={{
-                        name:         student.name,
-                        email:        student.email,
-                        ra:           student.ra,
-                        registerDate: dateTime(student.registeredAt),
-                      }}
+                      title={student.name}
+                      items={[
+                        {label: 'RA'               , value: student.ra           },
+                        {label: 'E-mail'           , value: student.email        },
+                        {label: 'Data de cadastro' , value: student.registeredAt },
+                      ]}
                     />
                   ))}
 
@@ -230,14 +234,15 @@ const Students = () => {
                   ) : studentsRegisteredToday.length > 0 ? (
                     <>
                       {studentsRegisteredToday.map((student) => (
-                        <StudentCard
+                        <ListCard
+                          smTexts
+                          crudActions={false}
                           key={student.ra}
-                          variant="REGISTERED_TODAY"
-                          student={{
-                            name:  student.name,
-                            email: student.email,
-                            ra:    student.ra,
-                          }}
+                          title={student.name}
+                          items={[
+                            {label: 'E-mail', value: student.email},
+                            {label: 'RA', value: student.ra},
+                          ]}
                         />
                       ))}
 

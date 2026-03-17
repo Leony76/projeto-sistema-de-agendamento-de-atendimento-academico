@@ -56,3 +56,16 @@
 .searchbar_filter_container .search {
   flex: 1;
 }
+
+.appointments_list {
+  background-color: white;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: inset 0px 0px 4px rgba(128, 128, 128, 0.402);
+  padding: 2px;
+}
+
+.appointments_list .list_overflow_y {
+  
+}

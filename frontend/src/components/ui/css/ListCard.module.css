@@ -1,0 +1,43 @@
+.user {
+  box-shadow: 0px 0px 3px rgba(128, 128, 128, 0.507);
+  border-radius: 10px;
+  padding: 8px;
+  background-color: var(--primary-color);
+  display: flex;
+  justify-content: space-between;
+}
+
+.user .left_container {
+  display: flex;
+  flex-direction: column;
+}
+
+.user .left_container .name {
+  color: orange;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.user .left_container .md_text {
+  font-size: 13px;
+  color: var(--dark-secondary-color);
+} 
+.user .left_container .md_text span {
+  color: var(--secondary-color);
+  filter: brightness(0.9);
+}
+
+.user .left_container .sm_text {
+  font-size: 12px;
+  color: var(--dark-secondary-color);
+} 
+.user .left_container .sm_text span {
+  color: var(--secondary-color);
+  filter: brightness(0.9);
+}
+
+.user .right_container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

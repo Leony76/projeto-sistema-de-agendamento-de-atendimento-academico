@@ -129,6 +129,8 @@ const Login = () => {
                   ? 'PROFESSOR'
                 : tab === 'PROFESSOR' 
                   ? 'STUDENT'
+                : tab === 'MANAGER'
+                  ? 'PROFESSOR'
                 : 'STUDENT'
               );
               setError(null);
@@ -139,7 +141,9 @@ const Login = () => {
                 ? 'Entrar como professor'
               : tab === 'PROFESSOR'
                 ? 'Entrar como aluno'
-              : 'Entrar como professor'
+              : tab === 'MANAGER'
+                ? 'Entrar como professor'
+              : 'Entrar como aluno'
               } 
             </Button>
 

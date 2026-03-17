@@ -8,7 +8,6 @@ import { ProfessorsListRegisteredTodayDTO } from "../types/dtos/professorsListRe
 import NoAvailableContent from "../components/ui/NoAvailableContent";
 import PaginationButtons from "../components/ui/PaginationButtons";
 import { ProfessorForm } from "./components/Professors/form";
-import ProfessorCard from "./components/Professors/ProfessorCard";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
 import Select from "../components/select/Select";
@@ -23,6 +22,8 @@ import { Modal } from "../components/modal";
 import { ProfessorListDTO } from "../types/dtos/professorListDTO";
 import { ProfessorToBeEdited } from "../types/professorToBeEdited";
 import { ProfessorToBeRemoved } from "../types/professorToBeRemoved";
+import ListCard from "../components/ui/ListCard";
+import { PROFESSOR_DISCIPLINES_MAP } from "../maps/professorDisciplinesMap";
 
 const Professors = () => {
 
@@ -158,21 +159,26 @@ const Professors = () => {
               ) : professors.length > 0 ? (
                 <>
                   {professors.map((professor) => (
-                    <ProfessorCard
+                    <ListCard
+                      smTexts={false}
+                      crudActions
                       key={professor.email}
-                      variant={'MAIN_LIST'}
-                      onClick={{ 
-                        setActiveModal,
-                        setProfessorToBeEdited,
-                        setProfessorToBeRemoved,
-                        showEditProfessorInfoForm: () => showProfessorForm('EDIT'),
+                      onClick={{
+                        toEdit: () => { 
+                          setProfessorToBeEdited(professor);
+                          showProfessorForm('EDIT');
+                        }, 
+                        toRemove: () => {
+                          setActiveModal('REMOVE_PROFESSOR');
+                          setProfessorToBeRemoved({email: professor.email, name: professor.name});
+                        }
                       }}
-                      professor={{
-                        name:         professor.name,
-                        email:        professor.email,
-                        discipline:   professor.discipline,
-                        registeredAt: dateTime(professor.registeredAt),
-                      }}
+                      title={professor.name}
+                      items={[
+                        {label: 'Diciplina'        , value: PROFESSOR_DISCIPLINES_MAP[professor.discipline]},
+                        {label: 'E-mail'           , value: professor.email},
+                        {label: 'Data de cadastro' , value: dateTime(professor.registeredAt)},
+                      ]}
                     />
                   ))}
 
@@ -232,14 +238,15 @@ const Professors = () => {
                   ) : professorsRegisteredToday.length > 0 ? (
                     <>
                       {professorsRegisteredToday.map((professor) => (
-                        <ProfessorCard
+                        <ListCard
                           key={professor.email}
-                          variant="REGISTERED_TODAY"
-                          professor={{
-                            name       : professor.name,
-                            email      : professor.email,
-                            discipline : professor.discipline,
-                          }}
+                          title={professor.name} 
+                          crudActions={false} 
+                          smTexts                        
+                          items={[
+                            {label: 'E-mail'     , value: professor.email},
+                            {label: 'Disciplina' , value: PROFESSOR_DISCIPLINES_MAP[professor.discipline]},
+                          ]} 
                         />
                       ))}
 
@@ -299,7 +306,7 @@ const Professors = () => {
 
       {professorToBeRemoved && (
         <Modal.ConfimAction
-          title={'Remover aluno'}
+          title={'Remover professor'}
           message={`Tem certeza em remover ${professorToBeRemoved.name} do sistema?`}
           isOpen={activeModal === 'REMOVE_PROFESSOR'}
           loading={loading}
