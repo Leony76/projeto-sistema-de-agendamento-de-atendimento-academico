@@ -66,11 +66,9 @@ export class StudentService {
     }));
     
     return {
-      students: {
-        list: studentsList,
-        totalCount: totalStudents,
-        pages: { total: Math.ceil(totalStudents / limit) }
-      }
+      list       : studentsList,
+      totalCount : totalStudents,
+      totalPaginationCount : Math.ceil(totalStudents / limit),
     }
   }
 
@@ -124,11 +122,9 @@ export class StudentService {
     }));
 
     return {
-      students: {
-        list       : studentsRegisteredTodayList,
-        totalCount : totalStudents,
-        pages      : { total: Math.ceil(totalStudents / limit) },
-      }
+      list       : studentsRegisteredTodayList,
+      totalCount : totalStudents,
+      totalPaginationCount : Math.ceil(totalStudents / limit),
     }
   }
 

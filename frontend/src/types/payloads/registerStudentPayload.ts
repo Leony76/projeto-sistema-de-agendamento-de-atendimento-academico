@@ -1,5 +1,3 @@
-export type RegisterStudentPayload = {
-  studentName: string;
-  email: string;
-  ra: string;
-};
+import { StudentListDTO } from "../dtos/studentListDTO";
+
+export type RegisterStudentPayload = Omit<StudentListDTO, 'registeredAt'>;

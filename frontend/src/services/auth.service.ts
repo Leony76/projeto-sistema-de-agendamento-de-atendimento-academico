@@ -1,7 +1,7 @@
 import { StudentLoginFormSchema, ManagerLoginFormSchema } from "../schemas/loginSchema";
 import { isStudentData } from "../types/guards/managerAndStudentGuard";
-import { ManagerPayload } from "../types/payloads/managerLoginPayload";
-import { StudentPayload } from "../types/payloads/studentLoginPayload";
+import { ManagerPayload } from "../types/payloads/loginManagerPayload";
+import { StudentPayload } from "../types/payloads/loginStudentLoginPayload";
 import { LoginPromise } from "../types/promises/login.promise";
 import api from "../api";
 import { SystemRoles } from "../types/systemRoles";

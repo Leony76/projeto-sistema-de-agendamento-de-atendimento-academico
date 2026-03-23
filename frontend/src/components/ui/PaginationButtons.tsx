@@ -4,10 +4,10 @@ import style from './css/PaginationButtons.module.css';
 
 type Props = {
   page: {
-    next: React.Dispatch<React.SetStateAction<number>>;
-    previous: React.Dispatch<React.SetStateAction<number>>;
-    current: number;
-    total: number;
+    next     : () => void;
+    previous : () => void;
+    current  : number;
+    total    : number;
   }
 }
 
@@ -17,7 +17,7 @@ const PaginationButtons = ({ page }:Props) => {
       {page.current !== 1 &&
         <Button 
         className={style.return}
-        onClick={() => page.previous(prev => prev - 1)}
+        onClick={page.previous}
         buttonStyle={{
           border:   "MD",
           fontSize: "MD",
@@ -38,7 +38,7 @@ const PaginationButtons = ({ page }:Props) => {
         <Button
         className={style.proceed}
         disabled={page.current === page.total}
-        onClick={() => page.next(prev => prev + 1)} 
+        onClick={page.next} 
         buttonStyle={{
           border:   "MD",
           fontSize: "MD",

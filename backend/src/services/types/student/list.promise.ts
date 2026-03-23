@@ -1,9 +1,7 @@
 import { StudentListDTO } from "../../../../types/dto/studentListDTO";
 
 export type StudentsListPromise = {
-  students: {
-    list       : StudentListDTO[];
-    totalCount : number;
-    pages      : { total: number };
-  };
+  list       : StudentListDTO[];
+  totalCount : number;
+  totalPaginationCount : number;
 };

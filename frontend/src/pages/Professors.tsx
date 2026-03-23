@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { dateTime } from "../utils/dateTime";
-import { useToast } from "../contexts/ToastContext";
 import { FaClipboardQuestion, FaPlus } from "react-icons/fa6";
 import { SearchProfessorsFilterValue } from "../maps/filters/searchProfessorsFilter";
 import { ProfessorsListRegisteredTodayDTO } from "../types/dtos/professorsListRegisteredTodayDTO";
@@ -15,8 +13,6 @@ import Spinner from "../components/ui/Spinner";
 import { Input } from "../components/input";
 
 import style from './css/Professor.module.css';
-import { ProfessorService } from "../services/professor.service";
-import { useLoadingState } from "../hooks/useLoadingState";
 import { ProfessorPageModal } from "../types/modals/professorsPage.modal";
 import { Modal } from "../components/modal";
 import { ProfessorListDTO } from "../types/dtos/professorListDTO";
@@ -24,90 +20,42 @@ import { ProfessorToBeEdited } from "../types/professorToBeEdited";
 import { ProfessorToBeRemoved } from "../types/professorToBeRemoved";
 import ListCard from "../components/ui/ListCard";
 import { PROFESSOR_DISCIPLINES_MAP } from "../maps/professorDisciplinesMap";
+import { UsersService } from "../services/users.service";
+import { useUsersList } from "../hooks/useUsersList";
 
 const Professors = () => {
 
-  const { showToast } = useToast();
-  const [pageLoading, setPageloading] = useState<boolean>(true); 
-  const { loading, setLoading } = useLoadingState();
+  const ProfessorService = new UsersService<ProfessorListDTO, ProfessorsListRegisteredTodayDTO, "PROFESSOR">("PROFESSOR");
 
-  // PROFESSORS LIST
-  const [professors, setProfessors] = useState<ProfessorListDTO[]>([]);
-  const [professorsListCount, setProfessorsListCount] = useState<number>(0);
-  const [currentProfessorsListPage, setCurrentProfessorsListPage] = useState<number>(1);
-  const [totalProfessorsListPages, setTotalProfessorsListPages] = useState<number>(1);
-
-  // PROFESSORS REGISTERED TODAY LIST
-  const [professorsRegisteredToday, setProfessorsRegisteredToday] = useState<ProfessorsListRegisteredTodayDTO[]>([]);
-  const [registeredTodayProfessorsCount, setRegisteredTodayProfessorsCount] = useState<number>(0);
-  const [currentProfessorsRegisteredTodayListPage, setCurrentProfessorsRegisteredTodayListPage] = useState<number>(1);
-  const [totalProfessorsRegisteredTodayListPages, setTotalProfessorsRegisteredTodayListPages] = useState<number>(1);
-
-  const [professorToBeEdited, setProfessorToBeEdited] = useState<ProfessorToBeEdited | null>(null);
-  const [professorToBeRemoved, setProfessorToBeRemoved] = useState<ProfessorToBeRemoved | null>(null);
-
-  const [search, setSearch] = useState<string>('');
-  const [filter, setFilter] = useState<SearchProfessorsFilterValue>('unselected');
-
-  const [professorForm, showProfessorForm] = useState<"REGISTER" | "EDIT" | null>(null);
-  const [activeModal, setActiveModal]  = useState<ProfessorPageModal | null>(null);
-
-  const fetchAllData = async():Promise<void> => {
-    setPageloading(true);
-
-    try {
-      const [
-        professorsResponse,
-        professorsRegisteredInTheDayResponse,
-      ] = await Promise.all([
-        ProfessorService.list(currentProfessorsListPage, search, filter),
-        ProfessorService.registeredInTheDayList(currentProfessorsRegisteredTodayListPage),
-      ]);
-      
-      setProfessors(professorsResponse.professors.list);
-      setTotalProfessorsListPages(professorsResponse.professors.pages.total);
-      setProfessorsListCount(professorsResponse.professors.totalCount);
-
-      setProfessorsRegisteredToday(professorsRegisteredInTheDayResponse.professors.list);
-      setTotalProfessorsRegisteredTodayListPages(professorsRegisteredInTheDayResponse.professors.pages.total);
-      setRegisteredTodayProfessorsCount(professorsRegisteredInTheDayResponse.professors.totalCount);
-    } catch (error: any) {
-      showToast(error.response?.data?.error || 'Erro ao carregar listagem', 'ERROR');
-    } finally {
-      setPageloading(false); 
-    }
-  };
-
-  const handleRemoveProfessor = async(
-    email : string,
-  ):Promise<void> => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const response = await ProfessorService.remove(email);
-      fetchAllData();
-      showToast(response, 'SUCCESS');
-    } catch (error:any) {
-      showToast(error.response?.data?.error || 'Houve um erro ao remover o usuário!', 'ERROR');
-    } finally {
-      setLoading(false);
-      setActiveModal(null);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllData();
-  } , [
-    currentProfessorsListPage, 
-    currentProfessorsRegisteredTodayListPage, 
-    filter, 
+  const { 
+    overall               : professors,
+    setOverall            : setProfessors,
+    registeredInTheDay    : professorsRegisteredInTheDay,
+    setRegisteredInTheDay : setProfessorsRegisteredInTheDay,
+    entityToBeEdited      : professorToBeEdited,
+    setEntityToBeEdited   : setProfessorToBeEdited,
+    entityToBeRemoved     : professorToBeRemoved,
+    setEntityToBeRemoved  : setProfessorToBeRemoved,
     search,
-  ]);
-
-  useEffect(() => {
-    setCurrentProfessorsListPage(1);
-  }, [filter, search]); 
+    setSearch,
+    filter,
+    setFilter,
+    entityForm     : professorForm,
+    showEntityForm : showProfessorForm,
+    activeModal,
+    setActiveModal,
+    pageLoading,
+    fetchAllData,
+    handleRemove : handleRemoveProfessor,
+    loading,
+  } = useUsersList<
+    ProfessorListDTO,
+    ProfessorsListRegisteredTodayDTO,
+    ProfessorToBeEdited,
+    ProfessorToBeRemoved,
+    SearchProfessorsFilterValue,
+    ProfessorPageModal
+  >(ProfessorService, "PROFESSOR");
 
   return (
     <AuthLayout tabSelected='PROFESSORS'>
@@ -156,9 +104,9 @@ const Professors = () => {
                     color="var(--secondary-color)"
                   />
                 </div>
-              ) : professors.length > 0 ? (
+              ) : professors.list.length > 0 ? (
                 <>
-                  {professors.map((professor) => (
+                  {professors.list.map((professor) => (
                     <ListCard
                       smTexts={false}
                       crudActions
@@ -182,13 +130,13 @@ const Professors = () => {
                     />
                   ))}
 
-                  {(totalProfessorsListPages > 1) && (
+                  {(professors.paginationTotalCount > 1) && (
                     <PaginationButtons
                       page={{
-                        current:  currentProfessorsListPage,
-                        total:    totalProfessorsListPages,
-                        next:     setCurrentProfessorsListPage,
-                        previous: setCurrentProfessorsListPage,
+                        current  : professors.currentPaginationCount,
+                        total    : professors.paginationTotalCount,
+                        next     : () => setProfessors(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount + 1})),
+                        previous : () => setProfessors(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount - 1})),
                       }}
                     />
                   )}
@@ -235,9 +183,9 @@ const Professors = () => {
                       color="var(--secondary-color)"
                     />
                   </div>
-                  ) : professorsRegisteredToday.length > 0 ? (
+                  ) : professorsRegisteredInTheDay.list.length > 0 ? (
                     <>
-                      {professorsRegisteredToday.map((professor) => (
+                      {professorsRegisteredInTheDay.list.map((professor) => (
                         <ListCard
                           key={professor.email}
                           title={professor.name} 
@@ -250,13 +198,13 @@ const Professors = () => {
                         />
                       ))}
 
-                      {totalProfessorsRegisteredTodayListPages > 1 &&
+                      {professorsRegisteredInTheDay.paginationTotalCount > 1 &&
                         <PaginationButtons
                           page={{
-                            current:  currentProfessorsRegisteredTodayListPage,
-                            total:    totalProfessorsRegisteredTodayListPages,
-                            next:     setCurrentProfessorsRegisteredTodayListPage,
-                            previous: setCurrentProfessorsRegisteredTodayListPage,
+                            current  : professorsRegisteredInTheDay.currentPaginationCount,
+                            total    : professorsRegisteredInTheDay.paginationTotalCount,
+                            next     : () => setProfessorsRegisteredInTheDay(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount + 1})),
+                            previous : () => setProfessorsRegisteredInTheDay(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount - 1})),
                           }}
                         />
                       }
@@ -283,7 +231,7 @@ const Professors = () => {
                       Cadastrados hoje:
                     </label>
                     <span>
-                      {registeredTodayProfessorsCount}
+                      {professorsRegisteredInTheDay.totalCount}
                     </span>
                   </div>
                 </div>
@@ -294,7 +242,7 @@ const Professors = () => {
                       Cadastrados:
                     </label>
                     <span>
-                      {professorsListCount}
+                      {professors.totalCount}
                     </span>
                   </div>
                 </div>

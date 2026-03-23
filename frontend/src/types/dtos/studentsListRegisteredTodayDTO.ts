@@ -1,5 +1,3 @@
-export type StudentListRegisteredTodayDTO = {
-  name: string;
-  ra: string;
-  email: string;
-};
+import { StudentListDTO } from "./studentListDTO";
+
+export type StudentListRegisteredTodayDTO = Omit<StudentListDTO, 'registeredAt'>;

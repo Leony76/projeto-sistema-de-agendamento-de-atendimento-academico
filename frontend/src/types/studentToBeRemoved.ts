@@ -1,3 +1,3 @@
 import { StudentToBeEdited } from "./studentToBeEdited";
 
-export type StudentToBeRemoved = Pick<StudentToBeEdited, 'name' | 'ra'>;
+export type StudentToBeRemoved = Omit<StudentToBeEdited, 'email'>;

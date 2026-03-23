@@ -69,11 +69,9 @@ export class ProfessorService {
     }));
     
     return {
-      professors: {
-        list       : professorsList,
-        totalCount : totalProfessors,
-        pages      : { total: Math.ceil(totalProfessors / limit) }
-      }
+      list       : professorsList,
+      totalCount : totalProfessors,
+      totalPaginationCount : Math.ceil(totalProfessors / limit),
     }
   }
 
@@ -133,11 +131,9 @@ export class ProfessorService {
     }));
 
     return {
-      professors: {
-        list       : professorsRegisteredTodayList,
-        totalCount : totalProfessors,
-        pages      : { total: Math.ceil(totalProfessors / limit) }
-      }
+      list       : professorsRegisteredTodayList,
+      totalCount : totalProfessors,
+      totalPaginationCount : Math.ceil(totalProfessors / limit),
     }
   }
 

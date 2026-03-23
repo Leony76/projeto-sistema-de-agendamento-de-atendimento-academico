@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { dateTime } from "../utils/dateTime";
-import { useToast } from "../contexts/ToastContext";
 import { StudentListDTO } from "../types/dtos/studentListDTO";
 import { FaClipboardQuestion, FaPlus } from "react-icons/fa6";
 import { SearchStudentsFilterValue } from "../maps/filters/searchStudentsFilter";
@@ -18,93 +16,45 @@ import { Input } from "../components/input";
 
 import style from './css/Students.module.css';
 import { StudentToBeEdited } from "../types/studentToBeEdited";
-import { StudentService } from "../services/student.service";
-import { useLoadingState } from "../hooks/useLoadingState";
 import { StudentsPageModal } from "../types/modals/studentsPage.modal";
 import { Modal } from "../components/modal";
 import { StudentToBeRemoved } from "../types/studentToBeRemoved";
+import { useUsersList } from "../hooks/useUsersList";
+import { UsersService } from "../services/users.service";
 
 const Students = () => {
 
-  const { showToast } = useToast();
-  const [pageLoading, setPageloading] = useState<boolean>(true); 
-  const { loading, setLoading } = useLoadingState();
+  const StudentService = new UsersService<StudentListDTO, StudentListRegisteredTodayDTO, "STUDENT">("STUDENT");
 
-  // STUDENTS LIST
-  const [students, setStudents] = useState<StudentListDTO[]>([]);
-  const [studentsListCount, setStudentsListCount] = useState<number>(0);
-  const [currentStudentsListPage, setCurrentStudentsListPage] = useState<number>(1);
-  const [totalStudentsListPages, setTotalStudentsListPages] = useState<number>(1);
-
-  // STUDENTS REGISTERED TODAY LIST
-  const [studentsRegisteredToday, setStudentsRegisteredToday] = useState<StudentListRegisteredTodayDTO[]>([]);
-  const [registeredTodayStudentsCount, setRegisteredTodayStudentsCount] = useState<number>(0);
-  const [currentStudentsRegisteredTodayListPage, setCurrentStudentsRegisteredTodayListPage] = useState<number>(1);
-  const [totalStudentsRegisteredTodayListPages, setTotalStudentsRegisteredTodayListPages] = useState<number>(1);
-
-  const [studentToBeEdited, setStudentToBeEdited] = useState<StudentToBeEdited | null>(null);
-  const [studentToBeRemoved, setStudentToBeRemoved] = useState<StudentToBeRemoved | null>(null);
-
-  const [search, setSearch] = useState<string>('');
-  const [filter, setFilter] = useState<SearchStudentsFilterValue>('unselected');
-
-  const [studentForm, showStudentForm] = useState<"REGISTER" | "EDIT" | null>(null);
-  const [activeModal, setActiveModal]  = useState<StudentsPageModal | null>(null);
-
-  const fetchAllData = async():Promise<void> => {
-    setPageloading(true);
-
-    try {
-      const [
-        studentsResponse,
-        studentsRegisteredInTheDayResponse,
-      ] = await Promise.all([
-        StudentService.list(currentStudentsListPage, search, filter),
-        StudentService.registeredInTheDayList(currentStudentsRegisteredTodayListPage),
-      ]);
-      
-      setStudents(studentsResponse.students.list);
-      setTotalStudentsListPages(studentsResponse.students.pages.total);
-      setStudentsListCount(studentsResponse.students.totalCount);
-
-      setStudentsRegisteredToday(studentsRegisteredInTheDayResponse.students.list);
-      setTotalStudentsRegisteredTodayListPages(studentsRegisteredInTheDayResponse.students.pages.total);
-      setRegisteredTodayStudentsCount(studentsRegisteredInTheDayResponse.students.totalCount);
-    } catch (error: any) {
-      showToast(error.response?.data?.error || 'Erro ao carregar listagem', 'ERROR');
-    } finally {
-      setPageloading(false); 
-    }
-  };
-
-  const handleRemoveStudent = async(ra:string):Promise<void> => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const response = await StudentService.remove(ra);
-      fetchAllData();
-      showToast(response, 'SUCCESS');
-    } catch (error:any) {
-      showToast(error.response?.data?.error || 'Houve um erro ao remover o usuário!', 'ERROR');
-    } finally {
-      setLoading(false);
-      setActiveModal(null);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllData();
-  } , [
-    currentStudentsListPage, 
-    currentStudentsRegisteredTodayListPage, 
-    filter, 
+  const { 
+    overall               : students,
+    setOverall            : setStudents,
+    registeredInTheDay    : studentsRegisteredInTheDay,
+    setRegisteredInTheDay : setStudentsRegisteredInTheDay,
+    entityToBeEdited      : studentToBeEdited,
+    setEntityToBeEdited   : setStudentToBeEdited,
+    entityToBeRemoved     : studentToBeRemoved,
+    setEntityToBeRemoved  : setStudentToBeRemoved,
     search,
-  ]);
-
-  useEffect(() => {
-    setCurrentStudentsListPage(1);
-  }, [filter, search]); 
+    setSearch,
+    filter,
+    setFilter,
+    entityForm     : studentForm,
+    showEntityForm : showStudentForm,
+    activeModal,
+    setActiveModal,
+    pageLoading,
+    fetchAllData,
+    handleRemove : handleRemoveStudent,
+    loading,
+  } = useUsersList<
+    StudentListDTO,
+    StudentListRegisteredTodayDTO,
+    StudentToBeEdited,
+    StudentToBeRemoved,
+    SearchStudentsFilterValue,
+    StudentsPageModal
+  >(StudentService, "STUDENT");
 
   return (
     <AuthLayout tabSelected='STUDENTS'>
@@ -152,9 +102,9 @@ const Students = () => {
                     color="var(--secondary-color)"
                   />
                 </div>
-              ) : students.length > 0 ? (
+              ) : students.list.length > 0 ? (
                 <>
-                  {students.map((student) => (
+                  {students.list.map((student) => (
                     <ListCard
                       smTexts={false}
                       crudActions
@@ -173,18 +123,18 @@ const Students = () => {
                       items={[
                         {label: 'RA'               , value: student.ra           },
                         {label: 'E-mail'           , value: student.email        },
-                        {label: 'Data de cadastro' , value: student.registeredAt },
+                        {label: 'Data de cadastro' , value: dateTime(student.registeredAt) },
                       ]}
                     />
                   ))}
 
-                  {(totalStudentsListPages > 1) && (
+                  {(students.paginationTotalCount > 1) && (
                     <PaginationButtons
                       page={{
-                        current:  currentStudentsListPage,
-                        total:    totalStudentsListPages,
-                        next:     setCurrentStudentsListPage,
-                        previous: setCurrentStudentsListPage,
+                        current  : students.currentPaginationCount,
+                        total    : students.paginationTotalCount,
+                        next     : () => setStudents(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount + 1})),
+                        previous : () => setStudents(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount - 1})),
                       }}
                     />
                   )}
@@ -231,28 +181,28 @@ const Students = () => {
                       color="var(--secondary-color)"
                     />
                   </div>
-                  ) : studentsRegisteredToday.length > 0 ? (
+                  ) : studentsRegisteredInTheDay.list.length > 0 ? (
                     <>
-                      {studentsRegisteredToday.map((student) => (
+                      {studentsRegisteredInTheDay.list.map((student) => (
                         <ListCard
                           smTexts
                           crudActions={false}
                           key={student.ra}
                           title={student.name}
                           items={[
-                            {label: 'E-mail', value: student.email},
-                            {label: 'RA', value: student.ra},
+                            {label : 'E-mail', value: student.email},
+                            {label : 'RA', value: student.ra},
                           ]}
                         />
                       ))}
 
-                      {totalStudentsRegisteredTodayListPages > 1 &&
+                      {studentsRegisteredInTheDay.paginationTotalCount > 1 &&
                         <PaginationButtons
                           page={{
-                            current:  currentStudentsRegisteredTodayListPage,
-                            total:    totalStudentsRegisteredTodayListPages,
-                            next:     setCurrentStudentsRegisteredTodayListPage,
-                            previous: setCurrentStudentsRegisteredTodayListPage,
+                            current  : studentsRegisteredInTheDay.currentPaginationCount,
+                            total    : studentsRegisteredInTheDay.paginationTotalCount,
+                            next     : () => setStudentsRegisteredInTheDay(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount + 1})),
+                            previous : () => setStudentsRegisteredInTheDay(prev => ({...prev, currentPaginationCount: prev.currentPaginationCount - 1})),
                           }}
                         />
                       }
@@ -279,7 +229,7 @@ const Students = () => {
                       Cadastrados hoje:
                     </label>
                     <span>
-                      {registeredTodayStudentsCount}
+                      {studentsRegisteredInTheDay.totalCount}
                     </span>
                   </div>
                 </div>
@@ -290,7 +240,7 @@ const Students = () => {
                       Cadastrados:
                     </label>
                     <span>
-                      {studentsListCount}
+                      {students.totalCount}
                     </span>
                   </div>
                 </div>
