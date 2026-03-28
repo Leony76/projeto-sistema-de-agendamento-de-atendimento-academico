@@ -51,15 +51,14 @@ export class ProfessorController {
     res : Response,
   ):Promise<Response>{
     try {  
-      const { ra } = req.params;
+      const { id } = req.params;
       const {
-        studentName,
+        name,
         email,
+        discipline,
       } = req.body;
       
-      const response = await ProfessorService.edit(
-        String(ra), studentName, email
-      );
+      const response = await ProfessorService.edit( Number(id), name, email, discipline );
   
       return res.status(200).json(response);
     } catch (error:any) {
@@ -78,12 +77,9 @@ export class ProfessorController {
     res : Response,
   ):Promise<Response>{
     try {
-      const { name, email } = req.params;
+      const { id } = req.params;
 
-      const response = await ProfessorService.remove(
-        String(name), 
-        String(email),
-      );
+      const response = await ProfessorService.remove(Number(id));
 
       return res.status(200).json(response);
     } catch (error:any) {

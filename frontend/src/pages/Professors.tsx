@@ -8,7 +8,7 @@ import PaginationButtons from "../components/ui/PaginationButtons";
 import { ProfessorForm } from "./components/Professors/form";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
-import Select from "../components/select/Select";
+import { Select } from "../components/select";
 import Spinner from "../components/ui/Spinner";
 import { Input } from "../components/input";
 
@@ -28,26 +28,26 @@ const Professors = () => {
   const ProfessorService = new UsersService<ProfessorListDTO, ProfessorsListRegisteredTodayDTO, "PROFESSOR">("PROFESSOR");
 
   const { 
+    search,
+    filter,
+    loading,
+    activeModal,
+    pageLoading,
+    setActiveModal,
+    fetchAllData,
+    setSearch,
+    setFilter,
     overall               : professors,
-    setOverall            : setProfessors,
+    entityForm            : professorForm,
+    entityToBeEdited      : professorToBeEdited,
+    entityToBeRemoved     : professorToBeRemoved,
     registeredInTheDay    : professorsRegisteredInTheDay,
     setRegisteredInTheDay : setProfessorsRegisteredInTheDay,
-    entityToBeEdited      : professorToBeEdited,
-    setEntityToBeEdited   : setProfessorToBeEdited,
-    entityToBeRemoved     : professorToBeRemoved,
     setEntityToBeRemoved  : setProfessorToBeRemoved,
-    search,
-    setSearch,
-    filter,
-    setFilter,
-    entityForm     : professorForm,
-    showEntityForm : showProfessorForm,
-    activeModal,
-    setActiveModal,
-    pageLoading,
-    fetchAllData,
-    handleRemove : handleRemoveProfessor,
-    loading,
+    setEntityToBeEdited   : setProfessorToBeEdited,
+    handleRemove          : handleRemoveProfessor,
+    showEntityForm        : showProfessorForm,
+    setOverall            : setProfessors,
   } = useUsersList<
     ProfessorListDTO,
     ProfessorsListRegisteredTodayDTO,
@@ -87,8 +87,7 @@ const Professors = () => {
               className={style.search}
             />
 
-            <Select 
-              variant={"SEARCH"} 
+            <Select.Default 
               selectSchema={"SEARCH_PROFESSORS_FILTER"}
               value={filter}
               onChange={(e) => setFilter(e.target.value as SearchProfessorsFilterValue)}
@@ -118,7 +117,7 @@ const Professors = () => {
                         }, 
                         toRemove: () => {
                           setActiveModal('REMOVE_PROFESSOR');
-                          setProfessorToBeRemoved({email: professor.email, name: professor.name});
+                          setProfessorToBeRemoved({id: professor.id, name: professor.name});
                         }
                       }}
                       title={professor.name}
@@ -260,7 +259,7 @@ const Professors = () => {
           loading={loading}
           onClick={{
             confirm : () => handleRemoveProfessor(
-              professorToBeRemoved.email, 
+              professorToBeRemoved.id, 
             ),
             closeModal : () => {
               setActiveModal(null);

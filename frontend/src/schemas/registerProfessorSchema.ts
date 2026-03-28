@@ -11,7 +11,7 @@ const disciplines = [
 ] as const;
 
 export const registerProfessorSchema = z.object({
-  professorName: z.string().min(2, 'O nome do professor deve conter até 2 caracteres'),
+  name: z.string().min(2, 'O nome do professor deve conter até 2 caracteres'),
   email: z.email('E-mail inválido'),
   discipline: z.enum(disciplines, "A disciplina deve ser selecionada"),
 });

@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, ProfessorDiscipline } from '@prisma/client';
 import { prisma } from '../prisma';
 import { EditPromise } from './types/student/edit.promise';
 import { ProfessorsListPromise } from './types/professor/list.promise';
@@ -45,6 +45,7 @@ export class ProfessorService {
       prisma.user.findMany({
         where: whereCondition,
         select: { 
+          id         : true,
           name       : true, 
           email      : true, 
           discipline : true,
@@ -62,6 +63,7 @@ export class ProfessorService {
     ]);
   
     const professorsList: ProfessorListDTO[] = professorsListQuery.map((professor) => ({
+      id:           professor.id,
       name:         professor.name,
       email:        professor.email ??  '[E-mail não registrado]',
       discipline:   professor.discipline ?? 'PORTUGUESE',
@@ -107,6 +109,7 @@ export class ProfessorService {
       prisma.user.findMany({
         where: whereCondition,
         select: { 
+          id         : true,        
           name       : true, 
           email      : true, 
           discipline : true, 
@@ -124,6 +127,7 @@ export class ProfessorService {
     ]);
 
     const professorsRegisteredTodayList: ProfessorListDTO[] = professorListQuery.map((professor) => ({
+      id:           professor.id,
       name:         professor.name,
       email:        professor.email ?? '[E-mail não registrado]',
       discipline:   professor.discipline  ?? 'PORTUGUESE',
@@ -138,19 +142,21 @@ export class ProfessorService {
   }
 
   static async edit(
-    ra            : string,
-    professorName : string,
-    email         : string,
+    id         : number,
+    name       : string,
+    email      : string,
+    discipline : ProfessorDiscipline,
   ):Promise<EditPromise>{
-    const user = await prisma.user.findUnique({ where: { ra } });
+    const user = await prisma.user.findUnique({ where: { id } });
     
     if (!user) throw new Error('Aluno não encontrado para edição');
 
     const updateData = await prisma.user.update({
-      where: { ra },
+      where: { id },
       data: {
-        name: professorName,
+        name,
         email,
+        discipline,
       },
     });
 
@@ -164,27 +170,21 @@ export class ProfessorService {
   }
 
   static async remove( 
-    name  : string, 
-    email : string, 
+    id : number, 
   ):Promise<RemovePromise>{
     const user = await prisma.user.findUnique({ 
-      where: { name, email } 
+      where: { id } 
     });
 
     if (!user) throw new Error('Professor não encontrado para ser removido');
 
-    const removed = await prisma.user.update({
-      where: { 
-        name, 
-        email, 
-        role: 'PROFESSOR' 
-      },
+    await prisma.user.update({
+      where: { id },
       data: { status: 'REMOVED' },
     });
 
     return {
       success: 'Professor removido do sistema com sucesso!',
-      info: removed.name,
     }
   }
 }

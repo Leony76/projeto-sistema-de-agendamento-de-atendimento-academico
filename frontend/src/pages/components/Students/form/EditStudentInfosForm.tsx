@@ -12,7 +12,9 @@ import axios from "axios";
 import style from '../../../css/Students.module.css';
 import StudentPageFormsWrapper from "./StudentPageFormsWrapper";
 import { StudentToBeEdited } from "../../../../types/studentToBeEdited";
-import { StudentService } from "../../../../services/student.service";
+import { UsersService } from "../../../../services/users.service"; 
+import { StudentListDTO } from "../../../../types/dtos/studentListDTO";
+import { StudentListRegisteredTodayDTO } from "../../../../types/dtos/studentsListRegisteredTodayDTO";
 
 export type EditProps = RegisterProps & {
   initialData: StudentToBeEdited;
@@ -22,6 +24,8 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   const { loading, setLoading } = useLoadingState();
   const { showToast } = useToast();
 
+  const studentService = new UsersService<StudentListDTO, StudentListRegisteredTodayDTO, "STUDENT">("STUDENT");
+
   const { 
     register, 
     handleSubmit, 
@@ -29,7 +33,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   } = useForm<RegisterStudentSchema>({
     resolver: zodResolver(registerStudentSchema),
     values: {
-      studentName: initialData.name,
+      name: initialData.name,
       email: initialData.email,
       ra: initialData.ra,
     }
@@ -39,7 +43,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
     setLoading(true);
 
     try {
-      const response = await StudentService.edit(data, initialData.ra);
+      const response = await studentService.edit(data, initialData.id);
       
       showToast(response, 'SUCCESS');
       
@@ -60,8 +64,8 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
     description={`Editando informações de ${initialData.name}.`}
     >
       <Input.Form 
-        {...register('studentName')} 
-        error={errors.studentName?.message} 
+        {...register('name')} 
+        error={errors.name?.message} 
         label="Nome" 
         className={style.add_student_form} 
       />

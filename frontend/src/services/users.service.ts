@@ -37,22 +37,22 @@ export class UsersService<T, U, V extends Extract<SystemRoles, "STUDENT" | "PROF
   };
 
   async remove(
-    ra : string,
+    id : number,
   ):Promise<string> {
 
-    const URL:string = `/${USERS_ENDPOINTS_MAP[this.endpoint]}/remove/${ra}`;
+    const URL:string = `/${USERS_ENDPOINTS_MAP[this.endpoint]}/remove/${id}`;
 
-    const response = await api.put(URL, ra);
+    const response = await api.put(URL, id);
 
     return response.data.success;
   };
 
   async edit(
-    data      : REGISTER_SCHEMA_MAP[V],
-    studentRa : string,
+    data : REGISTER_SCHEMA_MAP[V],
+    id   : number,
   ):Promise<string> {
 
-    const URL:string = `/${USERS_ENDPOINTS_MAP[this.endpoint]}/update/${studentRa}`;
+    const URL:string = `/${USERS_ENDPOINTS_MAP[this.endpoint]}/update/${id}`;
 
     const response = await api.put(URL, data);
 

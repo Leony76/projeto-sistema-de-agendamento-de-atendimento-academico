@@ -42,6 +42,7 @@ export class StudentService {
       prisma.user.findMany({
         where: whereCondition,
         select: { 
+          id:        true,
           name:      true, 
           email:     true, 
           ra:        true, 
@@ -59,6 +60,7 @@ export class StudentService {
     ]);
   
     const studentsList: StudentListDTO[] = studentsListQuery.map((student) => ({
+      id:           student.id,
       name:         student.name,
       email:        student.email ??  '[E-mail não registrado]',
       ra:           student.ra    ??  '[RA não registrado]',
@@ -100,6 +102,7 @@ export class StudentService {
       prisma.user.findMany({
         where: whereCondition,
         select: { 
+          id:        true,
           name:      true, 
           email:     true, 
           ra:        true, 
@@ -115,6 +118,7 @@ export class StudentService {
     ]);
 
     const studentsRegisteredTodayList: StudentListDTO[] = studentsListQuery.map((student) => ({
+      id:           student.id,
       name:         student.name,
       email:        student.email ?? '[E-mail não registrado]',
       ra:           student.ra    ?? '[RA não registrado]',
@@ -129,48 +133,41 @@ export class StudentService {
   }
 
   static async edit(
-    ra          : string,
-    studentName : string,
-    email       : string,
-  ):Promise<EditPromise>{
-    const user = await prisma.user.findUnique({ where: { ra } });
+    id    : number,
+    name  : string,
+    email : string,
+  ):Promise<{ success: string }>{
+    const user = await prisma.user.findUnique({ where: { id } });
     
     if (!user) throw new Error('Aluno não encontrado para edição');
 
-    const updateData = await prisma.user.update({
-      where: { ra },
+    await prisma.user.update({
+      where: { id },
       data: {
-        name: studentName,
+        name,
         email,
       },
     });
 
     return {
       success: 'Edição efetuada com sucesso!',
-      newData: {
-        name:  updateData.name,
-        email: updateData.email,
-      },
     };
   }
 
   static async remove( 
-    ra : string 
+    id : number, 
   ):Promise<RemovePromise>{
-    const user = await prisma.user.findUnique({ 
-      where: { ra } 
-    });
+    const user = await prisma.user.findUnique({ where: { id } });
 
     if (!user) throw new Error('Aluno não encontrado para ser removido');
 
     const remove = await prisma.user.update({
-      where: { ra },
+      where: { id },
       data: { status: 'REMOVED' },
     });
 
     return {
       success: 'Aluno removido do sistema com sucesso!',
-      info: remove.ra,
     }
   }
 }

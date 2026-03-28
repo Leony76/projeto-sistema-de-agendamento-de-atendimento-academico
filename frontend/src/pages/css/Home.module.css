@@ -19,8 +19,8 @@
 
 .general_infos_container {
   display: flex;
-  gap: 8px;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .container_base_style {

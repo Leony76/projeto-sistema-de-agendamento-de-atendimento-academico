@@ -27,26 +27,26 @@ const Students = () => {
   const StudentService = new UsersService<StudentListDTO, StudentListRegisteredTodayDTO, "STUDENT">("STUDENT");
 
   const { 
+    filter,
+    search,
+    activeModal,
+    pageLoading,
+    setActiveModal,
+    fetchAllData,
+    setFilter,
+    setSearch,
+    loading,
     overall               : students,
-    setOverall            : setStudents,
+    entityForm            : studentForm,
+    entityToBeEdited      : studentToBeEdited,
+    entityToBeRemoved     : studentToBeRemoved,
     registeredInTheDay    : studentsRegisteredInTheDay,
     setRegisteredInTheDay : setStudentsRegisteredInTheDay,
-    entityToBeEdited      : studentToBeEdited,
-    setEntityToBeEdited   : setStudentToBeEdited,
-    entityToBeRemoved     : studentToBeRemoved,
     setEntityToBeRemoved  : setStudentToBeRemoved,
-    search,
-    setSearch,
-    filter,
-    setFilter,
-    entityForm     : studentForm,
-    showEntityForm : showStudentForm,
-    activeModal,
-    setActiveModal,
-    pageLoading,
-    fetchAllData,
-    handleRemove : handleRemoveStudent,
-    loading,
+    setEntityToBeEdited   : setStudentToBeEdited,
+    handleRemove          : handleRemoveStudent,
+    showEntityForm        : showStudentForm,
+    setOverall            : setStudents,
   } = useUsersList<
     StudentListDTO,
     StudentListRegisteredTodayDTO,
@@ -116,7 +116,7 @@ const Students = () => {
                         }, 
                         toRemove: () => {
                           setActiveModal('REMOVE_STUDENT');
-                          setStudentToBeRemoved({ra: student.ra, name: student.name});
+                          setStudentToBeRemoved({id: student.id, name: student.name});
                         }
                       }}
                       title={student.name}
@@ -257,7 +257,7 @@ const Students = () => {
           isOpen={activeModal === 'REMOVE_STUDENT'}
           loading={loading}
           onClick={{
-            confirm    : () => handleRemoveStudent(studentToBeRemoved.ra),
+            confirm    : () => handleRemoveStudent(studentToBeRemoved.id),
             closeModal : () => {
               setActiveModal(null);
               setStudentToBeRemoved(null);

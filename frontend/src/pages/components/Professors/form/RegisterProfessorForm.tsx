@@ -42,11 +42,11 @@ const Register = ({
     if (loading) return; 
     setLoading(true);
 
-    const fetchURL:string = `/auth/register/professor`;
-    const payload:RegisterProfessorPayload = {
+    const fetchURL : string = `/auth/register/professor`;
+    const payload : RegisterProfessorPayload = {
       discipline : data.discipline,
       email      : data.email,
-      name       : data.professorName 
+      name       : data.name 
     };
 
     try {
@@ -73,8 +73,8 @@ const Register = ({
     onSubmit={handleSubmit(handleRegisterProfessor)}
     >
       <Input.Form 
-        {...register('professorName')}
-        error={errors.professorName?.message}
+        {...register('name')}
+        error={errors.name?.message}
         label={'Nome do professor'}
         placeholder='Insira o nome do professor'
         className={style.add_student_form}
@@ -88,6 +88,7 @@ const Register = ({
       />
       <Select.Form
         {...register('discipline')}
+        label='Disciplina'
         error={errors.discipline?.message}
         className={style.add_student_form}
         selectSchema={'PROFESSORS_DISCIPLINES_OPTIONS'}

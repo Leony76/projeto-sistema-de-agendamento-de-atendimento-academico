@@ -11,7 +11,10 @@ import style from '../../../css/Students.module.css';
 import ProfessorPageFormsWrapper from "./ProfessorPageFormsWrapper";
 import { ProfessorToBeEdited } from "../../../../types/professorToBeEdited";
 import { registerProfessorSchema, RegisterProfessorSchema } from "../../../../schemas/registerProfessorSchema";
-import { ProfessorService } from "../../../../services/professor.service";
+import { UsersService } from "../../../../services/users.service"; 
+import { ProfessorListDTO } from "../../../../types/dtos/professorListDTO";
+import { ProfessorsListRegisteredTodayDTO } from "../../../../types/dtos/professorsListRegisteredTodayDTO";
+import { Select } from "../../../../components/select";
 
 export type EditProps = RegisterProps & {
   initialData: ProfessorToBeEdited;
@@ -21,6 +24,8 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   const { loading, setLoading } = useLoadingState();
   const { showToast } = useToast();
 
+  const ProfessorService = new UsersService<ProfessorListDTO, ProfessorsListRegisteredTodayDTO, "PROFESSOR">("PROFESSOR");
+
   const { 
     register, 
     handleSubmit, 
@@ -28,7 +33,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   } = useForm<RegisterProfessorSchema>({
     resolver: zodResolver(registerProfessorSchema),
     values: {
-      professorName : initialData.name,
+      name : initialData.name,
       email         : initialData.email,
       discipline    : initialData.discipline,
     }
@@ -40,7 +45,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
     setLoading(true);
 
     try {
-      const response = await ProfessorService.edit(data, initialData.email);
+      const response = await ProfessorService.edit(data, initialData.id);
       
       showToast(response, 'SUCCESS');
       
@@ -61,8 +66,8 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
     description={`Editando informações de ${initialData.name}.`}
     >
       <Input.Form 
-        {...register('professorName')} 
-        error={errors.professorName?.message} 
+        {...register('name')} 
+        error={errors.name?.message} 
         label="Nome" 
         className={style.add_student_form} 
       />
@@ -72,8 +77,9 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
         label="E-mail" 
         className={style.add_student_form} 
       />
-      <Input.Form 
-        {...register('discipline')} 
+      <Select.Form 
+        {...register('discipline')}
+        selectSchema="PROFESSORS_DISCIPLINES_OPTIONS" 
         error={errors.discipline?.message} 
         label="Disciplina" 
         className={style.add_student_form} 

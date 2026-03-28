@@ -8,7 +8,7 @@ import { UsersListPromise } from "../types/promises/usersListPromisse";
 type EntityService<T, R, E, RM, F, M> = {
   list: (page: number, search: string, filter: any) => Promise<UsersListPromise<T>>;
   registeredInTheDayList: (page: number) => Promise<UsersListPromise<R>>;
-  remove: (id: string) => Promise<string>;
+  remove: (id: number) => Promise<string>;
 }
 
 export const useUsersList = <T, R, E, RM, F, M>(
@@ -82,13 +82,13 @@ export const useUsersList = <T, R, E, RM, F, M>(
   };
 
   const handleRemove = async(
-    email : string,
+    id : number,
   ):Promise<void> => {
     if (loading) return;
     setLoading(true);
 
     try {
-      const response = await service.remove(email);
+      const response = await service.remove(id);
       fetchAllData();
       showToast(response, 'SUCCESS');
     } catch (error:any) {

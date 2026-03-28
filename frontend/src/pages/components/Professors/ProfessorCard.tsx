@@ -80,8 +80,8 @@ const ProfessorCard = (props:Props) => {
           onClick={() => {
             onClick.setActiveModal('REMOVE_PROFESSOR');
             onClick.setProfessorToBeRemoved({
-              email : professor.email,
-              name  : professor.name,
+              id   : professor.id,
+              name : professor.name,
             });
           }}
           icon={FaTrashAlt}>

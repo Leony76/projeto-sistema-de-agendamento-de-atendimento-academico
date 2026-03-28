@@ -1,7 +1,7 @@
 import { StudentLoginFormSchema, ManagerLoginFormSchema } from "../schemas/loginSchema";
 import { isStudentData } from "../types/guards/managerAndStudentGuard";
-import { ManagerPayload } from "../types/payloads/loginManagerPayload";
-import { StudentPayload } from "../types/payloads/loginStudentLoginPayload";
+import { LoginManagerPayload } from "../types/payloads/loginManagerPayload";
+import { LoginStudentPayload } from "../types/payloads/loginStudentLoginPayload";
 import { LoginPromise } from "../types/promises/login.promise";
 import api from "../api";
 import { SystemRoles } from "../types/systemRoles";
@@ -15,14 +15,14 @@ export class AuthService {
     
     const fetchURL:string = `/auth/login/${role.toLowerCase()}`;
 
-    const payload: ManagerPayload | StudentPayload = isStudentData(data) 
+    const payload: LoginManagerPayload | LoginStudentPayload = isStudentData(data) 
       ? { ra    : data.ra    , password: data.password }
       : { email : data.email , password: data.password };
 
     const response = await api.post(fetchURL, payload);
 
     if (response.data.error) {
-       throw new Error(response.data.error);
+      throw new Error(response.data.error);
     }
 
     return {

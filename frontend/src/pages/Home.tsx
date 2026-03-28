@@ -7,7 +7,7 @@ import { FaCalendarDay } from "react-icons/fa6";
 import style from './css/Home.module.css';
 import { PiStudentBold } from "react-icons/pi";
 import { Input } from "../components/input";
-import Select from "../components/select/Select";
+import { Select } from "../components/select";
 
 const Home = () => {
 
@@ -16,7 +16,7 @@ const Home = () => {
     {icon: BsFillClockFill  , title: "Agendamentos pendentes"  , metric: 12},
     {icon: FaCalendarCheck  , title: "Atendimentos concluídos" , metric: 12},
     {icon: FaCalendarDay    , title: "Atendimentos hoje"       , metric: 12},
-    {icon: PiStudentBold    , title: "Alunos"                  , metric: 12},
+    {icon: PiStudentBold    , title: "Usuários cadastrados"    , metric: 12},
   ];
 
   return (
@@ -33,6 +33,7 @@ const Home = () => {
               />
             ))}
           </div>
+
           <div className={style.appointments_list_container}>
             <h3>
               Agendamentos
@@ -44,8 +45,7 @@ const Home = () => {
                 className={style.search}
               />
 
-              <Select 
-                variant={"SEARCH"} 
+              <Select.Default 
                 selectSchema={"SEARCH_STUDENTS_FILTER"}                
               />
             </div>

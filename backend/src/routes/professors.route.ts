@@ -9,7 +9,7 @@ router.use(authenticate);
 
 router.get('/list'                 , authorize(['MANAGER']), ProfessorController.list);
 router.get('/registered-today-list', authorize(['MANAGER']), ProfessorController.registeredTodayList);
-router.put('/update/:ra'           , authorize(['MANAGER']), ProfessorController.edit);
-router.put('/remove/:ra'           , authorize(['MANAGER']), ProfessorController.remove);
+router.put('/update/:id'           , authorize(['MANAGER']), ProfessorController.edit);
+router.put('/remove/:id'           , authorize(['MANAGER']), ProfessorController.remove);
 
 export default router;
