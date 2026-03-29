@@ -1,2 +1,3 @@
-# projeto-sistema-de-agendamento-de-atendimento-academico
-Projeto da disciplina de Gestão de Projetos
+# Sistema de Agendamento de Atendimento Acadêmico
+
+Projeto Pessoal meu
