@@ -1,23 +1,24 @@
 import { useForm } from "react-hook-form";
-import { RegisterProps } from "./RegisterProfessorForm";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "../../../../contexts/ToastContext";
-import { useLoadingState } from "../../../../hooks/useLoadingState";
+import { useToast } from "../../../contexts/ToastContext";
+import { useLoadingState } from "../../../hooks/useLoadingState";
 
-import Button from "../../../../components/button/Button";
-import { Input } from "../../../../components/input";
+import Button from "../../button/Button";
+import { Input } from "../../input";
 
-import style from '../../../css/Students.module.css';
-import ProfessorPageFormsWrapper from "./ProfessorPageFormsWrapper";
-import { ProfessorToBeEdited } from "../../../../types/professorToBeEdited";
-import { registerProfessorSchema, RegisterProfessorSchema } from "../../../../schemas/registerProfessorSchema";
-import { UsersService } from "../../../../services/users.service"; 
-import { ProfessorListDTO } from "../../../../types/dtos/professorListDTO";
-import { ProfessorsListRegisteredTodayDTO } from "../../../../types/dtos/professorsListRegisteredTodayDTO";
-import { Select } from "../../../../components/select";
+import style from '../css/Edit.module.css';
+import { Form } from "..";
+import { ProfessorToBeEdited } from "../../../types/professorToBeEdited";
+import { registerProfessorSchema, RegisterProfessorSchema } from "../../../schemas/registerProfessorSchema";
+import { UsersService } from "../../../services/users.service";
+import { ProfessorListDTO } from "../../../types/dtos/professorListDTO";
+import { ProfessorsListRegisteredTodayDTO } from "../../../types/dtos/professorsListRegisteredTodayDTO";
+import { Select } from "../../select";
 
-export type EditProps = RegisterProps & {
+export type EditProps = {
   initialData: ProfessorToBeEdited;
+  onClick: { closeForm: () => void };
+  onSuccess: () => Promise<void>;
 }
 
 const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
@@ -59,7 +60,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
   };
 
   return (
-    <ProfessorPageFormsWrapper 
+    <Form.Wrapper.Default
     title="Editar professor"
     onClose={onClick.closeForm}
     onSubmit={handleSubmit(handleUpdate)}
@@ -69,20 +70,20 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
         {...register('name')} 
         error={errors.name?.message} 
         label="Nome" 
-        className={style.add_student_form} 
+        className={style.input_form} 
       />
       <Input.Form 
         {...register('email')} 
         error={errors.email?.message} 
         label="E-mail" 
-        className={style.add_student_form} 
+        className={style.input_form} 
       />
       <Select.Form 
         {...register('discipline')}
         selectSchema="PROFESSORS_DISCIPLINES_OPTIONS" 
         error={errors.discipline?.message} 
         label="Disciplina" 
-        className={style.add_student_form} 
+        className={style.input_form} 
       />
       
       <Button 
@@ -95,7 +96,7 @@ const Edit = ({ onClick, onSuccess, initialData }: EditProps) => {
       }}>
         {loading ? 'Salvando' : 'Salvar Alterações'}
       </Button>
-    </ProfessorPageFormsWrapper>
+    </Form.Wrapper.Default>
   );
 };
 

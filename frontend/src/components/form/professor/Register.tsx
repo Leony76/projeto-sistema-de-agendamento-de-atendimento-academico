@@ -1,21 +1,19 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useToast } from '../../../../contexts/ToastContext';
-import { useLoadingState } from '../../../../hooks/useLoadingState';
-import { RegisterStudentPayload } from '../../../../types/payloads/registerStudentPayload';
-import { RegisterStudentSchema } from '../../../../schemas/registerStudentSchema';
+import { useToast } from '../../../contexts/ToastContext';
+import { useLoadingState } from '../../../hooks/useLoadingState';
 
-import Button from '../../../../components/button/Button';
-import { Input } from '../../../../components/input';
-import ProfessorPageFormsWrapper from './ProfessorPageFormsWrapper';
+import Button from '../../../components/button/Button';
+import { Input } from '../../../components/input';
+import { Form } from '..';
 
-import style from '../../../css/Students.module.css';
-import api from '../../../../api';
-import { registerProfessorSchema, RegisterProfessorSchema } from '../../../../schemas/registerProfessorSchema';
-import { RegisterProfessorPayload } from '../../../../types/payloads/registerProfessorPayload';
-import { Select } from '../../../../components/select';
+import style from '../css/Register.module.css';
+import api from '../../../api';
+import { registerProfessorSchema, RegisterProfessorSchema } from '../../../schemas/registerProfessorSchema';
+import { RegisterProfessorPayload } from '../../../types/payloads/registerProfessorPayload';
+import { Select } from '../../../components/select';
 
-export type RegisterProps = {
+type RegisterProps = {
   onClick: { closeForm: () => void };
   onSuccess: () => Promise<void>;
 }
@@ -66,7 +64,7 @@ const Register = ({
   };
 
   return (
-    <ProfessorPageFormsWrapper
+    <Form.Wrapper.Default
     description='Insira as informações que os campos abaixo pedem para cadastrar um professor no sistema!'
     title='Cadastrar professor'
     onClose={onClick.closeForm}
@@ -77,24 +75,24 @@ const Register = ({
         error={errors.name?.message}
         label={'Nome do professor'}
         placeholder='Insira o nome do professor'
-        className={style.add_student_form}
+        className={style.input_form}
       />
       <Input.Form 
         {...register('email')}
         error={errors.email?.message}
         label={'E-mail institucional'}
         placeholder='Insira o e-mail institucional do professor'
-        className={style.add_student_form}
+        className={style.input_form}
       />
       <Select.Form
         {...register('discipline')}
         label='Disciplina'
         error={errors.discipline?.message}
-        className={style.add_student_form}
+        className={style.input_form}
         selectSchema={'PROFESSORS_DISCIPLINES_OPTIONS'}
       />
 
-      <div className={style.register_student_submit_button_infos_container}>
+      <div className={style.register_submit_button_infos_container}>
         <Button 
         loading={loading}
         buttonStyle={{
@@ -110,7 +108,7 @@ const Register = ({
           Após o cadastro, o professor cadastrado receberá um e-mail do primeiro acesso ao sistema e poderá acessá-lo com o e-mail e uma senha provisória aleatóriamente gerada.
         </p>
       </div>
-    </ProfessorPageFormsWrapper>
+    </Form.Wrapper.Default>
   );
 }
 

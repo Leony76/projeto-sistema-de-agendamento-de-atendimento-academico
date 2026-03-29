@@ -1,0 +1,14 @@
+.input_form label {
+  color: orange;
+  text-shadow: none;
+}
+
+.input_form input {
+  border-color: orange;
+  color: var(--secondary-color);
+} .input_form input:focus {
+  border-color: rgb(255, 206, 116);
+} .input_form input::placeholder {
+  color: rgba(128, 128, 128, 0.457);
+  text-shadow: none;
+}

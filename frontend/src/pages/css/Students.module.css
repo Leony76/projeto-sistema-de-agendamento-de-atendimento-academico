@@ -8,7 +8,7 @@
   grid-template-columns: 1fr;
 }
 
-.students_list_container {
+.list_container {
   background-color: var(--primary-color);
   border-radius: 8px;
   box-shadow: 0px 0px 5px rgba(128, 128, 128, 0.324);
@@ -19,76 +19,17 @@
   padding: 10px 10px;
 }
 
-.students_list_container h2 {
+.list_container h2 {
   color: var(--dark-secondary-color);
 }
 
-.add_student_container {
-  background-color: var(--primary-color);
-  composes: students_list_container;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 15px;
-}
-
-.add_student_container h3 {
-  font-size: 26px;
-  color: var(--dark-secondary-color);
-}
-
-.add_student_container p {
-  font-size: 15px;
-  color: var(--secondary-color);
-}
-
-.add_student_container form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 15px;
-}
-
-.add_student_form label {
-  color: orange;
-  text-shadow: none;
-}
-
-.add_student_form input {
-  border-color: orange;
-  color: var(--secondary-color);
-} .add_student_form input:focus {
-  border-color: rgb(255, 206, 116);
-} .add_student_form input::placeholder {
-  color: rgba(128, 128, 128, 0.457);
-  text-shadow: none;
-}
-
-.title_switch_show_form_container {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.title_switch_show_form_container svg {
-  color: var(--dark-secondary-color);
-  font-size: 28px;
-  padding: 4px;
-  cursor: pointer;
-  transition: 0.25s;
-} .title_switch_show_form_container svg:hover {
-  background-color: rgba(135, 207, 235, 0.196);
-  border-radius: 25%;
-}
-
-.registered_students_today_container {
+.registered_today_container {
   display: grid;
   grid-template-rows: 1fr 100px;
   row-gap: 10px;
 }
 
-.registered_students_today_container div {
+.registered_today_container div {
   background-color: var(--primary-color);
 }
 
@@ -102,7 +43,7 @@
   flex: 3;
 }
 
-.search_filter_container .add_student {
+.search_filter_container .add {
   flex: 1.25;
 }
 
@@ -110,7 +51,7 @@
   flex: 1;
 }
 
-.students_list {
+.list {
   background-color: white;
   height: 56.5vh;
   width: 100%;
@@ -120,22 +61,22 @@
 }
 
 @media (min-height: 600px) {
-  .students_list { height: 60.5vh; }
+  .list { height: 60.5vh; }
 } @media (min-height: 700px) {
-  .students_list { height: 65vh; }
+  .list { height: 65vh; }
 } @media (min-height: 740px) {
-  .students_list { height: 67vh; }
+  .list { height: 67vh; }
 } @media (min-height: 800px) {
-  .students_list { height: 70.5vh; }
+  .list { height: 70.5vh; }
 } @media (min-height: 1100px) {
-  .students_list { height: 77.5vh; }
+  .list { height: 77.5vh; }
 } @media (min-height: 1600px) {
-  .students_list { height: 84.5vh; }
+  .list { height: 84.5vh; }
 } @media (min-height: 2200px) {
-  .students_list { height: 88.5vh; }
+  .list { height: 88.5vh; }
 } 
 
-.students_list .overflow_container {
+.list .overflow_container {
   display: flex;
   flex-direction: column;
   /* background-color: red; */
@@ -157,17 +98,17 @@
   background: var(--dark-secondary-color);
 }
 
-.registered_students_today { 
-  composes: students_list_container;
+.registered_today { 
+  composes: list_container;
   padding: 10px;
 }
 
-.registered_students_today h3,
-.registered_students_count h3 {
+.registered_today h3,
+.registered_count h3 {
   color: var(--dark-secondary-color );
 }
 
-.registered_students_today .registered_students_today_list {
+.registered_today .registered_today_list {
   height: calc(45vh + .5vh);
   width: 100%;
   background-color: white;
@@ -177,22 +118,22 @@
 }
 
 @media (min-height: 600px) {
-  .registered_students_today .registered_students_today_list { height: calc(47vh + 3vh); }
+  .registered_today .registered_today_list { height: calc(47vh + 3vh); }
 } @media (min-height: 700px) {
-  .registered_students_today .registered_students_today_list { height: calc(50vh + 6vh); }
+  .registered_today .registered_today_list { height: calc(50vh + 6vh); }
 } @media (min-height: 740px) {
-  .registered_students_today .registered_students_today_list { height: calc(52vh + 7vh); }
+  .registered_today .registered_today_list { height: calc(52vh + 7vh); }
 } @media (min-height: 800px) {
-  .registered_students_today .registered_students_today_list { height: calc(54vh + 9vh); }
+  .registered_today .registered_today_list { height: calc(54vh + 9vh); }
 } @media (min-height: 1100px) {
-  .registered_students_today .registered_students_today_list { height: calc(60vh + 13vh); }
+  .registered_today .registered_today_list { height: calc(60vh + 13vh); }
 } @media (min-height: 1600px) {
-  .registered_students_today .registered_students_today_list { height: calc(65.5vh + 16vh); }
+  .registered_today .registered_today_list { height: calc(65.5vh + 16vh); }
 } @media (min-height: 2200px) {
-  .registered_students_today .registered_students_today_list { height: calc(67.5vh + 18vh); }
+  .registered_today .registered_today_list { height: calc(67.5vh + 18vh); }
 } 
 
-.registered_students_today_list .overflow_container {
+.registered_today_list .overflow_container {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -203,23 +144,23 @@
   overflow-y: auto;
 }
 
-.student_registered_today .student {
+.registered_today .entity {
   padding: 5px;
   box-shadow: 0px 0px 3px rgba(128, 128, 128, 0.452);
   border-radius: 7px;
 }
 
-.student_registered_today .student .name {
+.registered_today .entity .name {
   font-size: 15px;
 }
 
-.student_registered_today .student span.ra,
-.student_registered_today .student span.email {
+.registered_today .entity span.ra,
+.registered_today .entity span.email {
   font-size: 10px;
 }
 
-.registered_students_count {
-  composes: students_list_container;
+.registered_count {
+  composes: list_container;
 }
 
 div.statistics_cards_container {
@@ -254,12 +195,6 @@ div.statistics_cards_container {
 .statistics_cards_container .statistic_card div span {
   color: orange;
   font-weight: 700;
-}
-
-.register_student_submit_button_infos_container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 div.loading_container {

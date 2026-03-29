@@ -1,4 +1,4 @@
-import style from '../../../css/Students.module.css';
+import style from './css/Default.module.css';
 import { FaChevronLeft } from "react-icons/fa6";
 
 export type Props = {
@@ -9,7 +9,7 @@ export type Props = {
   onClose:     () => void;
 }
 
-const StudentPageFormsWrapper = ({
+const Default = ({
   children,
   description,
   title,
@@ -17,7 +17,7 @@ const StudentPageFormsWrapper = ({
   onSubmit,
 }:Props) => {  
   return (
-    <div className={style.add_student_container}>
+    <div className={style.add_container}>
       <div className={style.title_switch_show_form_container}>
         <h3>
           {title}
@@ -37,4 +37,4 @@ const StudentPageFormsWrapper = ({
   );
 }
 
-export default StudentPageFormsWrapper;
+export default Default;

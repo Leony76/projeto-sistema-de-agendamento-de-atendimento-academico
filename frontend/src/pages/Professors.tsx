@@ -5,7 +5,7 @@ import { ProfessorsListRegisteredTodayDTO } from "../types/dtos/professorsListRe
 
 import NoAvailableContent from "../components/ui/NoAvailableContent";
 import PaginationButtons from "../components/ui/PaginationButtons";
-import { ProfessorForm } from "./components/Professors/form";
+import { Form } from "../components/form"; 
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
 import { Select } from "../components/select";
@@ -18,7 +18,7 @@ import { Modal } from "../components/modal";
 import { ProfessorListDTO } from "../types/dtos/professorListDTO";
 import { ProfessorToBeEdited } from "../types/professorToBeEdited";
 import { ProfessorToBeRemoved } from "../types/professorToBeRemoved";
-import ListCard from "../components/ui/ListCard";
+import { Card } from "../components/card";
 import { PROFESSOR_DISCIPLINES_MAP } from "../maps/professorDisciplinesMap";
 import { UsersService } from "../services/users.service";
 import { useUsersList } from "../hooks/useUsersList";
@@ -60,14 +60,14 @@ const Professors = () => {
   return (
     <AuthLayout tabSelected='PROFESSORS'>
       <div className={style.grid_container}>
-        <div className={style.students_list_container}>  
+        <div className={style.list_container}>  
           <h2>
             Professores
           </h2>
 
           <div className={style.search_filter_container}>
             <Button 
-            className={style.add_student}
+            className={style.add}
             buttonStyle={{
               fontSize: 'MD',
               border:   "XL",
@@ -95,7 +95,7 @@ const Professors = () => {
             />
           </div>
 
-          <div className={style.students_list}>  
+          <div className={style.list}>  
             <div className={style.overflow_container}>
               {pageLoading ? (
                 <div className={style.loading_container}>
@@ -106,7 +106,7 @@ const Professors = () => {
               ) : professors.list.length > 0 ? (
                 <>
                   {professors.list.map((professor) => (
-                    <ListCard
+                    <Card.List
                       smTexts={false}
                       crudActions
                       key={professor.email}
@@ -154,12 +154,12 @@ const Professors = () => {
         </div>
 
         {professorForm === 'REGISTER' ? (
-          <ProfessorForm.Register
+          <Form.Professor.Register
             onClick={{ closeForm: () => showProfessorForm(null)}}
             onSuccess={fetchAllData}
           />
         ) : (professorForm === 'EDIT' && professorToBeEdited) ? (
-          <ProfessorForm.Edit
+          <Form.Professor.Edit
             onClick={{ closeForm: () => {
               showProfessorForm(null);
               setProfessorToBeEdited(null);
@@ -168,13 +168,13 @@ const Professors = () => {
             initialData={professorToBeEdited}
           />
         ) : (
-          <div className={style.registered_students_today_container}>
-            <div className={style.registered_students_today}>
+          <div className={style.registered_today_container}>
+            <div className={style.registered_today}>
               <h3>
                 Cadastrados hoje
               </h3>
 
-              <div className={style.registered_students_today_list}>
+              <div className={style.registered_today_list}>
                 <div className={style.overflow_container}>
                   {pageLoading ? (
                     <div className={style.loading_container}>
@@ -185,7 +185,7 @@ const Professors = () => {
                   ) : professorsRegisteredInTheDay.list.length > 0 ? (
                     <>
                       {professorsRegisteredInTheDay.list.map((professor) => (
-                        <ListCard
+                        <Card.List
                           key={professor.email}
                           title={professor.name} 
                           crudActions={false} 
@@ -218,7 +218,7 @@ const Professors = () => {
               </div>
             </div>
 
-            <div className={style.registered_students_count}>
+            <div className={style.registered_count}>
               <h3>
                 Estatísticas
               </h3>

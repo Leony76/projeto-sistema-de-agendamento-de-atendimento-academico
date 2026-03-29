@@ -1,7 +1,7 @@
 import { FaCalendarAlt } from "react-icons/fa";
 import AuthLayout from "../components/layout/AuthLayout"
 import { BsFillClockFill } from "react-icons/bs";
-import GeneralInfosCard from "./components/Home/GeneralInfosCard";
+import { Card } from "../components/card";
 import { FaCalendarCheck } from "react-icons/fa6";
 import { FaCalendarDay } from "react-icons/fa6";
 import style from './css/Home.module.css';
@@ -25,7 +25,7 @@ const Home = () => {
         <div className={style.left_grid_container}>
           <div className={style.general_infos_container}>
             {generalInfosMap.map((info) => (
-              <GeneralInfosCard
+              <Card.GeneralInfos
                 key={info.title}
                 icon={info.icon}
                 title={info.title}

@@ -7,7 +7,7 @@ type Props = {
   metric: number | string;
 };
 
-const GeneralInfosCard = ({
+const GeneralInfos = ({
   title,
   icon: Icon,
   metric, 
@@ -25,4 +25,4 @@ const GeneralInfosCard = ({
   )
 }
 
-export default GeneralInfosCard
+export default GeneralInfos

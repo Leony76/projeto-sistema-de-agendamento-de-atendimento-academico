@@ -6,8 +6,8 @@ import { StudentListRegisteredTodayDTO } from "../types/dtos/studentsListRegiste
 
 import NoAvailableContent from "../components/ui/NoAvailableContent";
 import PaginationButtons from "../components/ui/PaginationButtons";
-import { StudentForm } from "./components/Students/form";
-import  ListCard from "../components/ui/ListCard";
+import { Form } from "../components/form";
+import { Card } from "../components/card";
 import AuthLayout from '../components/layout/AuthLayout';
 import Button from '../components/button/Button';
 import { Select } from "../components/select";
@@ -59,14 +59,14 @@ const Students = () => {
   return (
     <AuthLayout tabSelected='STUDENTS'>
       <div className={style.grid_container}>
-        <div className={style.students_list_container}>  
+        <div className={style.list_container}>  
           <h2>
             Alunos
           </h2>
 
           <div className={style.search_filter_container}>
             <Button 
-            className={style.add_student}
+            className={style.add}
             buttonStyle={{
               fontSize: 'MD',
               border:   "XL",
@@ -94,7 +94,7 @@ const Students = () => {
             />
           </div>
 
-          <div className={style.students_list}>  
+          <div className={style.list}>  
             <div className={style.overflow_container}>
               {pageLoading ? (
                 <div className={style.loading_container}>
@@ -105,7 +105,7 @@ const Students = () => {
               ) : students.list.length > 0 ? (
                 <>
                   {students.list.map((student) => (
-                    <ListCard
+                    <Card.List
                       smTexts={false}
                       crudActions
                       key={student.ra}
@@ -153,12 +153,12 @@ const Students = () => {
         </div>
 
         {studentForm === 'REGISTER' ? (
-          <StudentForm.Register
+          <Form.Student.Register
             onClick={{ closeForm: () => showStudentForm(null)}}
             onSuccess={fetchAllData}
           />
         ) : (studentForm === 'EDIT' && studentToBeEdited) ? (
-          <StudentForm.Edit
+          <Form.Student.Edit
             onClick={{ closeForm: () => {
               showStudentForm(null);
               setStudentToBeEdited(null);
@@ -167,13 +167,13 @@ const Students = () => {
             initialData={studentToBeEdited}
           />
         ) : (
-          <div className={style.registered_students_today_container}>
-            <div className={style.registered_students_today}>
+          <div className={style.registered_today_container}>
+            <div className={style.registered_today}>
               <h3>
                 Cadastrados hoje
               </h3>
 
-              <div className={style.registered_students_today_list}>
+              <div className={style.registered_today_list}>
                 <div className={style.overflow_container}>
                   {pageLoading ? (
                     <div className={style.loading_container}>
@@ -184,7 +184,7 @@ const Students = () => {
                   ) : studentsRegisteredInTheDay.list.length > 0 ? (
                     <>
                       {studentsRegisteredInTheDay.list.map((student) => (
-                        <ListCard
+                        <Card.List
                           smTexts
                           crudActions={false}
                           key={student.ra}
@@ -217,7 +217,7 @@ const Students = () => {
               </div>
             </div>
 
-            <div className={style.registered_students_count}>
+            <div className={style.registered_count}>
               <h3>
                 Estatísticas
               </h3>
