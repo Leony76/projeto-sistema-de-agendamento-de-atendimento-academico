@@ -6,7 +6,6 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   customStyle?: {
     label?     : string;
     input?     : string;
-    container? : string;
   };
 };
 
@@ -22,7 +21,7 @@ const Search = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
   return (
     <div className={`
-      px-2 flex items-center rounded-xl border bg-amber-100/25 transition-colors border-orange-300
+      px-2 flex items-center rounded-xl border bg-amber-100/25 transition-colors border-orange-300 flex-1
       ${customStyle?.input ?? ''}
     `}>
       <IoSearch className='text-orange-300 mx-1 mr-2'/>
@@ -30,7 +29,7 @@ const Search = forwardRef<HTMLInputElement, Props>((props, ref) => {
       <input
         ref={ref}
         {...rest} 
-        className="flex-1 outline-none text-sm text-cyan-600 py-1.5 bg-transparent"
+        className="flex-1 outline-none text-sm text-cyan-400 py-1.5 bg-transparent"
         type='text'
       />
 

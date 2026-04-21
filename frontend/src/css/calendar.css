@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+.custom-calendar {
+  @apply bg-linear-to-b from-transparent via-white to-transparent border-y border-cyan-100 mx-2 p-3;
+}
+
+.custom-calendar .react-calendar__navigation {
+  @apply flex justify-between mb-2;
+}
+
+.custom-calendar .react-calendar__navigation button {
+  @apply text-orange-500 hover:brightness-150 font-semibold cursor-pointer;
+}
+
+.custom-calendar .react-calendar__month-view__weekdays {
+  @apply text-cyan-400 text-xs font-semibold uppercase;
+}
+
+.custom-calendar .react-calendar__tile {
+  @apply rounded-lg p-2 transition text-cyan-500 text-sm cursor-pointer;
+}
+
+.custom-calendar .react-calendar__tile:hover {
+  @apply bg-cyan-100 text-cyan-500;
+}
+
+.custom-calendar .react-calendar__tile:active {
+  @apply bg-cyan-300 text-cyan-500;
+}
+
+.custom-calendar .react-calendar__tile--active {
+  @apply bg-cyan-500 text-white;
+}
+
+.custom-calendar .react-calendar__tile--now {
+  @apply bg-orange-200 text-orange-400;
+}
+
+.custom-calendar .react-calendar__month-view__days__day--neighboringMonth {
+  @apply text-gray-300;
+}
+
+.custom-calendar .react-calendar__navigation button {
+  @apply text-orange-500 font-bold rounded-lg px-2 py-1 transition;
+}
+
+.custom-calendar .react-calendar__navigation button:hover {
+  @apply bg-linear-to-r from-transparent via-orange-100 to-transparent;
+}

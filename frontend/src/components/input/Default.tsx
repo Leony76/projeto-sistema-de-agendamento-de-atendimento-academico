@@ -28,19 +28,19 @@ const Default = forwardRef<HTMLInputElement, Props>((props, ref) => {
     <div className={`flex flex-col gap-1 w-full ${customStyle?.container ?? ''}`}>
       {label && (
         <label className={`text-orange-500 text-sm font-semibold ${customStyle?.label ?? ''}`}>
-          {label}
+          { label }
         </label>
       )}
 
       <div className={`
-        px-2 flex items-center rounded-xl border bg-amber-100/25 transition-colors
+        px-2 flex py-2 items-center rounded-xl border bg-amber-100/25 transition-colors
         ${error ? 'border-red-500 shadow-[0px_0px_3px_red]' : 'border-orange-300'} 
         ${customStyle?.input ?? ''}
       `}>
         <input
           ref={ref}
           {...rest} 
-          className="flex-1 outline-none text-sm text-cyan-600 py-2 bg-transparent"
+          className="flex-1 outline-none text-sm text-cyan-600 bg-transparent"
           type={isPassword && passwordVisible ? 'text' : type}
         />
 
