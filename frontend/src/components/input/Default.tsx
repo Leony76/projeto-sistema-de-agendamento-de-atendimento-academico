@@ -1,5 +1,6 @@
-import React, { forwardRef, useState, type InputHTMLAttributes } from 'react'
+import { forwardRef, useState, type InputHTMLAttributes } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Warning from '../misc/Warning';
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -33,14 +34,14 @@ const Default = forwardRef<HTMLInputElement, Props>((props, ref) => {
       )}
 
       <div className={`
-        px-2 flex py-2 items-center rounded-xl border bg-amber-100/25 transition-colors
+        flex overflow-hidden items-center rounded-xl border bg-amber-100/25 transition-colors
         ${error ? 'border-red-500 shadow-[0px_0px_3px_red]' : 'border-orange-300'} 
         ${customStyle?.input ?? ''}
       `}>
         <input
           ref={ref}
           {...rest} 
-          className="flex-1 outline-none text-sm text-cyan-600 bg-transparent"
+          className="flex-1 p-2 outline-none text-sm text-cyan-600 bg-transparent"
           type={isPassword && passwordVisible ? 'text' : type}
         />
 
@@ -48,18 +49,18 @@ const Default = forwardRef<HTMLInputElement, Props>((props, ref) => {
           <button 
           type="button" 
           onClick={() => setPasswordVisible(!passwordVisible)}
-          className="focus:outline-none"
+          className="focus:outline-none cursor-pointer"
           >
             {passwordVisible ? (
-              <FaEyeSlash className="mx-1 ml-2 text-cyan-500 cursor-pointer" />
+              <FaEyeSlash className="mx-2 text-cyan-500" />
             ) : (
-              <FaEye className="mx-1 ml-2 text-cyan-500 cursor-pointer" />
+              <FaEye className="mx-2 text-cyan-500" />
             )}
           </button>
         )}
       </div>
       
-      {error && <span className="text-xs text-red-500">{error}</span>}
+      {error && <Warning error={error}/>}
     </div>
   );
 });

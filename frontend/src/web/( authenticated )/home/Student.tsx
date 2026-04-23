@@ -10,36 +10,44 @@ import { Card } from '@/components/card';
 import Calendar from 'react-calendar';
 import '@/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight } from 'react-icons/fa6';
-import { formartDateTime } from '@/utils/formatDateTime.util';
+import { formatDateTime } from '@/utils/formats/formatDateTime.util';
+import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
+import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
 
 const STUDENT_APPOITMENTS_DATA: Appointment[] = [
   {
     id         :  1,
     dateTime   : '2026-10-05T15:00:00.000Z',
-    professor  : 'Fabrício Carneiro',
     reason     : 'Lorem ipsum dolor ',
     status     : 'CONFIRMED',
-    room       : '1B'
+    room       : '1B',
+    professor  : {
+      name  : 'Cloud Strife',
+      photo : 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop' ,
+    },
   },
   {
     id         :  2,
     dateTime   : '2026-10-07T16:00:00.000Z',
-    professor  : 'Francisco Fábio',
+    professor  : {
+      name  : 'Madara Uchiha',
+      photo : 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
+    },
     reason     : 'Lorem ipsum dolorem ',
     status     : 'UNCONFIRMED',
     room       : '1C'
   },
 ];
 
-const STUDENT_LAST_APPOITMENT: Omit<Appointment, 'status'> = {
-  id: 0,
-  dateTime   : '2026-10-07T16:00:00.000Z',
-  professor  : 'Francisco Fábio',
-  reason     : 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-  room       : '4A',
+const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
+  id            : 0,
+  dateTime      : '2026-10-07T16:00:00.000Z',
+  professorName : 'Sasuke Uchiha',
+  reason        : 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+  room          : '4A',
 };
 
-const Student = ():React.JSX.Element => {
+const Student = (): React.JSX.Element => {
 
   const BRIEF_RENDER = [
     { icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'             , value: 2       },
@@ -50,6 +58,12 @@ const Student = ():React.JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
+
+  const filteredStudentAppointmentsData = filterStudentAppointments(
+    STUDENT_APPOITMENTS_DATA,
+    searchValue,
+    filterValue,
+  );
 
   return (
     <Layout selectedTab='HOME'>
@@ -89,15 +103,15 @@ const Student = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema='APPOITMENT_FILTER'
+                optionsSchema='APPOINTMENT_FILTER'
                 value={filterValue}
                 onSelect={setFilterValue}
               />
             </div>
 
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              { STUDENT_APPOITMENTS_DATA.map((appointment) => (
-                <Card.Appoitment.Student
+              { filteredStudentAppointmentsData.map((appointment) => (
+                <Card.Appointment.Student
                   key={appointment.id}
                   { ...appointment }
                 />
@@ -127,13 +141,13 @@ const Student = ():React.JSX.Element => {
             <div className='flex flex-col justify-center bg-white px-2 h-full border rounded-lg border-cyan-300'>
               <div className='flex justify-between items-center'>
                 <h3 className='font-bold text-orange-400'>
-                  { formartDateTime(STUDENT_LAST_APPOITMENT.dateTime) }
+                  { formatDateTime(STUDENT_LAST_APPOITMENT.dateTime) }
                 </h3>        
               </div>
               
               <div className='flex justify-between'>
                 <label className='text-sm text-orange-400 font-semibold'>
-                  Professor: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.professor } </span>
+                  Professor: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.professorName } </span>
                 </label>
 
                 <label className='text-sm text-orange-400 font-semibold'>

@@ -1,4 +1,5 @@
 import  { forwardRef, type TextareaHTMLAttributes } from 'react'
+import Warning from '../misc/Warning';
 
 type Props = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label?: string;
@@ -40,7 +41,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, Props>((props, ref) => {
       </div>
       
       <div className='flex'>
-        {error && <span className="text-xs text-red-500">{error}</span>}
+        {error && <Warning error={error}/>}
 
         <span className={`
           ml-auto text-[10px] -mt-1 

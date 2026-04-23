@@ -1,4 +1,4 @@
-import { forwardRef, useState, type InputHTMLAttributes } from 'react'
+import { forwardRef, type InputHTMLAttributes } from 'react'
 import { IoClose, IoSearch } from 'react-icons/io5';
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {

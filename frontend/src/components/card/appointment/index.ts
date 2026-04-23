@@ -1,5 +1,5 @@
 import Student from "./Student";
 
-export const Appoitment = {
+export const Appointment = {
   Student,
 };

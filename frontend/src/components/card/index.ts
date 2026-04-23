@@ -1,7 +1,11 @@
-import { Appoitment } from "./appoitment";
+import { Appointment } from "./appointment";
+import History from "./History";
 import ProfessorInfos from "./ProfessorInfos";
+import Solicitation from "./Solicitation";
 
 export const Card = {
-  Appoitment,
+  Appointment,
   ProfessorInfos,
+  Solicitation,
+  History,
 };

@@ -13,15 +13,27 @@
 }
 
 .custom-calendar .react-calendar__month-view__weekdays {
-  @apply text-cyan-400 text-xs font-semibold uppercase;
+  @apply text-cyan-400 text-xs font-semibold uppercase mb-2 text-center;
+}
+
+.custom-calendar .react-calendar__month-view__weekdays:disabled {
+  @apply opacity-30;
 }
 
 .custom-calendar .react-calendar__tile {
   @apply rounded-lg p-2 transition text-cyan-500 text-sm cursor-pointer;
 }
 
+.react-calendar__tile:disabled {
+  @apply opacity-30 cursor-not-allowed;
+}
+
 .custom-calendar .react-calendar__tile:hover {
   @apply bg-cyan-100 text-cyan-500;
+}
+
+.custom-calendar .react-calendar__tile:disabled {
+  @apply bg-white text-cyan-500;
 }
 
 .custom-calendar .react-calendar__tile:active {

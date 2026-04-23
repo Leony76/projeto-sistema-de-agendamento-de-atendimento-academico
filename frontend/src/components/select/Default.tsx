@@ -1,42 +1,32 @@
-import { APPOITMENT_FILTER_MAP } from '@/constants/maps/appoitmentFilter.map';
-import { forwardRef, useState, type InputHTMLAttributes } from 'react'
+import { SELECT_OPTIONS_SCHEMA_MAP } from '@/constants/maps/selectOptionsSchema.map';
+import type { SelectOptionsSchema } from '@/types/selectOptionsSchema.type';
+import { forwardRef, useState, type ButtonHTMLAttributes } from 'react'
 
-type OptionsSchema = 
-| 'APPOITMENT_FILTER'
-;
-
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'onSelect'> & {
-  label? : string;
-  error? : string;
-  optionsSchema : OptionsSchema;
-  onSelect: React.Dispatch<React.SetStateAction<string>>;
-  Icon? : React.ElementType; 
-  customStyle?: {
-    label?     : string;
-    input?     : string;
-    container? : string;
-    options? : {
-      container? : string;
-      button?    : string;
+type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
+  label?        : string;
+  error?        : string;
+  placeholder   : string;
+  optionsSchema : SelectOptionsSchema;
+  onSelect      : React.Dispatch<React.SetStateAction<string>>;
+  Icon?         : React.ElementType; 
+  customStyle?  : {
+    label?      : string;
+    input?      : string;
+    container?  : string;
+    options?    : {
+      container?: string;
+      button?   : string;
     };
   };
 };
 
-const Default = forwardRef<HTMLInputElement, Props>((props, ref) => {
+const Default = forwardRef<HTMLButtonElement, Props>((props, ref) => {
 
   const { 
     label,
     error, 
     customStyle, 
-    type, 
-    ...rest 
   } = props;
-
-  const OPTIONS_SCHEMA_MAP = {
-    APPOITMENT_FILTER : APPOITMENT_FILTER_MAP,
-  };
-
-  const optionsRender = OPTIONS_SCHEMA_MAP[props.optionsSchema];
 
   const Icon = props.Icon;
 
@@ -56,6 +46,7 @@ const Default = forwardRef<HTMLInputElement, Props>((props, ref) => {
         ${showOptions ? 'rounded-b-none' : '' }
       `}>
         <button 
+        ref={ref}
         onClick={() => setShowOptions(prev => !prev)}
         className={`
           px-2 flex-1 py-1 text-orange-400 text-sm flex cursor-pointer gap-2 justify-center items-center hover:bg-amber-100/30 active:brightness-90
@@ -74,7 +65,7 @@ const Default = forwardRef<HTMLInputElement, Props>((props, ref) => {
             absolute top-full left-0 w-full z-10 bg-[#F8FBF1] border border-t-0 rounded-b-xl border-orange-300 overflow-hidden
             ${props.customStyle?.options?.container ?? ''}
           `}>
-            {optionsRender.map(( item ) => (
+            {SELECT_OPTIONS_SCHEMA_MAP[props.optionsSchema].map(( item ) => (
               <button
               key={item.value}
               onClick={() => {
