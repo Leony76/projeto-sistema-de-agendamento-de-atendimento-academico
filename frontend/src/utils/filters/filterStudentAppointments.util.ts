@@ -13,6 +13,12 @@ export const filterStudentAppointments = (
       appointment.professor.name.toLowerCase().includes(search) 
       ||
       appointment.reason.toLowerCase().includes(search)
+      ||
+      appointment.room.toLowerCase().includes(search)
+      ||
+      appointment.status.toLowerCase().includes(search)
+      ||
+      appointment.dateTime.toLowerCase().includes(search)
     ;
 
     if (!filterValue) return matchesSearch;

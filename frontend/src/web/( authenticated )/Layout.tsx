@@ -1,5 +1,6 @@
 import React, { type JSX } from 'react'
 import { AiFillSchedule } from 'react-icons/ai';
+import { BiLogOut } from 'react-icons/bi';
 import { FaExclamation, FaHistory } from 'react-icons/fa';
 import { IoHome } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
@@ -63,6 +64,14 @@ const Layout = (props:Props): React.JSX.Element => {
               { item.name }
             </Link>
           ))}
+
+          <Link
+          to={'/'}
+          className={`flex mt-auto justify-center hover items-center py-1 gap-1 text-red-500 hover:bg-red-100/50`}
+          >
+            <BiLogOut size={20}/>
+            Sair
+          </Link>
         </aside>
 
         <main className='p-3 h-full min-h-0 overflow-hidden'>

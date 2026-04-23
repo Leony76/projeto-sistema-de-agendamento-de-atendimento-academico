@@ -59,6 +59,7 @@ const Requests = ():React.JSX.Element => {
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
+                placeholder='Pesquisar por professor, disciplina, data, horário ou status da solicitação'
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />

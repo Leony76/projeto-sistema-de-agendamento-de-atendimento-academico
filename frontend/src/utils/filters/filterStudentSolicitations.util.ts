@@ -1,4 +1,6 @@
 import type { Solicitation } from "@/types/solicitation.type";
+import { formatTime } from "../formats/formatTime.util";
+import { formatDate } from "../formats/formatDate.util";
 
 export const filterStudentSolicitations = (
   studentSolicitationsData : Solicitation[],
@@ -9,8 +11,13 @@ export const filterStudentSolicitations = (
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      solicitation.name.toLowerCase().includes(search) ||
-      solicitation.discipline.toLowerCase().includes(search);
+      solicitation.name.toLowerCase().includes(search) 
+      ||
+      solicitation.discipline.toLowerCase().includes(search)
+      ||
+      formatTime(solicitation.appoitmentDateTime).toLowerCase().includes(search)
+      ||
+      formatDate(solicitation.appoitmentDateTime).toLowerCase().includes(search)
 
     if (!filterValue) return matchesSearch;
 

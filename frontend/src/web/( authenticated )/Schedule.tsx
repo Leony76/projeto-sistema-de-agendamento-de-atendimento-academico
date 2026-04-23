@@ -110,6 +110,7 @@ const Schedule = ():React.JSX.Element => {
 
     const appointmentDateTime: string = formatMergeDateWithTime(data.appointmentDate, data.hour);
     
+    alert('Solicitado!')
     console.log(data, appointmentDateTime);
   };
 
@@ -153,6 +154,7 @@ const Schedule = ():React.JSX.Element => {
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
+                placeholder='Pesquisar por professor, disciplina, dias disponíveis ou horários disponíveis'
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />
@@ -208,6 +210,7 @@ const Schedule = ():React.JSX.Element => {
               <div className='flex-1 min-h-0 gap-3 overflow-auto py-1 flex flex-col border-y border-cyan-100'>
                 <Input.Default
                   label='Professor'
+                  readOnly
                   customStyle={{ input: 'h-8' }}
                   value={selectedProfessorData?.name}
                   error={errors.professorName?.message}
@@ -226,32 +229,44 @@ const Schedule = ():React.JSX.Element => {
                 />
 
                 <div className='space-y-1'>
-                  <h4 className='text-sm font-semibold text-orange-500'>
-                    Horários disponíveis
-                  </h4>
+                  <div>
+                    <h4 className={`
+                      text-sm font-semibold text-orange-500 
+                      ${ watch('appointmentDate') ? 'mb-1' : '-mb-1' }
+                    `}>
+                      Horários disponíveis
+                    </h4>
 
-                  <p className='text-xs text-gray-400'>
-                    Escolha um horário disponível do professor:
-                  </p>
+                    { watch('appointmentDate') ? (
+                      <>
+                        <p className='text-xs text-gray-400'>
+                          Escolha um horário disponível do professor:
+                        </p>
 
-                  <div className='flex flex-wrap gap-2 mt-2'>
-                    {selectedProfessorData?.available.hours
-                      .filter(( hour ) => !bookedHours.includes(hour)) 
-                      .map(( hour, index ) => (
-                        <Button.Default
-                          key={index}
-                          label={hour}
-                          selected={hour === watch('hour')}
-                          onClick={() => setValue('hour', hour, { shouldValidate: true })}
-                          customStyle={{
-                            button: 'w-fit! py-1 px-4! rounded-lg! text-xs font-bold',
-                          }}
-                        />
-                    ))}
-                    
-                    {errors.hour?.message && <Warning error={errors.hour.message}/>}
+                        <div className='flex flex-wrap gap-2 mt-2'>
+                          {selectedProfessorData?.available.hours
+                            .filter(( hour ) => !bookedHours.includes(hour)) 
+                            .map(( hour, index ) => (
+                              <Button.Default
+                                key={index}
+                                label={hour}
+                                selected={hour === watch('hour')}
+                                onClick={() => setValue('hour', hour, { shouldValidate: true })}
+                                customStyle={{
+                                  button: 'w-fit! py-1 px-4! rounded-lg! text-xs font-bold',
+                                }}
+                              />
+                          ))}
+                          
+                          {errors.hour?.message && <Warning error={errors.hour.message}/>}
+                        </div>
+                      </>
+                    ) : (
+                      <span className='text-xs text-gray-400 !mt-[-10px]'>
+                        Selecione a data do agendamento
+                      </span>
+                    )}
                   </div>
-
 
                   <Input.TextArea
                     label='Motivo'

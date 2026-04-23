@@ -96,6 +96,7 @@ const Student = (): React.JSX.Element => {
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
+                placeholder='Pesquisar por professor, status, sala ou motivo'
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />
@@ -120,7 +121,7 @@ const Student = (): React.JSX.Element => {
           </div>
         </div>
 
-        <div className='grid grid-rows-[2fr_1fr] gap-y-3 max-h-120'>
+        <div className='grid grid-rows-[2fr_1fr] gap-y-3 max-h-120 min-h-0'>
           <div className='flex items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
             <Calendar
               onChange={(value) => setDateSelected(value as Date)}
@@ -133,31 +134,29 @@ const Student = (): React.JSX.Element => {
             />
           </div>
 
-          <div className='flex flex-col gap-2 border border-cyan-400 p-2 rounded-lg bg-cyan-100/20'>
+          <div className='flex flex-col gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
             <h2 className='text-cyan-500 font-semibold self-center'>
               Último agendamento
             </h2>
 
-            <div className='flex flex-col justify-center bg-white px-2 h-full border rounded-lg border-cyan-300'>
-              <div className='flex justify-between items-center'>
-                <h3 className='font-bold text-orange-400'>
-                  { formatDateTime(STUDENT_LAST_APPOITMENT.dateTime) }
-                </h3>        
-              </div>
+            <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
+              <h3 className='font-bold text-orange-400 text-sm'>
+                { formatDateTime(STUDENT_LAST_APPOITMENT.dateTime) }
+              </h3>        
               
-              <div className='flex justify-between'>
-                <label className='text-sm text-orange-400 font-semibold'>
+              <div className='flex flex-col'>
+                <label className=' text-orange-400 font-semibold text-xs'>
                   Professor: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.professorName } </span>
                 </label>
 
-                <label className='text-sm text-orange-400 font-semibold'>
+                <label className=' text-orange-400 font-semibold text-xs'>
                   Sala: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.room } </span>
                 </label>
+          
+                <label className=' text-orange-400 font-semibold text-xs'>
+                  Motivo: <span className='text-gray-400 font-normal'> { STUDENT_LAST_APPOITMENT.reason.slice(0,50) + '...' } </span>
+                </label>
               </div>
-        
-              <label className='text-sm text-orange-400 font-semibold'>
-                Motivo: <span className='text-gray-400 font-normal'> { STUDENT_LAST_APPOITMENT.reason.slice(0,50) + '...' } </span>
-              </label>
             </div>
           </div>
         </div>

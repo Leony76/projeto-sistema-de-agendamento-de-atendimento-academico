@@ -59,6 +59,7 @@ const History = ():React.JSX.Element => {
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
+                placeholder='Pesquisar por professor, disciplina, data, horário ou motivo'
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />
@@ -72,7 +73,7 @@ const History = ():React.JSX.Element => {
               />
             </div>
 
-            <div className='flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
+            <div className='flex-1 min-h-0 grid items-start auto-rows-min grid-cols-1 md:grid-cols-2 gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
               { filteredStudentAppointmentsHistoryData.map(( history ) => (
                 <Card.History
                   key={ history.id }

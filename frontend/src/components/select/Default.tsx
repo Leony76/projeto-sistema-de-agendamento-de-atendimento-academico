@@ -7,7 +7,7 @@ type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
   error?        : string;
   placeholder   : string;
   optionsSchema : SelectOptionsSchema;
-  onSelect      : React.Dispatch<React.SetStateAction<string>>;
+  onSelect      : (value: string) => void;
   Icon?         : React.ElementType; 
   customStyle?  : {
     label?      : string;

@@ -1,4 +1,7 @@
+import { DISCIPLINES_MAP } from "@/constants/maps/disciplines.map";
 import type { AppointmentHistory } from "@/types/appointmentHistory.type";
+import { formatTime } from "../formats/formatTime.util";
+import { formatDate } from "../formats/formatDate.util";
 
 export const filterStudentAppointmentsHistory = (
   studentAppointmentsHistoryData : AppointmentHistory[],
@@ -9,8 +12,16 @@ export const filterStudentAppointmentsHistory = (
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      history.name.toLowerCase().includes(search) ||
-      history.discipline.toLowerCase().includes(search);
+      history.name.toLowerCase().includes(search) 
+      ||
+      history.reason.toLowerCase().includes(search) 
+      ||
+      DISCIPLINES_MAP[history.discipline].toLowerCase().includes(search)
+      ||
+      formatTime(history.appoitmentDateTime).toLowerCase().includes(search)
+      ||
+      formatDate(history.appoitmentDateTime).toLowerCase().includes(search)
+    ;
 
     if (!filterValue) return matchesSearch;
 
