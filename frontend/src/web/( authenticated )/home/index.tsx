@@ -4,7 +4,7 @@ import Manager from './Manager'
 import Professor from './Professor'
 import type React from 'react'
 
-const Home = ():React.JSX.Element => {
+const Home = (): React.JSX.Element | null => {
 
   const user: {role: UserRole} = { role: 'STUDENT' }
   
@@ -12,7 +12,7 @@ const Home = ():React.JSX.Element => {
     case 'STUDENT'   : return <Student/>
     case 'PROFESSOR' : return <Professor/>
     case 'MANAGER'   : return <Manager/>
-    default          : return <div> Impossível </div>
+    default          : return null
   }
 }
 

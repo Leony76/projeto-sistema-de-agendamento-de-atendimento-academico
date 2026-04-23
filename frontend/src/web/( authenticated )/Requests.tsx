@@ -7,6 +7,9 @@ import { Card } from '@/components/card';
 import '@/css/calendar.css';
 import type { Solicitation } from '@/types/solicitation.type';
 import { filterStudentSolicitations } from '@/utils/filters/filterStudentSolicitations.util';
+import NoContent from '@/components/misc/NoContent';
+import { STUDENT_SOLICITATIONS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentSolicitations.map.filter';
+import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 
 const SOLICITATIONS_DATA: Solicitation[] = [
   {
@@ -73,13 +76,30 @@ const Requests = ():React.JSX.Element => {
               />
             </div>
 
-            <div className='flex-1 min-h-0 grid items-start auto-rows-min grid-cols-1 md:grid-cols-2 gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              { filteredStudentSolicitations.map(( solicitation ) => (
-                <Card.Solicitation
-                  key={solicitation.id}
-                  { ...solicitation }
+            <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
+              {filteredStudentSolicitations.length > 0 ? (
+                <div className='grid items-start gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
+                  {filteredStudentSolicitations.map(( solicitation ) => (
+                    <Card.Solicitation
+                      key={solicitation.id}
+                      { ...solicitation }
+                    />
+                    ))}
+                </div>
+              ) : (
+                <NoContent
+                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
+                  message={
+                    searchValue && filterValue
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_SOLICITATIONS_FILTER_VALUE_MAP]}"`
+                      : searchValue
+                      ? `Nenhum resultado para "${searchValue}"`
+                      : filterValue
+                      ? `Nenhum resultado para o filtro "${STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_SOLICITATIONS_FILTER_VALUE_MAP]}"`
+                      : `Nenhuma solicitação no momento!`
+                  }
                 />
-              ))}
+              )}
             </div>
           </div>
         </div>

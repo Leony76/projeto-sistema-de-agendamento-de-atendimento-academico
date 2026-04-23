@@ -15,6 +15,9 @@ import { formatMergeDateWithTime } from '@/utils/formats/formatMergeDateWithTime
 import type { ProfessorAppointments } from '@/types/professorAppointments.type';
 import { normalizeAppointments } from '@/utils/misc/normalizeAppointments.util';
 import { filterToScheduleProfessors } from '@/utils/filters/filterToScheduleProfessors.util';
+import NoContent from '@/components/misc/NoContent';
+import { FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
+import { TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@/constants/maps/filters/toScheduleProfessors.map.filter';
 
 const PROFESSORS_DATA: Professor[] = [
   {
@@ -33,7 +36,7 @@ const PROFESSORS_DATA: Professor[] = [
     discipline: 'GEOGRAPHY',
     photo: 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
     available: {
-      days: ['MONDAY', 'THURSDAY', 'WEDNESDAY'],
+      days: ['MONDAY', 'THURSDAY', 'TUESDAY'],
       hours: ['11:00', '14:00', '16:00'],
     },
   },
@@ -169,19 +172,34 @@ const Schedule = ():React.JSX.Element => {
             </div>
 
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              { filteredProfessorsData.map(( professor ) => (
-                <Card.ProfessorInfos
-                  key={professor.id}
-                  { ...professor }
-                  onClick={{ toSchedule: () => {
-                    reset();
-                    setShowToScheduleForm(true);
-                    setSelectedProfessorData(professor);
-                    getSelectedProfessorAppointments(professor.id);
-                    setValue('professorName', professor.name);
-                  }}}
+              { filteredProfessorsData.length > 0 ? (
+                filteredProfessorsData.map(( professor ) => (
+                  <Card.ProfessorInfos
+                    key={professor.id}
+                    { ...professor }
+                    onClick={{ toSchedule: () => {
+                      reset();
+                      setShowToScheduleForm(true);
+                      setSelectedProfessorData(professor);
+                      getSelectedProfessorAppointments(professor.id);
+                      setValue('professorName', professor.name);
+                    }}}
+                  />
+                ))
+              ) : (
+                <NoContent
+                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
+                  message={
+                    searchValue && filterValue
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP]}"`
+                      : searchValue
+                      ? `Nenhum resultado para "${searchValue}"`
+                      : filterValue
+                      ? `Nenhum resultado para o filtro "${TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP]}"`
+                      : `Nenhum professor disponível para agendamento no momento!`
+                  }
                 />
-              ))}
+              )}
             </div>
           </div>
         </div>
@@ -262,7 +280,7 @@ const Schedule = ():React.JSX.Element => {
                         </div>
                       </>
                     ) : (
-                      <span className='text-xs text-gray-400 !mt-[-10px]'>
+                      <span className='text-xs text-gray-400'>
                         Selecione a data do agendamento
                       </span>
                     )}

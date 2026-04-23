@@ -9,34 +9,37 @@ import type { Appointment } from '@/types/appointment.type';
 import { Card } from '@/components/card';
 import Calendar from 'react-calendar';
 import '@/css/calendar.css';
-import { FaCircleChevronLeft, FaCircleChevronRight } from 'react-icons/fa6';
+import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
 import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
+import NoContent from '@/components/misc/NoContent';
+import { APPOINTMENT_FILTER_VALUE_MAP } from '@/constants/maps/filters/appoitment.map.filter';
+import { formatTime } from '@/utils/formats/formatTime.util';
 
 const STUDENT_APPOITMENTS_DATA: Appointment[] = [
-  {
-    id         :  1,
-    dateTime   : '2026-10-05T15:00:00.000Z',
-    reason     : 'Lorem ipsum dolor ',
-    status     : 'CONFIRMED',
-    room       : '1B',
-    professor  : {
-      name  : 'Cloud Strife',
-      photo : 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop' ,
-    },
-  },
-  {
-    id         :  2,
-    dateTime   : '2026-10-07T16:00:00.000Z',
-    professor  : {
-      name  : 'Madara Uchiha',
-      photo : 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
-    },
-    reason     : 'Lorem ipsum dolorem ',
-    status     : 'UNCONFIRMED',
-    room       : '1C'
-  },
+  // {
+  //   id         :  1,
+  //   dateTime   : '2026-10-05T15:00:00.000Z',
+  //   reason     : 'Lorem ipsum dolor ',
+  //   status     : 'CONFIRMED',
+  //   room       : '1B',
+  //   professor  : {
+  //     name  : 'Cloud Strife',
+  //     photo : 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop' ,
+  //   },
+  // },
+  // {
+  //   id         :  2,
+  //   dateTime   : '2026-10-07T16:00:00.000Z',
+  //   professor  : {
+  //     name  : 'Madara Uchiha',
+  //     photo : 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
+  //   },
+  //   reason     : 'Lorem ipsum dolorem ',
+  //   status     : 'UNCONFIRMED',
+  //   room       : '1C'
+  // },
 ];
 
 const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
@@ -47,12 +50,18 @@ const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
   room          : '4A',
 };
 
+const PENDING_SOLICITATIONS = {
+  appointmentsDone     : 3,
+  pendingSolicitations : 5,
+  nextPending          : '2026-04-24T19:30:00.000Z' 
+};
+
 const Student = (): React.JSX.Element => {
 
   const BRIEF_RENDER = [
-    { icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'             , value: 2       },
-    { icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: 3       },
-    { icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: '16:30' },
+    { icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: PENDING_SOLICITATIONS.appointmentsDone     },
+    { icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: PENDING_SOLICITATIONS.pendingSolicitations },
+    { icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatTime(PENDING_SOLICITATIONS.nextPending)          },
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
@@ -111,12 +120,27 @@ const Student = (): React.JSX.Element => {
             </div>
 
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              { filteredStudentAppointmentsData.map((appointment) => (
-                <Card.Appointment.Student
-                  key={appointment.id}
-                  { ...appointment }
+              { filteredStudentAppointmentsData.length > 0 ? (
+                filteredStudentAppointmentsData.map((appointment) => (
+                 <Card.Appointment.Student
+                   key={appointment.id}
+                   { ...appointment }
+                 />
+               ))
+              ) : (
+                <NoContent
+                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
+                  message={
+                    searchValue && filterValue
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      : searchValue
+                      ? `Nenhum resultado para "${searchValue}"`
+                      : filterValue
+                      ? `Nenhum resultado para o filtro "${APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      : `Nenhum agendamento disponível no momento!`
+                  }
                 />
-              ))}
+              )}
             </div>
           </div>
         </div>

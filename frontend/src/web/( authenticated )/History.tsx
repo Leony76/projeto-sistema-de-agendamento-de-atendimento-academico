@@ -7,6 +7,9 @@ import { Card } from '@/components/card';
 import '@/css/calendar.css';
 import type { AppointmentHistory } from '@/types/appointmentHistory.type';
 import { filterStudentAppointmentsHistory } from '@/utils/filters/filterStudentAppointmentsHistory.util';
+import NoContent from '@/components/misc/NoContent';
+import { STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
+import { FaClipboardQuestion } from 'react-icons/fa6';
 
 const APPOINTMENT_HISTORY_DATA: AppointmentHistory[] = [
   {
@@ -72,14 +75,32 @@ const History = ():React.JSX.Element => {
                 onSelect={setFilterValue}
               />
             </div>
+              
 
-            <div className='flex-1 min-h-0 grid items-start auto-rows-min grid-cols-1 md:grid-cols-2 gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              { filteredStudentAppointmentsHistoryData.map(( history ) => (
-                <Card.History
-                  key={ history.id }
-                  { ...history }
+            <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
+              {filteredStudentAppointmentsHistoryData.length > 0 ? (
+                <div className='grid items-start gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
+                  { filteredStudentAppointmentsHistoryData.map(( history ) => (
+                    <Card.History
+                      key={ history.id }
+                      { ...history }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <NoContent
+                  Icon={() => <FaClipboardQuestion size={24}/>}
+                  message={
+                    searchValue && filterValue
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP]}"`
+                      : searchValue
+                      ? `Nenhum resultado para "${searchValue}"`
+                      : filterValue
+                      ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP]}"`
+                      : `Nenhuma histórico no momento!`
+                  }
                 />
-              ))}
+              )}
             </div>
           </div>
         </div>

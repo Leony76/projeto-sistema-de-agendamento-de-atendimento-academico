@@ -1,4 +1,5 @@
 export const STUDENT_SOLICITATIONS_FILTER_MAP = [
+  { value: 'none'              , label: 'Nenhum'              },
   { value: 'AZProfessorName'   , label: 'Professor [A-Z]'     },
   { value: 'ZAProfessorName'   , label: 'Professor [Z-A]'     },
   { value: 'AZDisciplines'     , label: 'Disciplinas [A-Z]'   },
@@ -9,3 +10,17 @@ export const STUDENT_SOLICITATIONS_FILTER_MAP = [
   { value: 'unconfirmed'       , label: 'Não confirmados'     },
   { value: 'canceled'          , label: 'Cancelados'          },
 ] as const;
+
+
+export const STUDENT_SOLICITATIONS_FILTER_VALUE_MAP = {
+  none             : 'Nenhum'            ,
+  AZProfessorName  : 'Professor [A-Z]'   , 
+  ZAProfessorName  : 'Professor [Z-A]'   ,
+  AZDisciplines    : 'Disciplinas [A-Z]' ,
+  ZADisciplines    : 'Disciplinas [Z-A]' ,
+  mostRecent       : 'Mais recentes'     ,
+  mostOld          : 'Mais antigos'      ,
+  confirmed        : 'Confirmados'       ,
+  unconfirmed      : 'Não confirmados'   ,
+  canceled         : 'Cancelados'        ,
+} as const;
