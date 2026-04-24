@@ -1,5 +1,5 @@
-import type { Appointment } from "./appointment.type";
+import type { StudentAppointment } from "./appointment.type";
 
-export type StudentLastAppointment = Omit<Appointment, 'status' | 'professor'> & {
+export type StudentLastAppointment = Omit<StudentAppointment, 'status' | 'professor'> & {
   professorName: string;
 };

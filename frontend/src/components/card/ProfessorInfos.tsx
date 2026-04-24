@@ -4,6 +4,7 @@ import type { Professor } from '@/types/professor.type';
 import React from 'react'
 import { Button } from '../button';
 import { BsCheckSquareFill } from 'react-icons/bs';
+import ExpansibleImage from '../misc/ExpansibleImage';
 
 type Props = Professor & {
   onClick: {
@@ -15,13 +16,13 @@ const ProfessorInfos = (props:Props): React.JSX.Element => {
 
   return (
     <div className='px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>
-      <figure className='h-30 w-30 border border-cyan-400 rounded-full p-1'>
-        <img 
-          src={ props.photo } 
-          alt={ props.name  }
-          className='h-full w-full object-cover rounded-full'
-        />
-      </figure>
+      <ExpansibleImage
+        image={{
+          name : props.name,
+          uri  : props.photo,
+          size : 'h-30 w-30'
+        }}
+      />
 
       <div className='flex flex-col'>
         <h3 className='font-bold text-orange-400'>

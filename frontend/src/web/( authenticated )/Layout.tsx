@@ -1,3 +1,4 @@
+import type { UserRole } from '@/types/userRole.type';
 import React, { type JSX } from 'react'
 import { AiFillSchedule } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
@@ -16,16 +17,46 @@ type AsideTab = {
 type Props = {
   children    : React.ReactNode;
   selectedTab : SystemTabs;
+  from        : UserRole;
 };
 
 const Layout = (props:Props): React.JSX.Element => {
 
-  const ASIDE_TABS_RENDER: AsideTab[] = [
-    { id: 'HOME'        , name: 'Início'       , icon: <IoHome />         , route: '/home' },
-    { id: 'TO_SCHEDULE' , name: 'Agendar'      , icon: <AiFillSchedule /> , route: '/schedule' },
-    { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/requests' },
-    { id: 'HISTORY'     , name: 'Histórico'    , icon: <FaHistory />      , route: '/history' },
-  ];
+  const ASIDE_TABS_RENDER: Record<UserRole, AsideTab[]> = {
+    STUDENT: [
+      { id: 'HOME'        , name: 'Início'       , icon: <IoHome />         , route: '/home' },
+      { id: 'TO_SCHEDULE' , name: 'Agendar'      , icon: <AiFillSchedule /> , route: '/schedule' },
+      { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/requests' },
+      { id: 'HISTORY'     , name: 'Histórico'    , icon: <FaHistory />      , route: '/history' },
+    ],
+    PROFESSOR: [
+      { id: 'HOME'        , name: 'Início'       , icon: <IoHome />         , route: '/home' },
+      { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/requests' },
+      { id: 'HISTORY'     , name: 'Histórico'    , icon: <FaHistory />      , route: '/history' },
+    ],
+    MANAGER: [
+      { id: 'HOME'        , name: 'Início'       , icon: <IoHome />         , route: '/home' },
+    ],
+  };
+
+  const HEADER_INFOS_FOR_ROLE_CONFIG: Record<UserRole, {
+    label: string;
+    secondaryLabel?: string;
+  }> = {
+    STUDENT: {
+      label: 'Aluno:',
+      secondaryLabel: 'RA:',
+    },
+    PROFESSOR: {
+      label: 'Professor:',
+      secondaryLabel: 'Disciplina:',
+    },
+    MANAGER: {
+      label: 'Gestor:',
+    },
+  } as const;
+
+  const config = HEADER_INFOS_FOR_ROLE_CONFIG[props.from];
 
   return (
     <div className='flex flex-col h-screen'>
@@ -36,20 +67,32 @@ const Layout = (props:Props): React.JSX.Element => {
 
         <div className='flex gap-5'>
           <span className='font-semibold text-orange-400'>
-            Aluno: <span className='text-cyan-400 font-normal'>Leony Leandro Barros</span>
+            { config.label } {''} 
+
+            <span className='text-cyan-400 font-normal'>
+              Leony Leandro Barros
+            </span>
           </span>
 
-          <div className='w-px bg-cyan-300 rounded-4xl'/>
+          { config.secondaryLabel &&
+            <>
+              <div className='w-px bg-cyan-300 rounded-4xl'/>
 
-          <span className='font-semibold text-orange-400'>
-            RA: <span className='text-cyan-400 font-normal'>20241180209</span>
-          </span>
+              <span className='font-semibold text-orange-400'>
+                { config.secondaryLabel } {''}
+
+                <span className='text-cyan-400 font-normal'>
+                  20241180209
+                </span>
+              </span>
+            </>
+          }
         </div>
       </header>
 
       <div className='flex-1 grid grid-cols-[175px_1fr] min-h-0'>
         <aside className='flex flex-col py-5 border-r border-gray-200 bg-linear-to-b from-cyan-100/50 to-orange-500/5'>
-          { ASIDE_TABS_RENDER.map((item) => (
+          { ASIDE_TABS_RENDER[props.from].map((item) => (
             <Link
             to={item.route}
             key={item.id} 

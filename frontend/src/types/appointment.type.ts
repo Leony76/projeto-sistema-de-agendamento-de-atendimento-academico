@@ -1,7 +1,7 @@
 import type { AppointmentStatus } from "./appointmentStatus.type";
 import type { Room } from "./room.type";
 
-export type Appointment = {
+export type StudentAppointment = {
   readonly id : number;
   dateTime    : string;
   reason      : string;
@@ -12,3 +12,5 @@ export type Appointment = {
     photo : string;
   };
 };
+
+export type ProfessorAppointment = Omit<StudentAppointment, 'professor'> & {student: StudentAppointment['professor']};

@@ -11,16 +11,23 @@ export const STUDENT_SOLICITATIONS_FILTER_MAP = [
   { value: 'canceled'          , label: 'Cancelados'          },
 ] as const;
 
+export const STUDENT_SOLICITATIONS_FILTER_VALUE_MAP = 
+  Object.fromEntries(
+    STUDENT_SOLICITATIONS_FILTER_MAP.map((item) => [item.value, item.label]),
+);
 
-export const STUDENT_SOLICITATIONS_FILTER_VALUE_MAP = {
-  none             : 'Nenhum'            ,
-  AZProfessorName  : 'Professor [A-Z]'   , 
-  ZAProfessorName  : 'Professor [Z-A]'   ,
-  AZDisciplines    : 'Disciplinas [A-Z]' ,
-  ZADisciplines    : 'Disciplinas [Z-A]' ,
-  mostRecent       : 'Mais recentes'     ,
-  mostOld          : 'Mais antigos'      ,
-  confirmed        : 'Confirmados'       ,
-  unconfirmed      : 'Não confirmados'   ,
-  canceled         : 'Cancelados'        ,
-} as const;
+export const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP = [
+  { value: 'none'              , label: 'Nenhum'              },
+  { value: 'AZStudentName'     , label: 'Aluno [A-Z]'         },
+  { value: 'ZAStudentName'     , label: 'Aluno [Z-A]'         },
+  { value: 'mostRecent'        , label: 'Mais recentes'       },
+  { value: 'mostOld'           , label: 'Mais antigos'        },
+  { value: 'confirmed'         , label: 'Confirmados'         },
+  { value: 'unconfirmed'       , label: 'Não confirmados'     },
+  { value: 'canceled'          , label: 'Cancelados'          },
+] as const;
+
+export const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP =
+  Object.fromEntries(
+    STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP.map((item) => [item.value, item.label]),
+);

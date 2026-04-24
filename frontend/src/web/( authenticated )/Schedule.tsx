@@ -12,7 +12,7 @@ import { appointmentSolicitationSchema, type AppointmentSolicitationFormData } f
 import { zodResolver } from '@hookform/resolvers/zod';
 import Warning from '@/components/misc/Warning';
 import { formatMergeDateWithTime } from '@/utils/formats/formatMergeDateWithTime.util';
-import type { ProfessorAppointments } from '@/types/professorAppointments.type';
+import type { ProfessorScheduledAppointments } from '@/types/professorScheduledAppointments.type';
 import { normalizeAppointments } from '@/utils/misc/normalizeAppointments.util';
 import { filterToScheduleProfessors } from '@/utils/filters/filterToScheduleProfessors.util';
 import NoContent from '@/components/misc/NoContent';
@@ -42,7 +42,7 @@ const PROFESSORS_DATA: Professor[] = [
   },
 ];
 
-const PROFESSORS_APPOINTMENTS_DATA: ProfessorAppointments[] = [
+const PROFESSORS_APPOINTMENTS_DATA: ProfessorScheduledAppointments[] = [
   {
     id: 1,
     professorId: 1,
@@ -90,7 +90,7 @@ const Schedule = ():React.JSX.Element => {
   const [showToScheduleForm, setShowToScheduleForm] = useState<boolean>(false);
 
   const [selectedProfessorData, setSelectedProfessorData] = useState<Professor | null>(null);
-  const [selectedProfessorAppointments, setSelectedProfessorAppointments] = useState<ProfessorAppointments['appointments'] | null>(null);
+  const [selectedProfessorScheduledAppointments, setSelectedProfessorScheduledAppointments] = useState<ProfessorScheduledAppointments['appointments'] | null>(null);
 
   const selectedDate = watch('appointmentDate');
 
@@ -99,8 +99,8 @@ const Schedule = ():React.JSX.Element => {
     : ''
   ;
 
-  const appointmentsMap = selectedProfessorAppointments
-    ? normalizeAppointments(selectedProfessorAppointments)
+  const appointmentsMap = selectedProfessorScheduledAppointments
+    ? normalizeAppointments(selectedProfessorScheduledAppointments)
     : {}
   ;
 
@@ -117,11 +117,11 @@ const Schedule = ():React.JSX.Element => {
     console.log(data, appointmentDateTime);
   };
 
-  const getSelectedProfessorAppointments = async(professorId: number): Promise<void> => {
+  const getSelectedProfessorScheduledAppointments = async(professorId: number): Promise<void> => {
     try {
       const result = PROFESSORS_APPOINTMENTS_DATA.find((item) => item.professorId === professorId);
 
-      if (result) setSelectedProfessorAppointments(result.appointments);
+      if (result) setSelectedProfessorScheduledAppointments(result.appointments);
     } catch (error:unknown) {
       if (error instanceof Error) console.error(error.message);
     }
@@ -139,7 +139,10 @@ const Schedule = ():React.JSX.Element => {
   );
 
   return (
-    <Layout selectedTab='TO_SCHEDULE'>
+    <Layout 
+    from='STUDENT'
+    selectedTab='TO_SCHEDULE'
+    >
       <div className={`
         grid gap-x-3 h-full min-h-0 
         ${showToScheduleForm
@@ -181,7 +184,7 @@ const Schedule = ():React.JSX.Element => {
                       reset();
                       setShowToScheduleForm(true);
                       setSelectedProfessorData(professor);
-                      getSelectedProfessorAppointments(professor.id);
+                      getSelectedProfessorScheduledAppointments(professor.id);
                       setValue('professorName', professor.name);
                     }}}
                   />

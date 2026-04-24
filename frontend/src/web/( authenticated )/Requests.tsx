@@ -5,13 +5,15 @@ import { Input } from '@/components/input';
 import { Select } from '@/components/select';
 import { Card } from '@/components/card';
 import '@/css/calendar.css';
-import type { Solicitation } from '@/types/solicitation.type';
+import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@/types/solicitation.type';
 import { filterStudentSolicitations } from '@/utils/filters/filterStudentSolicitations.util';
 import NoContent from '@/components/misc/NoContent';
 import { STUDENT_SOLICITATIONS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentSolicitations.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
+import { filterStudentSolicitationsFromProfessorView } from '@/utils/filters/filterStudentSolicitationsFromProfessorView.util';
+import { LOGGED_USER_DATA } from './home/Student';
 
-const SOLICITATIONS_DATA: Solicitation[] = [
+const STUDENT_SOLICITATIONS_DATA: StudentSolicitation[] = [
   {
     id: 1,
     name: 'Cloud Strife',
@@ -38,19 +40,48 @@ const SOLICITATIONS_DATA: Solicitation[] = [
   },
 ];
 
+const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA: StudentSolicitationFromProfessorView[] = [
+  {
+    id: 1,
+    name: 'Mad Max',
+    photo: 'https://i0.wp.com/cinegrandiose.com/wp-content/uploads/2016/02/MadM-8.png?fit=960%2C540&ssl=1',
+    appoitmentDateTime: '2026-10-05T15:00:00.000Z',
+    reason: 'Lorem Ipsum Dolor Iurem Eclestas',
+    status: 'UNCONFIRMED',
+  },
+  {
+    id: 2,
+    name: 'Maria Bonita Mendonça de Oliveira Lima',
+    photo: 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
+    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
+    reason: 'Lorem Ipsum Dolor Iure Eclestas Joramentia caestus',
+    status: 'CONFIRMED',
+  },
+];
+
 const Requests = ():React.JSX.Element => {
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
 
-  const filteredStudentSolicitations = filterStudentSolicitations(
-    SOLICITATIONS_DATA,
-    searchValue,
-    filterValue,
-  ); 
+  const filteredSolicitationsByRole = {
+    STUDENT: filterStudentSolicitations(
+      STUDENT_SOLICITATIONS_DATA,
+      searchValue,
+      filterValue,
+    ),
+    PROFESSOR: filterStudentSolicitationsFromProfessorView(
+      STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA,
+      searchValue,
+      filterValue,
+    ),
+  };
 
   return (
-    <Layout selectedTab='REQUESTS'>
+    <Layout 
+    selectedTab='REQUESTS'
+    from={LOGGED_USER_DATA.role}
+    >
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -70,17 +101,21 @@ const Requests = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema='STUDENT_SOLICITATIONS_FILTER'
+                optionsSchema={LOGGED_USER_DATA.role === 'STUDENT' ? 'STUDENT_SOLICITATIONS_FILTER' : 'STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER'}
                 value={filterValue}
                 onSelect={setFilterValue}
               />
             </div>
 
             <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              {filteredStudentSolicitations.length > 0 ? (
-                <div className='grid items-start gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
-                  {filteredStudentSolicitations.map(( solicitation ) => (
+              {filteredSolicitationsByRole[LOGGED_USER_DATA.role].length > 0 ? (
+                <div className={`
+                  grid items-start gap-2 auto-rows-min 
+                  ${ LOGGED_USER_DATA.role === 'STUDENT' ? 'grid-cols-2' : 'grid-cols-1' }
+                `}>
+                  {filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
                     <Card.Solicitation
+                      from={LOGGED_USER_DATA.role}
                       key={solicitation.id}
                       { ...solicitation }
                     />

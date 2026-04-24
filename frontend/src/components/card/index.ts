@@ -1,4 +1,4 @@
-import { Appointment } from "./appointment";
+import Appointment from "./Appointment";
 import History from "./History";
 import ProfessorInfos from "./ProfessorInfos";
 import Solicitation from "./Solicitation";

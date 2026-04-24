@@ -1,5 +1,7 @@
-import type { Solicitation } from "./solicitation.type";
+import type { StudentSolicitation, StudentSolicitationFromProfessorView } from "./solicitation.type";
 
-export type AppointmentHistory = Omit<Solicitation, 'status'> & {
+export type StudentAppointmentHistory = Omit<StudentSolicitation, 'status'> & {
   reason : string;
 }
+
+export type ProfessorAppointmentHistory = Omit<StudentSolicitationFromProfessorView, 'status'>;

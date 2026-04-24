@@ -1,4 +1,5 @@
 import { SELECT_OPTIONS_SCHEMA_MAP } from '@/constants/maps/selectOptionsSchema.map';
+import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
 import type { SelectOptionsSchema } from '@/types/selectOptionsSchema.type';
 import { forwardRef, useState, type ButtonHTMLAttributes } from 'react'
 
@@ -31,6 +32,7 @@ const Default = forwardRef<HTMLButtonElement, Props>((props, ref) => {
   const Icon = props.Icon;
 
   const [showOptions, setShowOptions] = useState<boolean>(false);
+  const { containerRef } = useCloseModalOnMouseClickOutside(setShowOptions);
 
   return (
     <div className={`flex-1 flex flex-col gap-1 w-full ${customStyle?.container ?? ''}`}>
@@ -40,7 +42,9 @@ const Default = forwardRef<HTMLButtonElement, Props>((props, ref) => {
         </label>
       )} 
 
-      <div className={`
+      <div 
+      ref={containerRef}
+      className={`
         h-full flex flex-col border bg-amber-100/25 transition-colors rounded-xl relative 
         ${error ? 'border-red-500 shadow-[0px_0px_3px_red]' : 'border-orange-300'} 
         ${showOptions ? 'rounded-b-none' : '' }

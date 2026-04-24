@@ -1,7 +1,11 @@
-import type { Appointment } from "./appointment.type";
+import type { StudentAppointment } from "./appointment.type";
 import type { Professor } from "./professor.type";
 
-export type Solicitation = Omit<Professor, 'available'> & {
-  status : Appointment['status'];
+export type StudentSolicitation = Omit<Professor, 'available'> & {
+  status : StudentAppointment['status'];
   appoitmentDateTime : string;
 }
+
+export type StudentSolicitationFromProfessorView = Omit<StudentSolicitation, 'discipline'> & {
+  reason: string;
+};

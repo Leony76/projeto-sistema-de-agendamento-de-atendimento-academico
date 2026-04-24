@@ -1,16 +1,16 @@
-import type { StudentAppointment } from "@/types/appointment.type";
+import type { ProfessorAppointment } from "@/types/appointment.type";
 
-export const filterStudentAppointments = (
-  studentAppoitmentsData : StudentAppointment[],
+export const filterProfessorAppointments = (
+  professorAppoitmentsData : ProfessorAppointment[],
   searchValue            : string,
   filterValue            : string,
-): StudentAppointment[] => {
+): ProfessorAppointment[] => {
   
-  return studentAppoitmentsData.filter((appointment) => {
+  return professorAppoitmentsData.filter((appointment) => {
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      appointment.professor.name.toLowerCase().includes(search) 
+      appointment.student.name.toLowerCase().includes(search) 
       ||
       appointment.reason.toLowerCase().includes(search)
       ||
@@ -57,11 +57,11 @@ export const filterStudentAppointments = (
       case 'mostOld':
         return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
 
-      case 'AZProfessorName':
-        return a.professor.name.localeCompare(b.professor.name);
+      case 'AZStudentName':
+        return a.student.name.localeCompare(b.student.name);
 
-      case 'ZAProfessorName':
-        return b.professor.name.localeCompare(a.professor.name);
+      case 'ZAStudentName':
+        return b.student.name.localeCompare(a.student.name);
 
       default:
         return 0;

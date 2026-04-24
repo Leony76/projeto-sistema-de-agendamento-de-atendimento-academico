@@ -5,7 +5,7 @@ import { FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@/components/input';
 import { Select } from '@/components/select';
-import type { Appointment } from '@/types/appointment.type';
+import type { StudentAppointment } from '@/types/appointment.type';
 import { Card } from '@/components/card';
 import Calendar from 'react-calendar';
 import '@/css/calendar.css';
@@ -14,32 +14,37 @@ import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
 import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
 import NoContent from '@/components/misc/NoContent';
-import { APPOINTMENT_FILTER_VALUE_MAP } from '@/constants/maps/filters/appoitment.map.filter';
+import { STUDENT_APPOINTMENT_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
 import { formatTime } from '@/utils/formats/formatTime.util';
+import type { UserRole } from '@/types/userRole.type';
 
-const STUDENT_APPOITMENTS_DATA: Appointment[] = [
-  // {
-  //   id         :  1,
-  //   dateTime   : '2026-10-05T15:00:00.000Z',
-  //   reason     : 'Lorem ipsum dolor ',
-  //   status     : 'CONFIRMED',
-  //   room       : '1B',
-  //   professor  : {
-  //     name  : 'Cloud Strife',
-  //     photo : 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop' ,
-  //   },
-  // },
-  // {
-  //   id         :  2,
-  //   dateTime   : '2026-10-07T16:00:00.000Z',
-  //   professor  : {
-  //     name  : 'Madara Uchiha',
-  //     photo : 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
-  //   },
-  //   reason     : 'Lorem ipsum dolorem ',
-  //   status     : 'UNCONFIRMED',
-  //   room       : '1C'
-  // },
+export const LOGGED_USER_DATA: { role: Exclude<UserRole, 'MANAGER'> } = {
+  role: 'STUDENT',
+}
+
+const STUDENT_APPOITMENTS_DATA: StudentAppointment[] = [
+  {
+    id         :  1,
+    dateTime   : '2026-10-05T15:00:00.000Z',
+    reason     : 'Lorem ipsum dolor ',
+    status     : 'CONFIRMED',
+    room       : '1B',
+    professor  : {
+      name  : 'Cloud Strife',
+      photo : 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop' ,
+    },
+  },
+  {
+    id         :  2,
+    dateTime   : '2026-10-07T16:00:00.000Z',
+    professor  : {
+      name  : 'Madara Uchiha',
+      photo : 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
+    },
+    reason     : 'Lorem ipsum dolorem ',
+    status     : 'UNCONFIRMED',
+    room       : '1C'
+  },
 ];
 
 const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
@@ -75,7 +80,10 @@ const Student = (): React.JSX.Element => {
   );
 
   return (
-    <Layout selectedTab='HOME'>
+    <Layout 
+    selectedTab='HOME'
+    from='STUDENT'
+    >
       <div className='grid grid-cols-[1fr_300px] gap-x-3 h-full min-h-0'>
         <div className='grid gap-y-3 grid-rows-[60px_1fr] min-h-0'>
           <div className='flex gap-5 max-w-200 mx-auto w-full'>
@@ -113,7 +121,7 @@ const Student = (): React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema='APPOINTMENT_FILTER'
+                optionsSchema='STUDENT_APPOINTMENT_FILTER'
                 value={filterValue}
                 onSelect={setFilterValue}
               />
@@ -122,7 +130,8 @@ const Student = (): React.JSX.Element => {
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
               { filteredStudentAppointmentsData.length > 0 ? (
                 filteredStudentAppointmentsData.map((appointment) => (
-                 <Card.Appointment.Student
+                 <Card.Appointment
+                  from='STUDENT'
                    key={appointment.id}
                    { ...appointment }
                  />
@@ -132,11 +141,11 @@ const Student = (): React.JSX.Element => {
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                   message={
                     searchValue && filterValue
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`
                       : filterValue
-                      ? `Nenhum resultado para o filtro "${APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
                       : `Nenhum agendamento disponível no momento!`
                   }
                 />

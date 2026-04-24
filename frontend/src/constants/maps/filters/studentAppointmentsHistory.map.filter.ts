@@ -9,12 +9,7 @@ export const STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP = [
 ] as const;
 
 
-export const STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP = {
-  none            : 'Nenhum'         ,
-  AZProfessorName : 'Professor [A-Z]'   ,
-  ZAProfessorName : 'Professor [Z-A]'   ,
-  AZDisciplines   : 'Disciplinas [A-Z]' ,
-  ZADisciplines   : 'Disciplinas [Z-A]' ,
-  mostRecent      : 'Mais recentes'     ,
-  mostOld         : 'Mais antigos'      ,
-} as const;
+export const STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP = 
+  Object.fromEntries(
+    STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP.map((item) => [item.value, item.label]),
+);

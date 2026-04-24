@@ -5,13 +5,15 @@ import { Input } from '@/components/input';
 import { Select } from '@/components/select';
 import { Card } from '@/components/card';
 import '@/css/calendar.css';
-import type { AppointmentHistory } from '@/types/appointmentHistory.type';
+import type { StudentAppointmentHistory, ProfessorAppointmentHistory } from '@/types/appointmentHistory.type';
 import { filterStudentAppointmentsHistory } from '@/utils/filters/filterStudentAppointmentsHistory.util';
 import NoContent from '@/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
 import { FaClipboardQuestion } from 'react-icons/fa6';
+import { filterProfessorAppointmentsHistory } from '@/utils/filters/filterProfessorAppointmentsHistory.util';
+import { LOGGED_USER_DATA } from './home/Student';
 
-const APPOINTMENT_HISTORY_DATA: AppointmentHistory[] = [
+const STUDENT_APPOINTMENT_HISTORY_DATA: StudentAppointmentHistory[] = [
   {
     id: 1,
     name: 'Cloud Strife',
@@ -38,19 +40,53 @@ const APPOINTMENT_HISTORY_DATA: AppointmentHistory[] = [
   },
 ];
 
+const PROFESSOR_APPOINTMENT_HISTORY_DATA: ProfessorAppointmentHistory[] = [
+  {
+    id: 1,
+    name: 'Mad Max',
+    photo: 'https://i0.wp.com/cinegrandiose.com/wp-content/uploads/2016/02/MadM-8.png?fit=960%2C540&ssl=1',
+    appoitmentDateTime: '2026-10-05T15:00:00.000Z',
+    reason: 'Lorem Ipsum Dolor Iurem Eclestas',
+  },
+  {
+    id: 2,
+    name: 'Maria Bonita Mendonça de Oliveira Lima',
+    photo: 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
+    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
+    reason: 'Lorem Ipsum Dolor Iure Eclestas Joramentia caestus',
+  },
+  {
+    id: 3,
+    name: 'Zamna Jester Gransky',
+    photo: 'https://pbs.twimg.com/media/HEw70fNWsAEa-5T?format=jpg&name=large',
+    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
+    reason: 'Lorem ipsum dolor'
+  },
+];
+
 const History = ():React.JSX.Element => {
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
 
-  const filteredStudentAppointmentsHistoryData = filterStudentAppointmentsHistory(
-    APPOINTMENT_HISTORY_DATA,
-    searchValue,
-    filterValue,
-  ); 
+  const filteredAppointmentHistoryByRole = {
+    STUDENT: filterStudentAppointmentsHistory(
+      STUDENT_APPOINTMENT_HISTORY_DATA,
+      searchValue,
+      filterValue,
+    ), 
+    PROFESSOR: filterProfessorAppointmentsHistory(
+      PROFESSOR_APPOINTMENT_HISTORY_DATA,
+      searchValue,
+      filterValue,
+    ),
+  }
 
   return (
-    <Layout selectedTab='HISTORY'>
+    <Layout 
+    selectedTab='HISTORY'
+    from={LOGGED_USER_DATA.role}
+    >
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -70,18 +106,18 @@ const History = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema='STUDENT_APPOINTMENTS_HISTORY_FILTER'
+                optionsSchema={LOGGED_USER_DATA.role === 'PROFESSOR' ? 'PROFESSOR_APPOINTMENTS_HISTORY_FILTER' : 'STUDENT_APPOINTMENTS_HISTORY_FILTER'}
                 value={filterValue}
                 onSelect={setFilterValue}
               />
             </div>
               
-
             <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              {filteredStudentAppointmentsHistoryData.length > 0 ? (
+              {filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].length > 0 ? (
                 <div className='grid items-start gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
-                  { filteredStudentAppointmentsHistoryData.map(( history ) => (
+                  { filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].map(( history ) => (
                     <Card.History
+                      from={LOGGED_USER_DATA.role}
                       key={ history.id }
                       { ...history }
                     />
