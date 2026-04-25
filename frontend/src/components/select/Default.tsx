@@ -7,6 +7,7 @@ type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
   label?        : string;
   error?        : string;
   placeholder   : string;
+  textSize?     : 'BASE' | 'LG' | 'SM';
   optionsSchema : SelectOptionsSchema;
   onSelect      : (value: string) => void;
   Icon?         : React.ElementType; 
@@ -59,7 +60,7 @@ const Default = forwardRef<HTMLButtonElement, Props>((props, ref) => {
         `}>
           { Icon && <Icon/> }
 
-          <span className='mb-0.5'>
+          <span className={`mb-0.5`}>
             { props.placeholder }
           </span>
         </button>
@@ -82,7 +83,7 @@ const Default = forwardRef<HTMLButtonElement, Props>((props, ref) => {
                 setShowOptions(false);
               }}
               className={`
-                w-full text-left text-sm text-orange-500 py-1.5 hover:bg-amber-100/30 cursor-pointer px-2
+                w-full text-left text-sm text-orange-500 py-1.5 hover:bg-amber-100/30 cursor-pointer px-2              
                 ${props.customStyle?.options?.button}
                 ${item.value === props.value ? 'bg-amber-100/70' : ''}
               `}

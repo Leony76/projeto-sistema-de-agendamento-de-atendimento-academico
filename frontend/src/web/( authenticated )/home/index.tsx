@@ -6,7 +6,7 @@ import type React from 'react'
 
 const Home = (): React.JSX.Element | null => {
 
-  const user: {role: UserRole} = { role: 'STUDENT' }
+  const user: {role: UserRole} = { role: 'MANAGER' }
   
   switch (user.role) {
     case 'STUDENT'   : return <Student/>

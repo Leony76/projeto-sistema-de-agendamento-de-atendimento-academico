@@ -42,7 +42,7 @@ const ExpansibleImage = (props:Props):React.JSX.Element => {
         <img 
           src={ props.image.uri } 
           alt={ props.image.name }
-          className='h-full w-full object-cover rounded-full'
+          className='h-full w-full object-cover rounded-full aspect-square'
         />
       </figure>
     </>

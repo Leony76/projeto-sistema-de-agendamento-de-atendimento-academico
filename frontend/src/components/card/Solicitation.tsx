@@ -133,4 +133,54 @@ const Solicitation = (props:Props): React.JSX.Element => {
   );
 }
 
+export const SMSolicitation = (props:Props): React.JSX.Element => {
+
+  const statusTagStyle: Record<AppointmentStatus, { style: string, icon: JSX.Element }> = {
+    CANCELED    : { style: 'bg-red-100 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
+    CONFIRMED   : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
+    UNCONFIRMED : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+  };
+
+  return (
+    <div className='px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>
+      <div className='flex flex-col flex-1'>
+        <h3 className='font-bold text-orange-400 text-sm break-all'>
+          { props.name }
+        </h3>
+      
+        { props.from === 'STUDENT' && 
+          <label className='text-xs text-orange-400 font-semibold'>
+            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_MAP[props.discipline] }</span>
+          </label>
+        }
+
+        <label className='text-xs text-orange-400 font-semibold'>
+          Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
+        </label>
+
+        <label className='text-xs text-orange-400 font-semibold'>
+          Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
+        </label>
+
+        { props.from === 'PROFESSOR' &&
+          <label className='text-xs text-orange-400 font-semibold'>
+            Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
+          </label>
+        }
+
+        <span className={`
+          border mb-1 mt-2 text-xs py-1 font-semibold items-center gap-2 flex justify-center w-fit px-3 rounded-lg
+          ${statusTagStyle[props.status].style}
+        `}>
+          { statusTagStyle[props.status].icon }
+
+          <span>
+            { APPOINTMENT_STATUS_MAP[props.status] }
+          </span>
+        </span>
+      </div>  
+    </div>
+  );
+}
+
 export default Solicitation

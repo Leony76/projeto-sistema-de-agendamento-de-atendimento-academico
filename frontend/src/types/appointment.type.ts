@@ -13,4 +13,6 @@ export type StudentAppointment = {
   };
 };
 
-export type ProfessorAppointment = Omit<StudentAppointment, 'professor'> & {student: StudentAppointment['professor']};
+export type ProfessorAppointment = Omit<StudentAppointment, 'professor'> & {
+  student: StudentAppointment['professor'];
+};

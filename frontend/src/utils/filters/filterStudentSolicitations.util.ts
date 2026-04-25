@@ -1,12 +1,12 @@
-import type { Solicitation } from "@/types/solicitation.type";
+import type { StudentSolicitation } from "@/types/solicitation.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
 
 export const filterStudentSolicitations = (
-  studentSolicitationsData : Solicitation[],
+  studentSolicitationsData : StudentSolicitation[],
   searchValue              : string,
   filterValue              : string,
-): Solicitation[] => {
+): StudentSolicitation[] => {
   return studentSolicitationsData.filter((solicitation) => {
     const search = searchValue.toLowerCase();
 

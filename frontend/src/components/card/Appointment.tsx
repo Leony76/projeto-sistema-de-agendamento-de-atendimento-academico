@@ -119,4 +119,39 @@ const Appointment = (props:Props): React.JSX.Element => {
   )
 }
 
+
+export const SMAppointment = (props:Props): React.JSX.Element => {
+
+  const labelName = props.from === 'PROFESSOR'
+    ? { label: 'Professor(a):', name: props.student.name }
+    : { label: 'Aluno(a):', name: props.professor.name }
+  ;
+
+  return (
+    <div className='px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>               
+      <div className='flex flex-col flex-1'>
+        <h3 className='font-bold text-orange-400 text-sm'>
+          { formatDateTime(props.dateTime) }
+        </h3>
+
+        <label className='text-xs text-orange-400 font-semibold'>
+          { labelName.label } <span className='text-cyan-500 font-normal'>{ labelName.name }</span>
+        </label>
+
+        <label className='text-xs text-orange-400 font-semibold'>
+          Status: <span className='text-cyan-500 font-normal'>{ APPOINTMENT_STATUS_MAP[props.status] }</span>
+        </label>
+
+        <label className='text-xs text-orange-400 font-semibold'>
+          Sala: <span className='text-cyan-500 font-normal'>{ props.room }</span>
+        </label>
+
+        <label className='text-xs text-orange-400 font-semibold'>
+          Motivo: <span className='text-gray-400 font-normal'>{ props.reason } </span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
 export default Appointment

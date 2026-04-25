@@ -113,13 +113,23 @@ const Requests = ():React.JSX.Element => {
                   grid items-start gap-2 auto-rows-min 
                   ${ LOGGED_USER_DATA.role === 'STUDENT' ? 'grid-cols-2' : 'grid-cols-1' }
                 `}>
-                  {filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
-                    <Card.Solicitation
-                      from={LOGGED_USER_DATA.role}
-                      key={solicitation.id}
-                      { ...solicitation }
-                    />
-                    ))}
+                  {LOGGED_USER_DATA.role === 'STUDENT' ? (
+                    filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
+                      <Card.Solicitation
+                        from={'STUDENT'}
+                        key={solicitation.id}
+                        { ...solicitation }
+                      />
+                    ))             
+                  ) : (
+                    filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
+                      <Card.Solicitation
+                        from={'PROFESSOR'}
+                        key={solicitation.id}
+                        { ...solicitation }
+                      />
+                    ))
+                  )}
                 </div>
               ) : (
                 <NoContent
