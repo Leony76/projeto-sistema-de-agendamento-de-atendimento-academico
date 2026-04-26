@@ -1,11 +1,12 @@
 import { AVAILABLE_DAYS_MAP } from "@/constants/maps/days.map";
 import { DISCIPLINES_MAP } from "@/constants/maps/disciplines.map";
+import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@/constants/maps/filters/toScheduleProfessors.map.filter";
 import type { Professor } from "@/types/professor.type";
 
 export const filterToScheduleProfessors = (
   professorsData : Professor[],
   searchValue    : string,
-  filterValue    : string,
+  filterValue    : typeof TO_SCHEDULE_PROFESSORS_FILTER_MAP[number]['value'],
 ): Professor[] => {
   
   return professorsData.filter((professor) => {

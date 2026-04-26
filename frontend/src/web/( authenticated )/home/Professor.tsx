@@ -11,7 +11,7 @@ import '@/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
-import { PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
+import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
 import NoContent from '@/components/misc/NoContent';
 import { formatTime } from '@/utils/formats/formatTime.util';
 import { filterProfessorAppointments } from '@/utils/filters/filterProfessorAppointments.util';
@@ -64,7 +64,7 @@ const Professor = (): React.JSX.Element => {
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
+  const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
   const filteredStudentAppointmentsData = filterProfessorAppointments(
@@ -117,19 +117,19 @@ const Professor = (): React.JSX.Element => {
                 placeholder='Filtro'
                 optionsSchema='PROFESSOR_APPOINTMENT_FILTER'
                 value={filterValue}
-                onSelect={setFilterValue}
+                onSelect={(value) => setFilterValue(value as typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'])}
               />
             </div>
 
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
               { filteredStudentAppointmentsData.length > 0 ? (
                 filteredStudentAppointmentsData.map((appointment) => (
-                 <Card.Appointment
-                  from='PROFESSOR'
-                  key={appointment.id}
-                  { ...appointment }
-                 />
-               ))
+                  <Card.Appointment
+                    from='PROFESSOR'
+                    key={appointment.id}
+                    { ...appointment }
+                  />
+                ))
               ) : (
                 <NoContent
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}

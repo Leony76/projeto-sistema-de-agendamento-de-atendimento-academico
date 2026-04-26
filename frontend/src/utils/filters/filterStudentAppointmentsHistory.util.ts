@@ -2,11 +2,12 @@ import { DISCIPLINES_MAP } from "@/constants/maps/disciplines.map";
 import type { StudentAppointmentHistory } from "@/types/appointmentHistory.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
+import type { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP } from "@/constants/maps/filters/studentAppointmentsHistory.map.filter";
 
 export const filterStudentAppointmentsHistory = (
   studentAppointmentsHistoryData : StudentAppointmentHistory[],
   searchValue              : string,
-  filterValue              : string,
+  filterValue              : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'],
 ): StudentAppointmentHistory[] => {
   return studentAppointmentsHistoryData.filter(( history ) => {
     const search = searchValue.toLowerCase();

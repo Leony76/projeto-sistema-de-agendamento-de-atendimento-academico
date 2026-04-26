@@ -10,3 +10,5 @@ export const DISCIPLINES_MAP = {
   PORTUGUESE : 'Português'  ,
   ENGLISH    : 'Inglês'     ,
 } as const;
+
+export const DISCIPLINES = Object.keys(DISCIPLINES_MAP) as [keyof typeof DISCIPLINES_MAP, ...(keyof typeof DISCIPLINES_MAP)[]];

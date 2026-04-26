@@ -17,7 +17,7 @@ import { normalizeAppointments } from '@/utils/misc/normalizeAppointments.util';
 import { filterToScheduleProfessors } from '@/utils/filters/filterToScheduleProfessors.util';
 import NoContent from '@/components/misc/NoContent';
 import { FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import { TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@/constants/maps/filters/toScheduleProfessors.map.filter';
+import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@/constants/maps/filters/toScheduleProfessors.map.filter';
 
 const PROFESSORS_DATA: Professor[] = [
   {
@@ -85,7 +85,7 @@ const Schedule = ():React.JSX.Element => {
   })
 
   const [searchValue, setSearchValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
+  const [filterValue, setFilterValue] = useState<typeof TO_SCHEDULE_PROFESSORS_FILTER_MAP[number]['value']>('none');
 
   const [showToScheduleForm, setShowToScheduleForm] = useState<boolean>(false);
 
@@ -170,7 +170,7 @@ const Schedule = ():React.JSX.Element => {
                 placeholder='Filtro'
                 optionsSchema='TO_SCHEDULE_PROFESSORS_FILTER'
                 value={filterValue}
-                onSelect={setFilterValue}
+                onSelect={(value) => setFilterValue(value as typeof TO_SCHEDULE_PROFESSORS_FILTER_MAP[number]['value'])}
               />
             </div>
 
@@ -193,7 +193,7 @@ const Schedule = ():React.JSX.Element => {
                 <NoContent
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                   message={
-                    searchValue && filterValue
+                    searchValue && filterValue !== 'none'
                       ? `Nenhum resultado para "${searchValue}" com o filtro "${TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`

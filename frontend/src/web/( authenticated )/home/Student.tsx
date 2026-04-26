@@ -14,7 +14,7 @@ import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
 import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
 import NoContent from '@/components/misc/NoContent';
-import { STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
+import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
 import { formatTime } from '@/utils/formats/formatTime.util';
 import type { UserRole } from '@/types/userRole.type';
 
@@ -70,7 +70,7 @@ const Student = (): React.JSX.Element => {
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
+  const [filterValue, setFilterValue] = useState<typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
   const filteredStudentAppointmentsData = filterStudentAppointments(
@@ -123,7 +123,7 @@ const Student = (): React.JSX.Element => {
                 placeholder='Filtro'
                 optionsSchema='STUDENT_APPOINTMENT_FILTER'
                 value={filterValue}
-                onSelect={setFilterValue}
+                onSelect={(value) => setFilterValue(value as typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'])}
               />
             </div>
 
@@ -140,7 +140,7 @@ const Student = (): React.JSX.Element => {
                 <NoContent
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                   message={
-                    searchValue && filterValue
+                    searchValue && filterValue !== 'none'
                       ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`

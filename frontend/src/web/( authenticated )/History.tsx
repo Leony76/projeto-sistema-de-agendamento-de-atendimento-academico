@@ -8,10 +8,11 @@ import '@/css/calendar.css';
 import type { StudentAppointmentHistory, ProfessorAppointmentHistory } from '@/types/appointmentHistory.type';
 import { filterStudentAppointmentsHistory } from '@/utils/filters/filterStudentAppointmentsHistory.util';
 import NoContent from '@/components/misc/NoContent';
-import { STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
+import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
 import { FaClipboardQuestion } from 'react-icons/fa6';
 import { filterProfessorAppointmentsHistory } from '@/utils/filters/filterProfessorAppointmentsHistory.util';
 import { LOGGED_USER_DATA } from './home/Student';
+import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointmentsHistory.map.filter';
 
 const STUDENT_APPOINTMENT_HISTORY_DATA: StudentAppointmentHistory[] = [
   {
@@ -64,23 +65,55 @@ const PROFESSOR_APPOINTMENT_HISTORY_DATA: ProfessorAppointmentHistory[] = [
   },
 ];
 
+type FilterValue = {
+  student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
+  professor : typeof PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
+}
+
 const History = ():React.JSX.Element => {
 
   const [searchValue, setSearchValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
+  const [filterValue, setFilterValue] = useState<FilterValue>({
+    professor : 'none',
+    student   : 'none',
+  });
 
   const filteredAppointmentHistoryByRole = {
     STUDENT: filterStudentAppointmentsHistory(
       STUDENT_APPOINTMENT_HISTORY_DATA,
       searchValue,
-      filterValue,
+      filterValue.student,
     ), 
     PROFESSOR: filterProfessorAppointmentsHistory(
       PROFESSOR_APPOINTMENT_HISTORY_DATA,
       searchValue,
-      filterValue,
+      filterValue.professor,
     ),
   }
+
+  const filterByRoleMap = {
+    STUDENT: {
+      schema : 'STUDENT_APPOINTMENTS_HISTORY_FILTER',
+      value  : filterValue.student,
+      setter : (value: FilterValue['student']) => setFilterValue(
+        prev => ({ ...prev, student: value }),
+      ),
+    },
+    PROFESSOR: {
+      schema : 'PROFESSOR_APPOINTMENTS_HISTORY_FILTER',
+      value  : filterValue.professor,
+      setter : (value: FilterValue['professor']) => setFilterValue(
+        prev => ({ ...prev, professor: value }),
+      ),
+    }
+  } as const;
+
+  const noHistoryFoundFilterByRoleMap = {
+    STUDENT   : STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.student],
+    PROFESSOR : PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.professor],
+  } as const;
+  
+  const hasFilter = filterValue.student !== 'none' || filterValue.professor !== 'none';
 
   return (
     <Layout 
@@ -106,9 +139,9 @@ const History = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema={LOGGED_USER_DATA.role === 'PROFESSOR' ? 'PROFESSOR_APPOINTMENTS_HISTORY_FILTER' : 'STUDENT_APPOINTMENTS_HISTORY_FILTER'}
-                value={filterValue}
-                onSelect={setFilterValue}
+                optionsSchema={filterByRoleMap[LOGGED_USER_DATA.role].schema}
+                value={filterByRoleMap[LOGGED_USER_DATA.role].value}
+                onSelect={(value) => filterByRoleMap[LOGGED_USER_DATA.role].setter(value as any)}
               />
             </div>
               
@@ -127,12 +160,12 @@ const History = ():React.JSX.Element => {
                 <NoContent
                   Icon={() => <FaClipboardQuestion size={24}/>}
                   message={
-                    searchValue && filterValue
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP]}"`
+                    searchValue && hasFilter
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`
                       : filterValue
-                      ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
                       : `Nenhuma histórico no momento!`
                   }
                 />

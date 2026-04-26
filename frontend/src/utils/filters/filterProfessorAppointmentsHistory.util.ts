@@ -1,11 +1,12 @@
 import type { ProfessorAppointmentHistory } from "@/types/appointmentHistory.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
+import type { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "@/constants/maps/filters/professorAppointmentsHistory.map.filter";
 
 export const filterProfessorAppointmentsHistory = (
   studentAppointmentsHistoryData : ProfessorAppointmentHistory[],
   searchValue              : string,
-  filterValue              : string,
+  filterValue              : typeof PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'],
 ): ProfessorAppointmentHistory[] => {
   return studentAppointmentsHistoryData.filter(( history ) => {
     const search = searchValue.toLowerCase();
