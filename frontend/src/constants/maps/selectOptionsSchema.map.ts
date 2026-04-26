@@ -1,8 +1,8 @@
-import { STUDENT_APPOINTMENT_FILTER_MAP } from "./filters/studentAppoitment.map.filter";
+import { STUDENT_APPOINTMENTS_FILTER_MAP } from "./filters/studentAppoitment.map.filter";
 import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP } from "./filters/studentAppointmentsHistory.map.filter";
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from "./filters/studentSolicitations.map.filter";
 import { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "./filters/toScheduleProfessors.map.filter";
-import { PROFESSOR_APPOINTMENT_FILTER_MAP } from "./filters/professorAppointments.map.filter";
+import { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "./filters/professorAppointments.map.filter";
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "./filters/professorAppointmentsHistory.map.filter";
 import { USERS_LIST_BY_ROLE_FILTER_MAP } from "./filters/usersListByRole.map.filter";
 import { REGISTERED_MANAGERS_FILTER_MAP, REGISTERED_PROFESSORS_FILTER_MAP, REGISTERED_STUDENTS_FILTER_MAP } from "./filters/registeredUsers.map.filter";
@@ -12,8 +12,8 @@ export const SELECT_OPTIONS_SCHEMA_MAP = {
   REGISTERED_PROFESSORS_FILTER                     : REGISTERED_PROFESSORS_FILTER_MAP,
   REGISTERED_MANAGERS_FILTER                       : REGISTERED_MANAGERS_FILTER_MAP,
   USERS_LIST_BY_ROLE_FILTER                        : USERS_LIST_BY_ROLE_FILTER_MAP,
-  STUDENT_APPOINTMENT_FILTER                       : STUDENT_APPOINTMENT_FILTER_MAP,
-  PROFESSOR_APPOINTMENT_FILTER                     : PROFESSOR_APPOINTMENT_FILTER_MAP,
+  STUDENT_APPOINTMENT_FILTER                       : STUDENT_APPOINTMENTS_FILTER_MAP,
+  PROFESSOR_APPOINTMENT_FILTER                     : PROFESSOR_APPOINTMENTS_FILTER_MAP,
   TO_SCHEDULE_PROFESSORS_FILTER                    : TO_SCHEDULE_PROFESSORS_FILTER_MAP,
   STUDENT_SOLICITATIONS_FILTER                     : STUDENT_SOLICITATIONS_FILTER_MAP,
   STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP,

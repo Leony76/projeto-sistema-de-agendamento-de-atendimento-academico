@@ -1,9 +1,10 @@
+import type { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "@/constants/maps/filters/professorAppointments.map.filter";
 import type { ProfessorAppointment } from "@/types/appointment.type";
 
 export const filterProfessorAppointments = (
   professorAppoitmentsData : ProfessorAppointment[],
   searchValue            : string,
-  filterValue            : string,
+  filterValue            : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'],
 ): ProfessorAppointment[] => {
   
   return professorAppoitmentsData.filter((appointment) => {

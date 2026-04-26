@@ -11,7 +11,7 @@ import '@/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
-import { PROFESSOR_APPOINTMENT_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
+import { PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
 import NoContent from '@/components/misc/NoContent';
 import { formatTime } from '@/utils/formats/formatTime.util';
 import { filterProfessorAppointments } from '@/utils/filters/filterProfessorAppointments.util';
@@ -135,11 +135,11 @@ const Professor = (): React.JSX.Element => {
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                   message={
                     searchValue && filterValue
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${PROFESSOR_APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`
                       : filterValue
-                      ? `Nenhum resultado para o filtro "${PROFESSOR_APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para o filtro "${PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP]}"`
                       : `Nenhum agendamento disponível no momento!`
                   }
                 />

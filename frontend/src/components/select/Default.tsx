@@ -74,12 +74,7 @@ const Default = forwardRef<HTMLButtonElement, Props>((props, ref) => {
               <button
               key={item.value}
               onClick={() => {
-                if (item.value === 'none') {
-                  props.onSelect('');
-                } else {
-                  props.onSelect(item.value);
-                }
-
+                props.onSelect(item.value);
                 setShowOptions(false);
               }}
               className={`

@@ -1,11 +1,12 @@
 import type { StudentSolicitation } from "@/types/solicitation.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
+import type { STUDENT_SOLICITATIONS_FILTER_MAP } from "@/constants/maps/filters/studentSolicitations.map.filter";
 
 export const filterStudentSolicitations = (
   studentSolicitationsData : StudentSolicitation[],
   searchValue              : string,
-  filterValue              : string,
+  filterValue              : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'],
 ): StudentSolicitation[] => {
   return studentSolicitationsData.filter((solicitation) => {
     const search = searchValue.toLowerCase();

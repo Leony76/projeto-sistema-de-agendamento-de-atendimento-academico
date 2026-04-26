@@ -1,4 +1,4 @@
-export const STUDENT_APPOINTMENT_FILTER_MAP = [
+export const STUDENT_APPOINTMENTS_FILTER_MAP = [
   { value: 'none'            , label: 'Nenhum'          },
   { value: 'mostRecent'      , label: 'Mais recentes'   },
   { value: 'mostOld'         , label: 'Mais antigos'    },
@@ -10,7 +10,7 @@ export const STUDENT_APPOINTMENT_FILTER_MAP = [
   { value: 'unconfirmed'     , label: 'Não confirmados' },
 ] as const;
 
-export const STUDENT_APPOINTMENT_FILTER_VALUE_MAP = 
+export const STUDENT_APPOINTMENTS_FILTER_VALUE_MAP = 
   Object.fromEntries(
-    STUDENT_APPOINTMENT_FILTER_MAP.map((item) => [item.value, item.label])
+    STUDENT_APPOINTMENTS_FILTER_MAP.map((item) => [item.value, item.label])
 );

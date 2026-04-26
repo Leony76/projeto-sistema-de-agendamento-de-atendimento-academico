@@ -8,13 +8,15 @@ import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import { Select } from '../select';
 import { Input } from '../input';
 import { FaFilter } from 'react-icons/fa';
-import { STUDENT_APPOINTMENT_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
+import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { Card } from '../card';
 import { filterProfessorAppointments } from '@/utils/filters/filterProfessorAppointments.util';
 import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
 import { filterStudentSolicitationsFromProfessorView } from '@/utils/filters/filterStudentSolicitationsFromProfessorView.util';
 import { filterStudentSolicitations } from '@/utils/filters/filterStudentSolicitations.util';
+import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
+import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentSolicitations.map.filter';
 
 const REGISTERED_USERS_DATA: UserDetailsType[] = [
   {
@@ -122,6 +124,16 @@ const REGISTERED_USERS_DATA: UserDetailsType[] = [
   },
 ];
 
+type FilterValue = {
+  student   : {
+    appointments  : typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'];
+    solicitations : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
+  };
+  professor : {
+    appointments  : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'];
+    solicitations : typeof STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP[number]['value'];
+  }; 
+};
 
 export const UserDetails = (): React.JSX.Element => {
   const { id } = useParams();
@@ -129,37 +141,85 @@ export const UserDetails = (): React.JSX.Element => {
   const [ user, setUser ] = useState<UserDetailsType | null>(null);
 
   const [appoitmentSearchValue, setAppoitmentSearchValue] = useState<string>('');
-  const [appoitmentFilterValue, setAppoitmentFilterValue] = useState<string>('');
-
   const [solicitationSearchValue, setSolicitationSearchValue] = useState<string>('');
-  const [solicitationFilterValue, setSolicitationFilterValue] = useState<string>('');
+  
+  const [userDetailsFilter, setUserDetailsFilter] = useState<FilterValue>({
+    student   : { appointments: 'none', solicitations: 'none' },
+    professor : { appointments: 'none', solicitations: 'none' },
+  });
 
-  const appointmentsByRole = {
+  const appointmentsAndSolicitationsByRoleMap = {
     PROFESSOR: {
-      appoitments: filterProfessorAppointments(
+      appointments: filterProfessorAppointments(
         user?.role === 'PROFESSOR' ? user.appointmentsList : [],
         appoitmentSearchValue,
-        appoitmentFilterValue
+        userDetailsFilter.professor.appointments,
       ),
       solicitations: filterStudentSolicitationsFromProfessorView(
         user?.role === 'PROFESSOR' ? user.solicitationsList : [],
         solicitationSearchValue,
-        solicitationFilterValue,
-      )
+        userDetailsFilter.professor.solicitations,
+      ),
     },
     STUDENT: {
-      appoitments: filterStudentAppointments(
+      appointments: filterStudentAppointments(
         user?.role === 'STUDENT' ? user.appointmentsList : [],
         appoitmentSearchValue,
-        appoitmentFilterValue
+        userDetailsFilter.student.appointments,
       ),
       solicitations: filterStudentSolicitations(
         user?.role === 'STUDENT' ? user.solicitationsList : [],
         solicitationSearchValue,
-        solicitationFilterValue,
+        userDetailsFilter.student.solicitations,
       ),
     },
-  }
+  };
+
+  const userNotFoundByFilterByRoleMap = {
+    STUDENT   : {
+      appointments  : STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.student.appointments],
+      solicitations : STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[userDetailsFilter.student.solicitations],
+    },
+    PROFESSOR : {
+      appointments  : PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.professor.appointments],
+      solicitations : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[userDetailsFilter.professor.solicitations],
+    }
+  } as const
+
+  const filtersByRoleMap = {
+    STUDENT: {
+      appointments: {
+        schema  : 'STUDENT_APPOINTMENT_FILTER',
+        value   : userDetailsFilter.student.appointments,
+        setter : (value: FilterValue['student']['appointments']) => setUserDetailsFilter(prev => ({
+          ...prev, student: { ...prev.student, appointments: value }
+        })),
+      },
+      solicitations: {
+        schema : 'STUDENT_SOLICITATIONS_FILTER',
+        value  : userDetailsFilter.student.solicitations,
+        setter :(value: FilterValue['student']['solicitations']) => setUserDetailsFilter(prev => ({
+          ...prev, student: { ...prev.student, solicitations: value }
+        })),
+      },
+    },
+    PROFESSOR: {
+      appointments: {
+        schema : 'PROFESSOR_APPOINTMENT_FILTER',
+        value  : userDetailsFilter.professor.appointments,
+        setter : (value: FilterValue['professor']['appointments']) => setUserDetailsFilter(prev => ({
+          ...prev, professor: { ...prev.professor, appointments: value }
+        })),
+      },
+      solicitations: {
+        schema : 'STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER',
+        value  : userDetailsFilter.professor.solicitations,
+        setter : (value: FilterValue['professor']['solicitations']) => setUserDetailsFilter(prev => ({
+          ...prev, professor: { ...prev.professor, solicitations: value }
+        })),
+      },
+    }
+  } as const;
   
   useEffect(() => {
     if (!id) return;
@@ -235,17 +295,17 @@ export const UserDetails = (): React.JSX.Element => {
                 <Select.Default
                   Icon={() => <FaFilter size={13}/>}
                   placeholder='Filtro'
-                  optionsSchema='STUDENT_APPOINTMENT_FILTER'
+                  optionsSchema={filtersByRoleMap[user.role].appointments.schema}
                   customStyle={{ container: '', options: { button: 'text-xs' } }}
-                  value={appoitmentFilterValue}
-                  onSelect={setAppoitmentFilterValue}
+                  value={filtersByRoleMap[user.role].appointments.value}
+                  onSelect={(value) => filtersByRoleMap[user.role].appointments.setter(value)}
                 />
               </div>
 
               <div className='flex-1 min-h-0 max-h-57 flex w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-                { appointmentsByRole[user.role].appoitments.length > 0 ? (
+                { appointmentsAndSolicitationsByRoleMap[user.role].appointments.length > 0 ? (
                   user.role === 'STUDENT' ? (
-                    appointmentsByRole[user.role].appoitments.map(( appointment ) => (
+                    appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
                       <Card.SMAppointment
                         from='STUDENT'
                         key={appointment.id}
@@ -253,7 +313,7 @@ export const UserDetails = (): React.JSX.Element => {
                       />
                     ))
                   ) : (
-                    appointmentsByRole[user.role].appoitments.map(( appointment ) => (
+                    appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
                       <Card.SMAppointment
                         from='PROFESSOR'
                         key={appointment.id}
@@ -263,14 +323,14 @@ export const UserDetails = (): React.JSX.Element => {
                   )
                 ) : (
                   <NoContent
-                    Icon={(appoitmentSearchValue || appoitmentFilterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
+                    Icon={(appoitmentSearchValue || userDetailsFilter) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                     message={
-                      appoitmentSearchValue && appoitmentFilterValue
-                        ? `Nenhum resultado para "${appoitmentSearchValue}" com o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[appoitmentFilterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      appoitmentSearchValue && (userDetailsFilter.professor.appointments !== 'none' || userDetailsFilter.student.appointments !== 'none')
+                        ? `Nenhum resultado para "${appoitmentSearchValue}" com o filtro "${userNotFoundByFilterByRoleMap[user.role].appointments}"`
                         : appoitmentSearchValue
                         ? `Nenhum resultado para "${appoitmentSearchValue}"`
-                        : appoitmentFilterValue
-                        ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[appoitmentFilterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                        : userDetailsFilter
+                        ? `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[user.role].appointments}"`
                         : `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
                     }
                   />
@@ -295,17 +355,17 @@ export const UserDetails = (): React.JSX.Element => {
                 <Select.Default
                   Icon={() => <FaFilter size={13}/>}
                   placeholder='Filtro'
-                  optionsSchema='STUDENT_SOLICITATIONS_FILTER'
+                  optionsSchema={filtersByRoleMap[user.role].solicitations.schema}
                   customStyle={{ container: '', options: { button: 'text-xs' } }}
-                  value={solicitationFilterValue}
-                  onSelect={setSolicitationFilterValue}
+                  value={filtersByRoleMap[user.role].solicitations.value}
+                  onSelect={(value) => filtersByRoleMap[user.role].solicitations.setter(value)}
                 />
               </div>
 
               <div className='flex-1 grid grid-cols-1 min-h-0 max-h-57 w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-                { appointmentsByRole[user.role].solicitations.length > 0 ? (
+                { appointmentsAndSolicitationsByRoleMap[user.role].solicitations.length > 0 ? (
                   user.role === 'STUDENT' ? (
-                    appointmentsByRole[user.role].solicitations.map(( solicitation ) => (
+                    appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
                       <Card.SMSolicitation
                         from='STUDENT'
                         key={solicitation.id}
@@ -313,7 +373,7 @@ export const UserDetails = (): React.JSX.Element => {
                       />
                     ))
                   ) : (
-                    appointmentsByRole[user.role].solicitations.map(( solicitation ) => (
+                    appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
                       <Card.SMSolicitation
                         from='PROFESSOR'
                         key={solicitation.id}
@@ -323,14 +383,14 @@ export const UserDetails = (): React.JSX.Element => {
                   )
                 ) : (
                   <NoContent
-                    Icon={(appoitmentSearchValue || appoitmentFilterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
+                    Icon={(appoitmentSearchValue || userDetailsFilter) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                     message={
-                      solicitationSearchValue && solicitationFilterValue
-                        ? `Nenhum resultado para "${solicitationSearchValue}" com o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[solicitationFilterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      solicitationSearchValue && (userDetailsFilter.professor.solicitations !== 'none' || userDetailsFilter.student.solicitations !== 'none')
+                        ? `Nenhum resultado para "${solicitationSearchValue}" com o filtro "${userNotFoundByFilterByRoleMap[user.role].solicitations}"`
                         : solicitationSearchValue
                         ? `Nenhum resultado para "${solicitationSearchValue}"`
                         : solicitationSearchValue
-                        ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[solicitationFilterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                        ? `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[user.role].solicitations}"`
                         : `Nenhuma solicitação disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
                     }
                   />

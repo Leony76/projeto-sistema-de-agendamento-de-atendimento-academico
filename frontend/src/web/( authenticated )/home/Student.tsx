@@ -14,7 +14,7 @@ import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
 import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
 import NoContent from '@/components/misc/NoContent';
-import { STUDENT_APPOINTMENT_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
+import { STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
 import { formatTime } from '@/utils/formats/formatTime.util';
 import type { UserRole } from '@/types/userRole.type';
 
@@ -141,11 +141,11 @@ const Student = (): React.JSX.Element => {
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                   message={
                     searchValue && filterValue
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`
                       : filterValue
-                      ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENT_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENT_FILTER_VALUE_MAP]}"`
+                      ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP]}"`
                       : `Nenhum agendamento disponível no momento!`
                   }
                 />
