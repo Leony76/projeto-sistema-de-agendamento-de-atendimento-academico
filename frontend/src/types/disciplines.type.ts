@@ -1,3 +1,3 @@
-import type { DISCIPLINES_MAP } from "@/constants/maps/disciplines.map";
+import type { DISCIPLINES_VALUE_MAP } from "@/constants/maps/disciplines.map";
 
-export type Discipline = keyof typeof DISCIPLINES_MAP;
+export type Discipline = keyof typeof DISCIPLINES_VALUE_MAP;

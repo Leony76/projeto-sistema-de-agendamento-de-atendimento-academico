@@ -10,6 +10,7 @@ type Props<T> = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
   textSize?: 'BASE' | 'LG' | 'SM';
   optionsSchema: SelectOptionsSchema;
   onSelect: (value: T) => void;
+  gridConfig?: `grid-cols-${number}`;
   value?: T;
   Icon?: React.ElementType;
   customStyle?: {
@@ -38,6 +39,9 @@ const Default = forwardRef(
     
     const [showOptions, setShowOptions] = useState<boolean>(false);
     const { containerRef } = useCloseModalOnMouseClickOutside(setShowOptions);
+
+    const selectedOption = SELECT_OPTIONS_SCHEMA_MAP[props.optionsSchema]
+      .find(item => item.value === props.value);
     
     return (
       <div className={`flex-1 flex flex-col gap-1 w-full ${customStyle?.container ?? ''}`}>
@@ -65,14 +69,15 @@ const Default = forwardRef(
             { Icon && <Icon/> }
     
             <span className={`mb-0.5`}>
-              { props.placeholder }
+              { selectedOption?.label ?? props.placeholder }
             </span>
           </button>
           
           {showOptions && (
             <div className={`
               absolute top-full left-0 w-full z-10 bg-[#F8FBF1] border border-t-0 rounded-b-xl border-orange-300 overflow-hidden
-              ${props.customStyle?.options?.container ?? ''}
+              ${ props.customStyle?.options?.container ?? '' }
+              ${ props.gridConfig ? `grid ${props.gridConfig}` : '' }
             `}>
               {SELECT_OPTIONS_SCHEMA_MAP[props.optionsSchema].map(( item ) => (
                 <button
@@ -85,6 +90,7 @@ const Default = forwardRef(
                   w-full text-left text-sm text-orange-500 py-1.5 hover:bg-amber-100/30 cursor-pointer px-2              
                   ${props.customStyle?.options?.button}
                   ${item.value === props.value ? 'bg-amber-100/70' : ''}
+                  ${ props.gridConfig ? 'text-center!' : '' }
                 `}
                 >
                   { item.label }

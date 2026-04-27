@@ -1,5 +1,5 @@
 import { AVAILABLE_DAYS_MAP } from '@/constants/maps/days.map';
-import { DISCIPLINES_MAP } from '@/constants/maps/disciplines.map';
+import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
 import type { Professor } from '@/types/professor.type';
 import React from 'react'
 import { Button } from '../button';
@@ -30,7 +30,7 @@ const ProfessorInfos = (props:Props): React.JSX.Element => {
         </h3>   
 
         <label className='text-sm text-orange-400 font-semibold'>
-          Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_MAP[props.discipline] }</span>
+          Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
         </label>
 
         <label className='text-sm text-orange-400 font-semibold'>

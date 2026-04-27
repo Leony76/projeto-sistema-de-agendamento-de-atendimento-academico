@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
-import { FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock, FaTrashAlt, FaUserPlus } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock, FaTrashAlt, FaUserPlus } from 'react-icons/fa';
 import { Input } from '@/components/input';
 import { Select } from '@/components/select';
 import { Card } from '@/components/card';
@@ -20,9 +20,13 @@ import { filterRegisteredProfessors } from '@/utils/filters/filterRegisteredProf
 import { filterRegisteredManagers } from '@/utils/filters/filterRegisteredManagers.util';
 import { USER_ROLES } from '@/constants/maps/userRoles.map';
 import { Button } from '@/components/button';
-import { useForm } from 'react-hook-form';
-import { newStudentSchema, type NewStudentFormData } from '@/schemas/newUser.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from '@/components/form';
+import { Section } from '@/components/section';
+import type { Reports } from '@/types/reports.type';
+import { MdMeetingRoom } from 'react-icons/md';
+import { ROOMS } from '@/constants/rooms.const';
+import type { RoomStatus } from '@/types/roomStatus.type';
+import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 
 export const LOGGED_USER_DATA: { role: Exclude<UserRole, 'MANAGER'> } = {
   role: 'STUDENT',
@@ -97,6 +101,66 @@ const BRIEF_INFOS_DATA = {
   professors    : 12,
 };
 
+const SYSTEM_REPORTS_DATA: Reports = {
+  appointments: {
+    canceled   : 23,
+    confirmed : 123,
+    count     : 146
+  },
+  rate: {
+    appointments: {
+      attendance : 0.67,
+      withdrawal : 0.12,
+    },
+    solicitations: {
+      acceptance : 0.97,
+      rejection  : 0.03, 
+    },
+  },
+  registered: {
+    managers   : 1,
+    professors : 12,
+    students   : 233,
+  },
+  rooms: {
+    available : 12,
+    reserved  : 2,
+  },
+  solicitations: {
+    count    : 133,
+    accepted : 123,
+    rejected : 12,
+  },
+};
+
+const ROOMS_STATUS: RoomStatus[] = [
+  {
+    id: 1,
+    name: '1A',
+    status: 'RESERVED',
+    appointmentDate: '2026-04-28T15:00:00.000Z',
+    occupants: {
+      student   : 'Leony Leandro Barros',
+      professor : 'Cícero Tadeu Pereira Lima França',
+    },
+  },
+  {
+    id: 2,
+    name: '2B',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 3,
+    name: '3C',
+    status: 'RESERVED',
+    appointmentDate: '2026-04-29T15:00:00.000Z',
+    occupants: {
+      student   : 'Henrique Sampáio',
+      professor : 'Cícero Tadeu Pereira Lima França',
+    },
+  },
+];
+
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
   professor : typeof REGISTERED_PROFESSORS_FILTER_MAP[number]['value'];
@@ -104,19 +168,6 @@ type FilterValue = {
 };
 
 const Manager = (): React.JSX.Element => {
-
-  const { 
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<NewStudentFormData>({
-    resolver: zodResolver(newStudentSchema),
-    defaultValues: {
-      email : '',
-      name  : '',
-      ra    : '',
-    },
-  });
 
   const BRIEF_RENDER = [
     { icon: <GrSchedule className='text-cyan-500' size={24}/>             , label: 'Agendamentos'  , value: BRIEF_INFOS_DATA.appointments  },
@@ -126,6 +177,7 @@ const Manager = (): React.JSX.Element => {
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
+  const [systemReports, setSystemReports] = useState<Reports | null>(null);
   const [filterValue, setFilterValue] = useState<FilterValue>({
     student   : 'none',
     professor : 'none',
@@ -137,13 +189,15 @@ const Manager = (): React.JSX.Element => {
     | 'DELETE_USERS'
     | 'REPORTS'
     | 'USER_DETAILS'
+    | 'ROOMS'
     | null
   >(null);
 
-  const [newUserRole, setNewUserRole] = useState<UserRole>('STUDENT');
 
   const [userRoleList, setUserRoleList] = useState<UserRole>('STUDENT');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
+
+  const [roomsStatus, setRoomsStatus] = useState<RoomStatus[]>(ROOMS_STATUS);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -202,7 +256,7 @@ const Manager = (): React.JSX.Element => {
     MANAGER   : 'Pesquisar por gestor ou data de cadastro',
   };
 
-  const hasFilter =
+  const hasFilter: boolean =
     filterValue.student   !== 'none' ||
     filterValue.professor !== 'none' ||
     filterValue.manager   !== 'none'
@@ -213,6 +267,20 @@ const Manager = (): React.JSX.Element => {
       setGeneralActions(null);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const getData = async(): Promise<void> => {
+      try {
+        const response: Reports = SYSTEM_REPORTS_DATA;
+
+        setSystemReports(response);
+      } catch (error:unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+
+    getData();
+  },[]);
 
   return (
     <Layout 
@@ -336,72 +404,96 @@ const Manager = (): React.JSX.Element => {
         
         <div className={`
           grid gap-y-3 min-h-0
-          ${ (generalActions === 'USER_DETAILS' || generalActions === 'NEW_USER') ? 'grid-rows-1' : 'grid-rows-[2fr_1fr]' }
+          ${ (generalActions !== null) ? 'grid-rows-1' : 'grid-rows-[2fr_1fr]' }
         `}>
           { generalActions === 'USER_DETAILS' ? (
             <Outlet />
           ) : generalActions === 'NEW_USER' ? (
-            <div className='flex flex-col gap-2 py-3 px-4 items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
-              <h3 className='font-semibold text-lg text-cyan-500'>
-                Novo usuário
-              </h3>
-
-              <p className='text-xs text-orange-500'>
-                Selecione qual tipo de usuário vai cadastrar
-              </p>
-
-              <div className='flex w-full h-7 gap-2'>
-                <Button.Default
-                  label='Aluno'
-                  customStyle={{ button: 'text-sm' }}
-                  selected={newUserRole === 'STUDENT'}
-                  onClick={() => setNewUserRole('STUDENT')}
-                />
-
-                <Button.Default
-                  label='Professor'
-                  customStyle={{ button: 'text-sm' }}
-                  selected={newUserRole === 'PROFESSOR'}
-                  onClick={() => setNewUserRole('PROFESSOR')}
-                />
-
-                <Button.Default
-                  label='Gestor'
-                  customStyle={{ button: 'text-sm' }}
-                  selected={newUserRole === 'MANAGER'}
-                  onClick={() => setNewUserRole('MANAGER')}
-                />
-              </div>
-
-              <Input.Default
-                label='Nome'
-                customStyle={{ input: 'h-8' }}
-                placeholder='Insira o RA do novo aluno'
-                { ...register('ra') }
-                error={errors.ra?.message}
+            <Form.NewUser
+              onBack={() => setGeneralActions(null)}
+            />
+          ) : generalActions === 'REPORTS' ? (
+            systemReports ? (
+              <Section.ManagerReports
+                {...systemReports}
+                onBack={() => setGeneralActions(null)}
               />
-
-              <Input.Default
-                label='RA'
-                customStyle={{ input: 'h-8' }}
-                placeholder='Insira o RA do novo aluno'
-                { ...register('ra') }
-                error={errors.ra?.message}
-              />
-            </div>
+            ) : (
+              <NoContent message='Não foi possível carregar os relatórios do sistema!'/>
+            )
           ) : (
             <>
-              <div className='flex items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
-                <Calendar
-                  onChange={(value) => setDateSelected(value as Date)}
-                  value={dateSelected}
-                  className="custom-calendar"
-                  prevLabel={<FaCircleChevronLeft/>}
-                  nextLabel={<FaCircleChevronRight/>}
-                  prev2Label={null}
-                  next2Label={null}
-                />
-              </div>
+              { generalActions === 'ROOMS' ? (              
+                <div className='relative p-2 flex gap-2 flex-col items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
+                  <button 
+                  className='absolute top-3 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'
+                  onClick={() => setGeneralActions(null)}
+                  >
+                    <FaArrowCircleLeft size={20}/>
+                  </button>
+                  
+                  <h3 className='font-semibold text-lg text-cyan-500'>
+                    Salas do sistema
+                  </h3>
+
+                  <div className='flex-1 min-h-0 w-full grid grid-cols-5 items-center border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
+                    { ROOMS.map((room) => {
+                      
+                      const roomOnView = roomsStatus.find((r) => r.name === room);
+
+                      const isReserved = roomsStatus.some(
+                        (roomStatus) =>
+                          roomStatus.name === room &&
+                          roomStatus.status === 'RESERVED'
+                      );
+
+                      return (
+                        <div className='relative group'>
+                          <Button.Default
+                            label={room}   
+                            selected={isReserved}                     
+                            onClick={() => {}}                   
+                            customStyle={{ button: `
+                              h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
+                              ${ isReserved 
+                                ? 'bg-orange-500 text-orange-100! border-orange-50' 
+                                : 'bg-orange-50 text-orange-500 border-orange-500' 
+                            }`}}
+                          />
+
+                          <div className='
+                            absolute top-full left-1/2 -translate-x-1/2 mt-1
+                            hidden group-hover:block
+                            z-50 w-max max-w-[200px]
+                            bg-black text-white text-xs rounded-md px-2 py-1 shadow-lg
+                          '>
+                            {isReserved ? (
+                              <>
+                                <div>📅 {formatDateTime(roomOnView?.appointmentDate ?? '')}</div>
+                                <div>👨‍🎓 {roomOnView?.occupants?.student}</div>
+                                <div>👨‍🏫 {roomOnView?.occupants?.professor}</div>
+                              </>
+                            ) : (
+                              <div>Disponível</div>
+                            )}
+                          </div>
+                        </div>
+                    )})}
+                  </div>
+                </div>
+              ) : (
+                <div className='flex items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
+                  <Calendar
+                    onChange={(value) => setDateSelected(value as Date)}
+                    value={dateSelected}
+                    className="custom-calendar"
+                    prevLabel={<FaCircleChevronLeft/>}
+                    nextLabel={<FaCircleChevronRight/>}
+                    prev2Label={null}
+                    next2Label={null}
+                  />
+                </div>
+              )}
 
               <div className='flex flex-col items-center p-2 gap-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
                 <h3 className='font-semibold text-lg text-cyan-500'>
@@ -411,7 +503,7 @@ const Manager = (): React.JSX.Element => {
                 <div className='flex-1 min-h-0 w-full grid grid-cols-2 border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
                   <Button.Default
                     label='Novo usuário'
-                    Icon={() => <FaUserPlus />}
+                    Icon={() => <FaUserPlus className='scale-[1.3]'/>}
                     onClick={() => setGeneralActions('NEW_USER')}
                     customStyle={{ button: 'py-1 text-xs text-green-500 border-green-500 bg-green-100 font-semibold' }}
                   />  
@@ -428,6 +520,13 @@ const Manager = (): React.JSX.Element => {
                     Icon={() => <FaTrashAlt />}
                     onClick={() => setGeneralActions('DELETE_USERS')}
                     customStyle={{ button: 'py-1 text-xs text-red-600 border-red-700 bg-red-100 font-semibold' }}
+                  />  
+
+                  <Button.Default
+                    label='Salas'
+                    Icon={() => <MdMeetingRoom size={16}/>}
+                    onClick={() => setGeneralActions('ROOMS')}
+                    customStyle={{ button: 'py-1 text-xs text-yellow-600 border-yellow-700 bg-yellow-100 font-semibold' }}
                   />  
                 </div>  
               </div>

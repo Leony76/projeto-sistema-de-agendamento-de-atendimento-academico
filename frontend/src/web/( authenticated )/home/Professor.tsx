@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Layout from '../Layout'
-import { FaFilter, FaRegClock } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@/components/input';
 import { Select } from '@/components/select';
@@ -9,12 +9,15 @@ import { Card } from '@/components/card';
 import Calendar from 'react-calendar';
 import '@/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import { formatDateTime } from '@/utils/formats/formatDateTime.util';
-import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
 import NoContent from '@/components/misc/NoContent';
 import { formatTime } from '@/utils/formats/formatTime.util';
 import { filterProfessorAppointments } from '@/utils/filters/filterProfessorAppointments.util';
+import type { Professor as ProfessorType } from '@/types/professor.type';
+import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@/constants/maps/days.map';
+import { BiEdit } from 'react-icons/bi';
+import { Button } from '@/components/button';
+import { AVAILABLE_HOURS } from '@/constants/availableHours.const';
 
 const PROFESSOR_APPOITMENTS_DATA: ProfessorAppointment[] = [
   {
@@ -41,12 +44,9 @@ const PROFESSOR_APPOITMENTS_DATA: ProfessorAppointment[] = [
   },
 ];
 
-const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
-  id            : 0,
-  dateTime      : '2026-10-07T16:00:00.000Z',
-  professorName : 'Sasuke Uchiha',
-  reason        : 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-  room          : '4A',
+const PROFESSOR_AVAILIBITY_DATA: ProfessorType['available'] = {
+  days: ['FRIDAY', 'SATURDAY', 'TUESDAY'],
+  hours: ['10:00', '13:00', '15:00'],
 };
 
 const PENDING_SOLICITATIONS = {
@@ -67,11 +67,40 @@ const Professor = (): React.JSX.Element => {
   const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
+  const [editAvailableDays, setEditAvailableDays]   = useState<string[]>(PROFESSOR_AVAILIBITY_DATA.days);
+  const [editAvailableHours, setEditAvailableHours] = useState<string[]>(PROFESSOR_AVAILIBITY_DATA.hours);
+
+  const [showEdit, setShowEdit] = useState<'AVAILABLE_HOURS' | 'AVAILABLE_DAYS' | null>(null);
+
   const filteredStudentAppointmentsData = filterProfessorAppointments(
     PROFESSOR_APPOITMENTS_DATA,
     searchValue,
     filterValue,
   );
+
+  const handleNewAvailableDays = async(days: string[]) => {
+    alert('Novos dias:' + days);
+  };
+
+  const handleNewAvailableHours = async(hours: string[]) => {
+    alert('Novos horários:' + hours);
+  };
+
+  const handleToggleDay = (day: string) => {
+    setEditAvailableDays(prev =>
+      prev.includes(day)
+        ? prev.filter(d => d !== day) 
+        : [...prev, day]              
+    );
+  };
+
+  const handleToggleHour = (hour: string) => {
+    setEditAvailableHours(prev =>
+      prev.includes(hour)
+        ? prev.filter(h => h !== hour) 
+        : [...prev, hour]              
+    );
+  };
 
   return (
     <Layout 
@@ -161,29 +190,122 @@ const Professor = (): React.JSX.Element => {
             />
           </div>
 
-          <div className='flex flex-col gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
+          <div className='relative flex flex-col self-start gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
+            { showEdit &&
+              <button 
+              className='absolute top-2 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'
+              onClick={() => {
+                switch (showEdit) {
+                  case 'AVAILABLE_DAYS'  : handleNewAvailableDays(editAvailableDays);   break;
+                  case 'AVAILABLE_HOURS' : handleNewAvailableHours(editAvailableHours); break;
+                }
+                setShowEdit(null);
+              }}
+              >
+                <FaArrowCircleLeft size={18}/>
+              </button>
+            }
+
             <h2 className='text-cyan-500 font-semibold self-center'>
-              Último agendamento
+              Disponibilidade
             </h2>
 
-            <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
-              <h3 className='font-bold text-orange-400 text-sm'>
-                { formatDateTime(STUDENT_LAST_APPOITMENT.dateTime) }
-              </h3>        
-              
-              <div className='flex flex-col'>
-                <label className=' text-orange-400 font-semibold text-xs'>
-                  Professor: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.professorName } </span>
-                </label>
+            <div className='flex flex-col gap-2 justify-between flex-1 p-2 min-h-0 overflow-auto bg-white border rounded-lg border-cyan-300'>          
+              { showEdit === 'AVAILABLE_DAYS' ? (
+                <div className='flex flex-col gap-2'>
+                  <label className='text-sm text-orange-500'>
+                    Selecione seus dias disponíveis:
+                  </label>
 
-                <label className=' text-orange-400 font-semibold text-xs'>
-                  Sala: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.room } </span>
-                </label>
-          
-                <label className=' text-orange-400 font-semibold text-xs'>
-                  Motivo: <span className='text-gray-400 font-normal'> { STUDENT_LAST_APPOITMENT.reason.slice(0,50) + '...' } </span>
-                </label>
-              </div>
+                  <div className='grid grid-cols-3 gap-2'>
+                    { AVAILABLE_DAYS.map(( item ) => {
+                      const isSelected = editAvailableDays.includes(item.value);
+                      
+                      return (
+                      item.value !== 'SUNDAY' && (  
+                        <Button.Default
+                          label={item.label.split('-')[0]}
+                          selected={isSelected}                     
+                          onClick={() => handleToggleDay(item.value)}
+                          customStyle={{ button: 'h-6 text-xs font-semibold' }}
+                        />
+                      )
+                    )})}
+                  </div>
+                </div>
+              ) : showEdit === 'AVAILABLE_HOURS' ? (
+                <div className='flex flex-col gap-2'>
+                  <label className='text-sm text-orange-500'>
+                    Selecione seus horários disponíveis:
+                  </label>
+
+                  <div className='grid grid-cols-4 gap-2'>
+                    { AVAILABLE_HOURS.map(( item ) => {
+                      const isSelected = editAvailableHours.includes(item);
+                      
+                      return (
+                        <Button.Default
+                          label={item}
+                          selected={isSelected}                          
+                          onClick={() => handleToggleHour(item)}
+                          customStyle={{ button: 'h-6 text-xs font-semibold' }}
+                        />
+                    )})}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className='flex gap-2'>
+                    <button 
+                    onClick={() => setShowEdit('AVAILABLE_DAYS')}
+                    className='text-orange-400 cursor-pointer h-fit hover:brightness-120 active:brightness-100'>
+                      <BiEdit className='scale-[1.3]'/>
+                    </button>
+
+                    <label className=' text-orange-400 font-semibold text-[13px]'>
+                      Dias: { PROFESSOR_AVAILIBITY_DATA.days.map(( day, index ) => (
+                        <span 
+                        key={index}
+                        className='text-cyan-500 font-normal '
+                        >
+                          { AVAILABLE_DAYS_MAP[day] }
+                          {index === PROFESSOR_AVAILIBITY_DATA.days.length - 2
+                            ? ' e '
+                            : index < PROFESSOR_AVAILIBITY_DATA.days.length - 2
+                            ? ', '
+                            : ''
+                          }
+                        </span>
+                      ))}        
+                    </label>
+                  </div>
+                  
+                  <div className='flex gap-2'>
+                    <button 
+                    onClick={() => setShowEdit('AVAILABLE_HOURS')}
+                    className='text-orange-400 cursor-pointer h-fit hover:brightness-120 active:brightness-100'>
+                      <BiEdit className='scale-[1.3]'/>
+                    </button>
+
+                    <label className=' text-orange-400 font-semibold text-[13px]'>
+                      Horários: { PROFESSOR_AVAILIBITY_DATA.hours.map((hour, index) => (
+                        <span 
+                        key={index}
+                        className='text-cyan-500 font-normal'
+                        >
+                          { hour }
+                          {index === PROFESSOR_AVAILIBITY_DATA.hours.length - 2
+                            ? ' e '
+                            : index < PROFESSOR_AVAILIBITY_DATA.hours.length - 2
+                            ? ', '
+                            : ''
+                          }
+                        </span>
+                      ))}
+                    </label>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

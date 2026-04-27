@@ -6,8 +6,10 @@ import { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "./filters/professorAppointmen
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "./filters/professorAppointmentsHistory.map.filter";
 import { USERS_LIST_BY_ROLE_FILTER_MAP } from "./filters/usersListByRole.map.filter";
 import { REGISTERED_MANAGERS_FILTER_MAP, REGISTERED_PROFESSORS_FILTER_MAP, REGISTERED_STUDENTS_FILTER_MAP } from "./filters/registeredUsers.map.filter";
+import { DISCIPLINES_MAP } from "./disciplines.map";
 
 export const SELECT_OPTIONS_SCHEMA_MAP = {
+  DISCIPLINES                                      : DISCIPLINES_MAP,
   REGISTERED_STUDENTS_FILTER                       : REGISTERED_STUDENTS_FILTER_MAP,
   REGISTERED_PROFESSORS_FILTER                     : REGISTERED_PROFESSORS_FILTER_MAP,
   REGISTERED_MANAGERS_FILTER                       : REGISTERED_MANAGERS_FILTER_MAP,

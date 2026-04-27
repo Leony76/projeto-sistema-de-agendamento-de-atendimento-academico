@@ -23,7 +23,7 @@ const Default = (props:Props): React.JSX.Element => {
     className={`
       flex items-center justify-center gap-1.5 hover:brightness-97 active:brightness-90 hover:cursor-pointer w-full p-3 rounded-xl border 
       ${ props.customStyle?.button ?? '' }
-      ${ props.disabled ? 'opacity-30 pointer-events-none' : '' }
+      ${ props.disabled ? 'opacity-50 pointer-events-none' : '' }
       ${ props.selected 
         ? 'bg-cyan-500 text-cyan-100 border-cyan-300' 
         : 'bg-cyan-100 text-cyan-500 border-cyan-300' 

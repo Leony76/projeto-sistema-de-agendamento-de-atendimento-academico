@@ -1,4 +1,4 @@
-import { DISCIPLINES_MAP } from "@/constants/maps/disciplines.map";
+import { DISCIPLINES_VALUE_MAP } from "@/constants/maps/disciplines.map";
 import type { StudentAppointmentHistory } from "@/types/appointmentHistory.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
@@ -17,7 +17,7 @@ export const filterStudentAppointmentsHistory = (
       ||
       history.reason.toLowerCase().includes(search) 
       ||
-      DISCIPLINES_MAP[history.discipline].toLowerCase().includes(search)
+      DISCIPLINES_VALUE_MAP[history.discipline].toLowerCase().includes(search)
       ||
       formatTime(history.appoitmentDateTime).toLowerCase().includes(search)
       ||

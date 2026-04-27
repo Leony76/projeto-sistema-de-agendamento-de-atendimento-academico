@@ -1,4 +1,4 @@
-import { DISCIPLINES_MAP } from '@/constants/maps/disciplines.map';
+import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
 import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
 import type { StudentAppointmentHistory } from '@/types/appointmentHistory.type';
 import type { Discipline } from '@/types/disciplines.type';
@@ -60,7 +60,7 @@ const History = (props:Props): React.JSX.Element => {
 
         { props.discipline &&
           <label className='text-sm text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_MAP[props.discipline] }</span>
+            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
           </label>
         }
 

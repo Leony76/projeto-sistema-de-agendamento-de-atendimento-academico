@@ -1,5 +1,5 @@
 import { AVAILABLE_DAYS_MAP } from "@/constants/maps/days.map";
-import { DISCIPLINES_MAP } from "@/constants/maps/disciplines.map";
+import { DISCIPLINES_VALUE_MAP } from "@/constants/maps/disciplines.map";
 import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@/constants/maps/filters/toScheduleProfessors.map.filter";
 import type { Professor } from "@/types/professor.type";
 
@@ -21,7 +21,7 @@ export const filterToScheduleProfessors = (
     const matchesSearch =
       professor.name.toLowerCase().includes(search) 
       ||
-      DISCIPLINES_MAP[professor.discipline].toLowerCase().includes(search) 
+      DISCIPLINES_VALUE_MAP[professor.discipline].toLowerCase().includes(search) 
       ||
       daysPT.some((day) => day.includes(search)) 
       ||

@@ -1,5 +1,5 @@
 import { APPOINTMENT_STATUS_MAP } from '@/constants/maps/appointmentStatus.map';
-import { DISCIPLINES_MAP } from '@/constants/maps/disciplines.map';
+import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
 import type { AppointmentStatus } from '@/types/appointmentStatus.type';
 import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@/types/solicitation.type';
 import { formatDate } from '@/utils/formats/formatDate.util';
@@ -82,7 +82,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
       
         { props.from === 'STUDENT' && 
           <label className='text-sm text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_MAP[props.discipline] }</span>
+            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
           </label>
         }
 
@@ -150,7 +150,7 @@ export const SMSolicitation = (props:Props): React.JSX.Element => {
       
         { props.from === 'STUDENT' && 
           <label className='text-xs text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_MAP[props.discipline] }</span>
+            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
           </label>
         }
 

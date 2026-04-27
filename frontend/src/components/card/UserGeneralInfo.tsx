@@ -1,4 +1,4 @@
-import { DISCIPLINES_MAP } from '@/constants/maps/disciplines.map';
+import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
 import { formatDate } from '@/utils/formats/formatDate.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -78,7 +78,7 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
 
         { props.from === 'PROFESSOR' && 
           <label className='text-sm text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_MAP[props.discipline] }</span>
+            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
           </label>
         }
 
