@@ -1,5 +1,5 @@
 import type { REGISTERED_PROFESSORS_FILTER_MAP } from "@/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredProfessor, RegisteredStudent } from "@/types/registeredUsers.type";
+import type { RegisteredProfessor } from "@/types/registeredUsers.type";
 
 export const filterRegisteredProfessors = (
   registeredProfessorsData : RegisteredProfessor[],

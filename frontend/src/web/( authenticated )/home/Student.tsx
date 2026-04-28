@@ -124,6 +124,7 @@ const Student = (): React.JSX.Element => {
                 optionsSchema='STUDENT_APPOINTMENT_FILTER'
                 value={filterValue}
                 onSelect={(value) => setFilterValue(value as typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'])}
+                selectedOptionPlaceholderNotShow
               />
             </div>
 

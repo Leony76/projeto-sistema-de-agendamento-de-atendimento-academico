@@ -10,13 +10,11 @@ import { FaTrashAlt } from 'react-icons/fa';
 
 type Props = {
   onClick: () => void;
-} & (| RegisteredStudent & {
-  from: 'STUDENT';
-} | RegisteredProfessor & {
-  from: 'PROFESSOR';
-}| RegisteredManager & {
-  from: 'MANAGER';
-});
+} & (
+  | RegisteredStudent   & { from: 'STUDENT'   } 
+  | RegisteredProfessor & { from: 'PROFESSOR' }
+  | RegisteredManager   & { from: 'MANAGER'   }
+);
 
 const UserGeneralInfo = (props:Props): React.JSX.Element => {
 
@@ -64,39 +62,41 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
         }}
       />
 
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col gap-1 flex-1'>
         <h3 
         className='font-bold text-orange-400 break-all hover:underline cursor-pointer active:underline-offset-0 w-fit'
         onClick={props.onClick}
         >
           { props.name }
         </h3>
-      
-        <label className='text-sm text-orange-400 font-semibold'>
-          Identificador: <span className='text-green-500 font-bold'>{ props.id }</span>
-        </label>
-
-        { props.from === 'PROFESSOR' && 
-          <label className='text-sm text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+        
+        <div className='flex flex-col'>
+          <label className='text-xs text-orange-400 font-semibold'>
+            Identificador: <span className='text-green-500 font-bold'>{ props.id }</span>
           </label>
-        }
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDate(props.registeredAt) }</span>
-        </label>
+          { props.from === 'PROFESSOR' && 
+            <label className='text-xs text-orange-400 font-semibold'>
+              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+            </label>
+          }
 
-        { props.from !== 'MANAGER' &&
-          <label className='text-sm text-orange-400 font-semibold'>
-            Agendamentos: <span className='text-cyan-500 font-normal'>{ props.appointments }</span>
+          <label className='text-xs text-orange-400 font-semibold'>
+            Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDate(props.registeredAt) }</span>
           </label>
-        }
 
-        { props.from !== 'MANAGER' &&
-          <label className='text-sm text-orange-400 font-semibold'>
-            Solicitações: <span className='text-cyan-500 font-normal'>{ props.solicitations }</span>
-          </label>
-        }
+          { props.from !== 'MANAGER' &&
+            <label className='text-xs text-orange-400 font-semibold'>
+              Agendamentos: <span className='text-cyan-500 font-normal'>{ props.appointments }</span>
+            </label>
+          }
+
+          { props.from !== 'MANAGER' &&
+            <label className='text-xs text-orange-400 font-semibold'>
+              Solicitações: <span className='text-cyan-500 font-normal'>{ props.solicitations }</span>
+            </label>
+          }
+        </div>
       </div>  
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
-import { FaArrowCircleLeft, FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock, FaTrashAlt, FaUserPlus } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock, FaTrashAlt, FaUserPlus } from 'react-icons/fa';
 import { Input } from '@/components/input';
 import { Select } from '@/components/select';
 import { Card } from '@/components/card';
@@ -24,9 +24,8 @@ import { Form } from '@/components/form';
 import { Section } from '@/components/section';
 import type { Reports } from '@/types/reports.type';
 import { MdMeetingRoom } from 'react-icons/md';
-import { ROOMS } from '@/constants/rooms.const';
-import type { RoomStatus } from '@/types/roomStatus.type';
-import { formatDateTime } from '@/utils/formats/formatDateTime.util';
+import type { RoomDetails } from '@/types/roomStatus.type';
+import type { ManagerGeneralActions } from '@/types/managerGeneralActions.type';
 
 export const LOGGED_USER_DATA: { role: Exclude<UserRole, 'MANAGER'> } = {
   role: 'STUDENT',
@@ -37,6 +36,14 @@ const REGISTERED_STUDENTS_DATA: RegisteredStudent[] = [
     id            : 1,
     name          : 'Maria bonita 1',
     photo         : 'https://pbs.twimg.com/media/HGvGoDZXsAAC1bN?format=jpg&name=large',
+    registeredAt  : '2026-04-22T15:32:20.000Z',
+    appointments  : 12,
+    solicitations : 123,
+  },
+  {
+    id            : 12,
+    name          : 'Maria bonita 2',
+    photo         : 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
     registeredAt  : '2026-04-22T15:32:20.000Z',
     appointments  : 12,
     solicitations : 123,
@@ -133,7 +140,7 @@ const SYSTEM_REPORTS_DATA: Reports = {
   },
 };
 
-const ROOMS_STATUS: RoomStatus[] = [
+const ROOMS_DATA: RoomDetails[] = [
   {
     id: 1,
     name: '1A',
@@ -168,6 +175,9 @@ type FilterValue = {
 };
 
 const Manager = (): React.JSX.Element => {
+    
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const BRIEF_RENDER = [
     { icon: <GrSchedule className='text-cyan-500' size={24}/>             , label: 'Agendamentos'  , value: BRIEF_INFOS_DATA.appointments  },
@@ -177,30 +187,20 @@ const Manager = (): React.JSX.Element => {
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
-  const [systemReports, setSystemReports] = useState<Reports | null>(null);
+
   const [filterValue, setFilterValue] = useState<FilterValue>({
     student   : 'none',
     professor : 'none',
     manager   : 'none',
   });
 
-  const [generalActions, setGeneralActions] = useState<
-    | 'NEW_USER'
-    | 'DELETE_USERS'
-    | 'REPORTS'
-    | 'USER_DETAILS'
-    | 'ROOMS'
-    | null
-  >(null);
-
-
-  const [userRoleList, setUserRoleList] = useState<UserRole>('STUDENT');
+  const [systemReports, setSystemReports] = useState<Reports | null>(null);
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
-
-  const [roomsStatus, setRoomsStatus] = useState<RoomStatus[]>(ROOMS_STATUS);
+  const [roomsData, setRoomsData] = useState<RoomDetails[]>(ROOMS_DATA);
+  const [roomDetails, setRoomDetails] = useState<RoomDetails | null>(null);
   
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [generalActions, setGeneralActions] = useState<ManagerGeneralActions | null>(null);
+  const [userRoleList, setUserRoleList] = useState<UserRole>('STUDENT');
 
   const filteredUsersListDataByRoleMap = {
     STUDENT: filterRegisteredStudents(
@@ -218,7 +218,7 @@ const Manager = (): React.JSX.Element => {
       searchValue,
       filterValue.manager,
     ),
-  } as const; 
+  }; 
 
   const filtersByRoleMap = {
     STUDENT: {
@@ -347,43 +347,17 @@ const Manager = (): React.JSX.Element => {
 
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
               { filteredUsersListDataByRoleMap[userRoleList].length > 0 ? (
-                userRoleList === 'STUDENT' ? (
                   filteredUsersListDataByRoleMap[userRoleList].map(( user ) => (
                     <Card.UserGeneralInfo
-                      from='STUDENT'
+                      key={user.id}
+                      from={userRoleList}
+                      { ...user as any }
                       onClick={() => {
                         navigate(`/home/student/${user.id}`);
                         setGeneralActions('USER_DETAILS');
                       }}
-                      key={user.id}
-                      { ...user }
                     />
                   )) 
-                ) : userRoleList === 'PROFESSOR' ? (
-                  filteredUsersListDataByRoleMap[userRoleList].map(( user ) => (
-                    <Card.UserGeneralInfo
-                      from='PROFESSOR'
-                      onClick={() => {
-                        navigate(`/home/professor/${user.id}`);
-                        setGeneralActions('USER_DETAILS');
-                      }}
-                      key={user.id}
-                      { ...user }
-                    />
-                  ))
-                ) : (
-                  filteredUsersListDataByRoleMap[userRoleList].map(( user ) => (
-                    <Card.UserGeneralInfo
-                      from='MANAGER'
-                      onClick={() => {
-                        navigate(`/home/manager/${user.id}`);
-                        setGeneralActions('USER_DETAILS');
-                      }}
-                      key={user.id}
-                      { ...user }
-                    />
-                  ))
-                )
               ) : (
                 <NoContent
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
@@ -404,7 +378,7 @@ const Manager = (): React.JSX.Element => {
         
         <div className={`
           grid gap-y-3 min-h-0
-          ${ (generalActions !== null) ? 'grid-rows-1' : 'grid-rows-[2fr_1fr]' }
+          ${ (generalActions) ? 'grid-rows-1' : 'grid-rows-[2fr_1fr]' }
         `}>
           { generalActions === 'USER_DETAILS' ? (
             <Outlet />
@@ -413,74 +387,31 @@ const Manager = (): React.JSX.Element => {
               onBack={() => setGeneralActions(null)}
             />
           ) : generalActions === 'REPORTS' ? (
-            systemReports ? (
-              <Section.ManagerReports
-                {...systemReports}
-                onBack={() => setGeneralActions(null)}
-              />
-            ) : (
-              <NoContent message='Não foi possível carregar os relatórios do sistema!'/>
-            )
+            <Section.ManagerReports
+              {...systemReports!}
+              onBack={() => setGeneralActions(null)}
+            />
+          ) : generalActions === 'DELETE_USERS' ? (
+            <Section.DeleteUsers
+              filteredUsersListDataByRoleMap={filteredUsersListDataByRoleMap[userRoleList]}
+              userRoleList={userRoleList}
+              onBack={() => setGeneralActions(null)}
+            />            
           ) : (
             <>
-              { generalActions === 'ROOMS' ? (              
-                <div className='relative p-2 flex gap-2 flex-col items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
-                  <button 
-                  className='absolute top-3 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'
-                  onClick={() => setGeneralActions(null)}
-                  >
-                    <FaArrowCircleLeft size={20}/>
-                  </button>
-                  
-                  <h3 className='font-semibold text-lg text-cyan-500'>
-                    Salas do sistema
-                  </h3>
-
-                  <div className='flex-1 min-h-0 w-full grid grid-cols-5 items-center border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
-                    { ROOMS.map((room) => {
-                      
-                      const roomOnView = roomsStatus.find((r) => r.name === room);
-
-                      const isReserved = roomsStatus.some(
-                        (roomStatus) =>
-                          roomStatus.name === room &&
-                          roomStatus.status === 'RESERVED'
-                      );
-
-                      return (
-                        <div className='relative group'>
-                          <Button.Default
-                            label={room}   
-                            selected={isReserved}                     
-                            onClick={() => {}}                   
-                            customStyle={{ button: `
-                              h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
-                              ${ isReserved 
-                                ? 'bg-orange-500 text-orange-100! border-orange-50' 
-                                : 'bg-orange-50 text-orange-500 border-orange-500' 
-                            }`}}
-                          />
-
-                          <div className='
-                            absolute top-full left-1/2 -translate-x-1/2 mt-1
-                            hidden group-hover:block
-                            z-50 w-max max-w-[200px]
-                            bg-black text-white text-xs rounded-md px-2 py-1 shadow-lg
-                          '>
-                            {isReserved ? (
-                              <>
-                                <div>📅 {formatDateTime(roomOnView?.appointmentDate ?? '')}</div>
-                                <div>👨‍🎓 {roomOnView?.occupants?.student}</div>
-                                <div>👨‍🏫 {roomOnView?.occupants?.professor}</div>
-                              </>
-                            ) : (
-                              <div>Disponível</div>
-                            )}
-                          </div>
-                        </div>
-                    )})}
-                  </div>
-                </div>
+              { generalActions === 'ROOMS' ? (     
+                <Section.RoomsDetails
+                  roomsData={roomsData}
+                  roomDetails={roomDetails}
+                  onRoomDetails={(room) => setRoomDetails(room)}
+                  onBack={() => {
+                    if (roomDetails) {
+                      setRoomDetails(null);
+                    } else {
+                      setGeneralActions(null);
+                    }
+                  }}
+                />         
               ) : (
                 <div className='flex items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
                   <Calendar
@@ -495,41 +426,43 @@ const Manager = (): React.JSX.Element => {
                 </div>
               )}
 
-              <div className='flex flex-col items-center p-2 gap-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-                <h3 className='font-semibold text-lg text-cyan-500'>
-                  Ações gerais
-                </h3>
+              { !generalActions &&       
+                <div className='flex flex-col items-center p-2 gap-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
+                  <h3 className='font-semibold text-lg text-cyan-500'>
+                    Ações gerais
+                  </h3>
 
-                <div className='flex-1 min-h-0 w-full grid grid-cols-2 border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
-                  <Button.Default
-                    label='Novo usuário'
-                    Icon={() => <FaUserPlus className='scale-[1.3]'/>}
-                    onClick={() => setGeneralActions('NEW_USER')}
-                    customStyle={{ button: 'py-1 text-xs text-green-500 border-green-500 bg-green-100 font-semibold' }}
-                  />  
+                  <div className='flex-1 min-h-0 w-full grid grid-cols-2 border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
+                    <Button.Default
+                      label='Novo usuário'
+                      Icon={() => <FaUserPlus className='scale-[1.3]'/>}
+                      onClick={() => setGeneralActions('NEW_USER')}
+                      customStyle={{ button: 'py-1 text-xs text-green-500 border-green-500 bg-green-100 font-semibold' }}
+                    />  
 
-                  <Button.Default
-                    label='Relatórios'
-                    Icon={() => <FaClipboardList />}
-                    onClick={() => setGeneralActions('REPORTS')}
-                    customStyle={{ button: 'py-1 text-sm text-cyan-600 border-cyan-700 bg-cyan-200 font-semibold' }}
-                  />  
+                    <Button.Default
+                      label='Relatórios'
+                      Icon={() => <FaClipboardList />}
+                      onClick={() => setGeneralActions('REPORTS')}
+                      customStyle={{ button: 'py-1 text-xs text-cyan-600 border-cyan-700 bg-cyan-200 font-semibold' }}
+                    />  
 
-                  <Button.Default
-                    label='Excluir usuários'
-                    Icon={() => <FaTrashAlt />}
-                    onClick={() => setGeneralActions('DELETE_USERS')}
-                    customStyle={{ button: 'py-1 text-xs text-red-600 border-red-700 bg-red-100 font-semibold' }}
-                  />  
+                    <Button.Default
+                      label='Excluir usuários'
+                      Icon={() => <FaTrashAlt />}
+                      onClick={() => setGeneralActions('DELETE_USERS')}
+                      customStyle={{ button: 'py-1 text-xs text-red-600 border-red-700 bg-red-100 font-semibold' }}
+                    />  
 
-                  <Button.Default
-                    label='Salas'
-                    Icon={() => <MdMeetingRoom size={16}/>}
-                    onClick={() => setGeneralActions('ROOMS')}
-                    customStyle={{ button: 'py-1 text-xs text-yellow-600 border-yellow-700 bg-yellow-100 font-semibold' }}
-                  />  
-                </div>  
-              </div>
+                    <Button.Default
+                      label='Salas'
+                      Icon={() => <MdMeetingRoom size={16}/>}
+                      onClick={() => setGeneralActions('ROOMS')}
+                      customStyle={{ button: 'py-1 text-xs text-yellow-600 border-yellow-700 bg-yellow-100 font-semibold' }}
+                    />  
+                  </div>  
+                </div>
+              }
             </>
           ) }
         </div>

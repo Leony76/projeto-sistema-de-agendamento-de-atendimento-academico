@@ -7,7 +7,7 @@ import { USER_ROLES } from '@/constants/maps/userRoles.map';
 import { formatDateTime } from '@/utils/formats/formatDateTime.util';
 import { Select } from '../select';
 import { Input } from '../input';
-import { FaArrowCircleLeft, FaFilter } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaFilter, FaUserAltSlash } from 'react-icons/fa';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { Card } from '../card';
@@ -17,6 +17,7 @@ import { filterStudentSolicitationsFromProfessorView } from '@/utils/filters/fil
 import { filterStudentSolicitations } from '@/utils/filters/filterStudentSolicitations.util';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentSolicitations.map.filter';
+import { Button } from '../button';
 
 const REGISTERED_USERS_DATA: UserDetailsType[] = [
   {
@@ -259,7 +260,23 @@ export const UserDetails = (): React.JSX.Element => {
     userDetailsFilter.professor.solicitations !== 'none'
   ;
 
-  if (!user) return <NoContent message='Usuário não encontrado'/>;
+  if (!user) return (
+    <div className='flex flex-col justify-center items-center gap-2'>
+      <div>
+        <NoContent 
+          message='Usuário não encontrado' 
+          Icon={() => <FaUserAltSlash size={24}/>}
+        />
+      </div>
+  
+      <Button.Default
+        label=''
+        Icon={() => <FaArrowCircleLeft/>}
+        onClick={() => navigate('/home')}
+        customStyle={{ button: 'w-fit!' }}
+      />
+    </div>
+  );
 
   return (
     <div className='relative overflow-y-auto flex flex-col items-center gap-2 p-4 border border-cyan-400 rounded-lg bg-cyan-100/20'>

@@ -1,9 +1,9 @@
-import type { Room } from "./room.type";
+export type RoomStatus = 'RESERVED' | 'AVAILABLE';
 
-export type RoomStatus = {
+export type RoomDetails = {
   readonly id : number;
-  name        : Room; 
-  status      : 'RESERVED' | 'AVAILABLE';
+  name        : string; 
+  status      : RoomStatus;
   appointmentDate? : string;
   occupants? : {
     student   : string;

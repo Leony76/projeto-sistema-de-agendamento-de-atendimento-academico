@@ -3,12 +3,16 @@ import { formatPercentage } from '@/utils/formats/formatPercentage.util';
 import type React from 'react';
 import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaHouseUser, FaPercent } from 'react-icons/fa';
 import { MdMeetingRoom } from 'react-icons/md';
+import NoContent from '../misc/NoContent';
+import { useNavigate } from 'react-router-dom';
 
 type Props = Reports & {
   onBack: () => void;
 };
 
 const ManagerReports = (props:Props): React.JSX.Element => {
+
+  const navigate = useNavigate();
 
   const ListItem = (props : {label: string, value: string | number}):React.JSX.Element => {
     return (
@@ -42,18 +46,36 @@ const ManagerReports = (props:Props): React.JSX.Element => {
       { label: 'Gestores'    , value: props.registered.managers   },
     ],
     rate: [
-      { label: 'Desistência de agendamento' , value: props.rate.appointments.withdrawal         },
-      { label: 'Comparecimento a agendamento' , value: props.rate.appointments.withdrawal       },
+      { label: 'Desistência de agendamento'        , value: props.rate.appointments.withdrawal         },
+      { label: 'Comparecimento a agendamento'      , value: props.rate.appointments.attendance       },
       { label: 'Aceitação a solicitação de alunos' , value: props.rate.solicitations.acceptance },
-      { label: 'Rejeição a solicitação de alunos' , value: props.rate.solicitations.rejection   },
+      { label: 'Rejeição a solicitação de alunos'  , value: props.rate.solicitations.rejection   },
     ],
   } as const;
+
+  if (!props) return (
+    <div className='relative flex flex-col gap-2 items-center p-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
+      <button 
+      onClick={() => navigate('/home')}
+      className='absolute top-4 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'>
+        <FaArrowCircleLeft size={20}/>
+      </button>
+      
+      <h3 className='font-semibold text-lg text-cyan-500'>
+        Relatórios
+      </h3>
+
+      <div className='flex flex-col flex-1 min-h-0 w-full border gap-1 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
+        <NoContent message='Não foi possível carregar os relatórios do sistema!'/>
+      </div>
+    </div> 
+  );
 
   return (
     <div className='relative flex flex-col gap-2 items-center p-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
       <button 
       onClick={props.onBack}
-      className='absolute top-3 left-4 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'>
+      className='absolute top-3 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'>
         <FaArrowCircleLeft size={20}/>
       </button>
       

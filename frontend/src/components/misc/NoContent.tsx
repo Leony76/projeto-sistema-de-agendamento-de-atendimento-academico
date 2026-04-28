@@ -14,7 +14,7 @@ const NoContent = (props:Props): React.JSX.Element => {
       <div className='text-center text-cyan-400 flex justify-center gap-1 flex-col items-center'>
         { Icon && <Icon/> }
 
-        <span className='text-sm'>
+        <span className='text-sm break-all'>
           { props.message }
         </span>
       </div>

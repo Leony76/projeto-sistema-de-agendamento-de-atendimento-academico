@@ -8,6 +8,7 @@ type Props<T> = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
   error?: string;
   placeholder: string;
   textSize?: 'BASE' | 'LG' | 'SM';
+  selectedOptionPlaceholderNotShow? : boolean;
   optionsSchema: SelectOptionsSchema;
   onSelect: (value: T) => void;
   gridConfig?: `grid-cols-${number}`;
@@ -69,7 +70,11 @@ const Default = forwardRef(
             { Icon && <Icon/> }
     
             <span className={`mb-0.5`}>
-              { selectedOption?.label ?? props.placeholder }
+              { props.selectedOptionPlaceholderNotShow ? (
+                props.placeholder 
+              ) : (
+                selectedOption?.label ?? props.placeholder 
+              )}
             </span>
           </button>
           
