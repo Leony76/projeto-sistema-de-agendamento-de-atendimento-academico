@@ -1,66 +1,34 @@
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-
-import './App.css'
-import Login from './pages/Login';
-import Home from './pages/Home';
-import PrivateRoute from './components/middleware/PrivateRoute';
-import { AuthProvider } from './contexts/AuthContext';
-import Students from './pages/Students';
-import ManagerRoute from './components/middleware/ManagerRoute';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './web/( unauthenticated )/Login';
+import Register from './web/( unauthenticated )/Register';
+import Home from './web/( authenticated )/home';
+import Schedule from './web/( authenticated )/Schedule';
+import Requests from './web/( authenticated )/Requests';
+import History from './web/( authenticated )/History';
+import { UserDetails } from './components/misc/UserDetails';
 import { ToastProvider } from './contexts/ToastContext';
-import Professors from './pages/Professors';
 
-const App = () => {
+function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path='/'
-              element={<Login />}
-            />
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/"         element={<Login/>} />
+          <Route path="/register" element={<Register/>} />
 
-            <Route 
-              path="/login" 
-              element={<Login />} 
-            />
+          <Route path="/home"     element={<Home/>} >
+            <Route path="student/:id"   element={<UserDetails/>} />
+            <Route path="professor/:id" element={<UserDetails/>} />
+            <Route path="manager/:id"   element={<UserDetails/>} />
+          </Route>
 
-            <Route 
-              path="/home" 
-              element={
-                <PrivateRoute>
-                  <Home />
-                </PrivateRoute>
-              } 
-            />
-
-            <Route 
-              path="/students" 
-              element={
-                <PrivateRoute>
-                  <ManagerRoute>
-                    <Students/>
-                  </ManagerRoute>
-                </PrivateRoute>
-              } 
-            />   
-
-            <Route 
-              path="/professors" 
-              element={
-                <PrivateRoute>
-                  <ManagerRoute>
-                    <Professors/>
-                  </ManagerRoute>
-                </PrivateRoute>
-              } 
-            />   
-          </Routes>
-        </BrowserRouter>
-      </ToastProvider>
-    </AuthProvider>
+          <Route path="/schedule" element={<Schedule/>} />
+          <Route path="/requests" element={<Requests/>} />
+          <Route path="/history"  element={<History/>} />
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }
 
-export default App
+export default App;

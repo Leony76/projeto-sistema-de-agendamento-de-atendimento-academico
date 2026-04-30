@@ -1,13 +1,9 @@
-import { InputHTMLAttributes } from "react";
-import Form from "./Form";
+import Default from "./Default";
 import Search from "./Search";
-
-export type BaseProps = | InputHTMLAttributes<HTMLInputElement> & {
-  error?     : string; 
-  className? : string;
-};
+import TextArea from "./TextArea";
 
 export const Input = {
-  Form   : Form,
-  Search : Search,
+  Default,
+  Search,
+  TextArea,
 };

@@ -1,45 +1,37 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { ToastType } from '../types/toast';
-import Toast from '../components/toast/Toast';
+import { ToastContainer } from '@/components/misc/Toast';
+import type { Toast, ToastType,  } from '@/types/toast.type';
+import { createContext, useContext, useState } from 'react';
 
-interface ToastProps {
-  id: number;
-  message: string;
-  type: ToastType;
-}
-
-interface ToastContextData {
-  showToast: (message: string, type: ToastType) => void;
-  removeToast: (id: number) => void;
-}
-
-const ToastContext = createContext<ToastContextData>({} as ToastContextData);
-
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<ToastProps[]>([]);
-
-  const removeToast = useCallback((id: number) => {
-    setToasts((state) => state.filter((toast) => toast.id !== id));
-  }, []);
-
-  const showToast = useCallback((message: string, type: ToastType) => {
-    const id = Date.now();
-    const toast = { id, message, type };
-
-    setToasts((state) => [...state, toast]);
-
-    // Timer de 5 segundos
-    setTimeout(() => {
-      removeToast(id);
-    }, 10000);
-  }, [removeToast]);
-
-  return (
-    <ToastContext.Provider value={{ showToast, removeToast }}>
-      {children}
-      <Toast toasts={toasts} />
-    </ToastContext.Provider>
-  );
+type ToastContextType = {
+  toasts      : Toast[];
+  toast    : (message: string, type?: ToastType) => void;
+  removeToast : (id: string) => void;
 };
 
-export const useToast = () => useContext(ToastContext);
+const ToastContext = createContext({} as ToastContextType);
+
+export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const toast = (message: string, type: ToastType = 'success') => {
+    const id = crypto.randomUUID();
+
+    setToasts((prev) => [...prev, { id, message, type }]);
+
+  }
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }
+
+  return (
+    <ToastContext.Provider value={{ toasts, toast, removeToast }}>
+      {children}
+      <ToastContainer/>
+    </ToastContext.Provider>
+  );
+}
+
+export const useToast = () => {
+  return useContext(ToastContext);
+}

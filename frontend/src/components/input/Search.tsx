@@ -1,41 +1,51 @@
-import { forwardRef, useState } from 'react';
-import style from './css/Input.module.css';
-import { IoClose } from 'react-icons/io5';
-import { IoMdSearch } from 'react-icons/io';
-import { BaseProps } from '.';
+import { forwardRef, type InputHTMLAttributes } from 'react'
+import { IoClose, IoSearch } from 'react-icons/io5';
 
-type Props = BaseProps;
+type Props = InputHTMLAttributes<HTMLInputElement> & {
+  onClear: () => void;
+  customStyle?: {
+    label?     : string;
+    input?     : string;
+  };
+};
 
-const Search = forwardRef<HTMLInputElement, Props>(
-  (props, ref) => {
+const Search = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
-    const { 
-      className, 
-      type, 
-      placeholder, 
-      ...rest 
-    } = props;
+  const { 
+    customStyle, 
+    type, 
+    ...rest 
+  } = props;  
 
-    return (
-      <div className={`${style.search_input_container} ${className ?? ''}`}>
-        <IoMdSearch />
+  const hasValue = rest.value && rest.value.toString().length > 0;
 
-        <input
-          {...rest}
-          ref={ref} 
-          type={'text'}
-          placeholder={placeholder}
-        />
+  return (
+    <div className={`
+      px-2 flex items-center rounded-xl border bg-amber-100/25 transition-colors border-orange-300 flex-1
+      ${customStyle?.input ?? ''}
+    `}>
+      <IoSearch className='text-orange-300 mx-1 mr-2'/>
 
-        <IoClose 
-          className={style.clear_search}
-          onClick={() => rest.onChange?.({ target: { value: '' } } as any)}
-        />
-      </div>
-    );
-  }
-);
+      <input
+        ref={ref}
+        {...rest} 
+        className="flex-1 outline-none text-sm text-cyan-400 py-1.5 bg-transparent"
+        type='text'
+      />
 
-Search.displayName = 'Input'; 
+      {hasValue && (
+        <button 
+        type="button" 
+        onClick={props.onClear}
+        className="focus:outline-none cursor-pointer"
+        >
+          <IoClose className="text-xl text-orange-300" />
+        </button>
+      )}
+    </div>
+  );
+});
+
+Search.displayName = 'Input.Search';
 
 export default Search;

@@ -1,6 +1,0 @@
-export type ToastType = 
-| 'SUCCESS' 
-| 'ERROR' 
-| 'INFO' 
-| 'WARNING'
-;

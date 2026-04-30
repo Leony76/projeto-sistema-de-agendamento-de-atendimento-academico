@@ -1,9 +1,5 @@
-import { Professor } from "./professor";
-import { Student } from "./student";
-import { Wrapper } from "./wrapper";
+import NewUser from "./NewUser";
 
 export const Form = {
-  Professor,
-  Wrapper,
-  Student,
+  NewUser,
 };

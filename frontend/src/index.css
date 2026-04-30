@@ -1,18 +1,2 @@
-:root {
-
-  --primary-color: rgb(231, 252, 252);
-  --secondary-color: rgb(113, 215, 255);
-  --dark-secondary-color: rgb(79, 151, 179);
-  --tertiary-color: rgb(255, 220, 155);
-  --dark-tertiary-color: rgb(230, 149, 0);
-
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-
-  font-family: "Nunito", sans-serif;
-}
+@import "tailwindcss";
 
