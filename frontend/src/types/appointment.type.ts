@@ -1,4 +1,3 @@
-import type { AppointmentStatus } from "./appointmentStatus.type";
 import type { Professor } from "./professor.type";
 import type { Student } from "./Student.type";
 
@@ -7,7 +6,6 @@ export type StudentAppointment = {
   dateTime    : string;
   reason      : string;
   room        : string;
-  status      : AppointmentStatus;
   professor   : Omit<Professor, 'available'>;
 };
 

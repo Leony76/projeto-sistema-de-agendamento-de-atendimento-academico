@@ -111,6 +111,7 @@ export const REGISTERED_USERS_DATA: UserDetails[] = [
           ra    : 20241180002,
           photo : 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
         },
+        appoitmentDateTime: '2026-10-08T17:00:00.000Z',
         reason: 'Lorem Ipsum Dolor Iurem Eclestas',
         status: 'UNCONFIRMED',
       }

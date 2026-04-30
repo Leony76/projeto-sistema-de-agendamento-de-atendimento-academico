@@ -12,7 +12,7 @@ export const filterProfessorAppointmentsHistory = (
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      history.name.toLowerCase().includes(search) 
+      history.student.name.toLowerCase().includes(search) 
       ||
       history.reason.toLowerCase().includes(search) 
       ||
@@ -29,10 +29,10 @@ export const filterProfessorAppointmentsHistory = (
 
     switch (filterValue) {
       case 'AZStudentName':
-        return a.name.localeCompare(b.name);
+        return a.student.name.localeCompare(b.student.name);
 
       case 'ZAStudentName':
-        return b.name.localeCompare(a.name);
+        return b.student.name.localeCompare(a.student.name);
 
       case 'mostRecent':
         return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();

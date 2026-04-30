@@ -97,12 +97,12 @@ const History = ():React.JSX.Element => {
               
             <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
               {filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].length > 0 ? (
-                <div className='grid items-start gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
+                <div className='grid gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
                   { filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].map(( history ) => (
                     <Card.History
                       from={LOGGED_USER_DATA.role}
                       key={ history.id }
-                      { ...history }
+                      { ...history as any }
                     />
                   ))}
                 </div>

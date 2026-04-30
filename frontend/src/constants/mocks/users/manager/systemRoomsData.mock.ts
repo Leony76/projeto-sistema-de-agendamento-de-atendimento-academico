@@ -7,8 +7,8 @@ export const SYSTEM_ROOMS_DATA: RoomDetails[] = [
     status: 'RESERVED',
     appointmentDate: '2026-04-28T15:00:00.000Z',
     occupants: {
-      student   : 'Leony Leandro Barros',
-      professor : 'Cícero Tadeu Pereira Lima França',
+      student   : 'Andrine Sampaio Gostosuda',
+      professor : 'Madara Uchiha',
     },
   },
   {
@@ -22,8 +22,8 @@ export const SYSTEM_ROOMS_DATA: RoomDetails[] = [
     status: 'RESERVED',
     appointmentDate: '2026-04-29T15:00:00.000Z',
     occupants: {
-      student   : 'Henrique Sampáio',
-      professor : 'Cícero Tadeu Pereira Lima França',
+      student   : 'Maria Bonita Mendonça de Oliveira Lima',
+      professor : 'Sasuke Uchiha',
     },
   },
 ];

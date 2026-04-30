@@ -8,9 +8,9 @@ export type UserDetails =
   appointmentsList  : StudentAppointment[];
   solicitationsList : StudentSolicitation[];
 } | RegisteredProfessor & {
-  role             : 'PROFESSOR';
-  appointmentsList : ProfessorAppointment[];
-  solicitationsList : Omit<StudentSolicitationFromProfessorView, 'appoitmentDateTime'>[];
+  role              : 'PROFESSOR';
+  appointmentsList  : ProfessorAppointment[];
+  solicitationsList : StudentSolicitationFromProfessorView[];
 } | RegisteredManager & {
   role : 'MANAGER';
 };

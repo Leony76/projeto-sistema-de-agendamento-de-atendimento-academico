@@ -5,7 +5,6 @@ export const STUDENT_APPOITMENTS_DATA: StudentAppointment[] = [
     id         :  1,
     dateTime   : '2026-10-05T15:00:00.000Z',
     reason     : 'Lorem ipsum dolor ',
-    status     : 'CONFIRMED',
     room       : '1B',
     professor  : {
       id    : 1, 
@@ -18,7 +17,6 @@ export const STUDENT_APPOITMENTS_DATA: StudentAppointment[] = [
     id         :  2,
     dateTime   : '2026-10-07T16:00:00.000Z',
     reason     : 'Lorem ipsum dolorem ',
-    status     : 'UNCONFIRMED',
     room       : '1C',
     professor  : {
       id    : 2,
@@ -31,7 +29,6 @@ export const STUDENT_APPOITMENTS_DATA: StudentAppointment[] = [
     id         :  3,
     dateTime   : '2026-10-09T16:00:00.000Z',
     reason     : 'Lorem ipsum dolorem ashdashd',
-    status     : 'CONFIRMED',
     room       : '4A',
     professor  : {
       id    : 3,

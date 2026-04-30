@@ -235,25 +235,16 @@ export const UserDetails = (): React.JSX.Element => {
                 />
               </div>
 
-              <div className='flex-1 min-h-0 max-h-57 flex w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
+              <div className='flex-1 min-h-0 max-h-74 flex w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
                 { appointmentsAndSolicitationsByRoleMap[user.role].appointments.length > 0 ? (
-                  user.role === 'STUDENT' ? (
-                    appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
-                      <Card.SMAppointment
-                        from='STUDENT'
-                        key={appointment.id}
-                        { ...appointment }
-                      />
-                    ))
-                  ) : (
-                    appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
-                      <Card.SMAppointment
-                        from='PROFESSOR'
-                        key={appointment.id}
-                        { ...appointment }
-                      />                 
-                    ))
-                  )
+                  appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
+                    <Card.Appointment
+                      smVersion
+                      from={user.role}
+                      key={appointment.id}
+                      { ...appointment as any }
+                    />
+                  ))
                 ) : (
                   <NoContent
                     Icon={(searchValue.appointment || hasFilter) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
@@ -295,25 +286,16 @@ export const UserDetails = (): React.JSX.Element => {
                 />
               </div>
 
-              <div className='flex-1 grid grid-cols-1 min-h-0 max-h-57 w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
+              <div className='flex-1 grid grid-cols-1 min-h-0 max-h-74 w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
                 { appointmentsAndSolicitationsByRoleMap[user.role].solicitations.length > 0 ? (
-                  user.role === 'STUDENT' ? (
-                    appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
-                      <Card.SMSolicitation
-                        from='STUDENT'
-                        key={solicitation.id}
-                        { ...solicitation }
-                      />
-                    ))
-                  ) : (
-                    appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
-                      <Card.SMSolicitation
-                        from='PROFESSOR'
-                        key={solicitation.id}
-                        { ...solicitation }
-                      />                 
-                    ))
-                  )
+                  appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
+                    <Card.Solicitation
+                      smVersion
+                      from={user.role}
+                      key={solicitation.id}
+                      { ...solicitation as any }
+                    />
+                  ))       
                 ) : (
                   <NoContent
                     Icon={(searchValue.solicitation || (hasFilter)) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
