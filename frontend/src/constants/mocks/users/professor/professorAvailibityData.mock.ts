@@ -1,4 +1,4 @@
-import type { Professor } from "@/types/professor.type";
+import type { Professor } from "@shared/types/professor.type";
 
 export const PROFESSOR_AVAILIBITY_DATA: Professor['available'] = {
   days: ['FRIDAY', 'SATURDAY', 'TUESDAY'],

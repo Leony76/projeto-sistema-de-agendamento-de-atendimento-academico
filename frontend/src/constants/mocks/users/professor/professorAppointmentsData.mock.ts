@@ -1,11 +1,10 @@
-import type { ProfessorAppointment } from "@/types/appointment.type";
+import type { ProfessorAppointment } from "@shared/types/appointment.type";
 
 export const PROFESSOR_APPOITMENTS_DATA: ProfessorAppointment[] = [
   {
     id         :  1,
     dateTime   : '2026-10-05T15:00:00.000Z',
     reason     : 'Lorem ipsum dolor ',
-    status     : 'CONFIRMED',
     room       : '1B',
     student  : {
       id    : 1,   
@@ -19,7 +18,6 @@ export const PROFESSOR_APPOITMENTS_DATA: ProfessorAppointment[] = [
     id         :  2,
     dateTime   : '2026-10-07T16:00:00.000Z',
     reason     : 'Lorem ipsum dolorem horem ipsum dolorem porem ipsu',
-    status     : 'UNCONFIRMED',
     room       : '1C',
     student  : {
       id    : 2,   
@@ -33,7 +31,6 @@ export const PROFESSOR_APPOITMENTS_DATA: ProfessorAppointment[] = [
     id         :  2,
     dateTime   : '2026-10-07T16:00:00.000Z',
     reason     : 'Lorem ipsum dolorem horem ipsum dolorem porem ipsu',
-    status     : 'UNCONFIRMED',
     room       : '1C',
     student  : {
       id    : 3,   

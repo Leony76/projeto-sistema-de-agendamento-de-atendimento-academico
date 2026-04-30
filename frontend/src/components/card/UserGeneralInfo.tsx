@@ -1,11 +1,11 @@
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import { formatDate } from '@/utils/formats/formatDate.util';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@/types/registeredUsers.type';
+import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@shared/types/registeredUsers.type';
 import { FaTrashAlt } from 'react-icons/fa';
 
 type Props = {

@@ -1,7 +1,7 @@
-import type { StudentSolicitation } from "@/types/solicitation.type";
+import type { StudentSolicitation } from "@shared/types/solicitation.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { STUDENT_SOLICITATIONS_FILTER_MAP } from "@/constants/maps/filters/studentSolicitations.map.filter";
+import { STUDENT_SOLICITATIONS_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
 
 export const filterStudentSolicitations = (
   studentSolicitationsData : StudentSolicitation[],

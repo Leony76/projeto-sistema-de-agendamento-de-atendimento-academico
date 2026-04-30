@@ -1,0 +1,144 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            Int        @id @default(autoincrement())
+  email         String     @unique
+  registeredAt  DateTime   @default(now()) @map("registered_at")
+  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?
+  role          UserRole   @default(STUDENT)
+
+  student      Student?
+  professor    Professor?
+  manager      Manager?
+
+  @@map("users")
+}
+
+model Student {
+  id      Int  @id @default(autoincrement())
+  ra      Int  @unique
+
+  userId  Int  @unique @map("user_id")     
+  user    User @relation(fields: [userId], references: [id])
+
+  appointments  Appointment[]  
+  solicitations Solicitation[]  
+
+  @@map("students")
+}
+
+model Professor {
+  id            Int  @id @default(autoincrement())
+
+  userId        Int  @unique       
+  user          User @relation(fields: [userId], references: [id])
+  
+  disciplines   Discipline[]
+  appointments  Appointment[]  
+  solicitations Solicitation[]  
+  availability  ProfessorAvailability[]
+
+  @@map("professors")
+}
+
+model ProfessorAvailability {
+  id           Int   @id @default(autoincrement())
+
+  startTime    Int
+  endTime      Int 
+  dayOfWeek    DayOfWeek   
+
+  professorId  Int
+  professor    Professor   @relation(fields: [professorId], references: [id])
+
+  @@map("professor_availabilities")
+}
+
+model Appointment {
+  id         Int       @id  @default(autoincrement())
+  reason     String
+  dateTime   DateTime       @map("date_time")
+
+  studentId    Int          @map("student_id")
+  student      Student      @relation(fields: [studentId], references: [id]) 
+
+  professorId  Int          @map("professor_id")
+  professor    Professor    @relation(fields: [professorId], references: [id])  
+  history      History?
+
+  @@unique([professorId, dateTime])
+  @@map("appointments")
+}
+
+model Solicitation {
+  id         Int     @id         @default(autoincrement())
+  dateTime   DateTime
+  status     SolicitationStatus  @default(UNCONFIRMED)
+
+  studentId    Int          @map("student_id")
+  student      Student      @relation(fields: [studentId], references: [id]) 
+
+  professorId  Int          @map("professor_id")
+  professor    Professor    @relation(fields: [professorId], references: [id])  
+
+  @@map("solicitations")
+}
+
+model History {
+  id Int         @id           @default(autoincrement())
+
+  appointmentId  Int           @unique
+  appointment    Appointment   @relation(fields: [appointmentId], references: [id])
+
+  @@map("history")
+}
+
+model Discipline {
+  id           Int        @id @default(autoincrement())
+  name         String
+
+  professorId  Int 
+  professor    Professor  @relation(fields: [professorId], references: [id])
+
+  @@map("disciplines")
+}
+
+model Manager {
+  id      Int  @id @default(autoincrement())
+  userId  Int  @unique      
+  user    User @relation(fields: [userId], references: [id])
+  
+  @@map("managers")
+}
+
+enum UserRole {
+  STUDENT
+  PROFESSOR
+  MANAGER
+}
+
+enum SolicitationStatus {
+  CONFIRMED
+  UNCONFIRMED
+  CANCELED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+

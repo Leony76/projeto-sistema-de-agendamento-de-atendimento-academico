@@ -1,8 +1,8 @@
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
-import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@/types/appointmentHistory.type';
-import { formatDate } from '@/utils/formats/formatDate.util';
-import { formatTime } from '@/utils/formats/formatTime.util';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
+import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
+import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaTrashAlt } from 'react-icons/fa';

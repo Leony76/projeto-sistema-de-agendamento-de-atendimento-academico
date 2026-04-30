@@ -1,4 +1,4 @@
-import type { StudentLastAppointment } from "@/types/studentLastAppointment.type";
+import type { StudentLastAppointment } from "@shared/types/studentLastAppointment.type";
 
 export const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
   id            : 0,

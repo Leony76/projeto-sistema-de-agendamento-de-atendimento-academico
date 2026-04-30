@@ -1,6 +1,6 @@
-import { AVAILABLE_DAYS_MAP } from '@/constants/maps/days.map';
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import type { Professor } from '@/types/professor.type';
+import { AVAILABLE_DAYS_MAP } from '@frontend/constants/maps/days.map';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
+import type { Professor } from '@shared/types/professor.type';
 import React from 'react'
 import { Button } from '../button';
 import { BsCheckSquareFill } from 'react-icons/bs';

@@ -1,4 +1,4 @@
-import type { UserDetails } from "@/types/userDetails.type";
+import type { UserDetails } from "@shared/types/userDetails.type";
 
 export const REGISTERED_USERS_DATA: UserDetails[] = [
   {
@@ -14,7 +14,6 @@ export const REGISTERED_USERS_DATA: UserDetails[] = [
         id         :  1,
         dateTime   : '2026-10-05T15:00:00.000Z',
         reason     : 'Lorem ipsum dolor ',
-        status     : 'CONFIRMED',
         room       : '1B',
         professor  : {
           id    : 1, 
@@ -27,7 +26,6 @@ export const REGISTERED_USERS_DATA: UserDetails[] = [
         id         :  2,
         dateTime   : '2026-10-07T16:00:00.000Z',
         reason     : 'Lorem ipsum dolorem ',
-        status     : 'UNCONFIRMED',
         room       : '1C',
         professor  : {
           id    : 2,
@@ -76,7 +74,6 @@ export const REGISTERED_USERS_DATA: UserDetails[] = [
         id         :  1,
         dateTime   : '2026-10-05T15:00:00.000Z',
         reason     : 'Lorem ipsum dolor ',
-        status     : 'CONFIRMED',
         room       : '1B',
         student  : {
           id    : 1,   
@@ -97,7 +94,6 @@ export const REGISTERED_USERS_DATA: UserDetails[] = [
           photo : 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
         },
         reason     : 'Lorem ipsum dolorem ',
-        status     : 'UNCONFIRMED',
         room       : '1C'
       },
     ],

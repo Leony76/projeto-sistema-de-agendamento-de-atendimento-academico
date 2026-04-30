@@ -1,10 +1,10 @@
-import type { RoomDetails } from "@/types/roomStatus.type";
-import { formatDateTime } from "@/utils/formats/formatDateTime.util";
+import type { RoomDetails } from "@shared/types/roomStatus.type";
+import { formatDateTime } from "@frontend/utils/formats/formatDateTime.util";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdMeetingRoom } from "react-icons/md";
 import { Button } from "../button";
-import { ROOM_STATUS_MAP } from "@/constants/maps/roomStatus.map";
+import { ROOM_STATUS_MAP } from "@frontend/constants/maps/roomStatus.map";
 
 type Props = {
   onBack        : () => void;

@@ -6,9 +6,9 @@ export type Professor = {
   readonly id : number;
   name        : string;
   photo       : string;
-  discipline  : Discipline;
+  discipline  : string;
   available   : {
-    days  : AvailableDays[];
-    hours : AvailableHours[];
+    days  : string[];
+    hours : string[];
   };
 };

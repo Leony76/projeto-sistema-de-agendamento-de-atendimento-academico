@@ -1,5 +1,5 @@
-import type { Reports } from '@/types/reports.type';
-import { formatPercentage } from '@/utils/formats/formatPercentage.util';
+import type { Reports } from '@shared/types/reports.type';
+import { formatPercentage } from '@frontend/utils/formats/formatPercentage.util';
 import type React from 'react';
 import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaHouseUser, FaPercent } from 'react-icons/fa';
 import { MdMeetingRoom } from 'react-icons/md';

@@ -2,24 +2,24 @@ import React, { useState } from 'react'
 import Layout from '../Layout'
 import { FaArrowCircleLeft, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
 import Calendar from 'react-calendar';
-import '@/css/calendar.css';
+import '@frontend/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
-import NoContent from '@/components/misc/NoContent';
-import { filterProfessorAppointments } from '@/utils/filters/filterProfessorAppointments.util';
-import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@/constants/maps/days.map';
+import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
+import NoContent from '@frontend/components/misc/NoContent';
+import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
+import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@frontend/constants/maps/days.map';
 import { BiEdit } from 'react-icons/bi';
-import { Button } from '@/components/button';
-import { AVAILABLE_HOURS } from '@/constants/availableHours.const';
-import HomeBrief from '@/components/misc/HomeBrief';
-import { formatDateTime } from '@/utils/formats/formatDateTime.util';
-import { PROFESSOR_APPOITMENTS_DATA } from '@/constants/mocks/users/professor/professorAppointmentsData.mock';
-import { PROFESSOR_AVAILIBITY_DATA } from '@/constants/mocks/users/professor/professorAvailibityData.mock';
-import { PROFESSOR_GENERAL_INFO_STATUS_DATA } from '@/constants/mocks/users/professor/professorGeneralInfoStatusData.mock';
+import { Button } from '@frontend/components/button';
+import { AVAILABLE_HOURS } from '@frontend/constants/availableHours.const';
+import HomeBrief from '@frontend/components/misc/HomeBrief';
+import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
+import { PROFESSOR_APPOITMENTS_DATA } from '@frontend/constants/mocks/users/professor/professorAppointmentsData.mock';
+import { PROFESSOR_AVAILIBITY_DATA } from '@frontend/constants/mocks/users/professor/professorAvailibityData.mock';
+import { PROFESSOR_GENERAL_INFO_STATUS_DATA } from '@frontend/constants/mocks/users/professor/professorGeneralInfoStatusData.mock';
 
 const Professor = (): React.JSX.Element => {
 

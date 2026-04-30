@@ -1,4 +1,4 @@
-import type { StudentAppointment } from "@/types/appointment.type";
+import type { StudentAppointment } from "@shared/types/appointment.type";
 
 export const STUDENT_APPOITMENTS_DATA: StudentAppointment[] = [
   {

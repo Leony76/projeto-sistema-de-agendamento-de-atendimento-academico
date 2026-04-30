@@ -1,9 +1,9 @@
-import { type UserRole } from '@/types/userRole.type'
+import { type UserRole } from '@shared/types/userRole.type'
 import Student from './Student'
 import Manager from './Manager'
 import Professor from './Professor'
 import type React from 'react'
-import { LOGGED_USER_DATA } from '@/constants/mocks/loggedUserData.mock'
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock'
 
 const Home = (): React.JSX.Element | null => {
 

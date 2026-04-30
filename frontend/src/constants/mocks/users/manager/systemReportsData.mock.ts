@@ -1,4 +1,4 @@
-import type { Reports } from "@/types/reports.type";
+import type { Reports } from "@shared/types/reports.type";
 
 export const SYSTEM_REPORTS_DATA: Reports = {
   appointments: {

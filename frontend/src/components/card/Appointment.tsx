@@ -1,12 +1,12 @@
-import type { StudentAppointment, ProfessorAppointment } from '@/types/appointment.type';
-import { formatDateTime } from '@/utils/formats/formatDateTime.util';
+import type { StudentAppointment, ProfessorAppointment } from '@shared/types/appointment.type';
+import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md';
 import { TbCancel } from 'react-icons/tb';
 import { Button } from '../button';
 import { FaCheck } from 'react-icons/fa';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
 
 type Props = {

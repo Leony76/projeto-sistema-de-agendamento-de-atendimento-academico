@@ -1,4 +1,4 @@
-import type { StudentSolicitation } from "@/types/solicitation.type";
+import type { StudentSolicitation } from "@shared/types/solicitation.type";
 
 export const STUDENT_SOLICITATIONS_DATA: StudentSolicitation[] = [
   {

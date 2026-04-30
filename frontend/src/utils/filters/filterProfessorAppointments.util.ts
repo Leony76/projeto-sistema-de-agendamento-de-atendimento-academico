@@ -1,5 +1,5 @@
-import type { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "@/constants/maps/filters/professorAppointments.map.filter";
-import type { ProfessorAppointment } from "@/types/appointment.type";
+import type { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "@frontend/constants/maps/filters/professorAppointments.map.filter";
+import type { ProfessorAppointment } from "@shared/types/appointment.type";
 
 export const filterProfessorAppointments = (
   professorAppoitmentsData : ProfessorAppointment[],
@@ -17,20 +17,12 @@ export const filterProfessorAppointments = (
       ||
       appointment.room.toLowerCase().includes(search)
       ||
-      appointment.status.toLowerCase().includes(search)
-      ||
       appointment.dateTime.toLowerCase().includes(search)
     ;
 
     if (!filterValue) return matchesSearch;
 
     switch (filterValue) {
-      case 'confirmed':
-        return matchesSearch && appointment.status === 'CONFIRMED';
-
-      case 'unconfirmed':
-        return matchesSearch && appointment.status === 'UNCONFIRMED';
-
       case 'nextOnes':
         return (
           matchesSearch 

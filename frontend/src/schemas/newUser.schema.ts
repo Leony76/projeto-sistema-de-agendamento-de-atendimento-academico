@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DISCIPLINES } from '@/constants/maps/disciplines.map';
+import { DISCIPLINES } from '@frontend/constants/maps/disciplines.map';
 
 export const newStudentSchema = z.object({
   name: z

@@ -1,4 +1,4 @@
-import type { RegisteredManager } from "@/types/registeredUsers.type";
+import type { RegisteredManager } from "@shared/types/registeredUsers.type";
 
 export const REGISTERED_MANAGERS_DATA: RegisteredManager[] = [
   {

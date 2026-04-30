@@ -1,11 +1,11 @@
-import { Button } from '@/components/button'
-import { Input } from '@/components/input'
-import type { UserRole } from '@/types/userRole.type'
+import { Button } from '@frontend/components/button'
+import { Input } from '@frontend/components/input'
+import type { UserRole } from '@shared/types/userRole.type'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema, type LoginFormData } from '@/schemas/login.schema'
+import { loginSchema, type LoginFormData } from '@frontend/schemas/login.schema'
 
 const Login = (): React.JSX.Element => {
 

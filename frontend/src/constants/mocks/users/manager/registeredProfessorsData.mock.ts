@@ -1,4 +1,4 @@
-import type { RegisteredProfessor } from "@/types/registeredUsers.type";
+import type { RegisteredProfessor } from "@shared/types/registeredUsers.type";
 
 export const REGISTERED_PROFESSORS_DATA: RegisteredProfessor[] = [
   {

@@ -1,4 +1,4 @@
-import type { UserRole } from '@/types/userRole.type';
+import type { UserRole } from '@shared/types/userRole.type';
 import React, { type JSX } from 'react'
 import { AiFillSchedule } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';

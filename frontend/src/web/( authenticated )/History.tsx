@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
 import Layout from './Layout'
 import { FaFilter } from 'react-icons/fa';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
-import '@/css/calendar.css';
-import { filterStudentAppointmentsHistory } from '@/utils/filters/filterStudentAppointmentsHistory.util';
-import NoContent from '@/components/misc/NoContent';
-import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
+import '@frontend/css/calendar.css';
+import { filterStudentAppointmentsHistory } from '@frontend/utils/filters/filterStudentAppointmentsHistory.util';
+import NoContent from '@frontend/components/misc/NoContent';
+import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppointmentsHistory.map.filter';
 import { FaClipboardQuestion } from 'react-icons/fa6';
-import { filterProfessorAppointmentsHistory } from '@/utils/filters/filterProfessorAppointmentsHistory.util';
-import { LOGGED_USER_DATA } from '@/constants/mocks/loggedUserData.mock';
-import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointmentsHistory.map.filter';
-import { PROFESSOR_APPOINTMENT_HISTORY_DATA } from '@/constants/mocks/users/professor/professorAppointmentsHistoryData.mock';
-import { STUDENT_APPOINTMENT_HISTORY_DATA } from '@/constants/mocks/users/student/studentAppointmentsHistoryData.mock';
+import { filterProfessorAppointmentsHistory } from '@frontend/utils/filters/filterProfessorAppointmentsHistory.util';
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter';
+import { PROFESSOR_APPOINTMENT_HISTORY_DATA } from '@frontend/constants/mocks/users/professor/professorAppointmentsHistoryData.mock';
+import { STUDENT_APPOINTMENT_HISTORY_DATA } from '@frontend/constants/mocks/users/student/studentAppointmentsHistoryData.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];

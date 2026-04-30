@@ -3,20 +3,20 @@ import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
 import { FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
 import Calendar from 'react-calendar';
-import '@/css/calendar.css';
+import '@frontend/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import { formatDateTime } from '@/utils/formats/formatDateTime.util';
-import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
-import NoContent from '@/components/misc/NoContent';
-import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
-import HomeBrief from '@/components/misc/HomeBrief';
-import { STUDENT_APPOITMENTS_DATA } from '@/constants/mocks/users/student/studentAppointmentsData.mock';
-import { STUDENT_LAST_APPOITMENT } from '@/constants/mocks/users/student/studentLastAppointment.mock';
-import { STUDENT_GENERAL_INFO_STATUS } from '@/constants/mocks/users/student/studentGeneralInfoStatus.mock';
+import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
+import { filterStudentAppointments } from '@frontend/utils/filters/filterStudentAppointments.util';
+import NoContent from '@frontend/components/misc/NoContent';
+import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
+import HomeBrief from '@frontend/components/misc/HomeBrief';
+import { STUDENT_APPOITMENTS_DATA } from '@frontend/constants/mocks/users/student/studentAppointmentsData.mock';
+import { STUDENT_LAST_APPOITMENT } from '@frontend/constants/mocks/users/student/studentLastAppointment.mock';
+import { STUDENT_GENERAL_INFO_STATUS } from '@frontend/constants/mocks/users/student/studentGeneralInfoStatus.mock';
 
 const Student = (): React.JSX.Element => {
 

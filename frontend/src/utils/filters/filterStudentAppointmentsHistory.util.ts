@@ -1,8 +1,8 @@
-import { DISCIPLINES_VALUE_MAP } from "@/constants/maps/disciplines.map";
-import type { StudentAppointmentHistory } from "@/types/appointmentHistory.type";
+import { DISCIPLINES_VALUE_MAP } from "@frontend/constants/maps/disciplines.map";
+import type { StudentAppointmentHistory } from "@shared/types/appointmentHistory.type"
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP } from "@/constants/maps/filters/studentAppointmentsHistory.map.filter";
+import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP } from "@frontend/constants/maps/filters/studentAppointmentsHistory.map.filter";
 
 export const filterStudentAppointmentsHistory = (
   studentAppointmentsHistoryData : StudentAppointmentHistory[],

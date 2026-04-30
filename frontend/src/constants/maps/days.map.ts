@@ -1,4 +1,4 @@
-import type { AvailableDays } from "@/types/availableDays.type";
+import type { AvailableDays } from "@shared/types/availableDays.type";
 
 export const AVAILABLE_DAYS = [
   { value: 'SUNDAY'    , label: 'Domingo'       }, 

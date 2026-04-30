@@ -1,4 +1,4 @@
-import type { ProfessorAppointmentHistory } from "@/types/appointmentHistory.type";
+import type { ProfessorAppointmentHistory } from "@shared/types/appointmentHistory.type";
 
 export const PROFESSOR_APPOINTMENT_HISTORY_DATA: ProfessorAppointmentHistory[] = [
   {

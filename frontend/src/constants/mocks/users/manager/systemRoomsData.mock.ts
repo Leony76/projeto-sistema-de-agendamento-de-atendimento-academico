@@ -1,4 +1,4 @@
-import type { RoomDetails } from "@/types/roomStatus.type";
+import type { RoomDetails } from "@shared/types/roomStatus.type";
 
 export const SYSTEM_ROOMS_DATA: RoomDetails[] = [
   {

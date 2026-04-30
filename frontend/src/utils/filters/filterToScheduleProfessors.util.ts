@@ -1,7 +1,7 @@
-import { AVAILABLE_DAYS_MAP } from "@/constants/maps/days.map";
-import { DISCIPLINES_VALUE_MAP } from "@/constants/maps/disciplines.map";
-import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@/constants/maps/filters/toScheduleProfessors.map.filter";
-import type { Professor } from "@/types/professor.type";
+import { AVAILABLE_DAYS_MAP } from "@frontend/constants/maps/days.map";
+import { DISCIPLINES_VALUE_MAP } from "@frontend/constants/maps/disciplines.map";
+import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@frontend/constants/maps/filters/toScheduleProfessors.map.filter";
+import type { Professor } from "@shared/types/professor.type";
 
 export const filterToScheduleProfessors = (
   professorsData : Professor[],

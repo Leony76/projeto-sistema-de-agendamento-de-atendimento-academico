@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
 import { FaArrowCircleLeft, FaExclamation, FaFilter } from 'react-icons/fa';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
-import '@/css/calendar.css';
-import type { Professor } from '@/types/professor.type';
-import { Button } from '@/components/button';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
+import '@frontend/css/calendar.css';
+import type { Professor } from '@shared/types/professor.type';
+import { Button } from '@frontend/components/button';
 import { useForm } from 'react-hook-form';
-import { appointmentSolicitationSchema, type AppointmentSolicitationFormData } from '@/schemas/appointmentSolicitation.schema';
+import { appointmentSolicitationSchema, type AppointmentSolicitationFormData } from '@frontend/schemas/appointmentSolicitation.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Warning from '@/components/misc/Warning';
-import { formatMergeDateWithTime } from '@/utils/formats/formatMergeDateWithTime.util';
-import type { ProfessorScheduledAppointments } from '@/types/professorScheduledAppointments.type';
-import { normalizeAppointments } from '@/utils/misc/normalizeAppointments.util';
-import { filterToScheduleProfessors } from '@/utils/filters/filterToScheduleProfessors.util';
-import NoContent from '@/components/misc/NoContent';
+import Warning from '@frontend/components/misc/Warning';
+import { formatMergeDateWithTime } from '@frontend/utils/formats/formatMergeDateWithTime.util';
+import type { ProfessorScheduledAppointments } from '@shared/types/professorScheduledAppointments.type';
+import { normalizeAppointments } from '@frontend/utils/misc/normalizeAppointments.util';
+import { filterToScheduleProfessors } from '@frontend/utils/filters/filterToScheduleProfessors.util';
+import NoContent from '@frontend/components/misc/NoContent';
 import { FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@/constants/maps/filters/toScheduleProfessors.map.filter';
+import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/toScheduleProfessors.map.filter';
 
 const PROFESSORS_DATA: Professor[] = [
   {

@@ -1,4 +1,4 @@
-import type { StudentSolicitationFromProfessorView } from "@/types/solicitation.type";
+import type { StudentSolicitationFromProfessorView } from "@shared/types/solicitation.type";
 
 export const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA: StudentSolicitationFromProfessorView[] = [
   {

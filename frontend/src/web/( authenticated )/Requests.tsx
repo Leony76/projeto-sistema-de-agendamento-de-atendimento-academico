@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import Layout from './Layout'
 import { FaFilter } from 'react-icons/fa';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
-import '@/css/calendar.css';
-import { filterStudentSolicitations } from '@/utils/filters/filterStudentSolicitations.util';
-import NoContent from '@/components/misc/NoContent';
-import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentSolicitations.map.filter';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
+import '@frontend/css/calendar.css';
+import { filterStudentSolicitations } from '@frontend/utils/filters/filterStudentSolicitations.util';
+import NoContent from '@frontend/components/misc/NoContent';
+import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
-import { filterStudentSolicitationsFromProfessorView } from '@/utils/filters/filterStudentSolicitationsFromProfessorView.util';
-import { LOGGED_USER_DATA } from '@/constants/mocks/loggedUserData.mock';
-import { STUDENT_SOLICITATIONS_DATA } from '@/constants/mocks/users/student/studentSolicitationsData.mock';
-import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA } from '@/constants/mocks/users/professor/studentSolicitationsFromProfessorView.mock';
+import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterStudentSolicitationsFromProfessorView.util';
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import { STUDENT_SOLICITATIONS_DATA } from '@frontend/constants/mocks/users/student/studentSolicitationsData.mock';
+import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA } from '@frontend/constants/mocks/users/professor/studentSolicitationsFromProfessorView.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];

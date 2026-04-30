@@ -1,9 +1,9 @@
-import { APPOINTMENT_STATUS_MAP } from '@/constants/maps/appointmentStatus.map';
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import type { AppointmentStatus } from '@/types/appointmentStatus.type';
-import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@/types/solicitation.type';
-import { formatDate } from '@/utils/formats/formatDate.util';
-import { formatTime } from '@/utils/formats/formatTime.util';
+import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
+import type { AppointmentStatus } from '@shared/types/appointmentStatus.type';
+import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
+import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import React, { useState, type JSX } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaCheck, FaCheckCircle, FaRegClock } from 'react-icons/fa';
@@ -11,7 +11,7 @@ import { IoCloseCircleSharp, IoCloseSharp } from 'react-icons/io5';
 import { Button } from '../button';
 import { MdEdit } from 'react-icons/md';
 import { TbCancel } from 'react-icons/tb';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
 
 type Props = {

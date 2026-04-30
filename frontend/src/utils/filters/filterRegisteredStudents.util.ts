@@ -1,5 +1,5 @@
-import type { REGISTERED_STUDENTS_FILTER_MAP } from "@/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredStudent } from "@/types/registeredUsers.type";
+import type { REGISTERED_STUDENTS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
+import type { RegisteredStudent } from "@shared/types/registeredUsers.type";
 
 export const filterRegisteredStudents = (
   registeredStudentsData : RegisteredStudent[],

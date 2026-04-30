@@ -2,34 +2,34 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
 import { FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock } from 'react-icons/fa';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
 import Calendar from 'react-calendar';
-import '@/css/calendar.css';
+import '@frontend/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import NoContent from '@/components/misc/NoContent';
-import type { UserRole } from '@/types/userRole.type';
+import NoContent from '@frontend/components/misc/NoContent';
+import type { UserRole } from '@shared/types/userRole.type';
 import { PiStudentBold } from 'react-icons/pi';
-import { USERS_LIST_BY_ROLE_FILTER_REVERSE_TYPE_VALUE_MAP, USERS_LIST_BY_ROLE_FILTER_TYPE_VALUE_MAP } from '@/constants/maps/filters/usersListByRole.map.filter';
+import { USERS_LIST_BY_ROLE_FILTER_REVERSE_TYPE_VALUE_MAP, USERS_LIST_BY_ROLE_FILTER_TYPE_VALUE_MAP } from '@frontend/constants/maps/filters/usersListByRole.map.filter';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { filterRegisteredStudents } from '@/utils/filters/filterRegisteredStudents.util';
-import { REGISTERED_MANAGERS_FILTER_VALUE_MAP, REGISTERED_PROFESSORS_FILTER_VALUE_MAP, REGISTERED_STUDENTS_FILTER_VALUE_MAP, type REGISTERED_MANAGERS_FILTER_MAP, type REGISTERED_PROFESSORS_FILTER_MAP, type REGISTERED_STUDENTS_FILTER_MAP } from '@/constants/maps/filters/registeredUsers.map.filter';
-import { filterRegisteredProfessors } from '@/utils/filters/filterRegisteredProfessors.util';
-import { filterRegisteredManagers } from '@/utils/filters/filterRegisteredManagers.util';
-import { USER_ROLES } from '@/constants/maps/userRoles.map';
-import { Form } from '@/components/form';
-import { Section } from '@/components/section';
-import type { Reports } from '@/types/reports.type';
-import type { RoomDetails } from '@/types/roomStatus.type';
-import type { ManagerGeneralActions } from '@/types/managerGeneralActions.type';
-import HomeBrief from '@/components/misc/HomeBrief';
-import { REGISTERED_STUDENTS_DATA } from '@/constants/mocks/users/manager/registeredStudentsData.mock';
-import { REGISTERED_PROFESSORS_DATA } from '@/constants/mocks/users/manager/registeredProfessorsData.mock';
-import { REGISTERED_MANAGERS_DATA } from '@/constants/mocks/users/manager/registeredManagersData.mock';
-import { SYSTEM_GENERAL_METRICS_DATA } from '@/constants/mocks/users/manager/systemGenerealMetricsData.mock';
-import { SYSTEM_REPORTS_DATA } from '@/constants/mocks/users/manager/systemReportsData.mock';
-import { SYSTEM_ROOMS_DATA } from '@/constants/mocks/users/manager/systemRoomsData.mock';
+import { filterRegisteredStudents } from '@frontend/utils/filters/filterRegisteredStudents.util';
+import { REGISTERED_MANAGERS_FILTER_VALUE_MAP, REGISTERED_PROFESSORS_FILTER_VALUE_MAP, REGISTERED_STUDENTS_FILTER_VALUE_MAP, type REGISTERED_MANAGERS_FILTER_MAP, type REGISTERED_PROFESSORS_FILTER_MAP, type REGISTERED_STUDENTS_FILTER_MAP } from '@frontend/constants/maps/filters/registeredUsers.map.filter';
+import { filterRegisteredProfessors } from '@frontend/utils/filters/filterRegisteredProfessors.util';
+import { filterRegisteredManagers } from '@frontend/utils/filters/filterRegisteredManagers.util';
+import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
+import { Form } from '@frontend/components/form';
+import { Section } from '@frontend/components/section';
+import type { Reports } from '@shared/types/reports.type';
+import type { RoomDetails } from '@shared/types/roomStatus.type';
+import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
+import HomeBrief from '@frontend/components/misc/HomeBrief';
+import { REGISTERED_STUDENTS_DATA } from '@frontend/constants/mocks/users/manager/registeredStudentsData.mock';
+import { REGISTERED_PROFESSORS_DATA } from '@frontend/constants/mocks/users/manager/registeredProfessorsData.mock';
+import { REGISTERED_MANAGERS_DATA } from '@frontend/constants/mocks/users/manager/registeredManagersData.mock';
+import { SYSTEM_GENERAL_METRICS_DATA } from '@frontend/constants/mocks/users/manager/systemGenerealMetricsData.mock';
+import { SYSTEM_REPORTS_DATA } from '@frontend/constants/mocks/users/manager/systemReportsData.mock';
+import { SYSTEM_ROOMS_DATA } from '@frontend/constants/mocks/users/manager/systemRoomsData.mock';
 
 
 type FilterValue = {

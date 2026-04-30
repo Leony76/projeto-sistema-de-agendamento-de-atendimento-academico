@@ -2,9 +2,9 @@ import { forwardRef, useEffect, useState, type ButtonHTMLAttributes } from 'reac
 import { FaCalendarDays, FaCircleChevronLeft, FaCircleChevronRight } from 'react-icons/fa6';
 import { Modal } from '../modal';
 import Calendar from 'react-calendar';
-import { formatDate } from '@/utils/formats/formatDate.util';
-import '@/css/calendar.css';
-import { DAYS_BY_INDEX_MAP } from '@/constants/maps/days.map';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
+import '@frontend/css/calendar.css';
+import { DAYS_BY_INDEX_MAP } from '@frontend/constants/maps/days.map';
 import Warning from '../misc/Warning';
 
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
