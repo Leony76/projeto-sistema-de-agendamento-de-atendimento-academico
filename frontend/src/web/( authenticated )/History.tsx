@@ -5,65 +5,15 @@ import { Input } from '@/components/input';
 import { Select } from '@/components/select';
 import { Card } from '@/components/card';
 import '@/css/calendar.css';
-import type { StudentAppointmentHistory, ProfessorAppointmentHistory } from '@/types/appointmentHistory.type';
 import { filterStudentAppointmentsHistory } from '@/utils/filters/filterStudentAppointmentsHistory.util';
 import NoContent from '@/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
 import { FaClipboardQuestion } from 'react-icons/fa6';
 import { filterProfessorAppointmentsHistory } from '@/utils/filters/filterProfessorAppointmentsHistory.util';
-import { LOGGED_USER_DATA } from './home/Student';
+import { LOGGED_USER_DATA } from '@/constants/mocks/loggedUserData.mock';
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointmentsHistory.map.filter';
-
-const STUDENT_APPOINTMENT_HISTORY_DATA: StudentAppointmentHistory[] = [
-  {
-    id: 1,
-    name: 'Cloud Strife',
-    photo: 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop',
-    discipline: 'ENGLISH',
-    appoitmentDateTime: '2026-10-05T15:00:00.000Z',
-    reason: 'Lorem ipsum dolor jaripem dragunov krauserios nrap',
-  },
-  {
-    id: 2,
-    name: 'Madara Uchiha',
-    discipline: 'GEOGRAPHY',
-    photo: 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    reason: 'Lorem ipsum dolor jaripem dragunov'
-  },
-  {
-    id: 3,
-    name: 'Sasuke Uchiha',
-    discipline: 'CHEMISTRY',
-    photo: 'https://pop.proddigital.com.br/wp-content/uploads/sites/8/2024/04/01-32.jpg',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    reason: 'Lorem ipsum dolor'
-  },
-];
-
-const PROFESSOR_APPOINTMENT_HISTORY_DATA: ProfessorAppointmentHistory[] = [
-  {
-    id: 1,
-    name: 'Mad Max',
-    photo: 'https://i0.wp.com/cinegrandiose.com/wp-content/uploads/2016/02/MadM-8.png?fit=960%2C540&ssl=1',
-    appoitmentDateTime: '2026-10-05T15:00:00.000Z',
-    reason: 'Lorem Ipsum Dolor Iurem Eclestas',
-  },
-  {
-    id: 2,
-    name: 'Maria Bonita Mendonça de Oliveira Lima',
-    photo: 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    reason: 'Lorem Ipsum Dolor Iure Eclestas Joramentia caestus',
-  },
-  {
-    id: 3,
-    name: 'Zamna Jester Gransky',
-    photo: 'https://pbs.twimg.com/media/HEw70fNWsAEa-5T?format=jpg&name=large',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    reason: 'Lorem ipsum dolor'
-  },
-];
+import { PROFESSOR_APPOINTMENT_HISTORY_DATA } from '@/constants/mocks/users/professor/professorAppointmentsHistoryData.mock';
+import { STUDENT_APPOINTMENT_HISTORY_DATA } from '@/constants/mocks/users/student/studentAppointmentsHistoryData.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];

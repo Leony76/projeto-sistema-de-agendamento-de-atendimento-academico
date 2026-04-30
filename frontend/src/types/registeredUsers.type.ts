@@ -10,7 +10,7 @@ export type RegisteredStudent = {
 };
 
 export type RegisteredProfessor = RegisteredStudent & {
-  discipline    : Discipline;
+  discipline : Discipline;
 }
 
 export type RegisteredManager = Omit<RegisteredStudent, 'appointments' | 'solicitations'>;

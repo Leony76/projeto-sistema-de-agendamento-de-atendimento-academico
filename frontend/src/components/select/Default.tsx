@@ -8,7 +8,7 @@ type Props<T> = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
   error?: string;
   placeholder: string;
   textSize?: 'BASE' | 'LG' | 'SM';
-  selectedOptionPlaceholderNotShow? : boolean;
+  selectedOptionPlaceholderShow? : boolean;
   optionsSchema: SelectOptionsSchema;
   onSelect: (value: T) => void;
   gridConfig?: `grid-cols-${number}`;
@@ -70,10 +70,10 @@ const Default = forwardRef(
             { Icon && <Icon/> }
     
             <span className={`mb-0.5`}>
-              { props.selectedOptionPlaceholderNotShow ? (
-                props.placeholder 
-              ) : (
+              { props.selectedOptionPlaceholderShow ? (
                 selectedOption?.label ?? props.placeholder 
+              ) : (
+                props.placeholder 
               )}
             </span>
           </button>
@@ -95,7 +95,7 @@ const Default = forwardRef(
                   w-full text-left text-sm text-orange-500 py-1.5 hover:bg-amber-100/30 cursor-pointer px-2              
                   ${props.customStyle?.options?.button}
                   ${item.value === props.value ? 'bg-amber-100/70' : ''}
-                  ${ props.gridConfig ? 'text-center!' : '' }
+                  ${ props.gridConfig ? 'text-center! rounded-xl' : '' }
                 `}
                 >
                   { item.label }

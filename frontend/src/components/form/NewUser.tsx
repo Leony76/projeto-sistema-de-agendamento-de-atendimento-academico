@@ -126,6 +126,7 @@ const NewUser = (props:Props): React.JSX.Element => {
             value={watch('discipline')}
             gridConfig='grid-cols-3' 
             label='Disciplina do professor'
+            selectedOptionPlaceholderShow
             placeholder='Selecione a disciplina'
             error={(errors as FieldErrors<NewProfessorFormData>).discipline?.message}
             onSelect={(value) => {

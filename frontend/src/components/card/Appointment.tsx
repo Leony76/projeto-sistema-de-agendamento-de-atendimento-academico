@@ -78,33 +78,35 @@ const Appointment = (props:Props): React.JSX.Element => {
         }}
       />
       
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col gap-1 flex-1'>
         <h3 className='font-bold text-orange-400'>
           { formatDateTime(props.dateTime) }
         </h3>
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          { props.from === 'PROFESSOR' ? 'Aluno:' : 'Professor:'} <span className='text-cyan-500 font-normal'>{ props.from === 'PROFESSOR' ? props.student.name : props.professor.name }</span>
-        </label>
+        <div className='flex flex-col text-xs'>
+          <label className='text-orange-400 font-semibold'>
+            { props.from === 'PROFESSOR' ? 'Aluno:' : 'Professor:'} <span className='text-cyan-500 font-normal'>{ props.from === 'PROFESSOR' ? props.student.name : props.professor.name }</span>
+          </label>
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Status: <span className='text-cyan-500 font-normal'>{ APPOINTMENT_STATUS_MAP[props.status] }</span>
-        </label>
+          <label className='text-orange-400 font-semibold'>
+            Status: <span className='text-cyan-500 font-normal'>{ APPOINTMENT_STATUS_MAP[props.status] }</span>
+          </label>
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Sala: <span className='text-cyan-500 font-normal'>{ props.room }</span>
-        </label>
+          <label className='text-orange-400 font-semibold'>
+            Sala: <span className='text-cyan-500 font-normal'>{ props.room }</span>
+          </label>
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Motivo: <span className='text-gray-400 font-normal'>{ reason } { props.reason.length > 80 && 
-            <button 
-            onClick={() => setExpandedReason(prev => !prev)}
-            className='text-gray-400 w-fit font-semibold italic hover:underline cursor-pointer'
-            > 
-              { expandedReason ? 'Ler menos' : 'Ler mais' }
-            </button> 
-          }</span>
-        </label>
+          <label className='text-orange-400 font-semibold'>
+            Motivo: <span className='text-gray-400 font-normal'>{ reason } { props.reason.length > 80 && 
+              <button 
+              onClick={() => setExpandedReason(prev => !prev)}
+              className='text-gray-400 w-fit font-semibold italic hover:underline cursor-pointer'
+              > 
+                { expandedReason ? 'Ler menos' : 'Ler mais' }
+              </button> 
+            }</span>
+          </label>
+        </div>
 
         { (props.from === 'PROFESSOR' && props.status === 'CONFIRMED') &&
           <Button.Default

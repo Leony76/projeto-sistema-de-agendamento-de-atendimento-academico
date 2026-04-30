@@ -5,68 +5,25 @@ import { FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@/components/input';
 import { Select } from '@/components/select';
-import type { StudentAppointment } from '@/types/appointment.type';
 import { Card } from '@/components/card';
 import Calendar from 'react-calendar';
 import '@/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { formatDateTime } from '@/utils/formats/formatDateTime.util';
-import type { StudentLastAppointment } from '@/types/studentLastAppointment.type';
 import { filterStudentAppointments } from '@/utils/filters/filterStudentAppointments.util';
 import NoContent from '@/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppoitment.map.filter';
-import { formatTime } from '@/utils/formats/formatTime.util';
-import type { UserRole } from '@/types/userRole.type';
-
-export const LOGGED_USER_DATA: { role: Exclude<UserRole, 'MANAGER'> } = {
-  role: 'STUDENT',
-}
-
-const STUDENT_APPOITMENTS_DATA: StudentAppointment[] = [
-  {
-    id         :  1,
-    dateTime   : '2026-10-05T15:00:00.000Z',
-    reason     : 'Lorem ipsum dolor ',
-    status     : 'CONFIRMED',
-    room       : '1B',
-    professor  : {
-      name  : 'Cloud Strife',
-      photo : 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop' ,
-    },
-  },
-  {
-    id         :  2,
-    dateTime   : '2026-10-07T16:00:00.000Z',
-    professor  : {
-      name  : 'Madara Uchiha',
-      photo : 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
-    },
-    reason     : 'Lorem ipsum dolorem ',
-    status     : 'UNCONFIRMED',
-    room       : '1C'
-  },
-];
-
-const STUDENT_LAST_APPOITMENT: StudentLastAppointment = {
-  id            : 0,
-  dateTime      : '2026-10-07T16:00:00.000Z',
-  professorName : 'Sasuke Uchiha',
-  reason        : 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-  room          : '4A',
-};
-
-const PENDING_SOLICITATIONS = {
-  appointmentsDone     : 3,
-  pendingSolicitations : 5,
-  nextPending          : '2026-04-24T19:30:00.000Z' 
-};
+import HomeBrief from '@/components/misc/HomeBrief';
+import { STUDENT_APPOITMENTS_DATA } from '@/constants/mocks/users/student/studentAppointmentsData.mock';
+import { STUDENT_LAST_APPOITMENT } from '@/constants/mocks/users/student/studentLastAppointment.mock';
+import { STUDENT_GENERAL_INFO_STATUS } from '@/constants/mocks/users/student/studentGeneralInfoStatus.mock';
 
 const Student = (): React.JSX.Element => {
 
   const BRIEF_RENDER = [
-    { icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: PENDING_SOLICITATIONS.appointmentsDone     },
-    { icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: PENDING_SOLICITATIONS.pendingSolicitations },
-    { icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatTime(PENDING_SOLICITATIONS.nextPending)          },
+    { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: STUDENT_GENERAL_INFO_STATUS.appointmentsDone     },
+    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: STUDENT_GENERAL_INFO_STATUS.pendingSolicitations },
+    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatDateTime(STUDENT_GENERAL_INFO_STATUS.nextPending)          },
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
@@ -88,20 +45,23 @@ const Student = (): React.JSX.Element => {
         <div className='grid gap-y-3 grid-rows-[60px_1fr] min-h-0'>
           <div className='flex gap-5 max-w-200 mx-auto w-full'>
             { BRIEF_RENDER.map((item) => (
-              <div className='flex border justify-evenly items-center border-cyan-400 rounded-lg bg-cyan-100/20 flex-1'>
-                { item.icon }
-                
-                <div className='flex flex-col '>
-                  <h4 className=' text-cyan-500 text-sm'>
-                    { item.label }
-                  </h4>
-
-                  <span className='text-lg font-semibold -mt-1 text-orange-500/50'>
-                    { item.value }
-                  </span>
-                </div>
-              </div>
-            )) }
+              item.id === 3 ? (
+                <HomeBrief
+                  key={item.id}
+                  Icon={() => item.icon}
+                  label={item.label}
+                  value={item.value}
+                  customStyle={{ value: 'text-[15px] mt-[1px]' }}
+                />     
+              ) : (
+                <HomeBrief
+                  key={item.id}
+                  Icon={() => item.icon}
+                  label={item.label}
+                  value={item.value}
+                />     
+              )     
+            ))}
           </div>
 
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -124,7 +84,6 @@ const Student = (): React.JSX.Element => {
                 optionsSchema='STUDENT_APPOINTMENT_FILTER'
                 value={filterValue}
                 onSelect={(value) => setFilterValue(value as typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'])}
-                selectedOptionPlaceholderNotShow
               />
             </div>
 

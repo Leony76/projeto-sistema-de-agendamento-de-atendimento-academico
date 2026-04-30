@@ -71,45 +71,47 @@ const Solicitation = (props:Props): React.JSX.Element => {
         image={{
           name : props.name,
           uri  : props.photo,
-          size : 'h-30 w-30'
+          size : 'h-26 w-26'
         }}
       />
 
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col flex-1 gap-1'>
         <h3 className='font-bold text-orange-400 break-all w-[90%]'>
           { props.name }
         </h3>
-      
-        { props.from === 'STUDENT' && 
-          <label className='text-sm text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+        
+        <div className='flex flex-col text-xs'>
+          { props.from === 'STUDENT' && 
+            <label className='text-orange-400 font-semibold'>
+              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+            </label>
+          }
+
+          <label className='text-orange-400 font-semibold'>
+            Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
           </label>
-        }
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
-        </label>
-
-        <label className='text-sm text-orange-400 font-semibold'>
-          Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
-        </label>
-
-        { props.from === 'PROFESSOR' &&
-          <label className='text-sm text-orange-400 font-semibold'>
-            Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
+          <label className='text-orange-400 font-semibold'>
+            Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
           </label>
-        }
 
-        <span className={`
-          border mb-1 mt-2 text-sm py-1 font-semibold items-center gap-2 flex justify-center w-fit px-3 rounded-lg
-          ${statusTagStyle[props.status].style}
-        `}>
-          { statusTagStyle[props.status].icon }
+          { props.from === 'PROFESSOR' &&
+            <label className='text-orange-400 font-semibold'>
+              Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
+            </label>
+          }
 
-          <span>
-            { APPOINTMENT_STATUS_MAP[props.status] }
+          <span className={`
+            border mb-1 mt-2 text-sm py-1 font-semibold items-center gap-2 flex justify-center w-fit px-3 rounded-lg
+            ${statusTagStyle[props.status].style}
+          `}>
+            { statusTagStyle[props.status].icon }
+
+            <span>
+              { APPOINTMENT_STATUS_MAP[props.status] }
+            </span>
           </span>
-        </span>
+        </div>
       </div>  
 
       { (props.status === 'UNCONFIRMED' && props.from === 'PROFESSOR') &&

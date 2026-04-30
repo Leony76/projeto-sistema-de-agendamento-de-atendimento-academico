@@ -33,15 +33,10 @@ const History = (props:Props): React.JSX.Element => {
         </button>
 
         { moreOptions &&
-          <div className='flex flex-col rounded-b-xl rounded-tl-xl'>
-            <button className={`
-              bg-red-50 border border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90
-              ${props.from === 'STUDENT' ? 'rounded-b-lg' : 'rounded-lg'}
-            `}>
-              <FaTrashAlt />
-              Apagar
-            </button>
-          </div>
+          <button className={`bg-red-50 border rounded-lg border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90`}>
+            <FaTrashAlt />
+            Apagar
+          </button>
         }  
       </div>
       
@@ -53,28 +48,30 @@ const History = (props:Props): React.JSX.Element => {
         }}
       />
 
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col flex-1 gap-1'>
         <h3 className='font-bold text-orange-400'>
           { props.name }
         </h3>   
 
-        { props.discipline &&
-          <label className='text-sm text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+        <div className='flex flex-col text-xs'>
+          { props.discipline &&
+            <label className='text-orange-400 font-semibold'>
+              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+            </label>
+          }
+
+          <label className='text-orange-400 font-semibold'>
+            Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
           </label>
-        }
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
-        </label>
+          <label className='text-orange-400 font-semibold'>
+            Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
+          </label>
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
-        </label>
-
-        <label className='text-sm text-orange-400 font-semibold'>
-          Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
-        </label>
+          <label className='text-orange-400 font-semibold'>
+            Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
+          </label>
+        </div>
       </div>  
     </div>
   );

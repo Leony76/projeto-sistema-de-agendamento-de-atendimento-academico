@@ -5,59 +5,14 @@ import { Input } from '@/components/input';
 import { Select } from '@/components/select';
 import { Card } from '@/components/card';
 import '@/css/calendar.css';
-import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@/types/solicitation.type';
 import { filterStudentSolicitations } from '@/utils/filters/filterStudentSolicitations.util';
 import NoContent from '@/components/misc/NoContent';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentSolicitations.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { filterStudentSolicitationsFromProfessorView } from '@/utils/filters/filterStudentSolicitationsFromProfessorView.util';
-import { LOGGED_USER_DATA } from './home/Student';
-
-const STUDENT_SOLICITATIONS_DATA: StudentSolicitation[] = [
-  {
-    id: 1,
-    name: 'Cloud Strife',
-    photo: 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop',
-    discipline: 'ENGLISH',
-    appoitmentDateTime: '2026-10-05T15:00:00.000Z',
-    status: 'UNCONFIRMED',
-  },
-  {
-    id: 2,
-    name: 'Madara Uchiha',
-    discipline: 'GEOGRAPHY',
-    photo: 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    status: 'CONFIRMED',
-  },
-  {
-    id: 3,
-    name: 'Sasuke Uchiha',
-    discipline: 'CHEMISTRY',
-    photo: 'https://pop.proddigital.com.br/wp-content/uploads/sites/8/2024/04/01-32.jpg',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    status: 'CANCELED',
-  },
-];
-
-const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA: StudentSolicitationFromProfessorView[] = [
-  {
-    id: 1,
-    name: 'Mad Max',
-    photo: 'https://i0.wp.com/cinegrandiose.com/wp-content/uploads/2016/02/MadM-8.png?fit=960%2C540&ssl=1',
-    appoitmentDateTime: '2026-10-05T15:00:00.000Z',
-    reason: 'Lorem Ipsum Dolor Iurem Eclestas',
-    status: 'UNCONFIRMED',
-  },
-  {
-    id: 2,
-    name: 'Maria Bonita Mendonça de Oliveira Lima',
-    photo: 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
-    appoitmentDateTime: '2026-10-08T17:00:00.000Z',
-    reason: 'Lorem Ipsum Dolor Iure Eclestas Joramentia caestus',
-    status: 'CONFIRMED',
-  },
-];
+import { LOGGED_USER_DATA } from '@/constants/mocks/loggedUserData.mock';
+import { STUDENT_SOLICITATIONS_DATA } from '@/constants/mocks/users/student/studentSolicitationsData.mock';
+import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA } from '@/constants/mocks/users/professor/studentSolicitationsFromProfessorView.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -145,23 +100,13 @@ const Requests = ():React.JSX.Element => {
                   grid items-start gap-2 auto-rows-min 
                   ${ LOGGED_USER_DATA.role === 'STUDENT' ? 'grid-cols-2' : 'grid-cols-1' }
                 `}>
-                  {LOGGED_USER_DATA.role === 'STUDENT' ? (
-                    filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
+                    {filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
                       <Card.Solicitation
-                        from={'STUDENT'}
+                        from={LOGGED_USER_DATA.role}
                         key={solicitation.id}
-                        { ...solicitation }
+                        { ...solicitation as any }
                       />
-                    ))             
-                  ) : (
-                    filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
-                      <Card.Solicitation
-                        from={'PROFESSOR'}
-                        key={solicitation.id}
-                        { ...solicitation }
-                      />
-                    ))
-                  )}
+                    ))}                
                 </div>
               ) : (
                 <NoContent

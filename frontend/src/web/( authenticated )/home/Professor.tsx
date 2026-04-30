@@ -4,63 +4,29 @@ import { FaArrowCircleLeft, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@/components/input';
 import { Select } from '@/components/select';
-import type { ProfessorAppointment } from '@/types/appointment.type';
 import { Card } from '@/components/card';
 import Calendar from 'react-calendar';
 import '@/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointments.map.filter';
 import NoContent from '@/components/misc/NoContent';
-import { formatTime } from '@/utils/formats/formatTime.util';
 import { filterProfessorAppointments } from '@/utils/filters/filterProfessorAppointments.util';
-import type { Professor as ProfessorType } from '@/types/professor.type';
 import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@/constants/maps/days.map';
 import { BiEdit } from 'react-icons/bi';
 import { Button } from '@/components/button';
 import { AVAILABLE_HOURS } from '@/constants/availableHours.const';
-
-const PROFESSOR_APPOITMENTS_DATA: ProfessorAppointment[] = [
-  {
-    id         :  1,
-    dateTime   : '2026-10-05T15:00:00.000Z',
-    reason     : 'Lorem ipsum dolor ',
-    status     : 'CONFIRMED',
-    room       : '1B',
-    student  : {
-      name  : 'Mad Max',
-      photo : 'https://i0.wp.com/cinegrandiose.com/wp-content/uploads/2016/02/MadM-8.png?fit=960%2C540&ssl=1' ,
-    },
-  },
-  {
-    id         :  2,
-    dateTime   : '2026-10-07T16:00:00.000Z',
-    student  : {
-      name  : 'Maria Bonita Mendonça de Oliveira Lima',
-      photo : 'https://pbs.twimg.com/media/HGF5_JeX0AArbDa?format=jpg&name=large',
-    },
-    reason     : 'Lorem ipsum dolorem horem ipsum dolorem porem ipsu',
-    status     : 'UNCONFIRMED',
-    room       : '1C'
-  },
-];
-
-const PROFESSOR_AVAILIBITY_DATA: ProfessorType['available'] = {
-  days: ['FRIDAY', 'SATURDAY', 'TUESDAY'],
-  hours: ['10:00', '13:00', '15:00'],
-};
-
-const PENDING_SOLICITATIONS = {
-  appointmentsDone     : 3,
-  pendingSolicitations : 5,
-  nextPending          : '2026-04-24T19:30:00.000Z' 
-};
+import HomeBrief from '@/components/misc/HomeBrief';
+import { formatDateTime } from '@/utils/formats/formatDateTime.util';
+import { PROFESSOR_APPOITMENTS_DATA } from '@/constants/mocks/users/professor/professorAppointmentsData.mock';
+import { PROFESSOR_AVAILIBITY_DATA } from '@/constants/mocks/users/professor/professorAvailibityData.mock';
+import { PROFESSOR_GENERAL_INFO_STATUS_DATA } from '@/constants/mocks/users/professor/professorGeneralInfoStatusData.mock';
 
 const Professor = (): React.JSX.Element => {
 
   const BRIEF_RENDER = [
-    { icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Agendamentos confirmados'  , value: PENDING_SOLICITATIONS.pendingSolicitations },
-    { icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: PENDING_SOLICITATIONS.pendingSolicitations },
-    { icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatTime(PENDING_SOLICITATIONS.nextPending)          },
+    { id: 1, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Agendas confirmados'  , value: PROFESSOR_GENERAL_INFO_STATUS_DATA.pendingSolicitations },
+    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: PROFESSOR_GENERAL_INFO_STATUS_DATA.pendingSolicitations },
+    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próxima agenda'     , value: formatDateTime(PROFESSOR_GENERAL_INFO_STATUS_DATA.nextPending)          },
   ];
 
   const [searchValue, setSearchValue] = useState<string>('');
@@ -111,25 +77,28 @@ const Professor = (): React.JSX.Element => {
         <div className='grid gap-y-3 grid-rows-[60px_1fr] min-h-0'>
           <div className='flex gap-5 max-w-200 mx-auto w-full justify-center'>
             { BRIEF_RENDER.map((item) => (
-              <div className='flex border justify-evenly items-center border-cyan-400 rounded-lg bg-cyan-100/20 px-5 gap-5'>
-                { item.icon }
-                
-                <div className='flex flex-col '>
-                  <h4 className=' text-cyan-500 text-sm'>
-                    { item.label }
-                  </h4>
-
-                  <span className='text-lg font-semibold -mt-1 text-orange-500/50'>
-                    { item.value }
-                  </span>
-                </div>
-              </div>
-            )) }
+              item.id === 3 ? (
+                <HomeBrief
+                  key={item.id}
+                  Icon={() => item.icon}
+                  label={item.label}
+                  value={item.value}
+                  customStyle={{ value: 'text-[15px] mt-[1px]' }}
+                />     
+              ) : (
+                <HomeBrief
+                  key={item.id}
+                  Icon={() => item.icon}
+                  label={item.label}
+                  value={item.value}
+                />     
+              ) 
+            ))}
           </div>
 
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
             <h3 className='self-center font-semibold text-lg text-cyan-500'>
-              Agendamentos
+              Agenda
             </h3>
 
             <div className='w-full flex gap-2'>

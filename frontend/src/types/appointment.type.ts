@@ -1,18 +1,16 @@
 import type { AppointmentStatus } from "./appointmentStatus.type";
-import type { Room } from "./room.type";
+import type { Professor } from "./professor.type";
+import type { Student } from "./Student.type";
 
 export type StudentAppointment = {
   readonly id : number;
   dateTime    : string;
   reason      : string;
-  room        : Room;
+  room        : string;
   status      : AppointmentStatus;
-  professor   : {
-    name  : string;
-    photo : string;
-  };
+  professor   : Omit<Professor, 'available'>;
 };
 
 export type ProfessorAppointment = Omit<StudentAppointment, 'professor'> & {
-  student: StudentAppointment['professor'];
+  student: Student;
 };
