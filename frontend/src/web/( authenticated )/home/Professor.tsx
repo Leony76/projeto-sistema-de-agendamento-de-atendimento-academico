@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { FaArrowCircleLeft, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
@@ -11,15 +11,8 @@ import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPerso
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
 import NoContent from '@frontend/components/misc/NoContent';
 import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
-import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@frontend/constants/maps/days.map';
-import { BiEdit } from 'react-icons/bi';
-import { Button } from '@frontend/components/button';
-import { AVAILABLE_HOURS } from '@frontend/constants/availableHours.const';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
-import { PROFESSOR_APPOITMENTS_DATA } from '@frontend/constants/mocks/users/professor/professorAppointmentsData.mock';
-import { PROFESSOR_AVAILIBITY_DATA } from '@frontend/constants/mocks/users/professor/professorAvailibityData.mock';
-import { PROFESSOR_GENERAL_INFO_STATUS_DATA } from '@frontend/constants/mocks/users/professor/professorGeneralInfoStatusData.mock';
 
 const Professor = (): React.JSX.Element => {
 
@@ -33,8 +26,8 @@ const Professor = (): React.JSX.Element => {
   const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
-  const [editAvailableDays, setEditAvailableDays]   = useState<string[]>(PROFESSOR_AVAILIBITY_DATA.days);
-  const [editAvailableHours, setEditAvailableHours] = useState<string[]>(PROFESSOR_AVAILIBITY_DATA.hours);
+  const [ availability, setAvailability ] = useState<ProfessorAvailability[] | null>(null);
+  const [ editAvailability, setEditAvailability ] = useState<ProfessorAvailability[] | null>(null);
 
   const [showEdit, setShowEdit] = useState<'AVAILABLE_HOURS' | 'AVAILABLE_DAYS' | null>(null);
 
@@ -44,29 +37,15 @@ const Professor = (): React.JSX.Element => {
     filterValue,
   );
 
-  const handleNewAvailableDays = async(days: string[]) => {
+  const handleNewAvailability = async(days: string[]) => {
     alert('Novos dias:' + days);
   };
 
-  const handleNewAvailableHours = async(hours: string[]) => {
-    alert('Novos horários:' + hours);
-  };
-
-  const handleToggleDay = (day: string) => {
-    setEditAvailableDays(prev =>
-      prev.includes(day)
-        ? prev.filter(d => d !== day) 
-        : [...prev, day]              
-    );
-  };
-
-  const handleToggleHour = (hour: string) => {
-    setEditAvailableHours(prev =>
-      prev.includes(hour)
-        ? prev.filter(h => h !== hour) 
-        : [...prev, hour]              
-    );
-  };
+  useEffect(() => {
+    const getAvailability = () => {
+      
+    };
+  },[]);
 
   return (
     <Layout 
@@ -164,10 +143,6 @@ const Professor = (): React.JSX.Element => {
               <button 
               className='absolute top-2 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'
               onClick={() => {
-                switch (showEdit) {
-                  case 'AVAILABLE_DAYS'  : handleNewAvailableDays(editAvailableDays);   break;
-                  case 'AVAILABLE_HOURS' : handleNewAvailableHours(editAvailableHours); break;
-                }
                 setShowEdit(null);
               }}
               >
@@ -180,101 +155,9 @@ const Professor = (): React.JSX.Element => {
             </h2>
 
             <div className='flex flex-col gap-2 justify-between flex-1 p-2 min-h-0 overflow-auto bg-white border rounded-lg border-cyan-300'>          
-              { showEdit === 'AVAILABLE_DAYS' ? (
-                <div className='flex flex-col gap-2'>
-                  <label className='text-sm text-orange-500'>
-                    Selecione seus dias disponíveis:
-                  </label>
-
-                  <div className='grid grid-cols-3 gap-2'>
-                    { AVAILABLE_DAYS.map(( item ) => {
-                      const isSelected = editAvailableDays.includes(item.value);
-                      
-                      return (
-                      item.value !== 'SUNDAY' && (  
-                        <Button.Default
-                          label={item.label.split('-')[0]}
-                          selected={isSelected}                     
-                          onClick={() => handleToggleDay(item.value)}
-                          customStyle={{ button: 'h-6 text-xs font-semibold' }}
-                        />
-                      )
-                    )})}
-                  </div>
-                </div>
-              ) : showEdit === 'AVAILABLE_HOURS' ? (
-                <div className='flex flex-col gap-2'>
-                  <label className='text-sm text-orange-500'>
-                    Selecione seus horários disponíveis:
-                  </label>
-
-                  <div className='grid grid-cols-4 gap-2'>
-                    { AVAILABLE_HOURS.map(( item ) => {
-                      const isSelected = editAvailableHours.includes(item);
-                      
-                      return (
-                        <Button.Default
-                          label={item}
-                          selected={isSelected}                          
-                          onClick={() => handleToggleHour(item)}
-                          customStyle={{ button: 'h-6 text-xs font-semibold' }}
-                        />
-                    )})}
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className='flex gap-2'>
-                    <button 
-                    onClick={() => setShowEdit('AVAILABLE_DAYS')}
-                    className='text-orange-400 cursor-pointer h-fit hover:brightness-120 active:brightness-100'>
-                      <BiEdit className='scale-[1.3]'/>
-                    </button>
-
-                    <label className=' text-orange-400 font-semibold text-[13px]'>
-                      Dias: { PROFESSOR_AVAILIBITY_DATA.days.map(( day, index ) => (
-                        <span 
-                        key={index}
-                        className='text-cyan-500 font-normal '
-                        >
-                          { AVAILABLE_DAYS_MAP[day] }
-                          {index === PROFESSOR_AVAILIBITY_DATA.days.length - 2
-                            ? ' e '
-                            : index < PROFESSOR_AVAILIBITY_DATA.days.length - 2
-                            ? ', '
-                            : ''
-                          }
-                        </span>
-                      ))}        
-                    </label>
-                  </div>
-                  
-                  <div className='flex gap-2'>
-                    <button 
-                    onClick={() => setShowEdit('AVAILABLE_HOURS')}
-                    className='text-orange-400 cursor-pointer h-fit hover:brightness-120 active:brightness-100'>
-                      <BiEdit className='scale-[1.3]'/>
-                    </button>
-
-                    <label className=' text-orange-400 font-semibold text-[13px]'>
-                      Horários: { PROFESSOR_AVAILIBITY_DATA.hours.map((hour, index) => (
-                        <span 
-                        key={index}
-                        className='text-cyan-500 font-normal'
-                        >
-                          { hour }
-                          {index === PROFESSOR_AVAILIBITY_DATA.hours.length - 2
-                            ? ' e '
-                            : index < PROFESSOR_AVAILIBITY_DATA.hours.length - 2
-                            ? ', '
-                            : ''
-                          }
-                        </span>
-                      ))}
-                    </label>
-                  </div>
-                </>
-              )}
+              <div className='grid grid-cols-4'>
+                {  }
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
-import type { UserRole } from "@shared/types/userRole.type";
+import { USERS } from "./data/users.mock";
+import { type LoggedUserData } from '@shared/types/loggedUserData.type'
 
-export const LOGGED_USER_DATA: { role: Exclude<UserRole, 'MANAGER'> } = {
-  role: 'STUDENT',
-}
+const LOGGED_USER_ID = 1;
+
+export const LOGGED_USER_DATA: LoggedUserData = USERS.find(user => user.id === LOGGED_USER_ID)!;

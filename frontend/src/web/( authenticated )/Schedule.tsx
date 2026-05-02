@@ -5,65 +5,19 @@ import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
 import '@frontend/css/calendar.css';
-import type { Professor } from '@shared/types/professor.type';
 import { Button } from '@frontend/components/button';
 import { useForm } from 'react-hook-form';
 import { appointmentSolicitationSchema, type AppointmentSolicitationFormData } from '@frontend/schemas/appointmentSolicitation.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Warning from '@frontend/components/misc/Warning';
 import { formatMergeDateWithTime } from '@frontend/utils/formats/formatMergeDateWithTime.util';
-import type { ProfessorScheduledAppointments } from '@shared/types/professorScheduledAppointments.type';
-import { normalizeAppointments } from '@frontend/utils/misc/normalizeAppointments.util';
 import { filterToScheduleProfessors } from '@frontend/utils/filters/filterToScheduleProfessors.util';
 import NoContent from '@frontend/components/misc/NoContent';
 import { FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/toScheduleProfessors.map.filter';
-
-const PROFESSORS_DATA: Professor[] = [
-  {
-    id: 1,
-    name: 'Cloud Strife',
-    photo: 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2021/04/cloud-strife-ff7remake.jpg?w=1600&h=900&fit=crop',
-    discipline: 'ENGLISH',
-    available: {
-      days: ['FRIDAY', 'SATURDAY', 'TUESDAY'],
-      hours: ['10:00', '13:00', '15:00'],
-    },
-  },
-  {
-    id: 2,
-    name: 'Madara Uchiha',
-    discipline: 'GEOGRAPHY',
-    photo: 'https://criticalhits.com.br/wp-content/uploads/2021/05/Madara_Rinnegan.png',
-    available: {
-      days: ['MONDAY', 'THURSDAY', 'TUESDAY'],
-      hours: ['11:00', '14:00', '16:00'],
-    },
-  },
-];
-
-const PROFESSORS_APPOINTMENTS_DATA: ProfessorScheduledAppointments[] = [
-  {
-    id: 1,
-    professorId: 1,
-    appointments: [
-      '2026-04-24T13:00:00.000Z',
-      '2026-04-25T15:00:00.000Z',
-      '2026-04-28T15:00:00.000Z',
-    ],
-  },
-  {
-    id: 2,
-    professorId: 2,
-    appointments: [
-      '2026-04-27T11:00:00.000Z',
-      '2026-04-27T14:00:00.000Z',
-      '2026-04-27T16:00:00.000Z',
-      '2026-04-29T11:00:00.000Z',
-      '2026-04-30T11:00:00.000Z',
-    ],
-  },
-]
+import { getAvailableSlots, TO_SCHEDULE_PROFESSORS } from '@frontend/constants/mocks/dto/professor/toScheduleProfessors.mock';
+import type { ToScheduleProfessors } from '@shared/types/toScheduleProfessors.type';
+import { DAYS } from '@frontend/constants/days.const';
 
 const Schedule = ():React.JSX.Element => {
 
@@ -89,25 +43,10 @@ const Schedule = ():React.JSX.Element => {
 
   const [showToScheduleForm, setShowToScheduleForm] = useState<boolean>(false);
 
-  const [selectedProfessorData, setSelectedProfessorData] = useState<Professor | null>(null);
-  const [selectedProfessorScheduledAppointments, setSelectedProfessorScheduledAppointments] = useState<ProfessorScheduledAppointments['appointments'] | null>(null);
-
-  const selectedDate = watch('appointmentDate');
-
-  const selectedDateKey = selectedDate
-    ? new Date(selectedDate).toISOString().split('T')[0]
-    : ''
-  ;
-
-  const appointmentsMap = selectedProfessorScheduledAppointments
-    ? normalizeAppointments(selectedProfessorScheduledAppointments)
-    : {}
-  ;
-
-  const bookedHours = selectedDateKey
-    ? appointmentsMap[selectedDateKey] || []
-    : []
-  ;
+  const [selectedProfessorData, setSelectedProfessorData] = useState<ToScheduleProfessors | null>(null);
+  const [toScheduleProfessors, setToScheduleProfessors] = useState<ToScheduleProfessors[]>([]);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const appointmentDate = watch('appointmentDate');
 
   const handleAppointmentSolicitation = async(data: AppointmentSolicitationFormData): Promise<void> => {
 
@@ -117,26 +56,45 @@ const Schedule = ():React.JSX.Element => {
     console.log(data, appointmentDateTime);
   };
 
-  const getSelectedProfessorScheduledAppointments = async(professorId: number): Promise<void> => {
-    try {
-      const result = PROFESSORS_APPOINTMENTS_DATA.find((item) => item.professorId === professorId);
-
-      if (result) setSelectedProfessorScheduledAppointments(result.appointments);
-    } catch (error:unknown) {
-      if (error instanceof Error) console.error(error.message);
-    }
-  }; 
+  const filteredProfessorsData = filterToScheduleProfessors(
+    toScheduleProfessors,
+    searchValue,
+    filterValue,
+  );
 
   useEffect(() => {
     register('appointmentDate');
     register('professorName');
   }, [register]);
 
-  const filteredProfessorsData = filterToScheduleProfessors(
-    PROFESSORS_DATA,
-    searchValue,
-    filterValue,
-  );
+  useEffect(() => {
+    if (!selectedProfessorData || !watch('appointmentDate')) {
+      setAvailableSlots([]);
+      return;
+    }
+
+    const result = getAvailableSlots({
+      professorId: selectedProfessorData.id,
+      date: watch('appointmentDate'),
+    });
+
+    setAvailableSlots(result.slots);
+
+  }, [selectedProfessorData, appointmentDate]);
+
+  useEffect(() => {
+    const getData = async():Promise<void> => {
+      try {
+        const response = TO_SCHEDULE_PROFESSORS;
+
+        setToScheduleProfessors(response);
+      } catch (error:unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    };
+
+    getData();
+  }, []);
 
   return (
     <Layout 
@@ -184,7 +142,6 @@ const Schedule = ():React.JSX.Element => {
                       reset();
                       setShowToScheduleForm(true);
                       setSelectedProfessorData(professor);
-                      getSelectedProfessorScheduledAppointments(professor.id);
                       setValue('professorName', professor.name);
                     }}}
                   />
@@ -241,12 +198,22 @@ const Schedule = ():React.JSX.Element => {
                   placeholder='Selecione uma data'
                   label='Data do agendamento'
                   customStyle={{ input: 'py-1.25!' }}
-                  appointmentsMap={appointmentsMap}
-                  availableDays={selectedProfessorData?.available.days}
-                  availableHours={selectedProfessorData?.available.hours}
                   value={watch('appointmentDate')}
                   onChange={(date) => setValue('appointmentDate', date as string, { shouldValidate: true })}
                   error={errors.appointmentDate?.message}
+                  disabledDate={(date) => {
+                    if (!selectedProfessorData) return true;
+
+                    const day = DAYS[date.getDay()];
+
+                    const dayAvailability = selectedProfessorData.availability.filter(
+                      (a) => a.dayOfWeek === day
+                    );
+
+                    if (dayAvailability.length === 0) return true;
+
+                    return false;
+                  }}
                 />
 
                 <div className='space-y-1'>
@@ -265,11 +232,10 @@ const Schedule = ():React.JSX.Element => {
                         </p>
 
                         <div className='flex flex-wrap gap-2 mt-2'>
-                          {selectedProfessorData?.available.hours
-                            .filter(( hour ) => !bookedHours.includes(hour)) 
-                            .map(( hour, index ) => (
+                          {availableSlots.length > 0 ? (
+                            availableSlots.map((hour) => (
                               <Button.Default
-                                key={index}
+                                key={hour}
                                 label={hour}
                                 selected={hour === watch('hour')}
                                 onClick={() => setValue('hour', hour, { shouldValidate: true })}
@@ -277,8 +243,13 @@ const Schedule = ():React.JSX.Element => {
                                   button: 'w-fit! py-1 px-4! rounded-lg! text-xs font-bold',
                                 }}
                               />
-                          ))}
-                          
+                            ))
+                          ) : (
+                            <span className='text-xs text-gray-400'>
+                              Nenhum horário disponível para este dia
+                            </span>
+                          )}
+
                           {errors.hour?.message && <Warning error={errors.hour.message}/>}
                         </div>
                       </>

@@ -11,10 +11,11 @@ datasource db {
 model User {
   id            Int        @id @default(autoincrement())
   email         String     @unique
+  photo         String?
+  
   registeredAt  DateTime   @default(now()) @map("registered_at")
   updatedAt     DateTime   @updatedAt      @map("updated_at")
-  deletedAt     DateTime?
-  role          UserRole   @default(STUDENT)
+  deletedAt     DateTime?  @map("deleted_at")
 
   student      Student?
   professor    Professor?
@@ -24,10 +25,9 @@ model User {
 }
 
 model Student {
-  id      Int  @id @default(autoincrement())
+  userId  Int  @unique @map("user_id")     
   ra      Int  @unique
 
-  userId  Int  @unique @map("user_id")     
   user    User @relation(fields: [userId], references: [id])
 
   appointments  Appointment[]  
@@ -37,8 +37,6 @@ model Student {
 }
 
 model Professor {
-  id            Int  @id @default(autoincrement())
-
   userId        Int  @unique       
   user          User @relation(fields: [userId], references: [id])
   
@@ -50,15 +48,33 @@ model Professor {
   @@map("professors")
 }
 
+model Room {
+  id           Int        @id @default(autoincrement())
+  name         String
+  status       RoomStatus
+
+  registeredAt DateTime  @default(now())  @map("registered_at")
+  updatedAt    DateTime   @updatedAt       @map("updated_at")
+  deletedAt    DateTime?  @map("deleted_at")               
+
+  appointments Appointment[]
+
+  @@map("rooms")
+}
+
 model ProfessorAvailability {
   id           Int   @id @default(autoincrement())
+
+  registeredAt  DateTime   @default(now()) @map("registered_at")
+  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?  @map("deleted_at")
 
   startTime    Int
   endTime      Int 
   dayOfWeek    DayOfWeek   
 
   professorId  Int
-  professor    Professor   @relation(fields: [professorId], references: [id])
+  professor    Professor   @relation(fields: [professorId], references: [userId])
 
   @@map("professor_availabilities")
 }
@@ -68,33 +84,51 @@ model Appointment {
   reason     String
   dateTime   DateTime       @map("date_time")
 
+  registeredAt  DateTime   @default(now()) @map("registered_at")
+  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?  @map("deleted_at")
+
+  roomId       Int         
+  room         Room         @relation(fields: [roomId], references: [id])
+
   studentId    Int          @map("student_id")
-  student      Student      @relation(fields: [studentId], references: [id]) 
+  student      Student      @relation(fields: [studentId], references: [userId]) 
 
   professorId  Int          @map("professor_id")
-  professor    Professor    @relation(fields: [professorId], references: [id])  
+  professor    Professor    @relation(fields: [professorId], references: [userId]) 
+
   history      History?
 
   @@unique([professorId, dateTime])
+  @@unique([roomId, dateTime])
   @@map("appointments")
 }
 
 model Solicitation {
   id         Int     @id         @default(autoincrement())
   dateTime   DateTime
+
+  registeredAt  DateTime   @default(now()) @map("registered_at")
+  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?  @map("deleted_at")
+
   status     SolicitationStatus  @default(UNCONFIRMED)
 
   studentId    Int          @map("student_id")
-  student      Student      @relation(fields: [studentId], references: [id]) 
+  student      Student      @relation(fields: [studentId], references: [userId]) 
 
   professorId  Int          @map("professor_id")
-  professor    Professor    @relation(fields: [professorId], references: [id])  
+  professor    Professor    @relation(fields: [professorId], references: [userId])  
 
   @@map("solicitations")
 }
 
 model History {
-  id Int         @id           @default(autoincrement())
+  id Int        @id        @default(autoincrement())
+
+  registeredAt  DateTime   @default(now()) @map("registered_at")
+  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?  @map("deleted_at")
 
   appointmentId  Int           @unique
   appointment    Appointment   @relation(fields: [appointmentId], references: [id])
@@ -106,8 +140,12 @@ model Discipline {
   id           Int        @id @default(autoincrement())
   name         String
 
+  registeredAt  DateTime   @default(now()) @map("registered_at")
+  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?  @map("deleted_at")
+
   professorId  Int 
-  professor    Professor  @relation(fields: [professorId], references: [id])
+  professor    Professor  @relation(fields: [professorId], references: [userId])
 
   @@map("disciplines")
 }
@@ -120,6 +158,8 @@ model Manager {
   @@map("managers")
 }
 
+
+
 enum UserRole {
   STUDENT
   PROFESSOR
@@ -130,6 +170,12 @@ enum SolicitationStatus {
   CONFIRMED
   UNCONFIRMED
   CANCELED
+}
+
+enum RoomStatus {
+  AVAILABLE
+  RESERVED
+  UNAVAILABLE
 }
 
 enum DayOfWeek {

@@ -10,10 +10,14 @@ export const AVAILABLE_DAYS = [
   { value: 'SATURDAY'  , label: 'Sábado'        },
 ];
 
-export const AVAILABLE_DAYS_MAP = Object.fromEntries(
-  AVAILABLE_DAYS.map(item => [item.value, item.label])
-) as {
-  [K in typeof AVAILABLE_DAYS[number]['value']]: typeof AVAILABLE_DAYS[number]['label']
+export const AVAILABLE_DAYS_MAP = {
+  SUNDAY     : 'Domingo',
+  MONDAY     : 'Segunda-feira',
+  TUESDAY    : 'Terça-feira',
+  WEDNESDAY  : 'Quarta-feira', 
+  THURSDAY   : 'Quinta-feira',
+  FRIDAY     : 'Sexta-feira',
+  SATURDAY   : 'Sábado',
 };
 
 export const DAYS_BY_INDEX_MAP: Record<AvailableDays, number> = {

@@ -11,8 +11,6 @@ import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MA
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterStudentSolicitationsFromProfessorView.util';
 import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
-import { STUDENT_SOLICITATIONS_DATA } from '@frontend/constants/mocks/users/student/studentSolicitationsData.mock';
-import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA } from '@frontend/constants/mocks/users/professor/studentSolicitationsFromProfessorView.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];

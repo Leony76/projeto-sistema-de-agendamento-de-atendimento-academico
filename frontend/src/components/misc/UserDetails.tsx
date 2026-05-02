@@ -15,7 +15,6 @@ import { filterStudentAppointments } from '@frontend/utils/filters/filterStudent
 import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterStudentSolicitationsFromProfessorView.util';
 import { filterStudentSolicitations } from '@frontend/utils/filters/filterStudentSolicitations.util';
 import { Button } from '../button';
-import { REGISTERED_USERS_DATA } from '@frontend/constants/mocks/users/manager/registeredUsersData.mock';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';

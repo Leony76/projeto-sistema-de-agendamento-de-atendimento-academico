@@ -24,13 +24,6 @@ import type { Reports } from '@shared/types/reports.type';
 import type { RoomDetails } from '@shared/types/roomStatus.type';
 import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
-import { REGISTERED_STUDENTS_DATA } from '@frontend/constants/mocks/users/manager/registeredStudentsData.mock';
-import { REGISTERED_PROFESSORS_DATA } from '@frontend/constants/mocks/users/manager/registeredProfessorsData.mock';
-import { REGISTERED_MANAGERS_DATA } from '@frontend/constants/mocks/users/manager/registeredManagersData.mock';
-import { SYSTEM_GENERAL_METRICS_DATA } from '@frontend/constants/mocks/users/manager/systemGenerealMetricsData.mock';
-import { SYSTEM_REPORTS_DATA } from '@frontend/constants/mocks/users/manager/systemReportsData.mock';
-import { SYSTEM_ROOMS_DATA } from '@frontend/constants/mocks/users/manager/systemRoomsData.mock';
-
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];

@@ -12,8 +12,6 @@ import { FaClipboardQuestion } from 'react-icons/fa6';
 import { filterProfessorAppointmentsHistory } from '@frontend/utils/filters/filterProfessorAppointmentsHistory.util';
 import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter';
-import { PROFESSOR_APPOINTMENT_HISTORY_DATA } from '@frontend/constants/mocks/users/professor/professorAppointmentsHistoryData.mock';
-import { STUDENT_APPOINTMENT_HISTORY_DATA } from '@frontend/constants/mocks/users/student/studentAppointmentsHistoryData.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];

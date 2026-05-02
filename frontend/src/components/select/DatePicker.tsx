@@ -13,9 +13,7 @@ type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
   placeholder   : string;
   value?        : string;
   onChange      : (value: string) => void;
-  availableDays?: string[];
-  appointmentsMap?: Record<string, string[]>;
-  availableHours?: string[];
+  disabledDate?: (date: Date) => boolean;
   customStyle?  : {
     label?      : string;
     input?      : string;
@@ -53,6 +51,7 @@ const DatePicker = forwardRef<HTMLButtonElement, Props>((props, ref) => {
           className="custom-calendar"
           prevLabel={<FaCircleChevronLeft/>}
           nextLabel={<FaCircleChevronRight/>}
+          minDate={new Date()}
           prev2Label={null}
           next2Label={null}
           onChange={(value) => {
@@ -65,27 +64,7 @@ const DatePicker = forwardRef<HTMLButtonElement, Props>((props, ref) => {
           tileDisabled={({ date, view }) => {
             if (view !== 'month') return false;
 
-            const dateKey = new Date(Date.UTC(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate()
-            )).toISOString().split('T')[0];
-
-            if (props.availableDays) {
-              const allowedDays = props.availableDays.map((day) => DAYS_BY_INDEX_MAP[day as keyof typeof DAYS_BY_INDEX_MAP]);
-
-              if (!allowedDays.includes(date.getDay())) return true;
-            }
-
-            if (props.appointmentsMap && props.availableHours) {
-              const booked = props.appointmentsMap[dateKey] || [];
-
-              if (booked.length >= props.availableHours.length) {
-                return true; 
-              }
-            }
-
-            return false;
+            return props.disabledDate?.(date) ?? false;
           }}
         />
       </Modal.Default>

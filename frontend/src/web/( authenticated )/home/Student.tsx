@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
 import { FaFilter, FaRegClock } from 'react-icons/fa';
@@ -14,27 +14,57 @@ import { filterStudentAppointments } from '@frontend/utils/filters/filterStudent
 import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
-import { STUDENT_APPOITMENTS_DATA } from '@frontend/constants/mocks/users/student/studentAppointmentsData.mock';
-import { STUDENT_LAST_APPOITMENT } from '@frontend/constants/mocks/users/student/studentLastAppointment.mock';
-import { STUDENT_GENERAL_INFO_STATUS } from '@frontend/constants/mocks/users/student/studentGeneralInfoStatus.mock';
+import type { StudentAppointment } from '@shared/types/appointment.type';
+import { STUDENT_APPOINTMENTS_DATA } from '@frontend/constants/mocks/dto/student/appointments.mock';
+import { STUDENT_BRIEF_INFOS_DATA } from '@frontend/constants/mocks/dto/student/briefInfos.mock';
+import type { StudentBriefInfos } from '@shared/types/studentBriefInfos.type';
+import { STUDENT_LAST_APPOINTMENT } from '@frontend/constants/mocks/dto/student/lastAppointment.mock';
 
 const Student = (): React.JSX.Element => {
-
-  const BRIEF_RENDER = [
-    { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: STUDENT_GENERAL_INFO_STATUS.appointmentsDone     },
-    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: STUDENT_GENERAL_INFO_STATUS.pendingSolicitations },
-    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatDateTime(STUDENT_GENERAL_INFO_STATUS.nextPending)          },
-  ];
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
+  const [appointments, setAppointments] = useState<StudentAppointment[]>([]);
+  const [briefInfos, setBriefInfos] = useState<StudentBriefInfos | null>(null);
+  const [lastAppointment, setLastAppointment] = useState<StudentAppointment | null>(null);
+
   const filteredStudentAppointmentsData = filterStudentAppointments(
-    STUDENT_APPOITMENTS_DATA,
+    appointments,
     searchValue,
     filterValue,
   );
+
+  const BRIEF_RENDER = [
+    { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: briefInfos?.appointmentsMade     },
+    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: briefInfos?.pendingSolicitations! },
+    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatDateTime(briefInfos?.nextAppointmentDateTime!)          },
+  ];
+
+  useEffect(() => {
+    const getData = async(): Promise<void> => {
+      try {
+        const [
+          appointments, 
+          briefInfos,
+          lastAppointment,
+        ] = [
+          STUDENT_APPOINTMENTS_DATA, 
+          STUDENT_BRIEF_INFOS_DATA,
+          STUDENT_LAST_APPOINTMENT,
+        ];
+
+        setAppointments(appointments);
+        setBriefInfos(briefInfos);
+        setLastAppointment(lastAppointment);
+      } catch ( error:unknown ) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    };
+
+    getData();
+  },[]);
 
   return (
     <Layout 
@@ -50,7 +80,7 @@ const Student = (): React.JSX.Element => {
                   key={item.id}
                   Icon={() => item.icon}
                   label={item.label}
-                  value={item.value}
+                  value={item.value!}
                   customStyle={{ value: 'text-[15px] mt-[1px]' }}
                 />     
               ) : (
@@ -58,7 +88,7 @@ const Student = (): React.JSX.Element => {
                   key={item.id}
                   Icon={() => item.icon}
                   label={item.label}
-                  value={item.value}
+                  value={item.value!}
                 />     
               )     
             ))}
@@ -131,26 +161,28 @@ const Student = (): React.JSX.Element => {
             <h2 className='text-cyan-500 font-semibold self-center'>
               Último agendamento
             </h2>
+            
+            { lastAppointment &&
+              <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
+                <h3 className='font-bold text-orange-400 text-sm'>
+                  { formatDateTime(lastAppointment.dateTime) }
+                </h3>        
+                
+                <div className='flex flex-col'>
+                  <label className=' text-orange-400 font-semibold text-xs'>
+                    Professor: <span className='text-cyan-500 font-normal'> { lastAppointment.professor.name } </span>
+                  </label>
 
-            <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
-              <h3 className='font-bold text-orange-400 text-sm'>
-                { formatDateTime(STUDENT_LAST_APPOITMENT.dateTime) }
-              </h3>        
-              
-              <div className='flex flex-col'>
-                <label className=' text-orange-400 font-semibold text-xs'>
-                  Professor: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.professorName } </span>
-                </label>
-
-                <label className=' text-orange-400 font-semibold text-xs'>
-                  Sala: <span className='text-cyan-500 font-normal'> { STUDENT_LAST_APPOITMENT.room } </span>
-                </label>
-          
-                <label className=' text-orange-400 font-semibold text-xs'>
-                  Motivo: <span className='text-gray-400 font-normal'> { STUDENT_LAST_APPOITMENT.reason.slice(0,50) + '...' } </span>
-                </label>
+                  <label className=' text-orange-400 font-semibold text-xs'>
+                    Sala: <span className='text-cyan-500 font-normal'> { lastAppointment.room } </span>
+                  </label>
+            
+                  <label className=' text-orange-400 font-semibold text-xs'>
+                    Motivo: <span className='text-gray-400 font-normal'> { lastAppointment.reason } </span>
+                  </label>
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
       </div>
