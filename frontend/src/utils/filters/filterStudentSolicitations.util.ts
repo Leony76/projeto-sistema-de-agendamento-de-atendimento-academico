@@ -14,7 +14,7 @@ export const filterStudentSolicitations = (
     const matchesSearch =
       solicitation.professor.name.toLowerCase().includes(search) 
       ||
-      solicitation.professor.discipline.toLowerCase().includes(search)
+      solicitation.professor.disciplines.some(discipline => discipline.name.toLowerCase().includes(search))
       ||
       formatTime(solicitation.appoitmentDateTime).toLowerCase().includes(search)
       ||
@@ -39,6 +39,10 @@ export const filterStudentSolicitations = (
   .sort((a, b) => {
     if (!filterValue) return 0;
 
+    const getDisciplinesString = (s: StudentSolicitation) =>
+      s.professor.disciplines.map(d => d.name).join(', ')
+    ;
+
     switch (filterValue) {
       case 'AZProfessorName':
         return a.professor.name.localeCompare(b.professor.name);
@@ -47,10 +51,10 @@ export const filterStudentSolicitations = (
         return b.professor.name.localeCompare(a.professor.name);
 
       case 'AZDisciplines':
-        return b.professor.discipline.localeCompare(a.professor.discipline);
-        
+        return getDisciplinesString(a).localeCompare(getDisciplinesString(b));
+
       case 'ZADisciplines':
-        return a.professor.discipline.localeCompare(b.professor.discipline);
+        return getDisciplinesString(b).localeCompare(getDisciplinesString(a));
 
       case 'mostRecent':
         return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();

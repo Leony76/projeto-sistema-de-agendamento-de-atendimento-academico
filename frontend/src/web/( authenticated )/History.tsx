@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
 import { FaFilter } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
@@ -12,6 +12,9 @@ import { FaClipboardQuestion } from 'react-icons/fa6';
 import { filterProfessorAppointmentsHistory } from '@frontend/utils/filters/filterProfessorAppointmentsHistory.util';
 import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter';
+import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
+import { PROFESSOR_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/professor/history.mock';
+import { STUDENT_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/student/history.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -20,23 +23,31 @@ type FilterValue = {
 
 const History = ():React.JSX.Element => {
 
+  const role = LOGGED_USER_DATA.role === 'PROFESSOR' 
+   ? 'PROFESSOR'
+   : 'STUDENT'
+  ;
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<FilterValue>({
     professor : 'none',
     student   : 'none',
   });
 
+  const [studentAppointmentHistory, setStudentAppointmentHistory] = useState<StudentAppointmentHistory[]>([]);
+  const [professorAppointmentHistory, setProfessorAppointmentHistory] = useState<ProfessorAppointmentHistory[]>([]);
+
   const filteredAppointmentHistoryByRole = {
     STUDENT: filterStudentAppointmentsHistory(
-      STUDENT_APPOINTMENT_HISTORY_DATA,
+      studentAppointmentHistory,
       searchValue,
       filterValue.student,
-    ), 
+    ).map((rest) => ({ ...rest, from: 'STUDENT' as const })), 
     PROFESSOR: filterProfessorAppointmentsHistory(
-      PROFESSOR_APPOINTMENT_HISTORY_DATA,
+      professorAppointmentHistory,
       searchValue,
       filterValue.professor,
-    ),
+    ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
   }
 
   const filterByRoleMap = {
@@ -63,6 +74,22 @@ const History = ():React.JSX.Element => {
   
   const hasFilter = filterValue.student !== 'none' || filterValue.professor !== 'none';
 
+  useEffect(() => {
+    (async() => {
+      try {
+        const [ response1, response2 ] = [
+          STUDENT_APPOINTMENTS_HISTORY,
+          PROFESSOR_APPOINTMENTS_HISTORY,
+        ];
+
+        setStudentAppointmentHistory(response1);
+        setProfessorAppointmentHistory(response2);
+      } catch (error:unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    })();
+  },[]);
+
   return (
     <Layout 
     selectedTab='HISTORY'
@@ -87,20 +114,19 @@ const History = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema={filterByRoleMap[LOGGED_USER_DATA.role].schema}
-                value={filterByRoleMap[LOGGED_USER_DATA.role].value}
-                onSelect={(value) => filterByRoleMap[LOGGED_USER_DATA.role].setter(value as any)}
+                optionsSchema={filterByRoleMap[role].schema}
+                value={filterByRoleMap[role].value}
+                onSelect={(value) => filterByRoleMap[role].setter(value as any)}
               />
             </div>
               
             <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              {filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].length > 0 ? (
+              {filteredAppointmentHistoryByRole[role].length > 0 ? (
                 <div className='grid gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
-                  { filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].map(( history ) => (
+                  { filteredAppointmentHistoryByRole[role].map(( history ) => (
                     <Card.History
-                      from={LOGGED_USER_DATA.role}
                       key={ history.id }
-                      { ...history as any }
+                      { ...history  }
                     />
                   ))}
                 </div>
@@ -109,11 +135,11 @@ const History = ():React.JSX.Element => {
                   Icon={() => <FaClipboardQuestion size={24}/>}
                   message={
                     searchValue && hasFilter
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`
                       : filterValue
-                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
+                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
                       : `Nenhuma histórico no momento!`
                   }
                 />

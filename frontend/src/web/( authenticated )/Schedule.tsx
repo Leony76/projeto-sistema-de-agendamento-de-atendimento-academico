@@ -52,7 +52,9 @@ const Schedule = ():React.JSX.Element => {
 
     const appointmentDateTime: string = formatMergeDateWithTime(data.appointmentDate, data.hour);
     
-    alert('Solicitado!')
+    alert('Solicitado!');
+    reset();
+    setShowToScheduleForm(false);
     console.log(data, appointmentDateTime);
   };
 

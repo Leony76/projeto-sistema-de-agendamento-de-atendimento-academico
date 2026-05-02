@@ -15,7 +15,7 @@ import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import type { StudentAppointment } from '@shared/types/appointment.type';
-import { STUDENT_APPOINTMENTS_DATA } from '@frontend/constants/mocks/dto/student/appointments.mock';
+import { STUDENT_APPOINTMENTS } from '@frontend/constants/mocks/dto/student/appointments.mock';
 import { STUDENT_BRIEF_INFOS_DATA } from '@frontend/constants/mocks/dto/student/briefInfos.mock';
 import type { StudentBriefInfos } from '@shared/types/studentBriefInfos.type';
 import { STUDENT_LAST_APPOINTMENT } from '@frontend/constants/mocks/dto/student/lastAppointment.mock';
@@ -39,7 +39,7 @@ const Student = (): React.JSX.Element => {
   const BRIEF_RENDER = [
     { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: briefInfos?.appointmentsMade     },
     { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: briefInfos?.pendingSolicitations! },
-    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: formatDateTime(briefInfos?.nextAppointmentDateTime!)          },
+    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: briefInfos?.nextAppointmentDateTime ? formatDateTime(briefInfos?.nextAppointmentDateTime) : '??'},
   ];
 
   useEffect(() => {
@@ -50,14 +50,14 @@ const Student = (): React.JSX.Element => {
           briefInfos,
           lastAppointment,
         ] = [
-          STUDENT_APPOINTMENTS_DATA, 
+          STUDENT_APPOINTMENTS, 
           STUDENT_BRIEF_INFOS_DATA,
           STUDENT_LAST_APPOINTMENT,
         ];
 
         setAppointments(appointments);
-        setBriefInfos(briefInfos);
-        setLastAppointment(lastAppointment);
+        if (briefInfos) setBriefInfos(briefInfos);
+        if (lastAppointment) setLastAppointment(lastAppointment);
       } catch ( error:unknown ) {
         if (error instanceof Error) console.error(error.message);
       }

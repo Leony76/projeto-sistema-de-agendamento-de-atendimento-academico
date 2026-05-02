@@ -33,6 +33,12 @@ const Solicitation = (props:Props): React.JSX.Element => {
 
   const { containerRef } = useCloseModalOnMouseClickOutside(setMoreOptions);
 
+  const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
+  const disciplines = props.from === 'STUDENT' 
+    ? props.professor.disciplines.map(d => d.name) 
+    : []
+  ;
+
   const userInfos = props.from === 'STUDENT'
     ? props.professor
     : props.student
@@ -93,7 +99,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
         <div className='flex flex-col text-xs'>
           { props.from === 'STUDENT' && 
             <label className='text-orange-400 font-semibold'>
-              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.professor.discipline] }</span>
+              Disciplina(s): <span className='text-cyan-500 font-normal'> { formatter.format(disciplines) } </span>   
             </label>
           }
 

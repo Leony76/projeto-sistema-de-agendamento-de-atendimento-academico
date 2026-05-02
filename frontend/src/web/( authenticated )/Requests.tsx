@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
 import { FaFilter } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
@@ -11,6 +11,9 @@ import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MA
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterStudentSolicitationsFromProfessorView.util';
 import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
+import { STUDENT_SOLICITATIONS } from '@frontend/constants/mocks/dto/student/solicitations.mock';
+import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW } from '@frontend/constants/mocks/dto/professor/solicitations.mock';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -19,23 +22,33 @@ type FilterValue = {
 
 const Requests = ():React.JSX.Element => {
 
+  const role = LOGGED_USER_DATA.role === 'PROFESSOR'
+    ? 'PROFESSOR'
+    : 'STUDENT'
+  ;
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<FilterValue>({
     professor : 'none',
     student   : 'none',
   });
 
+  const [studentSolicitations, setStudentSolicitations] = useState<StudentSolicitation[]>([]);
+  const [studentSolicitationsFromPRofessorView, setStudentSolicitationsFromProfessorView] = useState<StudentSolicitationFromProfessorView[]>([]);
+
+
   const filteredSolicitationsByRole = {
     STUDENT: filterStudentSolicitations(
-      STUDENT_SOLICITATIONS_DATA,
+      studentSolicitations,
       searchValue,
-      filterValue.student,
-    ),
+      filterValue.student
+    ).map(rest => ({ ...rest, from: 'STUDENT' as const })), 
+
     PROFESSOR: filterStudentSolicitationsFromProfessorView(
-      STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_DATA,
+      studentSolicitationsFromPRofessorView,
       searchValue,
-      filterValue.professor,
-    ),
+      filterValue.professor
+    ).map(rest => ({ ...rest, from: 'PROFESSOR' as const })), 
   };
 
   const filterByRoleMap = {
@@ -62,6 +75,22 @@ const Requests = ():React.JSX.Element => {
 
   const hasFilter = filterValue.student !== 'none' || filterValue.professor !== 'none';
 
+  useEffect(() => {
+    (async() => {
+      try {
+        const [reponse1, response2] = [
+          STUDENT_SOLICITATIONS,
+          STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW,
+        ];
+
+        setStudentSolicitations(reponse1);
+        setStudentSolicitationsFromProfessorView(response2);
+      } catch (error:unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    })();
+  }, []);
+
   return (
     <Layout 
     selectedTab='REQUESTS'
@@ -86,23 +115,22 @@ const Requests = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema={filterByRoleMap[LOGGED_USER_DATA.role].schema}
-                value={filterByRoleMap[LOGGED_USER_DATA.role].value}
-                onSelect={(value) => filterByRoleMap[LOGGED_USER_DATA.role].setter(value as any)}
+                optionsSchema={filterByRoleMap[role].schema}
+                value={filterByRoleMap[role].value}
+                onSelect={(value) => filterByRoleMap[role].setter(value as any)}
               />
             </div>
 
             <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              {filteredSolicitationsByRole[LOGGED_USER_DATA.role].length > 0 ? (
+              {filteredSolicitationsByRole[role].length > 0 ? (
                 <div className={`
                   grid items-start gap-2 auto-rows-min 
                   ${ LOGGED_USER_DATA.role === 'STUDENT' ? 'grid-cols-2' : 'grid-cols-1' }
                 `}>
-                    {filteredSolicitationsByRole[LOGGED_USER_DATA.role].map(( solicitation ) => (
+                    {filteredSolicitationsByRole[role].map(( solicitation ) => (
                       <Card.Solicitation
-                        from={LOGGED_USER_DATA.role}
                         key={solicitation.id}
-                        { ...solicitation as any }
+                        { ...solicitation  }
                       />
                     ))}                
                 </div>
@@ -111,11 +139,11 @@ const Requests = ():React.JSX.Element => {
                   Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
                   message={
                     searchValue && hasFilter
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
+                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
                       : searchValue
                       ? `Nenhum resultado para "${searchValue}"`
                       : filterValue
-                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
+                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
                       : `Nenhuma solicitação no momento!`
                   }
                 />

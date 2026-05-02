@@ -17,6 +17,16 @@ export const DISCIPLINES: Discipline[] = [
     professorId : 5,
   },
   {
+    id          : 3,
+    name        : 'Artes',
+    professorId : 4,
+  },
+  {
+    id          : 3,
+    name        : 'Biologia',
+    professorId : 5,
+  },
+  {
     id          : 4,
     name        : 'História',
     professorId : 6,

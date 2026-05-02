@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
-import { FaArrowCircleLeft, FaFilter, FaRegClock } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaEdit, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
@@ -13,28 +13,62 @@ import NoContent from '@frontend/components/misc/NoContent';
 import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
+import type { ProfessorAppointment } from '@shared/types/appointment.type';
+import { PROFESSOR_APPOINTMENTS } from '@frontend/constants/mocks/dto/professor/appointments.mock';
+import type { ProfessorAvailability } from '@shared/types/professorAvailability.type';
+import { PROFESSOR_AVAILABILITY } from '@frontend/constants/mocks/data/professorAvailability.mock';
+import { PROFESSOR_BRIEF_INFOS } from '@frontend/constants/mocks/dto/professor/briefInfos.mock';
+import type { ProfessorBriefInfos } from '@shared/types/professorBriefInfos.type';
+import { Button } from '@frontend/components/button';
+import { DAYS } from '@frontend/constants/days.const';
+import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@frontend/constants/maps/days.map';
+import type { AvailableDays } from '@shared/types/availableDays.type';
+import { availabilityHoursRange } from '@frontend/utils/misc/availabilityHoursRange.util';
+
+type EditingHours = {
+  startHour : number;
+  endHour   : number;
+};
 
 const Professor = (): React.JSX.Element => {
 
-  const BRIEF_RENDER = [
-    { id: 1, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Agendas confirmados'  , value: PROFESSOR_GENERAL_INFO_STATUS_DATA.pendingSolicitations },
-    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: PROFESSOR_GENERAL_INFO_STATUS_DATA.pendingSolicitations },
-    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próxima agenda'     , value: formatDateTime(PROFESSOR_GENERAL_INFO_STATUS_DATA.nextPending)          },
-  ];
-
+  
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
+  
+  const [ availability, setAvailability ] = useState<ProfessorAvailability[]>([]);
+  const [ editingAvailability, setEditingAvailability ] = useState<AvailableDays | null>(null);
+  const [ editAvailabilityHours, setEditAvailabilityHours ] = useState<EditingHours | null>(null);
+  
+  const [ editingMorningHours, setEditingMorningHours ] = useState<EditingHours | null>(null);
+  const [ editingAfternoonHours, setEditingAfternoonHours ] = useState<EditingHours | null>(null);
+  
+  const [ professorAppointments, setProfessorAppointments ] = useState<ProfessorAppointment[]>([]);
+  const [ professorBriefInfos, setProfessorBriefInfos ] = useState<ProfessorBriefInfos | null>(null);
+  
+  const noomInMinutes = 720;
 
-  const [ availability, setAvailability ] = useState<ProfessorAvailability[] | null>(null);
-  const [ editAvailability, setEditAvailability ] = useState<ProfessorAvailability[] | null>(null);
-
-  const [showEdit, setShowEdit] = useState<'AVAILABLE_HOURS' | 'AVAILABLE_DAYS' | null>(null);
+  const BRIEF_RENDER = [
+    { id: 1, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Agendas confirmados'  , value: professorBriefInfos?.appointmentsConfirmed },
+    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: professorBriefInfos?.pendingSolicitations },
+    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próxima agenda'     , value: professorBriefInfos?.nextAppointmentDateTime ? formatDateTime(professorBriefInfos.nextAppointmentDateTime) : '??/??/??, ??:??'},
+  ];
 
   const filteredStudentAppointmentsData = filterProfessorAppointments(
-    PROFESSOR_APPOITMENTS_DATA,
+    professorAppointments,
     searchValue,
     filterValue,
+  );
+
+  const selectedEditDayAvaliable = {
+    startHour : availability.find((av) => av.dayOfWeek === editingAvailability)?.startHour,
+    endHour   : availability.find((av) => av.dayOfWeek === editingAvailability)?.endHour,
+  };
+
+  const selectedEditDayAvaliableHoursRange = availabilityHoursRange(
+    selectedEditDayAvaliable.startHour,
+    selectedEditDayAvaliable.endHour,
   );
 
   const handleNewAvailability = async(days: string[]) => {
@@ -42,9 +76,21 @@ const Professor = (): React.JSX.Element => {
   };
 
   useEffect(() => {
-    const getAvailability = () => {
-      
-    };
+    (async() => {
+      try {
+        const [ response1, response2, response3 ] = [
+          PROFESSOR_APPOINTMENTS,
+          PROFESSOR_AVAILABILITY,
+          PROFESSOR_BRIEF_INFOS,
+        ];
+
+        setProfessorAppointments(response1);
+        setAvailability(response2);
+        setProfessorBriefInfos(response3);
+      } catch (error:unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    })();
   },[]);
 
   return (
@@ -61,7 +107,7 @@ const Professor = (): React.JSX.Element => {
                   key={item.id}
                   Icon={() => item.icon}
                   label={item.label}
-                  value={item.value}
+                  value={item.value ?? '?'}
                   customStyle={{ value: 'text-[15px] mt-[1px]' }}
                 />     
               ) : (
@@ -69,7 +115,7 @@ const Professor = (): React.JSX.Element => {
                   key={item.id}
                   Icon={() => item.icon}
                   label={item.label}
-                  value={item.value}
+                  value={item.value ?? '?'}
                 />     
               ) 
             ))}
@@ -139,11 +185,14 @@ const Professor = (): React.JSX.Element => {
           </div>
 
           <div className='relative flex flex-col self-start gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
-            { showEdit &&
+            { editingAvailability &&
               <button 
               className='absolute top-2 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'
               onClick={() => {
-                setShowEdit(null);
+                setEditAvailabilityHours(null);
+                setEditingAvailability(null);
+                setEditingAfternoonHours(null);
+                setEditingMorningHours(null);
               }}
               >
                 <FaArrowCircleLeft size={18}/>
@@ -155,9 +204,108 @@ const Professor = (): React.JSX.Element => {
             </h2>
 
             <div className='flex flex-col gap-2 justify-between flex-1 p-2 min-h-0 overflow-auto bg-white border rounded-lg border-cyan-300'>          
-              <div className='grid grid-cols-4'>
-                {  }
-              </div>
+              { editingAvailability ? (
+                <div className='space-y-1'>
+                  <h4 className='text-xs text-orange-500'>
+                    Defina sua disponibilidade { (editingAvailability !== 'SUNDAY' && editingAvailability !== 'SATURDAY') 
+                      ? 'às ' + (AVAILABLE_DAYS_MAP[editingAvailability].split('-')[0].toLowerCase() + 's-' + AVAILABLE_DAYS_MAP[editingAvailability].split('-')[1] + 's') 
+                      : 'aos ' + AVAILABLE_DAYS_MAP[editingAvailability].toLowerCase() + 's'
+                    }: 
+                  </h4>
+                  
+                  <div className='flex gap-1 items-center'>
+                    <button
+                    onClick={() => setEditingMorningHours(editAvailabilityHours)}
+                    className='text-orange-400 hover:brightness-95 hover:scale-[1.2] active:brightness-90 active:scale-[1.1] cursor-pointer'
+                    >
+                      <FaEdit className='text-orange-400'/>
+                    </button>
+
+                    <h5 className='flex items-center gap-1 text-sm text-cyan-500 font-semibold'>
+                      Ás manhãs: <span className='text-gray-400 font-normal'>
+                        { editingMorningHours ? (
+                          <div className='flex'>
+                            <input 
+                              className='min-w-0 w-12 text-center outline-none'
+                              type="text"
+                              value={editingMorningHours.startHour} 
+                            />
+
+                            <span>ás</span>
+                            
+                            <input 
+                              className='min-w-0 w-12 text-center outline-none'
+                              type="text"
+                              value={editingMorningHours.endHour} 
+                            />
+                          </div>
+                        ) : (
+                          selectedEditDayAvaliableHoursRange.morning
+                        )}
+                      </span>
+                    </h5>
+                  </div>
+                  
+                  <div className='flex gap-1 items-center'>
+                    <button
+                    onClick={() => setEditingAfternoonHours(editAvailabilityHours)}
+                    className='text-orange-400 hover:brightness-95 hover:scale-[1.2] active:brightness-90 active:scale-[1.1] cursor-pointer'
+                    >
+                      <FaEdit className='text-orange-400'/>
+                    </button>
+
+                    <h5 className='flex items-center gap-1 text-sm text-cyan-500 font-semibold'>
+                      Ás tardes: <span className='text-gray-400 font-normal'>
+                        { editingAfternoonHours ? (
+                          <div className='flex'>
+                            <input 
+                              className='min-w-0 w-12 text-center outline-none'
+                              type="text"
+                              value={editingAfternoonHours.startHour} 
+                            />
+
+                            <span>ás</span>
+                            
+                            <input 
+                              className='min-w-0 w-12 text-center outline-none'
+                              type="text"
+                              value={editingAfternoonHours.endHour} 
+                            />
+                          </div>
+                        ) : (
+                          selectedEditDayAvaliableHoursRange.afternoon
+                        )}
+                      </span>
+                    </h5>
+                  </div>
+                </div>
+              ) : (
+                <div className='grid grid-cols-4 gap-1.5'>
+                  { AVAILABLE_DAYS.map((days) => {
+
+                    const isAvailable = availability.some((a) => a.dayOfWeek === days.value);
+                    const availableHoursOfTargetDay = availability.find((a) => a.dayOfWeek === days.value);
+
+                    return (
+                      <Button.Default
+                      selected={isAvailable}
+                        label={days.label.split('-')[0]}
+                        customStyle={{ button: 'py-1 text-xs' }}
+                        onClick={() => {
+                          setEditingAvailability(days.value);
+                          if (availableHoursOfTargetDay) {
+                            setEditAvailabilityHours({
+                              endHour   : availableHoursOfTargetDay.endHour,
+                              startHour : availableHoursOfTargetDay.startHour,
+                            });
+                            return;
+                          }
+                        }}
+                      />
+                    )
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>

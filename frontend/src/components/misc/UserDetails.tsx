@@ -57,24 +57,24 @@ export const UserDetails = (): React.JSX.Element => {
         user?.role === 'PROFESSOR' ? user.appointmentsList : [],
         searchValue.appointment,
         userDetailsFilter.professor.appointments,
-      ),
+      ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
       solicitations: filterStudentSolicitationsFromProfessorView(
         user?.role === 'PROFESSOR' ? user.solicitationsList : [],
         searchValue.solicitation,
         userDetailsFilter.professor.solicitations,
-      ),
+      ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
     },
     STUDENT: {
       appointments: filterStudentAppointments(
         user?.role === 'STUDENT' ? user.appointmentsList : [],
         searchValue.appointment,
         userDetailsFilter.student.appointments,
-      ),
+      ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
       solicitations: filterStudentSolicitations(
         user?.role === 'STUDENT' ? user.solicitationsList : [],
         searchValue.solicitation,
         userDetailsFilter.student.solicitations,
-      ),
+      ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
     },
   };
 
@@ -239,9 +239,8 @@ export const UserDetails = (): React.JSX.Element => {
                   appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
                     <Card.Appointment
                       smVersion
-                      from={user.role}
                       key={appointment.id}
-                      { ...appointment as any }
+                      { ...appointment }
                     />
                   ))
                 ) : (
@@ -290,9 +289,8 @@ export const UserDetails = (): React.JSX.Element => {
                   appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
                     <Card.Solicitation
                       smVersion
-                      from={user.role}
                       key={solicitation.id}
-                      { ...solicitation as any }
+                      { ...solicitation }
                     />
                   ))       
                 ) : (

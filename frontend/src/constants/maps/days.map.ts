@@ -8,7 +8,7 @@ export const AVAILABLE_DAYS = [
   { value: 'THURSDAY'  , label: 'Quinta-Feira'  },
   { value: 'FRIDAY'    , label: 'Sexta-Feira'   },
   { value: 'SATURDAY'  , label: 'Sábado'        },
-];
+] as const;
 
 export const AVAILABLE_DAYS_MAP = {
   SUNDAY     : 'Domingo',
@@ -18,7 +18,7 @@ export const AVAILABLE_DAYS_MAP = {
   THURSDAY   : 'Quinta-feira',
   FRIDAY     : 'Sexta-feira',
   SATURDAY   : 'Sábado',
-};
+} as const;
 
 export const DAYS_BY_INDEX_MAP: Record<AvailableDays, number> = {
   SUNDAY    : 0,

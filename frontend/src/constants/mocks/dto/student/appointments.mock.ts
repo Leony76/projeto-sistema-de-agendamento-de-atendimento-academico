@@ -4,7 +4,7 @@ import { PROFESSORS } from "../../data/professors.mock";
 import { ROOMS } from "../../data/rooms.mock";
 import { LOGGED_USER_DATA } from "../../loggedUserData.mock";
 
-export const STUDENT_APPOINTMENTS_DATA: StudentAppointment[] = 
+export const STUDENT_APPOINTMENTS: StudentAppointment[] = 
   APPOINTMENTS_DATA
   .filter((appointment) => appointment.studentId === LOGGED_USER_DATA.id)
   .map((appointment) => {
