@@ -5,7 +5,7 @@ export const PROFESSOR_AVAILABILITY: ProfessorAvailability[] = [
     id          : 1,
     professorId : 4,
     dayOfWeek   : 'MONDAY',
-    startHour   : 780,
+    startHour   : 800,
     endHour     : 1080,
   },
   { 
