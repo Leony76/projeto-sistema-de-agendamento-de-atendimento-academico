@@ -8,6 +8,7 @@ import { formatMinutesToTime } from '@frontend/utils/formats/formartMinutesInHou
 import { formatTimeInput } from '@frontend/utils/formats/formatTimeToInput.util';
 import { formatHoursToMinutes } from '@frontend/utils/formats/formatHoursInMinutes.util';
 import { useToast } from '@frontend/contexts/ToastContext';
+import { isValidHours } from '@frontend/utils/misc/isValidHour.util';
 
 type Props = {
   availability: ProfessorAvailability[];
@@ -22,8 +23,11 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
 
   const { toast } = useToast();
 
-  const [ editingAvailabilityDay, setEditingAvailabilityDay ] = useState<AvailableDays | null>(null);
+  const GENERAL_CONFIGS = {
+    morning: { start: 420, end: 690 },
+  };
 
+  const [ editingAvailabilityDay, setEditingAvailabilityDay ] = useState<AvailableDays | null>(null);
   const [ newAvailableShiftHours, setNewAvailableShiftHours ] = useState<Hours | null>(null);
 
   const [ newMorningHours, setNewMorningHours ] = useState<Hours | null>(null);
@@ -33,33 +37,6 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
   const [ backupAfternoonHours, setBackupAfternoonHours ] = useState<Hours | null>(null);
 
   const [ editing, setEditing ] = useState<'MORNING' | 'AFTERNOON' | null>(null);
-
-  const isValidTimeString = (time: string): boolean => {
-    if (!time) return false;
-
-    const match = time.match(/^(\d{2}):(\d{2})$/);
-    if (!match) return false;
-
-    const hours = Number(match[1]);
-    const minutes = Number(match[2]);
-
-    if (hours < 0 || hours > 23) return false;
-    if (minutes < 0 || minutes > 59) return false;
-
-    return true;
-  };
-
-  const isValidHours = (hours: Hours | null): boolean => {
-    if (!hours) return false;
-
-    if (!isValidTimeString(hours.start)) return false;
-    if (!isValidTimeString(hours.end)) return false;
-
-    const start = formatHoursToMinutes(hours.start);
-    const end   = formatHoursToMinutes(hours.end);
-
-    return start < end;
-  };
 
   const handleNewAvailability = async (): Promise<void> => {
     try {
@@ -151,8 +128,8 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
                           setNewMorningHours(prev => {
                             if (!prev) return prev;
 
-                            if (value > 690) return { ...prev, start: '11:30' };
-                            if (value < 420)  return { ...prev, start: '07:00' };
+                            if (value > GENERAL_CONFIGS.morning.end) return { ...prev, start: '11:30' };
+                            if (value < GENERAL_CONFIGS.morning.start)  return { ...prev, start: '07:00' };
 
                             return prev;
                           });
@@ -190,8 +167,8 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
                           setNewMorningHours(prev => {
                             if (!prev) return prev;
 
-                            if (value > 690) return { ...prev, end: '11:30' };
-                            if (value < 420)  return { ...prev, end: '07:00' };
+                            if (value > GENERAL_CONFIGS.morning.end) return { ...prev, end: '11:30' };
+                            if (value < GENERAL_CONFIGS.morning.start)  return { ...prev, end: '07:00' };
 
                             return prev;
                           });
