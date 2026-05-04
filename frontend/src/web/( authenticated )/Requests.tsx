@@ -72,8 +72,38 @@ const Requests = ():React.JSX.Element => {
     STUDENT   : STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[filterValue.student],
     PROFESSOR : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[filterValue.professor],
   } as const;
+  
+  const noContentFound = () => {
 
-  const hasFilter = filterValue.student !== 'none' || filterValue.professor !== 'none';
+    const filterLabel = noHistoryFoundFilterByRoleMap[role];
+    const hasSearch = !!searchValue;
+    const hasFilter = filterValue && (
+      filterValue.professor !== 'none' || 
+      filterValue.student !== 'none'
+    );
+  
+    const NoContentIcon = (hasSearch || hasFilter)
+      ? <FaPersonCircleQuestion size={24}/>
+      : <FaClipboardQuestion size={24}/>
+    ;
+
+    let message = 'Nenhuma solicitação no momento!';
+
+    if (hasSearch && hasFilter) {
+      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
+    } else if (hasSearch) {
+      message = `Nenhum resultado para "${searchValue}"`;
+    } else if (hasFilter) {
+      message = filterLabel === 'Nenhum'
+        ? 'Nenhuma solicitação no momento!'
+        : `Nenhum resultado para o filtro "${filterLabel}"`;
+    }
+
+    return {
+      message,
+      Icon: NoContentIcon,
+    }
+  };
 
   useEffect(() => {
     (async() => {
@@ -136,16 +166,8 @@ const Requests = ():React.JSX.Element => {
                 </div>
               ) : (
                 <NoContent
-                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && hasFilter
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : filterValue
-                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
-                      : `Nenhuma solicitação no momento!`
-                  }
+                  Icon={() => noContentFound().Icon}
+                  message={noContentFound().message}
                 />
               )}
             </div>

@@ -42,6 +42,35 @@ const Student = (): React.JSX.Element => {
     { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: briefInfos?.nextAppointmentDateTime ? formatDateTime(briefInfos?.nextAppointmentDateTime) : '??'},
   ];
 
+  const noContentFound = () => {
+      
+    const filterLabel = STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP];
+    const hasSearch = !!searchValue;
+    const hasFilter = filterValue && filterValue !== 'none';
+
+    const NoContentIcon = (hasSearch || hasFilter)
+      ? <FaPersonCircleQuestion size={24}/>
+      : <FaClipboardQuestion size={24}/>
+    ;
+
+    let message = 'Nenhum agendamento no momento!';
+
+    if (hasSearch && hasFilter) {
+      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
+    } else if (hasSearch) {
+      message = `Nenhum resultado para "${searchValue}"`;
+    } else if (hasFilter) {
+      message = filterLabel === 'Nenhum'
+        ? 'Nenhum agendamento no momento!'
+        : `Nenhum resultado para o filtro "${filterLabel}"`;
+    }
+
+    return {
+      message,
+      Icon: NoContentIcon,
+    };
+  };
+
   useEffect(() => {
     const getData = async(): Promise<void> => {
       try {
@@ -128,16 +157,8 @@ const Student = (): React.JSX.Element => {
                ))
               ) : (
                 <NoContent
-                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && filterValue !== 'none'
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : filterValue
-                      ? `Nenhum resultado para o filtro "${STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP]}"`
-                      : `Nenhum agendamento disponível no momento!`
-                  }
+                  Icon={() => noContentFound().Icon}
+                  message={noContentFound().message}
                 />
               )}
             </div>

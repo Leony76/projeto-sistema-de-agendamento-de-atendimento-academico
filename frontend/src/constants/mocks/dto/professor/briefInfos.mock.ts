@@ -3,9 +3,9 @@ import { SOLICITATIONS_DATA } from "../../data/solicitations.mock"
 import type { ProfessorBriefInfos } from "@shared/types/professorBriefInfos.type"
 import { LOGGED_USER_DATA } from "../../loggedUserData.mock"
 
-const getProfessorBriefInfos = (): ProfessorBriefInfos => {
+const professorId = LOGGED_USER_DATA.id;
 
-  const professorId = LOGGED_USER_DATA.id;
+const getProfessorBriefInfos = (professorId:number): ProfessorBriefInfos => {
 
   const appointmentsConfirmed = APPOINTMENTS_DATA.filter((appointment) => 
     appointment.professorId === professorId
@@ -34,4 +34,4 @@ const getProfessorBriefInfos = (): ProfessorBriefInfos => {
   }
 } 
 
-export const PROFESSOR_BRIEF_INFOS = getProfessorBriefInfos();
+export const PROFESSOR_BRIEF_INFOS = getProfessorBriefInfos(professorId);

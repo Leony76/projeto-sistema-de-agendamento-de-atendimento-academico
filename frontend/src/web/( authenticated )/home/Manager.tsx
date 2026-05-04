@@ -24,6 +24,7 @@ import type { Reports } from '@shared/types/reports.type';
 import type { RoomDetails } from '@shared/types/roomStatus.type';
 import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -113,11 +114,38 @@ const Manager = (): React.JSX.Element => {
     MANAGER   : 'Pesquisar por gestor ou data de cadastro',
   };
 
-  const hasFilter: boolean =
-    filterValue.student   !== 'none' ||
-    filterValue.professor !== 'none' ||
-    filterValue.manager   !== 'none'
-  ;
+  const noContentFound = () => {
+    
+    const filterLabel = userNotFoundByFilterByRoleMap[userRoleList];
+    const hasSearch = !!searchValue;
+    const hasFilter = filterValue && (
+      filterValue.manager   !== 'none' ||
+      filterValue.professor !== 'none' ||
+      filterValue.student   !== 'none' 
+    );
+
+    const NoContentIcon = (hasSearch || hasFilter)
+      ? <FaPersonCircleQuestion size={24}/>
+      : <FaClipboardQuestion size={24}/>
+    ;
+
+    let message = `Nenhum ${USER_ROLES[userRoleList]} cadastrado(a) no momento!`;
+
+    if (hasSearch && hasFilter) {
+      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
+    } else if (hasSearch) {
+      message = `Nenhum resultado para "${searchValue}"`;
+    } else if (hasFilter) {
+      message = filterLabel === 'Nenhum'
+        ? `Nenhum ${USER_ROLES[userRoleList]} cadastrado(a) no momento!`
+        : `Nenhum resultado para o filtro "${filterLabel}"`;
+    }
+
+    return {
+      message,
+      Icon: NoContentIcon,
+    };
+  };
 
   useEffect(() => {
     if (location.pathname === '/home') {
@@ -209,16 +237,8 @@ const Manager = (): React.JSX.Element => {
                 )) 
               ) : (
                 <NoContent
-                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && hasFilter
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${userNotFoundByFilterByRoleMap[userRoleList]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : hasFilter
-                      ? `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[userRoleList]}"`
-                      : `Nenhum ${USER_ROLES[userRoleList].toLocaleLowerCase()} cadastrado no momento!`
-                  }
+                  Icon={() => noContentFound().Icon}
+                  message={noContentFound().message}
                 />
               )}
             </div>

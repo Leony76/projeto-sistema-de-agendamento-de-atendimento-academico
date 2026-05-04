@@ -72,7 +72,30 @@ const History = ():React.JSX.Element => {
     PROFESSOR : PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.professor],
   } as const;
   
-  const hasFilter = filterValue.student !== 'none' || filterValue.professor !== 'none';
+  const noContentFound = () => {
+  
+    const filterLabel = noHistoryFoundFilterByRoleMap[role];
+    const hasSearch = !!searchValue;
+    const hasFilter = filterValue && (
+      filterValue.professor !== 'none' || 
+      filterValue.student !== 'none'
+    );
+
+    let message = 'Nenhum histórico no momento!';
+
+    if (hasSearch && hasFilter) {
+      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
+    } else if (hasSearch) {
+      message = `Nenhum resultado para "${searchValue}"`;
+    } else if (hasFilter) {
+      message = filterLabel === 'Nenhum'
+        ? 'Nenhum histórico no momento!'
+        : `Nenhum resultado para o filtro "${filterLabel}"`;
+    }
+
+    return message;
+  };
+
 
   useEffect(() => {
     (async() => {
@@ -133,15 +156,7 @@ const History = ():React.JSX.Element => {
               ) : (
                 <NoContent
                   Icon={() => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && hasFilter
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : filterValue
-                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[role]}"`
-                      : `Nenhuma histórico no momento!`
-                  }
+                  message={noContentFound()}
                 />
               )}
             </div>

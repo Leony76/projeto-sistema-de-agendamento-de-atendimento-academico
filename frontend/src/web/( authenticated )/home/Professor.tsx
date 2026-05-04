@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
-import { FaArrowCircleLeft, FaCheckSquare, FaEdit, FaFilter, FaRegClock } from 'react-icons/fa';
+import { FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
@@ -16,7 +16,7 @@ import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import type { ProfessorAppointment } from '@shared/types/appointment.type';
 import { PROFESSOR_APPOINTMENTS } from '@frontend/constants/mocks/dto/professor/appointments.mock';
 import type { ProfessorAvailability } from '@shared/types/professorAvailability.type';
-import { PROFESSOR_AVAILABILITY } from '@frontend/constants/mocks/data/professorAvailability.mock';
+import { PROFESSOR_AVAILABILITY } from '@frontend/constants/mocks/dto/professor/availability.mock';
 import { PROFESSOR_BRIEF_INFOS } from '@frontend/constants/mocks/dto/professor/briefInfos.mock';
 import type { ProfessorBriefInfos } from '@shared/types/professorBriefInfos.type';
 import { Section } from '@frontend/components/section';
@@ -44,8 +44,33 @@ const Professor = (): React.JSX.Element => {
     filterValue,
   );
 
-  const handleNewAvailability = async(days: string[]) => {
-    alert('Novos dias:' + days);
+  const noContentFound = () => {
+    
+    const filterLabel = PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP];
+    const hasSearch = !!searchValue;
+    const hasFilter = filterValue && filterValue !== 'none';
+
+    const NoContentIcon = (hasSearch || hasFilter)
+      ? <FaPersonCircleQuestion size={24}/>
+      : <FaClipboardQuestion size={24}/>
+    ;
+
+    let message = 'Nenhum agendamento no momento!';
+
+    if (hasSearch && hasFilter) {
+      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
+    } else if (hasSearch) {
+      message = `Nenhum resultado para "${searchValue}"`;
+    } else if (hasFilter) {
+      message = filterLabel === 'Nenhum'
+        ? 'Nenhum agendamento no momento!'
+        : `Nenhum resultado para o filtro "${filterLabel}"`;
+    }
+
+    return {
+      message,
+      Icon: NoContentIcon,
+    };
   };
 
   useEffect(() => {
@@ -64,6 +89,8 @@ const Professor = (): React.JSX.Element => {
         if (error instanceof Error) console.error(error.message);
       }
     })();
+
+    console.log(availability);
   },[]);
 
   return (
@@ -75,22 +102,13 @@ const Professor = (): React.JSX.Element => {
         <div className='grid gap-y-3 grid-rows-[60px_1fr] min-h-0'>
           <div className='flex gap-5 max-w-200 mx-auto w-full justify-center'>
             { BRIEF_RENDER.map((item) => (
-              item.id === 3 ? (
-                <HomeBrief
-                  key={item.id}
-                  Icon={() => item.icon}
-                  label={item.label}
-                  value={item.value ?? '?'}
-                  customStyle={{ value: 'text-[15px] mt-[1px]' }}
-                />     
-              ) : (
-                <HomeBrief
-                  key={item.id}
-                  Icon={() => item.icon}
-                  label={item.label}
-                  value={item.value ?? '?'}
-                />     
-              ) 
+              <HomeBrief
+                key={item.id}
+                Icon={() => item.icon}
+                label={item.label}
+                value={item.value ?? '?'}
+                customStyle={{ value: `${item.id === 3 ? 'text-[15px] mt-[1px]' : ''}` }}
+              />       
             ))}
           </div>
 
@@ -128,16 +146,8 @@ const Professor = (): React.JSX.Element => {
                 ))
               ) : (
                 <NoContent
-                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && filterValue
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : filterValue
-                      ? `Nenhum resultado para o filtro "${PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP]}"`
-                      : `Nenhum agendamento disponível no momento!`
-                  }
+                  Icon={() => noContentFound().Icon}
+                  message={noContentFound().message}
                 />
               )}
             </div>

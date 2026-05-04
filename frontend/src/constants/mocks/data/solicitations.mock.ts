@@ -4,7 +4,7 @@ export const SOLICITATIONS_DATA: Solicitation[] = [
   {
     id: 1,
     studentId: 1,
-    professorId: 4,
+    professorId: 3,
     reason: 'Lorem ipsum dolor 1',
     appoitmentDateTime: '2026-10-05T15:00:00.000Z',
     status: 'CANCELED',

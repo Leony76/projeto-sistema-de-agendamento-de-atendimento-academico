@@ -5,26 +5,23 @@ import { Button } from '../button';
 import type { AvailableDays } from '@shared/types/availableDays.type';
 import type { ProfessorAvailability } from '@shared/types/professorAvailability.type';
 import { formatMinutesToTime } from '@frontend/utils/formats/formartMinutesInHours.util';
-import { formatTimeInput } from '@frontend/utils/formats/formatTimeToInput.util';
-import { formatHoursToMinutes } from '@frontend/utils/formats/formatHoursInMinutes.util';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { isValidHours } from '@frontend/utils/misc/isValidHour.util';
+import type { Shift } from '@shared/types/shifts.type';
+import type { Hours } from '@shared/types/availableHours.type';
+import ShiftHourEditor from '../misc/ShiftHourEditor';
 
 type Props = {
   availability: ProfessorAvailability[];
 };
-
-export type Hours = {
-  start : string; 
-  end   : string; 
-}
 
 const EditProfessorAvailability = (props:Props): React.JSX.Element => {
 
   const { toast } = useToast();
 
   const GENERAL_CONFIGS = {
-    morning: { start: 420, end: 690 },
+    morning: { start: 420, end: 690    },
+    afternoom: { start: 780, end: 1080 },
   };
 
   const [ editingAvailabilityDay, setEditingAvailabilityDay ] = useState<AvailableDays | null>(null);
@@ -36,12 +33,77 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
   const [ backupMorningHours, setBackupMorningHours ] = useState<Hours | null>(null);
   const [ backupAfternoonHours, setBackupAfternoonHours ] = useState<Hours | null>(null);
 
-  const [ editing, setEditing ] = useState<'MORNING' | 'AFTERNOON' | null>(null);
+  const [ editing, setEditing ] = useState<Shift | null>(null);
+
+  const handleOnEditAvailability = (
+    newHours       : Hours | null, 
+    newShiftHours  : Hours | null,
+    setNewHours    : (hours: Hours | null) => void,
+    setBackupHours : (hours: Hours | null) => void,
+    shift          : Shift,
+  ):void => {
+    if (newShiftHours !== null) {
+      setNewHours(newShiftHours);
+    }
+
+    if (editing === shift) {
+      if (!isValidHours(newShiftHours || newHours)) {
+        toast('Horário inválido', 'error');
+        setNewAvailableShiftHours(null);
+        return;
+      }
+      handleNewAvailability();
+    }
+
+    setEditing(prev => prev === shift ? null : shift);
+    setBackupHours(newMorningHours);       
+  }
+
+  const handleEditDayAvailability = (
+    dayHours : ProfessorAvailability | undefined,
+    day      : typeof AVAILABLE_DAYS[number]['value'],
+  ): void => {
+    setEditingAvailabilityDay(day);
+    if (dayHours) {
+
+      const shiftLength = dayHours.endHour < 720
+        ? 'MORNING'
+      : dayHours.startHour >= 720
+        ? 'AFTERNOON'
+      : dayHours.startHour < 720 && dayHours.endHour >= 720
+        && 'BOTH'
+      ;
+
+      switch (shiftLength) {
+        case 'MORNING':
+          setNewMorningHours({
+            start : formatMinutesToTime(dayHours.startHour),
+            end   : formatMinutesToTime(dayHours.endHour),
+          }); break;
+        case 'AFTERNOON':
+            setNewAfternoonHours({
+              start : formatMinutesToTime(dayHours.startHour),
+              end   : formatMinutesToTime(dayHours.endHour),
+            }); break;
+        case 'BOTH':
+          setNewMorningHours({
+            start : formatMinutesToTime(dayHours.startHour),
+            end   : '11:30',
+          }); setNewAfternoonHours({
+            start : '13:00',
+            end   : formatMinutesToTime(dayHours.endHour),
+          }); break;
+        default: return
+      } 
+    }
+  }
 
   const handleNewAvailability = async (): Promise<void> => {
     try {
   
       toast('Nova disponibilidade salva com sucesso!');
+
+      setNewAvailableShiftHours(null);
   
     } catch (error:unknown) {
       if (error instanceof Error) console.error(error.message);
@@ -82,20 +144,13 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
             <div className='flex gap-1 items-center'>
               <button
               className='text-orange-400 hover:brightness-95 hover:scale-[1.2] active:brightness-90 active:scale-[1.1] cursor-pointer'
-              onClick={() => {
-                if (newAvailableShiftHours) setNewMorningHours(newAvailableShiftHours);
-
-                if (editing === 'MORNING') {
-                  if (!isValidHours(newMorningHours)) {
-                    toast('Horário inválido', 'error');
-                    return
-                  };
-                  handleNewAvailability();
-                }
-
-                setEditing(prev => prev === 'MORNING' ? null : 'MORNING');
-                setBackupMorningHours(newMorningHours);           
-              }}
+              onClick={() => handleOnEditAvailability(
+                newMorningHours, 
+                newAvailableShiftHours,
+                setNewMorningHours, 
+                setBackupMorningHours, 
+                'MORNING'
+              )}
               >
                 { editing === 'MORNING' 
                   ? <FaCheckSquare className='text-green-500' /> 
@@ -105,125 +160,16 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
 
               <h5 className='flex items-center gap-1 text-sm text-cyan-500 font-semibold'>
                 Ás manhãs: <span className='text-gray-400 font-normal'>
-                  { newMorningHours ? (
-                    <div className='flex gap-1'>
-                      <input
-                        placeholder={'XX:XX'}
-                        readOnly={editing !== 'MORNING'} 
-                        className='min-w-0 w-10 text-center outline-none'
-                        type="text"
-                        value={newMorningHours.start}
-                        onBlur={() => {
-                          if (!newMorningHours || !backupMorningHours) return;
-
-                          const currentStart = newMorningHours.start;
-
-                          if (!currentStart) {
-                            setNewMorningHours(backupMorningHours);
-                            return;
-                          }
-
-                          const value = formatHoursToMinutes(currentStart);
-
-                          setNewMorningHours(prev => {
-                            if (!prev) return prev;
-
-                            if (value > GENERAL_CONFIGS.morning.end) return { ...prev, start: '11:30' };
-                            if (value < GENERAL_CONFIGS.morning.start)  return { ...prev, start: '07:00' };
-
-                            return prev;
-                          });
-                        }}
-                        onChange={(e) => {
-                          const value = formatTimeInput(e.target.value);                         
-
-                          setNewMorningHours(prev => {
-                            if (!prev) return { start: value ?? '', end: '' }; 
-                            return { ...prev, start: value ?? '' };
-                          });
-                        }}
-                      />
-
-                      <span>ás</span>
-                      
-                      <input
-                        placeholder={'XX:XX'} 
-                        readOnly={editing !== 'MORNING'} 
-                        className='min-w-0 w-10 text-center outline-none'
-                        type="text"
-                        value={newMorningHours.end}
-                        onBlur={() => {
-                          if (!newMorningHours || !backupMorningHours) return;
-
-                          const currentEnd = newMorningHours.end;
-
-                          if (!currentEnd) {
-                            setNewMorningHours(backupMorningHours);
-                            return;
-                          }
-
-                          const value = formatHoursToMinutes(currentEnd);
-
-                          setNewMorningHours(prev => {
-                            if (!prev) return prev;
-
-                            if (value > GENERAL_CONFIGS.morning.end) return { ...prev, end: '11:30' };
-                            if (value < GENERAL_CONFIGS.morning.start)  return { ...prev, end: '07:00' };
-
-                            return prev;
-                          });
-                        }}
-                        onChange={(e) => {
-                          const value = formatTimeInput(e.target.value);                         
-
-                          setNewMorningHours(prev => {
-                            if (!prev) return { start: '', end: value ?? '' }; 
-                            return { ...prev, end: value ?? '' };
-                          });
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    editing === 'MORNING' ? (
-                      <div className='flex gap-1'>
-                        <input
-                          placeholder={'XX:XX'}
-                          readOnly={editing !== 'MORNING'} 
-                          className='min-w-0 w-10 text-center outline-none'
-                          type="text"
-                          value={newAvailableShiftHours?.start ?? ''}
-                          onChange={(e) => {
-                            const value = formatTimeInput(e.target.value);                         
-
-                            setNewAvailableShiftHours(prev => {
-                              if (!prev) return { start: value ?? '', end: '' }; 
-                              return { ...prev, start: value ?? '' };
-                            });
-                          }}
-                        />
-
-                        <span>ás</span>
-                        
-                        <input
-                          placeholder={'XX:XX'} 
-                          readOnly={editing !== 'MORNING'} 
-                          className='min-w-0 w-10 text-center outline-none'
-                          type="text"
-                          value={newAvailableShiftHours?.end}
-                          onChange={(e) => {
-                            const value = formatTimeInput(e.target.value);                         
-
-                            setNewAvailableShiftHours(prev => {
-                              if (!prev) return { start: '', end: value ?? '' }; 
-                              return { ...prev, end: value ?? '' };
-                            });
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div>Não disponível</div>
-                    )
-                  )}
+                  <ShiftHourEditor
+                    shift='MORNING'
+                    editing={editing}
+                    newHours={newMorningHours}
+                    backupHours={backupMorningHours}
+                    shiftLimit={GENERAL_CONFIGS.morning}
+                    newShiftHours={newAvailableShiftHours}
+                    setNewShiftHours={setNewAvailableShiftHours}
+                    setNewHours={setNewMorningHours}
+                  />
                 </span>
               </h5>
             </div>
@@ -231,21 +177,13 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
             <div className='flex gap-1 items-center'>
               <button
               className='text-orange-400 hover:brightness-95 hover:scale-[1.2] active:brightness-90 active:scale-[1.1] cursor-pointer'
-              onClick={() => {
-                if (newAvailableShiftHours) setNewAfternoonHours(newAvailableShiftHours);
-                
-                if (editing === 'AFTERNOON') {
-                  if (!isValidHours(newAfternoonHours)) {
-                    toast('Horário inválido', 'error');
-                    return
-                  };
-
-                  handleNewAvailability();
-                }
-
-                setEditing(prev => prev === 'AFTERNOON' ? null : 'AFTERNOON');
-                setBackupAfternoonHours(newAfternoonHours);
-              }}
+              onClick={() => handleOnEditAvailability(
+                newAfternoonHours,
+                newAvailableShiftHours,
+                setNewAfternoonHours,
+                setBackupAfternoonHours,
+                'AFTERNOON',
+              )}
               >
                 { editing === 'AFTERNOON' 
                   ? <FaCheckSquare className='text-green-500' /> 
@@ -255,125 +193,16 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
 
               <h5 className='flex items-center gap-1 text-sm text-cyan-500 font-semibold'>
                 Ás tardes: <span className='text-gray-400 font-normal'>
-                  { newAfternoonHours ? (
-                    <div className='flex gap-1'>
-                      <input
-                        placeholder={'XX:XX'} 
-                        readOnly={editing !== 'AFTERNOON'}
-                        className='min-w-0 w-10 text-center outline-none'
-                        type="text"
-                        value={newAfternoonHours.start}
-                        onBlur={() => {
-                          if (!newAfternoonHours || !backupAfternoonHours) return;
-
-                          const currentStart = newAfternoonHours.start;
-
-                          if (!currentStart) {
-                            setNewAfternoonHours(backupAfternoonHours);
-                            return;
-                          }
-
-                          const value = formatHoursToMinutes(currentStart);
-
-                          setNewAfternoonHours(prev => {
-                            if (!prev) return prev;
-
-                            if (value > 1080) return { ...prev, start: '18:00' };
-                            if (value < 780)  return { ...prev, start: '13:00' };
-
-                            return prev;
-                          });
-                        }}
-                        onChange={(e) => {
-                          const value = formatTimeInput(e.target.value);           
-
-                          setNewAfternoonHours(prev => {
-                            if (!prev) return { start: value ?? '', end: '' }; 
-                            return { ...prev, start: value ?? '' };
-                          });
-                        }}
-                      />
-
-                      <span>ás</span>
-                      
-                      <input
-                        placeholder={'XX:XX'} 
-                        readOnly={editing !== 'AFTERNOON'}
-                        className='min-w-0 w-10 text-center outline-none'
-                        type="text"
-                        value={newAfternoonHours.end}
-                        onBlur={() => {
-                          if (!newAfternoonHours || !backupAfternoonHours) return;
-
-                          const currentEnd = newAfternoonHours.end;
-
-                          if (!currentEnd) {
-                            setNewAfternoonHours(backupAfternoonHours);
-                            return;
-                          }
-
-                          const value = formatHoursToMinutes(currentEnd);
-
-                          setNewAfternoonHours(prev => {
-                            if (!prev) return prev;
-
-                            if (value > 1080) return { ...prev, end: '18:00' };
-                            if (value < 780)  return { ...prev, end: '13:00' };
-
-                            return prev;
-                          });
-                        }}
-                        onChange={(e) => {
-                          const value = formatTimeInput(e.target.value);
-
-                          setNewAfternoonHours(prev => {
-                            if (!prev) return { start: '', end: value ?? '' }; 
-                            return { ...prev, end: value ?? '' };
-                          });
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    editing === 'AFTERNOON' ? (
-                      <div className='flex gap-1'>
-                        <input
-                          placeholder={'XX:XX'}
-                          readOnly={editing !== 'AFTERNOON'} 
-                          className='min-w-0 w-10 text-center outline-none'
-                          type="text"
-                          value={newAvailableShiftHours?.start ?? ''}
-                          onChange={(e) => {
-                            const value = formatTimeInput(e.target.value);                         
-
-                            setNewAvailableShiftHours(prev => {
-                              if (!prev) return { start: value ?? '', end: '' }; 
-                              return { ...prev, start: value ?? '' };
-                            });
-                          }}
-                        />
-
-                        <span>ás</span>
-                        
-                        <input
-                          placeholder={'XX:XX'} 
-                          readOnly={editing !== 'AFTERNOON'} 
-                          className='min-w-0 w-10 text-center outline-none'
-                          type="text"
-                          value={newAvailableShiftHours?.end}
-                          onChange={(e) => {
-                            const value = formatTimeInput(e.target.value);                         
-
-                            setNewAvailableShiftHours(prev => {
-                              if (!prev) return { start: '', end: value ?? '' }; 
-                              return { ...prev, end: value ?? '' };
-                            });
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div>Não disponível</div>
-                    )
-                  )}
+                  <ShiftHourEditor
+                    shift='AFTERNOON'
+                    editing={editing}
+                    newHours={newAfternoonHours}
+                    backupHours={backupAfternoonHours}
+                    newShiftHours={newAvailableShiftHours}
+                    shiftLimit={GENERAL_CONFIGS.afternoom}
+                    setNewShiftHours={setNewAvailableShiftHours}
+                    setNewHours={setNewAfternoonHours}
+                  />
                 </span>
               </h5>
             </div>
@@ -390,36 +219,7 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
                   selected={available}
                   label={days.label.split('-')[0]}
                   customStyle={{ button: 'py-1 text-xs' }}
-                  onClick={() => {        
-                    setEditingAvailabilityDay(days.value);
-                    if (availableHoursOfTargetDay) {
-
-                      const isMorning = availableHoursOfTargetDay.endHour < 720;
-                      const isAfternoon = availableHoursOfTargetDay.startHour >= 720;
-                      const isMixed = availableHoursOfTargetDay.startHour < 720 && availableHoursOfTargetDay.endHour >= 720;
-
-                      if (isMixed) {
-                        setNewMorningHours({
-                          start : formatMinutesToTime(availableHoursOfTargetDay.startHour),
-                          end   : '11:30',
-                        }); setNewAfternoonHours({
-                          start : '13:00',
-                          end   : formatMinutesToTime(availableHoursOfTargetDay.endHour),
-                        });
-                      } else if (isMorning) {
-                        setNewMorningHours({
-                          start : formatMinutesToTime(availableHoursOfTargetDay.startHour),
-                          end   : formatMinutesToTime(availableHoursOfTargetDay.endHour),
-                        });
-                      } else if (isAfternoon) {
-                        setNewAfternoonHours({
-                          start : formatMinutesToTime(availableHoursOfTargetDay.startHour),
-                          end   : formatMinutesToTime(availableHoursOfTargetDay.endHour),
-                        });
-                      }
-                      return;
-                    }
-                  }}
+                  onClick={() => handleEditDayAvailability(availableHoursOfTargetDay, days.value)}
                 />
               )
             })}

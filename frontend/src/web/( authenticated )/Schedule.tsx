@@ -84,6 +84,35 @@ const Schedule = ():React.JSX.Element => {
 
   }, [selectedProfessorData, appointmentDate]);
 
+  const noContentFound = () => {
+  
+    const filterLabel = TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP];
+    const hasSearch = !!searchValue;
+    const hasFilter = filterValue && filterValue !== 'none';
+
+    const NoContentIcon = (hasSearch || hasFilter)
+      ? <FaPersonCircleQuestion size={24}/>
+      : <FaClipboardQuestion size={24}/>
+    ;
+
+    let message = 'Nenhum professor disponível para agendamento no momento!';
+
+    if (hasSearch && hasFilter) {
+      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
+    } else if (hasSearch) {
+      message = `Nenhum resultado para "${searchValue}"`;
+    } else if (hasFilter) {
+      message = filterLabel === 'Nenhum'
+        ? 'Nenhum professor disponível para agendamento no momento!'
+        : `Nenhum resultado para o filtro "${filterLabel}"`;
+    }
+
+    return {
+      message,
+      Icon: NoContentIcon,
+    };
+  };
+
   useEffect(() => {
     const getData = async():Promise<void> => {
       try {
@@ -150,16 +179,8 @@ const Schedule = ():React.JSX.Element => {
                 ))
               ) : (
                 <NoContent
-                  Icon={(searchValue || filterValue) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && filterValue !== 'none'
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : filterValue
-                      ? `Nenhum resultado para o filtro "${TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP]}"`
-                      : `Nenhum professor disponível para agendamento no momento!`
-                  }
+                  Icon={() => noContentFound().Icon}
+                  message={noContentFound().message}
                 />
               )}
             </div>

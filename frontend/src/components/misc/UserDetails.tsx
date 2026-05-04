@@ -252,7 +252,9 @@ export const UserDetails = (): React.JSX.Element => {
                         : searchValue.appointment
                         ? `Nenhum resultado para "${searchValue.appointment}"`
                         : userDetailsFilter
-                        ? `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[user.role].appointments}"`
+                        ? userNotFoundByFilterByRoleMap[user.role].appointments === 'Nenhum'
+                          ? `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
+                          : `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[user.role].appointments}"`
                         : `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
                     }
                   />
