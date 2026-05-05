@@ -7,7 +7,7 @@ export const SOLICITATIONS_DATA: Solicitation[] = [
     professorId: 3,
     reason: 'Lorem ipsum dolor 1',
     appoitmentDateTime: '2026-10-05T15:00:00.000Z',
-    status: 'CANCELED',
+    status: 'ACCEPTED',
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const SOLICITATIONS_DATA: Solicitation[] = [
     professorId: 5, 
     appoitmentDateTime: '2026-10-08T17:00:00.000Z',
     reason : 'Lorem ipsum dolor 2',
-    status: 'CONFIRMED',
+    status: 'REJECTED',
   },
   {
     id: 3,
@@ -23,6 +23,6 @@ export const SOLICITATIONS_DATA: Solicitation[] = [
     professorId: 6, 
     appoitmentDateTime: '2026-10-08T17:00:00.000Z',
     reason : 'Lorem ipsum dolor 3',
-    status: 'CANCELED',
+    status: 'PENDING',
   },
 ];

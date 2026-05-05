@@ -10,7 +10,7 @@ const getProfessorBriefInfos = (professorId:number): ProfessorBriefInfos => {
   const appointmentsConfirmed = APPOINTMENTS_DATA.filter((appointment) => 
     appointment.professorId === professorId
     &&
-    !appointment.wasDone
+    appointment.status === 'SCHEDULED'
   ).length;
 
   const pendingSolicitations = SOLICITATIONS_DATA.filter((solicitation) => 

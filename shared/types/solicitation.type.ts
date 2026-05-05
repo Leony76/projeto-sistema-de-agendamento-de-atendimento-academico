@@ -1,6 +1,7 @@
 import type { AppointmentStatus } from "./appointmentStatus.type";
 import { Discipline } from "./disciplines.type";
 import type { Professor } from "./professor.type";
+import { SolicitationStatus } from "./solicitationStatus.type";
 import type { Student } from "./student.type";
 
 export type Solicitation = {
@@ -9,7 +10,7 @@ export type Solicitation = {
   readonly professorId : number;
 
   reason             : string;
-  status             : AppointmentStatus;
+  status             : SolicitationStatus;
   appoitmentDateTime : string;
 }
 

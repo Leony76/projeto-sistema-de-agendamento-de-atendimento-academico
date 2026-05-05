@@ -14,6 +14,7 @@ import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock'
 import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
 import { STUDENT_SOLICITATIONS } from '@frontend/constants/mocks/dto/student/solicitations.mock';
 import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW } from '@frontend/constants/mocks/dto/professor/solicitations.mock';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -73,37 +74,19 @@ const Requests = ():React.JSX.Element => {
     PROFESSOR : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[filterValue.professor],
   } as const;
   
-  const noContentFound = () => {
-
-    const filterLabel = noHistoryFoundFilterByRoleMap[role];
-    const hasSearch = !!searchValue;
-    const hasFilter = filterValue && (
+  const noContent = noContentFound(
+    'Nenhuma solicitação no momento!',
+    noHistoryFoundFilterByRoleMap[role],
+    searchValue,
+    filterValue && (
       filterValue.professor !== 'none' || 
       filterValue.student !== 'none'
-    );
-  
-    const NoContentIcon = (hasSearch || hasFilter)
-      ? <FaPersonCircleQuestion size={24}/>
-      : <FaClipboardQuestion size={24}/>
-    ;
-
-    let message = 'Nenhuma solicitação no momento!';
-
-    if (hasSearch && hasFilter) {
-      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
-    } else if (hasSearch) {
-      message = `Nenhum resultado para "${searchValue}"`;
-    } else if (hasFilter) {
-      message = filterLabel === 'Nenhum'
-        ? 'Nenhuma solicitação no momento!'
-        : `Nenhum resultado para o filtro "${filterLabel}"`;
-    }
-
-    return {
-      message,
-      Icon: NoContentIcon,
-    }
-  };
+    ),
+    {
+      notFound   : FaPersonCircleQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
 
   useEffect(() => {
     (async() => {
@@ -166,8 +149,8 @@ const Requests = ():React.JSX.Element => {
                 </div>
               ) : (
                 <NoContent
-                  Icon={() => noContentFound().Icon}
-                  message={noContentFound().message}
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>

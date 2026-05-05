@@ -18,6 +18,7 @@ import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_
 import { getAvailableSlots, TO_SCHEDULE_PROFESSORS } from '@frontend/constants/mocks/dto/professor/toScheduleProfessors.mock';
 import type { ToScheduleProfessors } from '@shared/types/toScheduleProfessors.type';
 import { DAYS } from '@frontend/constants/days.const';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 
 const Schedule = ():React.JSX.Element => {
 
@@ -84,34 +85,16 @@ const Schedule = ():React.JSX.Element => {
 
   }, [selectedProfessorData, appointmentDate]);
 
-  const noContentFound = () => {
-  
-    const filterLabel = TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP];
-    const hasSearch = !!searchValue;
-    const hasFilter = filterValue && filterValue !== 'none';
-
-    const NoContentIcon = (hasSearch || hasFilter)
-      ? <FaPersonCircleQuestion size={24}/>
-      : <FaClipboardQuestion size={24}/>
-    ;
-
-    let message = 'Nenhum professor disponível para agendamento no momento!';
-
-    if (hasSearch && hasFilter) {
-      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
-    } else if (hasSearch) {
-      message = `Nenhum resultado para "${searchValue}"`;
-    } else if (hasFilter) {
-      message = filterLabel === 'Nenhum'
-        ? 'Nenhum professor disponível para agendamento no momento!'
-        : `Nenhum resultado para o filtro "${filterLabel}"`;
-    }
-
-    return {
-      message,
-      Icon: NoContentIcon,
-    };
-  };
+  const noContent = noContentFound(
+    'Nenhum professor disponível para agendamento no momento!',
+    TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP],
+    searchValue,
+    filterValue && filterValue !== 'none',
+    {
+      notFound   : FaPersonCircleQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
 
   useEffect(() => {
     const getData = async():Promise<void> => {
@@ -179,8 +162,8 @@ const Schedule = ():React.JSX.Element => {
                 ))
               ) : (
                 <NoContent
-                  Icon={() => noContentFound().Icon}
-                  message={noContentFound().message}
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>

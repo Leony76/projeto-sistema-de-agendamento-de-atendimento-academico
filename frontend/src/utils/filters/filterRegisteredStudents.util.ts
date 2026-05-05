@@ -13,6 +13,10 @@ export const filterRegisteredStudents = (
     const matchesSearch =
       student.name.toLowerCase().includes(search) 
       ||
+      student.email.toLowerCase().includes(search) 
+      ||
+      student.ra.toString().includes(search) 
+      ||
       student.id.toString().includes(search)
       ||
       student.registeredAt.toLowerCase().includes(search)

@@ -19,6 +19,7 @@ import { STUDENT_APPOINTMENTS } from '@frontend/constants/mocks/dto/student/appo
 import { STUDENT_BRIEF_INFOS_DATA } from '@frontend/constants/mocks/dto/student/briefInfos.mock';
 import type { StudentBriefInfos } from '@shared/types/studentBriefInfos.type';
 import { STUDENT_LAST_APPOINTMENT } from '@frontend/constants/mocks/dto/student/lastAppointment.mock';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 
 const Student = (): React.JSX.Element => {
 
@@ -42,34 +43,16 @@ const Student = (): React.JSX.Element => {
     { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: briefInfos?.nextAppointmentDateTime ? formatDateTime(briefInfos?.nextAppointmentDateTime) : '??'},
   ];
 
-  const noContentFound = () => {
-      
-    const filterLabel = STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP];
-    const hasSearch = !!searchValue;
-    const hasFilter = filterValue && filterValue !== 'none';
-
-    const NoContentIcon = (hasSearch || hasFilter)
-      ? <FaPersonCircleQuestion size={24}/>
-      : <FaClipboardQuestion size={24}/>
-    ;
-
-    let message = 'Nenhum agendamento no momento!';
-
-    if (hasSearch && hasFilter) {
-      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
-    } else if (hasSearch) {
-      message = `Nenhum resultado para "${searchValue}"`;
-    } else if (hasFilter) {
-      message = filterLabel === 'Nenhum'
-        ? 'Nenhum agendamento no momento!'
-        : `Nenhum resultado para o filtro "${filterLabel}"`;
-    }
-
-    return {
-      message,
-      Icon: NoContentIcon,
-    };
-  };
+  const noContent = noContentFound(
+    'Nenhum agendamento no momento!',
+    STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof STUDENT_APPOINTMENTS_FILTER_VALUE_MAP],
+    searchValue,
+    filterValue && filterValue !== 'none',
+    {
+      notFound   : FaPersonCircleQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
 
   useEffect(() => {
     const getData = async(): Promise<void> => {
@@ -157,8 +140,8 @@ const Student = (): React.JSX.Element => {
                ))
               ) : (
                 <NoContent
-                  Icon={() => noContentFound().Icon}
-                  message={noContentFound().message}
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>

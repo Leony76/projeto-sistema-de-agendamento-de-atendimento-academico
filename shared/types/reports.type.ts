@@ -1,8 +1,8 @@
 export type Reports = {
   appointments : {
-    count     : number;
-    confirmed : number;
-    canceled   : number;
+    count   : number;
+    done    : number;
+    canceled : number;
   };
   solicitations : {
     count    : number;
@@ -10,18 +10,22 @@ export type Reports = {
     rejected : number;
   };
   rooms : {
-    reserved  : number;
-    available : number;
+    count       : number;
+    reserved    : number;
+    available   : number;
+    unavailable : number;
   };
   registered : {
+    users      : number;
     students   : number;
     professors : number;
     managers   : number;
   };
   rate: {
     appointments: {
-      withdrawal : number;
-      attendance : number;
+      cancellation : number;
+      withdrawal   : number;
+      attendance   : number;
     };
     solicitations: {
       acceptance : number;

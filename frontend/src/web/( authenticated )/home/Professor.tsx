@@ -20,6 +20,7 @@ import { PROFESSOR_AVAILABILITY } from '@frontend/constants/mocks/dto/professor/
 import { PROFESSOR_BRIEF_INFOS } from '@frontend/constants/mocks/dto/professor/briefInfos.mock';
 import type { ProfessorBriefInfos } from '@shared/types/professorBriefInfos.type';
 import { Section } from '@frontend/components/section';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 
 const Professor = (): React.JSX.Element => {
 
@@ -44,34 +45,16 @@ const Professor = (): React.JSX.Element => {
     filterValue,
   );
 
-  const noContentFound = () => {
-    
-    const filterLabel = PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP];
-    const hasSearch = !!searchValue;
-    const hasFilter = filterValue && filterValue !== 'none';
-
-    const NoContentIcon = (hasSearch || hasFilter)
-      ? <FaPersonCircleQuestion size={24}/>
-      : <FaClipboardQuestion size={24}/>
-    ;
-
-    let message = 'Nenhum agendamento no momento!';
-
-    if (hasSearch && hasFilter) {
-      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
-    } else if (hasSearch) {
-      message = `Nenhum resultado para "${searchValue}"`;
-    } else if (hasFilter) {
-      message = filterLabel === 'Nenhum'
-        ? 'Nenhum agendamento no momento!'
-        : `Nenhum resultado para o filtro "${filterLabel}"`;
-    }
-
-    return {
-      message,
-      Icon: NoContentIcon,
-    };
-  };
+  const noContent = noContentFound(
+    'Nenhum agendamento no momento!',
+    PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[filterValue as keyof typeof PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP],
+    searchValue,
+    filterValue && filterValue !== 'none',
+    {
+      notFound   : FaPersonCircleQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
 
   useEffect(() => {
     (async() => {
@@ -146,8 +129,8 @@ const Professor = (): React.JSX.Element => {
                 ))
               ) : (
                 <NoContent
-                  Icon={() => noContentFound().Icon}
-                  message={noContentFound().message}
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>

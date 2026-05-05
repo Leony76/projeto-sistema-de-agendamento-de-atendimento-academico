@@ -1,16 +1,23 @@
 import type { Discipline } from "./disciplines.type";
 
-export type RegisteredStudent = {
+type RegisteredUser = {
   readonly id   : number; 
   name          : string;
+  email         : string;
   photo         : string;
   registeredAt  : string;
+};
+
+export type RegisteredStudent = RegisteredUser & {
+  ra            : number;
   appointments  : number;
   solicitations : number;
 };
 
-export type RegisteredProfessor = RegisteredStudent & {
-  discipline : Discipline;
+export type RegisteredProfessor = RegisteredUser & {
+  appointments  : number;
+  solicitations : number;
+  disciplines   : Discipline[];
 }
 
-export type RegisteredManager = Omit<RegisteredStudent, 'appointments' | 'solicitations'>;
+export type RegisteredManager = RegisteredUser;

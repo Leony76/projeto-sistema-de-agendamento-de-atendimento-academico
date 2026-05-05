@@ -15,6 +15,7 @@ import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTO
 import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
 import { PROFESSOR_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/professor/history.mock';
 import { STUDENT_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/student/history.mock';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -71,31 +72,20 @@ const History = ():React.JSX.Element => {
     STUDENT   : STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.student],
     PROFESSOR : PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.professor],
   } as const;
-  
-  const noContentFound = () => {
-  
-    const filterLabel = noHistoryFoundFilterByRoleMap[role];
-    const hasSearch = !!searchValue;
-    const hasFilter = filterValue && (
+
+  const noContent = noContentFound(
+    'Nenhum histórico de agendamentos no momento!',
+    noHistoryFoundFilterByRoleMap[role],
+    searchValue,
+    filterValue && (
       filterValue.professor !== 'none' || 
       filterValue.student !== 'none'
-    );
-
-    let message = 'Nenhum histórico no momento!';
-
-    if (hasSearch && hasFilter) {
-      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
-    } else if (hasSearch) {
-      message = `Nenhum resultado para "${searchValue}"`;
-    } else if (hasFilter) {
-      message = filterLabel === 'Nenhum'
-        ? 'Nenhum histórico no momento!'
-        : `Nenhum resultado para o filtro "${filterLabel}"`;
-    }
-
-    return message;
-  };
-
+    ),
+    {
+      notFound   : FaClipboardQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
 
   useEffect(() => {
     (async() => {
@@ -155,8 +145,8 @@ const History = ():React.JSX.Element => {
                 </div>
               ) : (
                 <NoContent
-                  Icon={() => <FaClipboardQuestion size={24}/>}
-                  message={noContentFound()}
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>

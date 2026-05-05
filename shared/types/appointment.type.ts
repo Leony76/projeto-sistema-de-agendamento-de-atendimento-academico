@@ -1,3 +1,4 @@
+import { AppointmentStatus } from "./appointmentStatus.type";
 import type { Professor } from "./professor.type";
 import type { Student } from "./student.type";
 
@@ -7,10 +8,9 @@ export type Appointment = {
   readonly professorId : number;
   readonly roomId      : number;
 
-  wasDone              : boolean;
-
-  dateTime    : string;
-  reason      : string;
+  status : AppointmentStatus;
+  dateTime : string;
+  reason   : string;
 }
 
 export type StudentAppointment = {

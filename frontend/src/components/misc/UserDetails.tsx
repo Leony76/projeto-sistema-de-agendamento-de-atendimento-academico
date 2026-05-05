@@ -18,6 +18,7 @@ import { Button } from '../button';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
+import { USERS } from '@frontend/constants/mocks/data/users.mock';
 
 type SearchValue = {
   appointment  : string;
@@ -127,17 +128,15 @@ export const UserDetails = (): React.JSX.Element => {
   useEffect(() => {
     if (!id) return;
 
-    const getUserSelected = async(id:number):Promise<void> => {
+    (async(id:number):Promise<void> => {
       try {
-        const response = REGISTERED_USERS_DATA.find((user) => user.id === id);
+        const response = USERS.find((user) => user.id === id);
   
         setUser(response ?? null);
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
       }
-    };
-
-    getUserSelected(Number(id));
+    })(Number(id));
   },[id]);
 
   const hasFilter =

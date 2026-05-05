@@ -21,10 +21,18 @@ import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Form } from '@frontend/components/form';
 import { Section } from '@frontend/components/section';
 import type { Reports } from '@shared/types/reports.type';
-import type { RoomDetails } from '@shared/types/roomStatus.type';
 import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
-import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
+import { SYSTEM_GENERAL_METRICS } from '@frontend/constants/mocks/dto/manager/systemGeneralMetrics.mock';
+import type { SystemGeneralMetrics } from '@shared/types/systemGeneralMetrics.type';
+import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@shared/types/registeredUsers.type';
+import { REGISTERED_PROFESSORS } from '@frontend/constants/mocks/dto/manager/registeredProfessor.mock';
+import { REGISTERED_STUDENTS } from '@frontend/constants/mocks/dto/manager/registeredStudents.mock';
+import { REGISTERED_MANAGERS } from '@frontend/constants/mocks/dto/manager/registeredManagers.mock';
+import { ROOMS_DETAILS } from '@frontend/constants/mocks/dto/manager/rooms.mock';
+import type { Room } from '@shared/types/room.type';
+import { SYSTEM_REPORTS } from '@frontend/constants/mocks/dto/manager/systemReports.mock';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -37,45 +45,52 @@ const Manager = (): React.JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const BRIEF_RENDER = [
-    { icon: <GrSchedule className='text-cyan-500' size={24}/>             , label: 'Agendamentos'  , value: SYSTEM_GENERAL_METRICS_DATA.appointments  },
-    { icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações' , value: SYSTEM_GENERAL_METRICS_DATA.solicitations },
-    { icon: <PiStudentBold className='text-cyan-500' size={28}/> ,  label: 'Alunos'       , value: SYSTEM_GENERAL_METRICS_DATA.students      },
-    { icon: <FaChalkboardTeacher className='text-cyan-500' size={28}/> ,  label: 'Professores'  , value: SYSTEM_GENERAL_METRICS_DATA.professors    },
-  ];
-
+  
   const [searchValue, setSearchValue] = useState<string>('');
-
+  
   const [filterValue, setFilterValue] = useState<FilterValue>({
     student   : 'none',
     professor : 'none',
     manager   : 'none',
   });
-
-  const [systemReports, setSystemReports] = useState<Reports | null>(null);
-  const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
-  const [roomsData, setRoomsData] = useState<RoomDetails[]>(SYSTEM_ROOMS_DATA);
-  const [roomDetails, setRoomDetails] = useState<RoomDetails | null>(null);
   
+  const [systemReports, setSystemReports] = useState<Reports | null>(null);
+
+  const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<SystemGeneralMetrics['count'] | null>(null);
+
+  const [ registeredProfessors, setRegisteredProfessors ] = useState<RegisteredProfessor[]>([]);
+  const [ registeredStudents,   setRegisteredStudents ] = useState<RegisteredStudent[]>([]);
+  const [ registeredManagers,   setRegisteredManagers ] = useState<RegisteredManager[]>([]);
+
+  const [rooms, setRooms] = useState<Room[]>([]);
+  
+  const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   const [generalActions, setGeneralActions] = useState<ManagerGeneralActions | null>(null);
   const [userRoleList, setUserRoleList] = useState<UserRole>('STUDENT');
 
+  const BRIEF_RENDER = [
+    { icon: <GrSchedule className='text-cyan-500' size={24}/>          , label: 'Agendamentos' , value: systemGeneralMetrics?.appointments ?? '?'  },
+    { icon: <FaRegClock className='text-cyan-500' size={28}/>          , label: 'Solicitações' , value: systemGeneralMetrics?.solicitations ?? '?' },
+    { icon: <PiStudentBold className='text-cyan-500' size={28}/>       , label: 'Alunos'       , value: systemGeneralMetrics?.student ?? '?'       },
+    { icon: <FaChalkboardTeacher className='text-cyan-500' size={28}/> , label: 'Professores'  , value: systemGeneralMetrics?.professors ?? '?'    },
+  ];
+
   const filteredUsersListDataByRoleMap = {
     STUDENT: filterRegisteredStudents(
-      REGISTERED_STUDENTS_DATA,
+      registeredStudents,
       searchValue,
       filterValue.student,
-    ),
+    ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
     PROFESSOR: filterRegisteredProfessors(
-      REGISTERED_PROFESSORS_DATA,
+      registeredProfessors,
       searchValue,
       filterValue.professor,
-    ),
+    ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
     MANAGER: filterRegisteredManagers(
-      REGISTERED_MANAGERS_DATA,
+      registeredManagers,
       searchValue,
       filterValue.manager,
-    ),
+    ).map((rest) => ({ ...rest, from: 'MANAGER' as const })),
   }; 
 
   const filtersByRoleMap = {
@@ -114,38 +129,21 @@ const Manager = (): React.JSX.Element => {
     MANAGER   : 'Pesquisar por gestor ou data de cadastro',
   };
 
-  const noContentFound = () => {
-    
-    const filterLabel = userNotFoundByFilterByRoleMap[userRoleList];
-    const hasSearch = !!searchValue;
-    const hasFilter = filterValue && (
+  const noContent = noContentFound(
+    `Nenhum ${USER_ROLES[userRoleList]} cadastrado(a) no momento!`,
+    userNotFoundByFilterByRoleMap[userRoleList],
+    searchValue,
+    filterValue && (
       filterValue.manager   !== 'none' ||
       filterValue.professor !== 'none' ||
       filterValue.student   !== 'none' 
-    );
-
-    const NoContentIcon = (hasSearch || hasFilter)
-      ? <FaPersonCircleQuestion size={24}/>
-      : <FaClipboardQuestion size={24}/>
-    ;
-
-    let message = `Nenhum ${USER_ROLES[userRoleList]} cadastrado(a) no momento!`;
-
-    if (hasSearch && hasFilter) {
-      message = `Nenhum resultado para "${searchValue}" com o filtro "${filterLabel}"`;
-    } else if (hasSearch) {
-      message = `Nenhum resultado para "${searchValue}"`;
-    } else if (hasFilter) {
-      message = filterLabel === 'Nenhum'
-        ? `Nenhum ${USER_ROLES[userRoleList]} cadastrado(a) no momento!`
-        : `Nenhum resultado para o filtro "${filterLabel}"`;
-    }
-
-    return {
-      message,
-      Icon: NoContentIcon,
-    };
-  };
+    ),
+    {
+      notFound   : FaPersonCircleQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
+  
 
   useEffect(() => {
     if (location.pathname === '/home') {
@@ -154,17 +152,27 @@ const Manager = (): React.JSX.Element => {
   }, [location.pathname]);
 
   useEffect(() => {
-    const getData = async(): Promise<void> => {
+    (async() => {
       try {
-        const response: Reports = SYSTEM_REPORTS_DATA;
+        const [ response1, response2, response3, response4, response5, response6 ] = [
+          SYSTEM_GENERAL_METRICS,
+          REGISTERED_STUDENTS,
+          REGISTERED_PROFESSORS,
+          REGISTERED_MANAGERS,
+          ROOMS_DETAILS,
+          SYSTEM_REPORTS,
+        ]; 
 
-        setSystemReports(response);
+        setSystemGeneralMetrics(response1);
+        setRegisteredProfessors(response3);
+        setRegisteredStudents(response2);
+        setRegisteredManagers(response4);
+        setSystemReports(response6);
+        setRooms(response5);
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
-      }
-    }
-
-    getData();
+      } 
+    })();
   },[]);
 
   return (
@@ -227,8 +235,7 @@ const Manager = (): React.JSX.Element => {
                 filteredUsersListDataByRoleMap[userRoleList].map(( user ) => (
                   <Card.UserGeneralInfo
                     key={user.id}
-                    from={userRoleList}
-                    { ...user as any }
+                    { ...user }
                     onClick={() => {
                       navigate(`/home/student/${user.id}`);
                       setGeneralActions('USER_DETAILS');
@@ -237,8 +244,8 @@ const Manager = (): React.JSX.Element => {
                 )) 
               ) : (
                 <NoContent
-                  Icon={() => noContentFound().Icon}
-                  message={noContentFound().message}
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>
@@ -270,16 +277,8 @@ const Manager = (): React.JSX.Element => {
             <>
               { generalActions === 'ROOMS' ? (     
                 <Section.RoomsDetails
-                  roomsData={roomsData}
-                  roomDetails={roomDetails}
-                  onRoomDetails={(room) => setRoomDetails(room)}
-                  onBack={() => {
-                    if (roomDetails) {
-                      setRoomDetails(null);
-                    } else {
-                      setGeneralActions(null);
-                    }
-                  }}
+                  rooms={rooms}
+                  onBack={() => setGeneralActions(null)}
                 />         
               ) : (
                 <div className='flex items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>

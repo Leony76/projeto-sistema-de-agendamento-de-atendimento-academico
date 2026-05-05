@@ -9,7 +9,7 @@ const appointmentsMade = APPOINTMENTS_DATA.filter(
   (appointment) => 
     appointment.studentId === loggedId
   &&
-    appointment.wasDone
+    appointment.status === 'DONE'
 ).length;
 
 const nextAppointmentDateTime = APPOINTMENTS_DATA
