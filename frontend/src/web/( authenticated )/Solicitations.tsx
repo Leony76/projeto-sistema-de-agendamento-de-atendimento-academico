@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaFilter } from 'react-icons/fa';
+import { FaExclamation, FaFilter } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -37,7 +37,6 @@ const Requests = ():React.JSX.Element => {
   const [studentSolicitations, setStudentSolicitations] = useState<StudentSolicitation[]>([]);
   const [studentSolicitationsFromPRofessorView, setStudentSolicitationsFromProfessorView] = useState<StudentSolicitationFromProfessorView[]>([]);
 
-
   const filteredSolicitationsByRole = {
     STUDENT: filterStudentSolicitations(
       studentSolicitations,
@@ -72,6 +71,17 @@ const Requests = ():React.JSX.Element => {
   const noHistoryFoundFilterByRoleMap = {
     STUDENT   : STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[filterValue.student],
     PROFESSOR : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[filterValue.professor],
+  } as const;
+
+  const labelsByRoleMap = {
+    STUDENT: {
+      mainTitle        : 'Minhas solicitações',
+      searchBarMessage : 'Pesquisar por professor, disciplina(s), data, horário, motivo ou status da solicitação',
+    },
+    PROFESSOR: {
+      mainTitle: 'Solicitações dos alunos',
+      searchBarMessage: 'Pesquisar por aluno, data, horário, motivo ou status da solicitação',
+    }
   } as const;
   
   const noContent = noContentFound(
@@ -112,15 +122,16 @@ const Requests = ():React.JSX.Element => {
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-            <h3 className='self-center font-semibold text-lg text-cyan-500'>
-              Solicitações
+            <h3 className='flex items-center gap-1 self-center font-semibold text-lg text-cyan-500'>
+              <FaExclamation />
+              { labelsByRoleMap[role].mainTitle }
             </h3>
 
             <div className='w-full flex gap-2'>
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
-                placeholder='Pesquisar por professor, disciplina, data, horário ou status da solicitação'
+                placeholder={labelsByRoleMap[role].searchBarMessage}
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />

@@ -23,14 +23,14 @@ export const filterStudentSolicitations = (
     if (!filterValue) return matchesSearch;
 
     switch (filterValue) {
-      case 'confirmed':
-        return matchesSearch && solicitation.status === 'CONFIRMED';
+      case 'accepted':
+        return matchesSearch && solicitation.status === 'ACCEPTED';
 
-      case 'unconfirmed':
-        return matchesSearch && solicitation.status === 'UNCONFIRMED';
+      case 'pending':
+        return matchesSearch && solicitation.status === 'PENDING';
 
-      case 'canceled':
-        return matchesSearch && solicitation.status === 'CANCELED';
+      case 'rejected':
+        return matchesSearch && solicitation.status === 'REJECTED';
 
       default:
         return matchesSearch;

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .custom-calendar {
-  @apply bg-linear-to-b from-transparent via-white to-transparent border-y border-cyan-100 mx-2 p-3;
+  @apply bg-linear-to-b from-transparent via-white to-transparent border-y border-cyan-100 mx-2 py-2 px-3;
 }
 
 .custom-calendar .react-calendar__navigation {

@@ -8,4 +8,5 @@ export type LoggedUserData = {
   photo?       : string;
   role         : UserRole;
   ra?          : number;
+  disciplines? : Discipline[];
 };

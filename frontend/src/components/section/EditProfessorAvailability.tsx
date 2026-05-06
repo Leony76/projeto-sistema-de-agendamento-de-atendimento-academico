@@ -81,10 +81,10 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
             end   : formatMinutesToTime(dayHours.endHour),
           }); break;
         case 'AFTERNOON':
-            setNewAfternoonHours({
-              start : formatMinutesToTime(dayHours.startHour),
-              end   : formatMinutesToTime(dayHours.endHour),
-            }); break;
+          setNewAfternoonHours({
+            start : formatMinutesToTime(dayHours.startHour),
+            end   : formatMinutesToTime(dayHours.endHour),
+          }); break;
         case 'BOTH':
           setNewMorningHours({
             start : formatMinutesToTime(dayHours.startHour),

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaFilter } from 'react-icons/fa';
+import { FaFilter, FaHistory } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -73,6 +73,15 @@ const History = ():React.JSX.Element => {
     PROFESSOR : PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.professor],
   } as const;
 
+  const labelsByRoleMap = {
+    STUDENT: {
+      searchBarMessage : 'Pesquisar por professor, disciplina(s), data, horário ou motivo',
+    },
+    PROFESSOR: {
+      searchBarMessage: 'Pesquisar por aluno, data, horário ou motivo',
+    }
+  } as const;
+
   const noContent = noContentFound(
     'Nenhum histórico de agendamentos no momento!',
     noHistoryFoundFilterByRoleMap[role],
@@ -111,15 +120,16 @@ const History = ():React.JSX.Element => {
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-            <h3 className='self-center font-semibold text-lg text-cyan-500'>
-              Histórico
+            <h3 className='flex items-center gap-1.5 self-center font-semibold text-lg text-cyan-500'>
+              <FaHistory />
+              Histórico de atendimentos
             </h3>
 
             <div className='w-full flex gap-2'>
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
-                placeholder='Pesquisar por professor, disciplina, data, horário ou motivo'
+                placeholder={labelsByRoleMap[role].searchBarMessage}
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />

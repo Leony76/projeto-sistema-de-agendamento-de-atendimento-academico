@@ -6,8 +6,6 @@ export const PROFESSOR_APPOINTMENTS_FILTER_MAP = [
   { value: 'lastOnes'        , label: 'Últimos'         },
   { value: 'AZStudentName'   , label: 'Aluno [A-Z]'     },
   { value: 'ZAStudentName'   , label: 'Aluno [Z-A]'     },
-  { value: 'confirmed'       , label: 'Confirmados'     },
-  { value: 'unconfirmed'     , label: 'Não confirmados' },
 ] as const;
 
 export const PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP =

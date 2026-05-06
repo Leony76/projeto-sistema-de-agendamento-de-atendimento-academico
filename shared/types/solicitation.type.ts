@@ -17,7 +17,7 @@ export type Solicitation = {
 export type StudentSolicitation = { 
   readonly id : number;
   professor   : Professor & { disciplines: Discipline[] };
-  status      : AppointmentStatus;
+  status      : SolicitationStatus;
   reason      : string;
   appoitmentDateTime : string;
 }

@@ -1,54 +1,123 @@
-import type { UserDetails } from "@shared/types/userDetails.type";
+import type { ProfessorDetails, StudentDetails, UserDetails } from "@shared/types/userDetails.type";
 import { USERS } from "../../data/users.mock";
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from "@shared/types/registeredUsers.type";
+import type { RegisteredManager, RegisteredProfessor } from "@shared/types/registeredUsers.type";
 import { APPOINTMENTS_DATA } from "../../data/appointments.mock";
 import { SOLICITATIONS_DATA } from "../../data/solicitations.mock";
-import type { Appointment, StudentAppointment } from "@shared/types/appointment.type";
-import type { Solicitation } from "@shared/types/solicitation.type";
+import type { ProfessorAppointment, StudentAppointment } from "@shared/types/appointment.type";
+import type { StudentSolicitation, StudentSolicitationFromProfessorView } from "@shared/types/solicitation.type";
 import { DISCIPLINES } from "../../data/disciplines.mock";
+import { PROFESSORS } from "../../data/professors.mock";
+import { ROOMS } from "../../data/rooms.mock";
+import type { Discipline } from "@shared/types/disciplines.type";
+import type { Professor } from "@shared/types/professor.type";
+import { STUDENTS } from "../../data/students.mock";
 
-const userGeneralInfos = (id:number): UserDetails => {
+export const getUserGeneralInfos = ( id: number ): UserDetails => {
 
   const targetUser = USERS.find((user) => user.id === id);
 
   switch (targetUser?.role) {
     case "STUDENT": {
       
-      const appointments: Appointment[] = APPOINTMENTS_DATA.filter((appointment) => appointment.studentId === targetUser.id);
-      const solicitation: Solicitation[] = SOLICITATIONS_DATA.filter((solicitation) => solicitation.studentId === targetUser.id);
+      const appointments: StudentAppointment[] = APPOINTMENTS_DATA
+        .filter((appointment) => appointment.studentId === targetUser.id)
+        .map((appointment) => {
 
-      const student: RegisteredStudent = { 
+          const professor = PROFESSORS.find((professor) => professor.id === appointment.professorId)!;
+          const room = ROOMS.find((room) => room.id === appointment.roomId)!;     
+
+          return {
+            ...appointment,
+            professor,
+            room: room.name,
+          }
+        }
+      );
+
+      const solicitations: StudentSolicitation[] = SOLICITATIONS_DATA
+        .filter((solicitation) => solicitation.studentId === targetUser.id)
+        .map((solicitation) => {
+
+          const professor = PROFESSORS.find((professor) => professor.id === solicitation.professorId)!;     
+          const disciplines = DISCIPLINES.filter((discipline) => discipline.professorId === professor.id)!;     
+
+          const professorData: Professor & { disciplines: Discipline[] } = {
+            ...professor,
+            disciplines,
+          }
+
+          const solicitationData: StudentSolicitation = {
+            ...solicitation,
+            professor: professorData,
+          };
+
+          return solicitationData;
+        }
+      );
+      
+      const studentData: StudentDetails = {
         ...targetUser,
-        appointments  : appointments.length,
-        solicitations : solicitation.length,
+        solicitations     : solicitations.length,
+        appointments      : appointments.length,
+        appointmentsList  : appointments,
+        solicitationsList : solicitations,          
       };
 
-      return {
-        student,
-        appointmentsList: appointments,
-        solicitationsList: solicitation,
-      };  
-
+      return studentData;
     } case "PROFESSOR": {
 
-      const appointments: Appointment[] = APPOINTMENTS_DATA.filter((appointment) => appointment.professorId === targetUser.id);
-      const solicitation: Solicitation[] = SOLICITATIONS_DATA.filter((solicitation) => solicitation.professorId === targetUser.id);
+      const appointments: ProfessorAppointment[] = APPOINTMENTS_DATA
+        .filter((appointment) => appointment.professorId === targetUser.id)
+        .map((appointment) => {
+
+          const student = STUDENTS.find((student) => student.id === appointment.studentId)!;
+          const room = ROOMS.find((room) => room.id === appointment.roomId)!;     
+
+          return {
+            ...appointment,
+            student,
+            room: room.name,
+          }
+        }
+      );
+
+      const solicitations: StudentSolicitationFromProfessorView[] = SOLICITATIONS_DATA
+        .filter((solicitation) => solicitation.professorId === targetUser.id)
+        .map((solicitation) => {
+
+          const student = STUDENTS.find((student) => student.id === solicitation.studentId)!;     
+
+          const solicitationData: StudentSolicitationFromProfessorView = {
+            ...solicitation,
+            student,
+          };
+
+          return solicitationData;
+        }
+      );
 
       const professor: RegisteredProfessor = { 
         ...targetUser,
         disciplines   : DISCIPLINES.filter((discipline) => discipline.professorId === targetUser.id),
         appointments  : appointments.length,
-        solicitations : solicitation.length,
+        solicitations : solicitations.length,
       };
 
-      return {
-        professor,
-        appointments,
-        solicitation,
-      };  
+      const professorData: ProfessorDetails = {
+        ...professor,
+        appointments      : appointments.length,
+        solicitations     : solicitations.length,
+        appointmentsList  : appointments,
+        solicitationsList : solicitations,          
+        role              : 'PROFESSOR',
+      };
+
+      return professorData;      
     } case "MANAGER": {
 
-      const manager: RegisteredManager = { ...targetUser };
+      const manager: RegisteredManager & { role: 'MANAGER' } = { 
+        ...targetUser,
+      };
 
       return manager;  
     } default: throw new Error('Invalid role');

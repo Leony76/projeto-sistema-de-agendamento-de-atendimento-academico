@@ -55,6 +55,7 @@ export const filterProfessorAppointments = (
 
       case 'ZAStudentName':
         return b.student.name.localeCompare(a.student.name);
+      
 
       default:
         return 0;

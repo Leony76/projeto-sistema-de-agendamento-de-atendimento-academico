@@ -25,16 +25,12 @@ export const filterStudentAppointments = (
     switch (filterValue) {
       case 'nextOnes':
         return (
-          matchesSearch 
-          &&
-          new Date(appointment.dateTime) > new Date()
+          matchesSearch && new Date(appointment.dateTime) > new Date()
         );
 
       case 'lastOnes':
         return (
-          matchesSearch 
-          &&
-          new Date(appointment.dateTime) < new Date()
+          matchesSearch && new Date(appointment.dateTime) < new Date()
         );
 
       default:

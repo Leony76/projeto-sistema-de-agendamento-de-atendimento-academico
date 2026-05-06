@@ -8,6 +8,7 @@ import { Button } from '../button';
 import { FaCheck } from 'react-icons/fa';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 
 type Props = {
   smVersion?: boolean;
@@ -89,7 +90,7 @@ const Appointment = (props:Props): React.JSX.Element => {
 
         <div className={`
           flex flex-col
-          ${ props.from === 'PROFESSOR' ? 'text-xs' : 'text-sm' }
+          ${ props.from === 'PROFESSOR' ? 'text-xs' : 'text-[13px]' }
         `}>
           <label className='text-orange-400 font-semibold'>
             { props.from === 'PROFESSOR' ? 'Aluno:' : 'Professor:'} <span className='text-cyan-500 font-normal'>{ props.from === 'PROFESSOR' ? props.student.name : props.professor.name }</span>
@@ -111,7 +112,7 @@ const Appointment = (props:Props): React.JSX.Element => {
           </label>
         </div>
 
-        { (props.from === 'PROFESSOR') &&
+        { (props.from === 'PROFESSOR' && LOGGED_USER_DATA.role === 'PROFESSOR') &&
           <Button.Default
             label='Marcar como concluído'
             Icon={() => <FaCheck />}

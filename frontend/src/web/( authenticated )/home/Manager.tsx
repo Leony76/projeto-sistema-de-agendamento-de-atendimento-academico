@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
-import { FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaClipboardList, FaFilter, FaRegClock, FaUsers } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -124,9 +124,9 @@ const Manager = (): React.JSX.Element => {
   } as const
 
   const searchInputPlaceholder: Record<UserRole, string> = {
-    STUDENT   : 'Pesquisar por aluno, data de cadastro, agendamentos ou solicitações',
-    PROFESSOR : 'Pesquisar por professor, disciplina, data de cadastro, agendamentos ou solicitações',
-    MANAGER   : 'Pesquisar por gestor ou data de cadastro',
+    STUDENT   : 'Pesquisar por aluno, identificador, data de cadastro, quantidade de agendamentos ou solicitações',
+    PROFESSOR : 'Pesquisar por professor, identificador, disciplina(s), data de cadastro, agendamentos ou solicitações',
+    MANAGER   : 'Pesquisar por gestor, identificador ou data de cadastro',
   };
 
   const noContent = noContentFound(
@@ -196,7 +196,8 @@ const Manager = (): React.JSX.Element => {
           </div>
 
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-            <h3 className='self-center font-semibold text-lg text-cyan-500'>
+            <h3 className='self-center font-semibold text-lg text-cyan-500 flex items-center gap-2'>
+              <FaUsers size={21}/>
               Usuários do sistema
             </h3>
 
@@ -254,7 +255,7 @@ const Manager = (): React.JSX.Element => {
         
         <div className={`
           grid gap-y-3 min-h-0
-          ${ (generalActions) ? 'grid-rows-1' : 'grid-rows-[2fr_1fr]' }
+          ${ (generalActions) ? 'grid-rows-1' : 'grid-rows-[300px_140px]' }
         `}>
           { generalActions === 'USER_DETAILS' ? (
             <Outlet />

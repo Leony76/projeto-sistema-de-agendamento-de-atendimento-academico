@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
-import { FaFilter, FaRegClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
@@ -96,7 +96,8 @@ const Professor = (): React.JSX.Element => {
           </div>
 
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-            <h3 className='self-center font-semibold text-lg text-cyan-500'>
+            <h3 className='flex items-center gap-1.5 self-center font-semibold text-lg text-cyan-500'>
+              <FaCalendarAlt />
               Agenda
             </h3>
 
@@ -104,7 +105,7 @@ const Professor = (): React.JSX.Element => {
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
-                placeholder='Pesquisar por aluno, status, sala ou motivo'
+                placeholder='Pesquisar por data, aluno, sala ou motivo'
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />
@@ -137,7 +138,7 @@ const Professor = (): React.JSX.Element => {
           </div>
         </div>
 
-        <div className='grid grid-rows-[2fr_1fr] gap-y-3 max-h-120 min-h-0'>
+        <div className='grid grid-rows-[300px_1fr] gap-y-3 min-h-0'>
           <div className='flex items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
             <Calendar
               onChange={(value) => setDateSelected(value as Date)}
@@ -150,7 +151,7 @@ const Professor = (): React.JSX.Element => {
             />
           </div>
 
-          <div className='relative flex flex-col self-start gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
+          <div className='relative flex self-start flex-col gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
             <Section.EditProfessorAvailability
               availability={availability}
             />

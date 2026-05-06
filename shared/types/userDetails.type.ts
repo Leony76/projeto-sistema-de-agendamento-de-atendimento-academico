@@ -2,15 +2,22 @@ import type { ProfessorAppointment, StudentAppointment } from "./appointment.typ
 import type { RegisteredStudent, RegisteredManager, RegisteredProfessor } from "./registeredUsers.type";
 import type { StudentSolicitation, StudentSolicitationFromProfessorView } from "./solicitation.type";
 
-export type UserDetails = 
-  | RegisteredStudent & {
-  role              : 'STUDENT';
+export type StudentDetails = RegisteredStudent & {
   appointmentsList  : StudentAppointment[];
   solicitationsList : StudentSolicitation[];
-} | RegisteredProfessor & {
-  role              : 'PROFESSOR';
+  role : 'STUDENT';
+};
+
+export type ProfessorDetails = RegisteredProfessor & {
   appointmentsList  : ProfessorAppointment[];
   solicitationsList : StudentSolicitationFromProfessorView[];
-} | RegisteredManager & {
-  role : 'MANAGER';
+  role : 'PROFESSOR';
 };
+
+export type ManagerDetails = RegisteredManager & { role : 'MANAGER' };
+
+export type UserDetails = 
+  | StudentDetails   
+  | ProfessorDetails  
+  | ManagerDetails   
+;

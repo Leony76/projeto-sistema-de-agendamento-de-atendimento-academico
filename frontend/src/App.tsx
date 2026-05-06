@@ -3,7 +3,7 @@ import Login from './web/( unauthenticated )/Login';
 import Register from './web/( unauthenticated )/Register';
 import Home from './web/( authenticated )/home';
 import Schedule from './web/( authenticated )/Schedule';
-import Requests from './web/( authenticated )/Requests';
+import Requests from './web/( authenticated )/Solicitations';
 import History from './web/( authenticated )/History';
 import { UserDetails } from './components/misc/UserDetails';
 import { ToastProvider } from './contexts/ToastContext';
@@ -23,7 +23,7 @@ function App() {
           </Route>
 
           <Route path="/schedule" element={<Schedule/>} />
-          <Route path="/requests" element={<Requests/>} />
+          <Route path="/solicitations" element={<Requests/>} />
           <Route path="/history"  element={<History/>} />
         </Routes>
       </BrowserRouter>

@@ -6,7 +6,7 @@ import type { UserDetails as UserDetailsType } from '@shared/types/userDetails.t
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Select } from '../select';
 import { Input } from '../input';
-import { FaArrowCircleLeft, FaFilter, FaUserAltSlash } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaFilter, FaUserAltSlash } from 'react-icons/fa';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { Card } from '../card';
@@ -18,7 +18,10 @@ import { Button } from '../button';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
-import { USERS } from '@frontend/constants/mocks/data/users.mock';
+import { getUserGeneralInfos } from '@frontend/constants/mocks/dto/manager/userGeneralInfos.mock';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
+import { TiInfoLarge } from 'react-icons/ti';
+import type { UserRole } from '../../../../backend/generated/prisma/enums';
 
 type SearchValue = {
   appointment  : string;
@@ -37,6 +40,7 @@ type FilterValue = {
 };
 
 export const UserDetails = (): React.JSX.Element => {
+
   const { id } = useParams();
 
   const [ user, setUser ] = useState<UserDetailsType | null>(null);
@@ -88,7 +92,7 @@ export const UserDetails = (): React.JSX.Element => {
       appointments  : PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.professor.appointments],
       solicitations : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[userDetailsFilter.professor.solicitations],
     }
-  } as const
+  } as const;
 
   const filtersByRoleMap = {
     STUDENT: {
@@ -130,21 +134,48 @@ export const UserDetails = (): React.JSX.Element => {
 
     (async(id:number):Promise<void> => {
       try {
-        const response = USERS.find((user) => user.id === id);
-  
-        setUser(response ?? null);
+        
+        const user = getUserGeneralInfos(id);
+
+        setUser(user ?? null);
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
       }
     })(Number(id));
   },[id]);
 
-  const hasFilter =
-    userDetailsFilter.student.appointments !== 'none'   ||
-    userDetailsFilter.student.solicitations !== 'none'  ||
-    userDetailsFilter.professor.appointments !== 'none' ||
-    userDetailsFilter.professor.solicitations !== 'none'
-  ;
+  let noAppointmentsContent  = undefined;
+  let noSolicitationsContent = undefined;
+
+  if (user?.role && user.role !== 'MANAGER') {
+    noAppointmentsContent = noContentFound(
+      `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`,
+      userNotFoundByFilterByRoleMap[user.role].appointments,
+      searchValue.appointment,
+      (
+        userDetailsFilter.student.appointments !== 'none'   ||
+        userDetailsFilter.professor.appointments !== 'none'
+      ),
+      {
+        notFound   : FaPersonCircleQuestion,
+        notContent : FaClipboardQuestion
+      },
+    );
+
+    noSolicitationsContent = noContentFound(
+      `Nenhuma solicitação disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`,
+      userNotFoundByFilterByRoleMap[user.role].solicitations,
+      searchValue.solicitation,
+      (
+        userDetailsFilter.student.solicitations !== 'none'  ||
+        userDetailsFilter.professor.solicitations !== 'none'
+      ),
+      {
+        notFound   : FaPersonCircleQuestion,
+        notContent : FaClipboardQuestion
+      },
+    );
+  }
 
   if (!user) return (
     <div className='flex flex-col justify-center items-center gap-2'>
@@ -181,36 +212,56 @@ export const UserDetails = (): React.JSX.Element => {
       />
 
       <div className='flex flex-col items-center'>
-        <h3 className='text-orange-500 text-xl font-bold'>
+        <h3 className='text-orange-500 text-xl font-bold text-center break-all'>
           { user.name }
-        </h3>
+        </h3>        
+
+        <label className='text-sm text-cyan-400 font-semibold tracking-wide'>
+          { user.role === 'STUDENT' ? user.ra : user.email }
+        </label>
 
         <label className='text-sm text-cyan-400'>
           { USER_ROLES[user.role] }
         </label>
       </div>
-      
+        
       <div className='w-full'>
-        { user.role !== 'MANAGER' &&
-          <div className='flex justify-between'>
-            <label className='text-sm text-orange-400 font-semibold'>
-              Agendamentos: <span className='text-cyan-500 font-normal'>{ user.appointments }</span>
-            </label>
+        <div className='flex flex-col space-y-2'>
+          <h3 className='flex self-center items-center text-cyan-500 text-lg font-semibold'>
+            <TiInfoLarge size={22}/>
+            Informações gerais
+          </h3>
 
-            <label className='text-sm text-orange-400 font-semibold'>
-              Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointments }</span>
-            </label>
-          </div>
-        }
+          <ul className='list-inside list-disc'>
+            { user.role !== 'MANAGER' &&
+              <>
+                <li className='text-sm text-orange-400 font-semibold'>
+                  Agendamentos: <span className='text-cyan-500 font-normal'>{ user.appointments }</span>
+                </li>
 
-        <label className='text-sm text-orange-400 font-semibold'>
-          Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDateTime(user.registeredAt) }</span>
-        </label>
+                <li className='text-sm text-orange-400 font-semibold'>
+                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointments }</span>
+                </li>
+              </>
+            }
+
+            { user.role === 'STUDENT' &&
+              <li className='text-sm text-orange-400 font-semibold'>
+                E-mail: <span className='text-cyan-500 font-normal'>{ user.email }</span>
+              </li>
+            }
+
+            <li className='text-sm text-orange-400 font-semibold'>
+              Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDateTime(user.registeredAt) }</span>
+            </li>
+          </ul>
+        </div>
 
         { user.role !== 'MANAGER' &&  
           <>
             <div className='flex flex-col items-center mt-2 gap-3'>
-              <h3 className='text-cyan-500 text-lg font-semibold'>
+              <h3 className='text-cyan-500 text-lg font-semibold flex items-center gap-1.5'>
+                <FaCalendarAlt size={16}/>
                 Agendamentos
               </h3>
 
@@ -218,7 +269,7 @@ export const UserDetails = (): React.JSX.Element => {
                 <Input.Search
                   onChange={(e) => setSearchValue(prev => ({ ...prev, appointment: e.target.value }))}
                   onClear={() => setSearchValue(prev => ({ ...prev, appointment: '' }))}
-                  placeholder='Pesquisar por professor, status, sala ou motivo'
+                  placeholder='Pesquisar...'
                   value={searchValue.appointment}
                   customStyle={{ input: 'flex-2' }}
                 />
@@ -244,25 +295,16 @@ export const UserDetails = (): React.JSX.Element => {
                   ))
                 ) : (
                   <NoContent
-                    Icon={(searchValue.appointment || hasFilter) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                    message={
-                      searchValue.appointment && hasFilter
-                        ? `Nenhum resultado para "${searchValue.appointment}" com o filtro "${userNotFoundByFilterByRoleMap[user.role].appointments}"`
-                        : searchValue.appointment
-                        ? `Nenhum resultado para "${searchValue.appointment}"`
-                        : userDetailsFilter
-                        ? userNotFoundByFilterByRoleMap[user.role].appointments === 'Nenhum'
-                          ? `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
-                          : `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[user.role].appointments}"`
-                        : `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
-                    }
+                    Icon={noAppointmentsContent?.Icon}
+                    message={noAppointmentsContent?.message ?? 'Indisponível'}
                   />
                 )}
               </div>
             </div>
 
             <div className='flex flex-col items-center mt-2 gap-3'>
-              <h3 className='text-cyan-500 text-lg font-semibold'>
+              <h3 className='text-cyan-500 text-lg font-semibold flex items-center gap-1'>
+                <FaExclamation />
                 Solicitações
               </h3>
 
@@ -270,7 +312,7 @@ export const UserDetails = (): React.JSX.Element => {
                 <Input.Search
                   onChange={(e) => setSearchValue(prev => ({ ...prev, solicitation: e.target.value}))}
                   onClear={() => setSearchValue(prev => ({ ...prev, solicitation: ''}))}
-                  placeholder='Pesquisar por professor, status, sala ou motivo'
+                  placeholder='Pesquisar...'
                   value={searchValue.solicitation}
                   customStyle={{ input: 'flex-2' }}
                 />
@@ -296,16 +338,8 @@ export const UserDetails = (): React.JSX.Element => {
                   ))       
                 ) : (
                   <NoContent
-                    Icon={(searchValue.solicitation || (hasFilter)) ? () => <FaPersonCircleQuestion size={24}/> : () => <FaClipboardQuestion size={24}/>}
-                    message={
-                      searchValue.solicitation && hasFilter
-                        ? `Nenhum resultado para "${searchValue.solicitation}" com o filtro "${userNotFoundByFilterByRoleMap[user.role].solicitations}"`
-                        : searchValue.solicitation
-                        ? `Nenhum resultado para "${searchValue.solicitation}"`
-                        : hasFilter
-                        ? `Nenhum resultado para o filtro "${userNotFoundByFilterByRoleMap[user.role].solicitations}"`
-                        : `Nenhuma solicitação disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`
-                    }
+                    Icon={noSolicitationsContent?.Icon}
+                    message={noSolicitationsContent?.message ?? ''}
                   />
                 )}
               </div>

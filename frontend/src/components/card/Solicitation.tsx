@@ -13,6 +13,8 @@ import { MdEdit } from 'react-icons/md';
 import { TbCancel } from 'react-icons/tb';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
+import type { SolicitationStatus } from '@shared/types/solicitationStatus.type';
+import { SOLICITATION_STATUS_MAP } from '@frontend/constants/maps/solicitationStatus.map';
 
 type Props = {
   smVersion?: boolean;
@@ -25,10 +27,10 @@ const Solicitation = (props:Props): React.JSX.Element => {
 
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
 
-  const statusTagStyle: Record<AppointmentStatus, { style: string, icon: JSX.Element }> = {
-    CANCELED    : { style: 'bg-red-100 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
-    CONFIRMED   : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
-    UNCONFIRMED : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+  const statusTagStyle: Record<SolicitationStatus, { style: string, icon: JSX.Element }> = {
+    REJECTED : { style: 'bg-red-50 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
+    ACCEPTED : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
+    PENDING  : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
   };
 
   const { containerRef } = useCloseModalOnMouseClickOutside(setMoreOptions);
@@ -123,14 +125,14 @@ const Solicitation = (props:Props): React.JSX.Element => {
           `}>
             { statusTagStyle[props.status].icon }
 
-            <span>
-              { APPOINTMENT_STATUS_MAP[props.status] }
+            <span className='mb-px'>
+              { SOLICITATION_STATUS_MAP[props.status] }
             </span>
           </span>
         </div>
       </div>  
 
-      { (props.status === 'UNCONFIRMED' && props.from === 'PROFESSOR') &&
+      { (props.status === 'PENDING' && props.from === 'PROFESSOR') &&
         <div className='flex gap-2 self-end'>
           <Button.Default
             label='Aceitar'
