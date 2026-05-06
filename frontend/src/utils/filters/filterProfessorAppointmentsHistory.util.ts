@@ -1,7 +1,7 @@
-import type { ProfessorAppointmentHistory } from "@/types/appointmentHistory.type";
+import type { ProfessorAppointmentHistory } from "@shared/types/appointmentHistory.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "@/constants/maps/filters/professorAppointmentsHistory.map.filter";
+import type { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter";
 
 export const filterProfessorAppointmentsHistory = (
   studentAppointmentsHistoryData : ProfessorAppointmentHistory[],

@@ -6,9 +6,9 @@ export const STUDENT_SOLICITATIONS_FILTER_MAP = [
   { value: 'ZADisciplines'     , label: 'Disciplinas [Z-A]'   },
   { value: 'mostRecent'        , label: 'Mais recentes'       },
   { value: 'mostOld'           , label: 'Mais antigos'        },
-  { value: 'confirmed'         , label: 'Confirmados'         },
-  { value: 'unconfirmed'       , label: 'Não confirmados'     },
-  { value: 'canceled'          , label: 'Cancelados'          },
+  { value: 'accepted'          , label: 'Aceitos'             },
+  { value: 'pending'           , label: 'Pendentes'           },
+  { value: 'rejected'          , label: 'Rejeitados'          },
 ] as const;
 
 export const STUDENT_SOLICITATIONS_FILTER_VALUE_MAP = 
@@ -22,9 +22,9 @@ export const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP = [
   { value: 'ZAStudentName'     , label: 'Aluno [Z-A]'         },
   { value: 'mostRecent'        , label: 'Mais recentes'       },
   { value: 'mostOld'           , label: 'Mais antigos'        },
-  { value: 'confirmed'         , label: 'Confirmados'         },
-  { value: 'unconfirmed'       , label: 'Não confirmados'     },
-  { value: 'canceled'          , label: 'Cancelados'          },
+  { value: 'accepted'          , label: 'Aceitos'             },
+  { value: 'pending'           , label: 'Pendentes'           },
+  { value: 'rejected'          , label: 'Rejeitados'          },
 ] as const;
 
 export const STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP =

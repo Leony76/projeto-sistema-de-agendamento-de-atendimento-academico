@@ -1,5 +1,6 @@
-import { ToastContainer } from '@/components/misc/Toast';
-import type { Toast, ToastType,  } from '@/types/toast.type';
+
+import { ToastContainer } from '@frontend/components/misc/Toast';
+import type { Toast, ToastType,  } from '@shared/types/toast.type';
 import { createContext, useContext, useState } from 'react';
 
 type ToastContextType = {

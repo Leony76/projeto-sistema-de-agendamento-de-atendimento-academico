@@ -1,7 +1,7 @@
-import type { StudentSolicitation } from "@/types/solicitation.type";
+import type { StudentSolicitation } from "@shared/types/solicitation.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { STUDENT_SOLICITATIONS_FILTER_MAP } from "@/constants/maps/filters/studentSolicitations.map.filter";
+import { STUDENT_SOLICITATIONS_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
 
 export const filterStudentSolicitations = (
   studentSolicitationsData : StudentSolicitation[],
@@ -14,7 +14,7 @@ export const filterStudentSolicitations = (
     const matchesSearch =
       solicitation.professor.name.toLowerCase().includes(search) 
       ||
-      solicitation.professor.discipline.toLowerCase().includes(search)
+      solicitation.professor.disciplines.some(discipline => discipline.name.toLowerCase().includes(search))
       ||
       formatTime(solicitation.appoitmentDateTime).toLowerCase().includes(search)
       ||
@@ -23,14 +23,14 @@ export const filterStudentSolicitations = (
     if (!filterValue) return matchesSearch;
 
     switch (filterValue) {
-      case 'confirmed':
-        return matchesSearch && solicitation.status === 'CONFIRMED';
+      case 'accepted':
+        return matchesSearch && solicitation.status === 'ACCEPTED';
 
-      case 'unconfirmed':
-        return matchesSearch && solicitation.status === 'UNCONFIRMED';
+      case 'pending':
+        return matchesSearch && solicitation.status === 'PENDING';
 
-      case 'canceled':
-        return matchesSearch && solicitation.status === 'CANCELED';
+      case 'rejected':
+        return matchesSearch && solicitation.status === 'REJECTED';
 
       default:
         return matchesSearch;
@@ -38,6 +38,10 @@ export const filterStudentSolicitations = (
   })
   .sort((a, b) => {
     if (!filterValue) return 0;
+
+    const getDisciplinesString = (s: StudentSolicitation) =>
+      s.professor.disciplines.map(d => d.name).join(', ')
+    ;
 
     switch (filterValue) {
       case 'AZProfessorName':
@@ -47,10 +51,10 @@ export const filterStudentSolicitations = (
         return b.professor.name.localeCompare(a.professor.name);
 
       case 'AZDisciplines':
-        return b.professor.discipline.localeCompare(a.professor.discipline);
-        
+        return getDisciplinesString(a).localeCompare(getDisciplinesString(b));
+
       case 'ZADisciplines':
-        return a.professor.discipline.localeCompare(b.professor.discipline);
+        return getDisciplinesString(b).localeCompare(getDisciplinesString(a));
 
       case 'mostRecent':
         return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();

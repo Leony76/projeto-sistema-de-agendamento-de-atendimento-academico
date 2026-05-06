@@ -1,12 +1,11 @@
-import { AVAILABLE_DAYS_MAP } from '@/constants/maps/days.map';
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import type { Professor } from '@/types/professor.type';
+import { AVAILABLE_DAYS_MAP } from '@frontend/constants/maps/days.map';
 import React from 'react'
 import { Button } from '../button';
 import { BsCheckSquareFill } from 'react-icons/bs';
 import ExpansibleImage from '../misc/ExpansibleImage';
+import type { ToScheduleProfessors } from '@shared/types/toScheduleProfessors.type';
 
-type Props = Professor & {
+type Props = ToScheduleProfessors & {
   onClick: {
     toSchedule: () => void;
   };
@@ -31,19 +30,15 @@ const ProfessorInfos = (props:Props): React.JSX.Element => {
 
         <div className='flex flex-col text-xs'>
           <label className='text-orange-400 font-semibold'>
-            Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
-          </label>
-
-          <label className='text-orange-400 font-semibold'>
-            Dias disponíveis: { props.available.days.map((day, index) => (
+            Disciplina(s): { props.disciplines.map(( discipline, index ) => (
               <span 
               key={index}
               className='text-cyan-500 font-normal'
               >
-                { AVAILABLE_DAYS_MAP[day] }
-                {index === props.available.days.length - 2
+                { discipline }
+                {index === props.disciplines.length - 2
                   ? ' e '
-                  : index < props.available.days.length - 2
+                  : index < props.disciplines.length - 2
                   ? ', '
                   : ''
                 }
@@ -52,15 +47,15 @@ const ProfessorInfos = (props:Props): React.JSX.Element => {
           </label>
 
           <label className='text-orange-400 font-semibold'>
-            Horários disponíveis: { props.available.hours.map((hour, index) => (
+            Dias disponíveis: { props.availability.map((item, index) => (
               <span 
               key={index}
               className='text-cyan-500 font-normal'
               >
-                { hour }
-                {index === props.available.hours.length - 2
+                { AVAILABLE_DAYS_MAP[item.dayOfWeek] }
+                {index === props.availability.length - 2
                   ? ' e '
-                  : index < props.available.hours.length - 2
+                  : index < props.availability.length - 2
                   ? ', '
                   : ''
                 }

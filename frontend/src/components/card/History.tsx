@@ -1,8 +1,8 @@
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
-import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@/types/appointmentHistory.type';
-import { formatDate } from '@/utils/formats/formatDate.util';
-import { formatTime } from '@/utils/formats/formatTime.util';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
+import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
+import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaTrashAlt } from 'react-icons/fa';
@@ -18,6 +18,12 @@ const History = (props:Props): React.JSX.Element => {
 
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
   const { containerRef } = useCloseModalOnMouseClickOutside(setMoreOptions);
+
+  const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
+  const disciplines = props.from === 'STUDENT' 
+    ? props.professor.disciplines.map(discipline => discipline.name) 
+    : []
+  ;
 
   const entity = props.from === 'STUDENT'
     ? props.professor
@@ -60,7 +66,7 @@ const History = (props:Props): React.JSX.Element => {
         <div className='flex flex-col text-xs'>
           { props.from === 'STUDENT' &&
             <label className='text-orange-400 font-semibold'>
-              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.professor.discipline] }</span>
+              Disciplina: <span className='text-cyan-500 font-normal'>{ formatter.format(disciplines) }</span>
             </label>
           }
 

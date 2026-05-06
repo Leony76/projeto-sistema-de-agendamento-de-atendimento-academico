@@ -1,19 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaFilter } from 'react-icons/fa';
-import { Input } from '@/components/input';
-import { Select } from '@/components/select';
-import { Card } from '@/components/card';
-import '@/css/calendar.css';
-import { filterStudentAppointmentsHistory } from '@/utils/filters/filterStudentAppointmentsHistory.util';
-import NoContent from '@/components/misc/NoContent';
-import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/studentAppointmentsHistory.map.filter';
+import { FaFilter, FaHistory } from 'react-icons/fa';
+import { Input } from '@frontend/components/input';
+import { Select } from '@frontend/components/select';
+import { Card } from '@frontend/components/card';
+import '@frontend/css/calendar.css';
+import { filterStudentAppointmentsHistory } from '@frontend/utils/filters/filterStudentAppointmentsHistory.util';
+import NoContent from '@frontend/components/misc/NoContent';
+import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppointmentsHistory.map.filter';
 import { FaClipboardQuestion } from 'react-icons/fa6';
-import { filterProfessorAppointmentsHistory } from '@/utils/filters/filterProfessorAppointmentsHistory.util';
-import { LOGGED_USER_DATA } from '@/constants/mocks/loggedUserData.mock';
-import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@/constants/maps/filters/professorAppointmentsHistory.map.filter';
-import { PROFESSOR_APPOINTMENT_HISTORY_DATA } from '@/constants/mocks/users/professor/professorAppointmentsHistoryData.mock';
-import { STUDENT_APPOINTMENT_HISTORY_DATA } from '@/constants/mocks/users/student/studentAppointmentsHistoryData.mock';
+import { filterProfessorAppointmentsHistory } from '@frontend/utils/filters/filterProfessorAppointmentsHistory.util';
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter';
+import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
+import { PROFESSOR_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/professor/history.mock';
+import { STUDENT_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/student/history.mock';
+import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -22,23 +24,31 @@ type FilterValue = {
 
 const History = ():React.JSX.Element => {
 
+  const role = LOGGED_USER_DATA.role === 'PROFESSOR' 
+   ? 'PROFESSOR'
+   : 'STUDENT'
+  ;
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<FilterValue>({
     professor : 'none',
     student   : 'none',
   });
 
+  const [studentAppointmentHistory, setStudentAppointmentHistory] = useState<StudentAppointmentHistory[]>([]);
+  const [professorAppointmentHistory, setProfessorAppointmentHistory] = useState<ProfessorAppointmentHistory[]>([]);
+
   const filteredAppointmentHistoryByRole = {
     STUDENT: filterStudentAppointmentsHistory(
-      STUDENT_APPOINTMENT_HISTORY_DATA,
+      studentAppointmentHistory,
       searchValue,
       filterValue.student,
-    ), 
+    ).map((rest) => ({ ...rest, from: 'STUDENT' as const })), 
     PROFESSOR: filterProfessorAppointmentsHistory(
-      PROFESSOR_APPOINTMENT_HISTORY_DATA,
+      professorAppointmentHistory,
       searchValue,
       filterValue.professor,
-    ),
+    ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
   }
 
   const filterByRoleMap = {
@@ -62,8 +72,45 @@ const History = ():React.JSX.Element => {
     STUDENT   : STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.student],
     PROFESSOR : PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP[filterValue.professor],
   } as const;
-  
-  const hasFilter = filterValue.student !== 'none' || filterValue.professor !== 'none';
+
+  const labelsByRoleMap = {
+    STUDENT: {
+      searchBarMessage : 'Pesquisar por professor, disciplina(s), data, horário ou motivo',
+    },
+    PROFESSOR: {
+      searchBarMessage: 'Pesquisar por aluno, data, horário ou motivo',
+    }
+  } as const;
+
+  const noContent = noContentFound(
+    'Nenhum histórico de agendamentos no momento!',
+    noHistoryFoundFilterByRoleMap[role],
+    searchValue,
+    filterValue && (
+      filterValue.professor !== 'none' || 
+      filterValue.student !== 'none'
+    ),
+    {
+      notFound   : FaClipboardQuestion,
+      notContent : FaClipboardQuestion
+    },
+  );
+
+  useEffect(() => {
+    (async() => {
+      try {
+        const [ response1, response2 ] = [
+          STUDENT_APPOINTMENTS_HISTORY,
+          PROFESSOR_APPOINTMENTS_HISTORY,
+        ];
+
+        setStudentAppointmentHistory(response1);
+        setProfessorAppointmentHistory(response2);
+      } catch (error:unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    })();
+  },[]);
 
   return (
     <Layout 
@@ -73,15 +120,16 @@ const History = ():React.JSX.Element => {
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-            <h3 className='self-center font-semibold text-lg text-cyan-500'>
-              Histórico
+            <h3 className='flex items-center gap-1.5 self-center font-semibold text-lg text-cyan-500'>
+              <FaHistory />
+              Histórico de atendimentos
             </h3>
 
             <div className='w-full flex gap-2'>
               <Input.Search
                 onChange={(e) => setSearchValue(e.target.value)}
                 onClear={() => setSearchValue('')}
-                placeholder='Pesquisar por professor, disciplina, data, horário ou motivo'
+                placeholder={labelsByRoleMap[role].searchBarMessage}
                 value={searchValue}
                 customStyle={{ input: 'flex-4' }}
               />
@@ -89,35 +137,26 @@ const History = ():React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema={filterByRoleMap[LOGGED_USER_DATA.role].schema}
-                value={filterByRoleMap[LOGGED_USER_DATA.role].value}
-                onSelect={(value) => filterByRoleMap[LOGGED_USER_DATA.role].setter(value as any)}
+                optionsSchema={filterByRoleMap[role].schema}
+                value={filterByRoleMap[role].value}
+                onSelect={(value) => filterByRoleMap[role].setter(value as any)}
               />
             </div>
               
             <div className='flex-1 min-h-0 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-              {filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].length > 0 ? (
+              {filteredAppointmentHistoryByRole[role].length > 0 ? (
                 <div className='grid gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
-                  { filteredAppointmentHistoryByRole[LOGGED_USER_DATA.role].map(( history ) => (
+                  { filteredAppointmentHistoryByRole[role].map(( history ) => (
                     <Card.History
-                      from={LOGGED_USER_DATA.role}
                       key={ history.id }
-                      { ...history as any }
+                      { ...history  }
                     />
                   ))}
                 </div>
               ) : (
                 <NoContent
-                  Icon={() => <FaClipboardQuestion size={24}/>}
-                  message={
-                    searchValue && hasFilter
-                      ? `Nenhum resultado para "${searchValue}" com o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
-                      : searchValue
-                      ? `Nenhum resultado para "${searchValue}"`
-                      : filterValue
-                      ? `Nenhum resultado para o filtro "${noHistoryFoundFilterByRoleMap[LOGGED_USER_DATA.role]}"`
-                      : `Nenhuma histórico no momento!`
-                  }
+                  Icon={noContent.Icon}
+                  message={noContent.message}
                 />
               )}
             </div>

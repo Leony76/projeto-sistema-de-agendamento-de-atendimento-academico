@@ -1,10 +1,12 @@
-import type { UserRole } from '@/types/userRole.type';
+import type { UserRole } from '@shared/types/userRole.type';
 import React, { type JSX } from 'react'
 import { AiFillSchedule } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
 import { FaExclamation, FaHistory } from 'react-icons/fa';
 import { IoHome } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
+import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import ExpansibleImage from '@frontend/components/misc/ExpansibleImage';
 
 type SystemTabs = 'HOME' | 'REQUESTS' | 'TO_SCHEDULE' | 'HISTORY';
 type AsideTab = {
@@ -26,12 +28,12 @@ const Layout = (props:Props): React.JSX.Element => {
     STUDENT: [
       { id: 'HOME'        , name: 'Início'       , icon: <IoHome />         , route: '/home' },
       { id: 'TO_SCHEDULE' , name: 'Agendar'      , icon: <AiFillSchedule /> , route: '/schedule' },
-      { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/requests' },
+      { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/solicitations' },
       { id: 'HISTORY'     , name: 'Histórico'    , icon: <FaHistory />      , route: '/history' },
     ],
     PROFESSOR: [
       { id: 'HOME'        , name: 'Início'       , icon: <IoHome />         , route: '/home' },
-      { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/requests' },
+      { id: 'REQUESTS'    , name: 'Solicitações' , icon: <FaExclamation />  , route: '/solicitations' },
       { id: 'HISTORY'     , name: 'Histórico'    , icon: <FaHistory />      , route: '/history' },
     ],
     MANAGER: [
@@ -39,17 +41,22 @@ const Layout = (props:Props): React.JSX.Element => {
     ],
   };
 
+  const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
+
   const HEADER_INFOS_FOR_ROLE_CONFIG: Record<UserRole, {
     label: string;
     secondaryLabel?: string;
+    secondaryLabelValue?: string | string[];
   }> = {
     STUDENT: {
       label: 'Aluno:',
       secondaryLabel: 'RA:',
+      secondaryLabelValue: LOGGED_USER_DATA.ra?.toString(),
     },
     PROFESSOR: {
       label: 'Professor:',
-      secondaryLabel: 'Disciplina:',
+      secondaryLabel: 'Disciplina(s):',
+      secondaryLabelValue: formatter.format(LOGGED_USER_DATA.disciplines?.map((discipline => discipline.name)) ?? ['']),
     },
     MANAGER: {
       label: 'Gestor:',
@@ -65,28 +72,37 @@ const Layout = (props:Props): React.JSX.Element => {
           Sistema de Agendamento Acadêmico Online
         </h3>
 
-        <div className='flex gap-5'>
+        <div className='flex items-center gap-5'>
           <span className='font-semibold text-orange-400'>
             { config.label } {''} 
 
             <span className='text-cyan-400 font-normal'>
-              Leony Leandro Barros
+              { LOGGED_USER_DATA.name }
             </span>
           </span>
 
           { config.secondaryLabel &&
             <>
-              <div className='w-px bg-cyan-300 rounded-4xl'/>
+              <div className='w-px h-7 bg-cyan-300 rounded-4xl'/>
 
               <span className='font-semibold text-orange-400'>
                 { config.secondaryLabel } {''}
 
                 <span className='text-cyan-400 font-normal'>
-                  20241180209
+                  { config.secondaryLabelValue }
                 </span>
               </span>
             </>
           }
+
+          <ExpansibleImage
+            imagePaddingDisabled
+            image={{
+              name : LOGGED_USER_DATA.name,
+              uri  : LOGGED_USER_DATA.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
+              size : 'w-8 h-8',
+            }}
+          />
         </div>
       </header>
 

@@ -3,6 +3,7 @@ import { Modal } from '../modal';
 import { BsArrowsFullscreen } from 'react-icons/bs';
 
 type Props = {
+  imagePaddingDisabled?: boolean;
   image: {
     name : string;
     uri  : string;
@@ -56,8 +57,9 @@ const ExpansibleImage = (props:Props):React.JSX.Element => {
       <figure 
       onClick={() => setExpanded('CONTAIN')}
       className={`
-        border border-cyan-400 rounded-full p-1 cursor-zoom-in
+        border border-cyan-400 rounded-full cursor-zoom-in
         ${ props.image.size ?? ' h-30 w-30'}
+        ${ props.imagePaddingDisabled ? '' : 'p-1' }
       `}>
         <img 
           src={ props.image.uri } 

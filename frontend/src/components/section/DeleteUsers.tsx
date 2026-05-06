@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { FaArrowCircleLeft, FaTrashAlt } from 'react-icons/fa';
 import { Input } from '../input';
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@/types/registeredUsers.type';
-import { USER_ROLES } from '@/constants/maps/userRoles.map';
+import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@frontend/types/registeredUsers.type';
+import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { FaUserXmark } from 'react-icons/fa6';
 import ExpansibleImage from '../misc/ExpansibleImage';
 import NoContent from '../misc/NoContent';
-import type { UserRole } from '@/types/userRole.type';
+import type { UserRole } from '@shared/types/userRole.type';
 import { Button } from '../button';
-import { useToast } from '@/contexts/ToastContext';
+import { useToast } from '@frontend/contexts/ToastContext';
 import { Modal } from '../modal';
 
 type Props = {

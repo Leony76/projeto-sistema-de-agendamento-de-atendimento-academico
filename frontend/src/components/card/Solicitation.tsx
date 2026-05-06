@@ -1,9 +1,9 @@
-import { APPOINTMENT_STATUS_MAP } from '@/constants/maps/appointmentStatus.map';
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import type { AppointmentStatus } from '@/types/appointmentStatus.type';
-import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@/types/solicitation.type';
-import { formatDate } from '@/utils/formats/formatDate.util';
-import { formatTime } from '@/utils/formats/formatTime.util';
+import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
+import type { AppointmentStatus } from '@shared/types/appointmentStatus.type';
+import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
+import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import React, { useState, type JSX } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaCheck, FaCheckCircle, FaRegClock } from 'react-icons/fa';
@@ -11,8 +11,10 @@ import { IoCloseCircleSharp, IoCloseSharp } from 'react-icons/io5';
 import { Button } from '../button';
 import { MdEdit } from 'react-icons/md';
 import { TbCancel } from 'react-icons/tb';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
+import type { SolicitationStatus } from '@shared/types/solicitationStatus.type';
+import { SOLICITATION_STATUS_MAP } from '@frontend/constants/maps/solicitationStatus.map';
 
 type Props = {
   smVersion?: boolean;
@@ -25,13 +27,19 @@ const Solicitation = (props:Props): React.JSX.Element => {
 
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
 
-  const statusTagStyle: Record<AppointmentStatus, { style: string, icon: JSX.Element }> = {
-    CANCELED    : { style: 'bg-red-100 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
-    CONFIRMED   : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
-    UNCONFIRMED : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+  const statusTagStyle: Record<SolicitationStatus, { style: string, icon: JSX.Element }> = {
+    REJECTED : { style: 'bg-red-50 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
+    ACCEPTED : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
+    PENDING  : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
   };
 
   const { containerRef } = useCloseModalOnMouseClickOutside(setMoreOptions);
+
+  const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
+  const disciplines = props.from === 'STUDENT' 
+    ? props.professor.disciplines.map(d => d.name) 
+    : []
+  ;
 
   const userInfos = props.from === 'STUDENT'
     ? props.professor
@@ -93,7 +101,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
         <div className='flex flex-col text-xs'>
           { props.from === 'STUDENT' && 
             <label className='text-orange-400 font-semibold'>
-              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.professor.discipline] }</span>
+              Disciplina(s): <span className='text-cyan-500 font-normal'> { formatter.format(disciplines) } </span>   
             </label>
           }
 
@@ -117,14 +125,14 @@ const Solicitation = (props:Props): React.JSX.Element => {
           `}>
             { statusTagStyle[props.status].icon }
 
-            <span>
-              { APPOINTMENT_STATUS_MAP[props.status] }
+            <span className='mb-px'>
+              { SOLICITATION_STATUS_MAP[props.status] }
             </span>
           </span>
         </div>
       </div>  
 
-      { (props.status === 'UNCONFIRMED' && props.from === 'PROFESSOR') &&
+      { (props.status === 'PENDING' && props.from === 'PROFESSOR') &&
         <div className='flex gap-2 self-end'>
           <Button.Default
             label='Aceitar'

@@ -1,11 +1,10 @@
-import { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
-import { formatDate } from '@/utils/formats/formatDate.util';
+import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@/types/registeredUsers.type';
+import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@shared/types/registeredUsers.type';
 import { FaTrashAlt } from 'react-icons/fa';
 
 type Props = {
@@ -21,6 +20,12 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
 
   const { containerRef } = useCloseModalOnMouseClickOutside(setMoreOptions);
+
+  const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
+  const disciplines = props.from === 'PROFESSOR' 
+    ? props.disciplines.map((discipline) => discipline.name)
+    : []
+  ;
 
   return (
     <div className='relative px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>
@@ -77,7 +82,7 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
 
           { props.from === 'PROFESSOR' && 
             <label className='text-xs text-orange-400 font-semibold'>
-              Disciplina: <span className='text-cyan-500 font-normal'>{ DISCIPLINES_VALUE_MAP[props.discipline] }</span>
+              Disciplina: <span className='text-cyan-500 font-normal'>{ formatter.format(disciplines) }</span>
             </label>
           }
 

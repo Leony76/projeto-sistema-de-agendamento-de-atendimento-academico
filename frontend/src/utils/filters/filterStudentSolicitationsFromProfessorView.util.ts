@@ -1,7 +1,7 @@
-import type { StudentSolicitationFromProfessorView } from "@/types/solicitation.type";
+import type { StudentSolicitationFromProfessorView } from "@shared/types/solicitation.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from "@/constants/maps/filters/studentSolicitations.map.filter";
+import type { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
 
 export const filterStudentSolicitationsFromProfessorView = (
   studentSolicitationsFromProfessorViewData : StudentSolicitationFromProfessorView[],
@@ -21,14 +21,14 @@ export const filterStudentSolicitationsFromProfessorView = (
     if (!filterValue) return matchesSearch;
 
     switch (filterValue) {
-      case 'confirmed':
-        return matchesSearch && solicitation.status === 'CONFIRMED';
+      case 'accepted':
+        return matchesSearch && solicitation.status === 'ACCEPTED';
 
-      case 'unconfirmed':
-        return matchesSearch && solicitation.status === 'UNCONFIRMED';
+      case 'pending':
+        return matchesSearch && solicitation.status === 'PENDING';
 
-      case 'canceled':
-        return matchesSearch && solicitation.status === 'CANCELED';
+      case 'rejected':
+        return matchesSearch && solicitation.status === 'REJECTED';
 
       default:
         return matchesSearch;

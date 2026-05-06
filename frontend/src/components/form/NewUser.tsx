@@ -1,12 +1,12 @@
-import { newUserSchema, type NewProfessorFormData, type NewStudentFormData, type NewUserFormData } from '@/schemas/newUser.schema';
-import type { UserRole } from '@/types/userRole.type'
+import { newUserSchema, type NewProfessorFormData, type NewStudentFormData, type NewUserFormData } from '@frontend/schemas/newUser.schema';
+import type { UserRole } from '@shared/types/userRole.type'
 import React, { useEffect, useState } from 'react'
 import { FaArrowCircleLeft, FaUserPlus } from 'react-icons/fa';
 import { useForm, type FieldErrors } from 'react-hook-form';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Select } from '../select';
-import type { DISCIPLINES_VALUE_MAP } from '@/constants/maps/disciplines.map';
+import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
 import { TiInfoLarge } from 'react-icons/ti';
 import { zodResolver } from '@hookform/resolvers/zod';
 

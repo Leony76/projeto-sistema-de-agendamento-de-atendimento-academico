@@ -1,5 +1,5 @@
-import { useToast } from '@/contexts/ToastContext';
-import type { Toast } from '@/types/toast.type';
+import { useToast } from '@frontend/contexts/ToastContext';
+import type { Toast } from '@shared/types/toast.type';
 import { useEffect, useState } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { IoIosClose } from 'react-icons/io';

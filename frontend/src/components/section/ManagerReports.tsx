@@ -1,5 +1,5 @@
-import type { Reports } from '@/types/reports.type';
-import { formatPercentage } from '@/utils/formats/formatPercentage.util';
+import type { Reports } from '@shared/types/reports.type';
+import { formatPercentage } from '@frontend/utils/formats/formatPercentage.util';
 import type React from 'react';
 import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaHouseUser, FaPercent } from 'react-icons/fa';
 import { MdMeetingRoom } from 'react-icons/md';
@@ -28,8 +28,8 @@ const ManagerReports = (props:Props): React.JSX.Element => {
   const reportsRenderMap = {
     appointments: [
       { label: 'Totais'      , value: props.appointments.count     },
-      { label: 'Confirmados' , value: props.appointments.confirmed },
-      { label: 'Cancelados  ', value: props.appointments.canceled   },
+      { label: 'Feitos'      , value: props.appointments.done      },
+      { label: 'Cancelados  ', value: props.appointments.canceled  },
     ],
     solicitations: [
       { label: 'Totais'      , value: props.solicitations.count    },
@@ -46,9 +46,10 @@ const ManagerReports = (props:Props): React.JSX.Element => {
       { label: 'Gestores'    , value: props.registered.managers   },
     ],
     rate: [
-      { label: 'Desistência de agendamento'        , value: props.rate.appointments.withdrawal         },
-      { label: 'Comparecimento a agendamento'      , value: props.rate.appointments.attendance       },
-      { label: 'Aceitação a solicitação de alunos' , value: props.rate.solicitations.acceptance },
+      { label: 'Cancelamento de atendimentos'      , value: props.rate.appointments.cancellation },
+      { label: 'Desistência de agendamento'        , value: props.rate.appointments.withdrawal   },
+      { label: 'Comparecimento a agendamento'      , value: props.rate.appointments.attendance   },
+      { label: 'Aceitação a solicitação de alunos' , value: props.rate.solicitations.acceptance  },
       { label: 'Rejeição a solicitação de alunos'  , value: props.rate.solicitations.rejection   },
     ],
   } as const;
@@ -141,7 +142,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
         </ul>
 
         <h4 className='text-orange-500 font-semibold flex items-center gap-1'>
-          <FaPercent />
+          <FaPercent size={15} />
           Indices 
         </h4>
 

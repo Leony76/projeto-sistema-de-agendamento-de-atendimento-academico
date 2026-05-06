@@ -1,6 +1,6 @@
-import { SELECT_OPTIONS_SCHEMA_MAP } from '@/constants/maps/selectOptionsSchema.map';
-import { useCloseModalOnMouseClickOutside } from '@/hooks/useCloseModalOnMouseClickOutside.hook';
-import type { SelectOptionsSchema } from '@/types/selectOptionsSchema.type';
+import { SELECT_OPTIONS_SCHEMA_MAP } from '@frontend/constants/maps/selectOptionsSchema.map';
+import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
+import type { SelectOptionsSchema } from '@shared/types/selectOptionsSchema.type';
 import { forwardRef, useState, type ButtonHTMLAttributes } from 'react'
 
 type Props<T> = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {

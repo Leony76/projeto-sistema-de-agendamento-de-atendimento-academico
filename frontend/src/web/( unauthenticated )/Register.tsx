@@ -1,6 +1,6 @@
-import { Button } from '@/components/button'
-import { Input } from '@/components/input'
-import { registerSchema, type RegisterFormData } from '@/schemas/register.schema';
+import { Button } from '@frontend/components/button'
+import { Input } from '@frontend/components/input'
+import { registerSchema, type RegisterFormData } from '@frontend/schemas/register.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom'

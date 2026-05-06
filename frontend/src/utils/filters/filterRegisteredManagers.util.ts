@@ -1,5 +1,5 @@
-import type { REGISTERED_MANAGERS_FILTER_MAP } from "@/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredManager } from "@/types/registeredUsers.type";
+import type { REGISTERED_MANAGERS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
+import type { RegisteredManager } from "@shared/types/registeredUsers.type";
 
 export const filterRegisteredManagers = (
   registeredManagersData : RegisteredManager[],

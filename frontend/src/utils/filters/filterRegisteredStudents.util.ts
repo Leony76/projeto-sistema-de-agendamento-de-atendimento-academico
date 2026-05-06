@@ -1,5 +1,5 @@
-import type { REGISTERED_STUDENTS_FILTER_MAP } from "@/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredStudent } from "@/types/registeredUsers.type";
+import type { REGISTERED_STUDENTS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
+import type { RegisteredStudent } from "@shared/types/registeredUsers.type";
 
 export const filterRegisteredStudents = (
   registeredStudentsData : RegisteredStudent[],
@@ -12,6 +12,10 @@ export const filterRegisteredStudents = (
 
     const matchesSearch =
       student.name.toLowerCase().includes(search) 
+      ||
+      student.email.toLowerCase().includes(search) 
+      ||
+      student.ra.toString().includes(search) 
       ||
       student.id.toString().includes(search)
       ||

@@ -1,4 +1,4 @@
-import type { AvailableDays } from "@/types/availableDays.type";
+import type { AvailableDays } from "@shared/types/availableDays.type";
 
 export const AVAILABLE_DAYS = [
   { value: 'SUNDAY'    , label: 'Domingo'       }, 
@@ -8,13 +8,17 @@ export const AVAILABLE_DAYS = [
   { value: 'THURSDAY'  , label: 'Quinta-Feira'  },
   { value: 'FRIDAY'    , label: 'Sexta-Feira'   },
   { value: 'SATURDAY'  , label: 'Sábado'        },
-];
+] as const;
 
-export const AVAILABLE_DAYS_MAP = Object.fromEntries(
-  AVAILABLE_DAYS.map(item => [item.value, item.label])
-) as {
-  [K in typeof AVAILABLE_DAYS[number]['value']]: typeof AVAILABLE_DAYS[number]['label']
-};
+export const AVAILABLE_DAYS_MAP = {
+  SUNDAY     : 'Domingo',
+  MONDAY     : 'Segunda-feira',
+  TUESDAY    : 'Terça-feira',
+  WEDNESDAY  : 'Quarta-feira', 
+  THURSDAY   : 'Quinta-feira',
+  FRIDAY     : 'Sexta-feira',
+  SATURDAY   : 'Sábado',
+} as const;
 
 export const DAYS_BY_INDEX_MAP: Record<AvailableDays, number> = {
   SUNDAY    : 0,

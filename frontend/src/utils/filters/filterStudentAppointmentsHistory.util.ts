@@ -1,8 +1,9 @@
-import { DISCIPLINES_VALUE_MAP } from "@/constants/maps/disciplines.map";
-import type { StudentAppointmentHistory } from "@/types/appointmentHistory.type";
+import type { StudentAppointmentHistory } from "@shared/types/appointmentHistory.type"
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP } from "@/constants/maps/filters/studentAppointmentsHistory.map.filter";
+import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP } from "@frontend/constants/maps/filters/studentAppointmentsHistory.map.filter";
+import type { Professor } from "@shared/types/professor.type";
+import type { Discipline } from "@shared/types/disciplines.type";
 
 export const filterStudentAppointmentsHistory = (
   studentAppointmentsHistoryData : StudentAppointmentHistory[],
@@ -17,7 +18,7 @@ export const filterStudentAppointmentsHistory = (
       ||
       history.reason.toLowerCase().includes(search) 
       ||
-      DISCIPLINES_VALUE_MAP[history.professor.discipline].toLowerCase().includes(search)
+      history.professor.disciplines.some((discipline) => discipline.name.toLowerCase().includes(search))
       ||
       formatTime(history.appoitmentDateTime).toLowerCase().includes(search)
       ||
@@ -30,6 +31,9 @@ export const filterStudentAppointmentsHistory = (
   }).sort((a, b) => {
     if (!filterValue) return 0;
 
+    const getDisciplinesString = (professor: Professor & { disciplines: Discipline[]}) =>
+      professor.disciplines.map(discipline => discipline.name).join(', ');
+
     switch (filterValue) {
       case 'AZProfessorName':
         return a.professor.name.localeCompare(b.professor.name);
@@ -38,10 +42,10 @@ export const filterStudentAppointmentsHistory = (
         return b.professor.name.localeCompare(a.professor.name);
 
       case 'AZDisciplines':
-        return b.professor.discipline.localeCompare(a.professor.discipline);
-        
+        return getDisciplinesString(a.professor).localeCompare(getDisciplinesString(b.professor));
+
       case 'ZADisciplines':
-        return a.professor.discipline.localeCompare(b.professor.discipline);
+        return getDisciplinesString(b.professor).localeCompare(getDisciplinesString(a.professor));
 
       case 'mostRecent':
         return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();
