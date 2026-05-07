@@ -1,13 +1,17 @@
 import { Button } from '@frontend/components/button'
 import { Input } from '@frontend/components/input'
+import { useToast } from '@frontend/contexts/ToastContext';
 import { registerSchema, type RegisterFormData } from '@frontend/schemas/register.schema';
+import { AuthService } from '@frontend/services/auth.service';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { RegisterUser } from '@shared/types/registerUser.type';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom'
 
 const Register = (): React.JSX.Element => {
 
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { 
     register, 
@@ -24,8 +28,20 @@ const Register = (): React.JSX.Element => {
     },
   });
 
-  const handleRegister = async(): Promise<void> => {
-    navigate('/home')
+  const handleRegister = async( data: RegisterFormData ): Promise<void> => {
+    try {
+      const user: RegisterUser = { ...data };
+
+      await AuthService.register(user);
+
+      alert("Casdastro foi um sucesso!");
+
+      navigate('/home');
+    } catch (error:unknown) {
+      if (error instanceof Error) {
+        toast('Houve um erro ao realizar o cadastro!: ' + error.message, 'error');
+      }
+    }
   } ;
 
   return (

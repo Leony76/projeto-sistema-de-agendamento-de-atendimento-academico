@@ -6,10 +6,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginFormData } from '@frontend/schemas/login.schema'
+import { useToast } from '@frontend/contexts/ToastContext'
+import { AuthService } from '@frontend/services/auth.service'
 
 const Login = (): React.JSX.Element => {
 
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { 
     register, 
@@ -47,8 +50,19 @@ const Login = (): React.JSX.Element => {
     },
   };
 
-  const handleLogin = async(): Promise<void> => {
-    navigate('/home')
+  const handleLogin = async(data: LoginFormData): Promise<void> => {
+    try {
+
+
+      await AuthService.login({ 
+        email: data
+      });
+    } catch (error:unknown) {
+      if (error instanceof Error) {
+        toast('Houve um erro ao realizar o cadastro!: ' + error.message, 'error');
+      }
+    }
+    navigate('/home');
   };
 
   return (
