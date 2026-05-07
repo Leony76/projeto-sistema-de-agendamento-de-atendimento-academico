@@ -186,7 +186,7 @@ export type HistoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type HistoryGroupByOutputType = {
   id: number
   registeredAt: Date
-  updatedAt: Date
+  updatedAt: Date | null
   deletedAt: Date | null
   appointmentId: number
   _count: HistoryCountAggregateOutputType | null
@@ -217,7 +217,7 @@ export type HistoryWhereInput = {
   NOT?: Prisma.HistoryWhereInput | Prisma.HistoryWhereInput[]
   id?: Prisma.IntFilter<"History"> | number
   registeredAt?: Prisma.DateTimeFilter<"History"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"History"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"History"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"History"> | Date | string | null
   appointmentId?: Prisma.IntFilter<"History"> | number
   appointment?: Prisma.XOR<Prisma.AppointmentScalarRelationFilter, Prisma.AppointmentWhereInput>
@@ -226,7 +226,7 @@ export type HistoryWhereInput = {
 export type HistoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   appointmentId?: Prisma.SortOrder
   appointment?: Prisma.AppointmentOrderByWithRelationInput
@@ -239,7 +239,7 @@ export type HistoryWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.HistoryWhereInput[]
   NOT?: Prisma.HistoryWhereInput | Prisma.HistoryWhereInput[]
   registeredAt?: Prisma.DateTimeFilter<"History"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"History"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"History"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"History"> | Date | string | null
   appointment?: Prisma.XOR<Prisma.AppointmentScalarRelationFilter, Prisma.AppointmentWhereInput>
 }, "id" | "appointmentId">
@@ -247,7 +247,7 @@ export type HistoryWhereUniqueInput = Prisma.AtLeast<{
 export type HistoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   appointmentId?: Prisma.SortOrder
   _count?: Prisma.HistoryCountOrderByAggregateInput
@@ -263,14 +263,14 @@ export type HistoryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.HistoryScalarWhereWithAggregatesInput | Prisma.HistoryScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"History"> | number
   registeredAt?: Prisma.DateTimeWithAggregatesFilter<"History"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"History"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"History"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"History"> | Date | string | null
   appointmentId?: Prisma.IntWithAggregatesFilter<"History"> | number
 }
 
 export type HistoryCreateInput = {
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   appointment: Prisma.AppointmentCreateNestedOneWithoutHistoryInput
 }
@@ -278,14 +278,14 @@ export type HistoryCreateInput = {
 export type HistoryUncheckedCreateInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   appointmentId: number
 }
 
 export type HistoryUpdateInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointment?: Prisma.AppointmentUpdateOneRequiredWithoutHistoryNestedInput
 }
@@ -293,7 +293,7 @@ export type HistoryUpdateInput = {
 export type HistoryUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointmentId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -301,21 +301,21 @@ export type HistoryUncheckedUpdateInput = {
 export type HistoryCreateManyInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   appointmentId: number
 }
 
 export type HistoryUpdateManyMutationInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type HistoryUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointmentId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -393,14 +393,14 @@ export type HistoryUncheckedUpdateOneWithoutAppointmentNestedInput = {
 
 export type HistoryCreateWithoutAppointmentInput = {
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
 }
 
 export type HistoryUncheckedCreateWithoutAppointmentInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
 }
 
@@ -422,14 +422,14 @@ export type HistoryUpdateToOneWithWhereWithoutAppointmentInput = {
 
 export type HistoryUpdateWithoutAppointmentInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type HistoryUncheckedUpdateWithoutAppointmentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -489,7 +489,7 @@ export type $HistoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     registeredAt: Date
-    updatedAt: Date
+    updatedAt: Date | null
     deletedAt: Date | null
     appointmentId: number
   }, ExtArgs["result"]["history"]>

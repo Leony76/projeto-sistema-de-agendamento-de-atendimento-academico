@@ -15,7 +15,7 @@ export const filterRegisteredStudents = (
       ||
       student.email.toLowerCase().includes(search) 
       ||
-      student.ra.toString().includes(search) 
+      student.ra.includes(search) 
       ||
       student.id.toString().includes(search)
       ||

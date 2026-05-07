@@ -9,7 +9,7 @@ type RegisteredUser = {
 };
 
 export type RegisteredStudent = RegisteredUser & {
-  ra            : number;
+  ra            : string;
   appointments  : number;
   solicitations : number;
 };

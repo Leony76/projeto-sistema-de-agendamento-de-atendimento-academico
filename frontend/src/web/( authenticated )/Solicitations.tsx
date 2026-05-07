@@ -10,11 +10,12 @@ import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterStudentSolicitationsFromProfessorView.util';
-import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
 import { STUDENT_SOLICITATIONS } from '@frontend/constants/mocks/dto/student/solicitations.mock';
 import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW } from '@frontend/constants/mocks/dto/professor/solicitations.mock';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Navigate } from 'react-router-dom';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -23,7 +24,11 @@ type FilterValue = {
 
 const Requests = ():React.JSX.Element => {
 
-  const role = LOGGED_USER_DATA.role === 'PROFESSOR'
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to={'/'}/>;
+
+  const role = user.role === 'PROFESSOR'
     ? 'PROFESSOR'
     : 'STUDENT'
   ;
@@ -117,7 +122,7 @@ const Requests = ():React.JSX.Element => {
   return (
     <Layout 
     selectedTab='REQUESTS'
-    from={LOGGED_USER_DATA.role}
+    from={user.role}
     >
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
@@ -149,7 +154,7 @@ const Requests = ():React.JSX.Element => {
               {filteredSolicitationsByRole[role].length > 0 ? (
                 <div className={`
                   grid items-start gap-2 auto-rows-min 
-                  ${ LOGGED_USER_DATA.role === 'STUDENT' ? 'grid-cols-2' : 'grid-cols-1' }
+                  ${ user.role === 'STUDENT' ? 'grid-cols-2' : 'grid-cols-1' }
                 `}>
                     {filteredSolicitationsByRole[role].map(( solicitation ) => (
                       <Card.Solicitation

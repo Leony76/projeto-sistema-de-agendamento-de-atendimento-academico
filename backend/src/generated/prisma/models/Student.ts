@@ -28,22 +28,20 @@ export type AggregateStudent = {
 
 export type StudentAvgAggregateOutputType = {
   userId: number | null
-  ra: number | null
 }
 
 export type StudentSumAggregateOutputType = {
   userId: number | null
-  ra: number | null
 }
 
 export type StudentMinAggregateOutputType = {
   userId: number | null
-  ra: number | null
+  ra: string | null
 }
 
 export type StudentMaxAggregateOutputType = {
   userId: number | null
-  ra: number | null
+  ra: string | null
 }
 
 export type StudentCountAggregateOutputType = {
@@ -55,12 +53,10 @@ export type StudentCountAggregateOutputType = {
 
 export type StudentAvgAggregateInputType = {
   userId?: true
-  ra?: true
 }
 
 export type StudentSumAggregateInputType = {
   userId?: true
-  ra?: true
 }
 
 export type StudentMinAggregateInputType = {
@@ -167,7 +163,7 @@ export type StudentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type StudentGroupByOutputType = {
   userId: number
-  ra: number
+  ra: string
   _count: StudentCountAggregateOutputType | null
   _avg: StudentAvgAggregateOutputType | null
   _sum: StudentSumAggregateOutputType | null
@@ -195,7 +191,7 @@ export type StudentWhereInput = {
   OR?: Prisma.StudentWhereInput[]
   NOT?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
   userId?: Prisma.IntFilter<"Student"> | number
-  ra?: Prisma.IntFilter<"Student"> | number
+  ra?: Prisma.StringFilter<"Student"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
   solicitations?: Prisma.SolicitationListRelationFilter
@@ -211,7 +207,7 @@ export type StudentOrderByWithRelationInput = {
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
   userId?: number
-  ra?: number
+  ra?: string
   AND?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
   OR?: Prisma.StudentWhereInput[]
   NOT?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
@@ -235,11 +231,11 @@ export type StudentScalarWhereWithAggregatesInput = {
   OR?: Prisma.StudentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StudentScalarWhereWithAggregatesInput | Prisma.StudentScalarWhereWithAggregatesInput[]
   userId?: Prisma.IntWithAggregatesFilter<"Student"> | number
-  ra?: Prisma.IntWithAggregatesFilter<"Student"> | number
+  ra?: Prisma.StringWithAggregatesFilter<"Student"> | string
 }
 
 export type StudentCreateInput = {
-  ra: number
+  ra: string
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutStudentInput
   solicitations?: Prisma.SolicitationCreateNestedManyWithoutStudentInput
@@ -247,13 +243,13 @@ export type StudentCreateInput = {
 
 export type StudentUncheckedCreateInput = {
   userId: number
-  ra: number
+  ra: string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutStudentInput
   solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUpdateInput = {
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutStudentNestedInput
   solicitations?: Prisma.SolicitationUpdateManyWithoutStudentNestedInput
@@ -261,23 +257,23 @@ export type StudentUpdateInput = {
 
 export type StudentUncheckedUpdateInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutStudentNestedInput
   solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyInput = {
   userId: number
-  ra: number
+  ra: string
 }
 
 export type StudentUpdateManyMutationInput = {
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type StudentUncheckedUpdateManyInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type StudentNullableScalarRelationFilter = {
@@ -292,7 +288,6 @@ export type StudentCountOrderByAggregateInput = {
 
 export type StudentAvgOrderByAggregateInput = {
   userId?: Prisma.SortOrder
-  ra?: Prisma.SortOrder
 }
 
 export type StudentMaxOrderByAggregateInput = {
@@ -307,7 +302,6 @@ export type StudentMinOrderByAggregateInput = {
 
 export type StudentSumOrderByAggregateInput = {
   userId?: Prisma.SortOrder
-  ra?: Prisma.SortOrder
 }
 
 export type StudentScalarRelationFilter = {
@@ -376,13 +370,13 @@ export type StudentUpdateOneRequiredWithoutSolicitationsNestedInput = {
 }
 
 export type StudentCreateWithoutUserInput = {
-  ra: number
+  ra: string
   appointments?: Prisma.AppointmentCreateNestedManyWithoutStudentInput
   solicitations?: Prisma.SolicitationCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
-  ra: number
+  ra: string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutStudentInput
   solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutStudentInput
 }
@@ -404,26 +398,26 @@ export type StudentUpdateToOneWithWhereWithoutUserInput = {
 }
 
 export type StudentUpdateWithoutUserInput = {
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUpdateManyWithoutStudentNestedInput
   solicitations?: Prisma.SolicitationUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutStudentNestedInput
   solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAppointmentsInput = {
-  ra: number
+  ra: string
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   solicitations?: Prisma.SolicitationCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAppointmentsInput = {
   userId: number
-  ra: number
+  ra: string
   solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutStudentInput
 }
 
@@ -444,26 +438,26 @@ export type StudentUpdateToOneWithWhereWithoutAppointmentsInput = {
 }
 
 export type StudentUpdateWithoutAppointmentsInput = {
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   solicitations?: Prisma.SolicitationUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAppointmentsInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutSolicitationsInput = {
-  ra: number
+  ra: string
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutSolicitationsInput = {
   userId: number
-  ra: number
+  ra: string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutStudentInput
 }
 
@@ -484,14 +478,14 @@ export type StudentUpdateToOneWithWhereWithoutSolicitationsInput = {
 }
 
 export type StudentUpdateWithoutSolicitationsInput = {
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutSolicitationsInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  ra?: Prisma.IntFieldUpdateOperationsInput | number
+  ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutStudentNestedInput
 }
 
@@ -584,7 +578,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     userId: number
-    ra: number
+    ra: string
   }, ExtArgs["result"]["student"]>
   composites: {}
 }
@@ -1012,7 +1006,7 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface StudentFieldRefs {
   readonly userId: Prisma.FieldRef<"Student", 'Int'>
-  readonly ra: Prisma.FieldRef<"Student", 'Int'>
+  readonly ra: Prisma.FieldRef<"Student", 'String'>
 }
     
 

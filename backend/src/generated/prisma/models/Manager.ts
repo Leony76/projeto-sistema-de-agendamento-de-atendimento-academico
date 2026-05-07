@@ -27,54 +27,44 @@ export type AggregateManager = {
 }
 
 export type ManagerAvgAggregateOutputType = {
-  id: number | null
   userId: number | null
 }
 
 export type ManagerSumAggregateOutputType = {
-  id: number | null
   userId: number | null
 }
 
 export type ManagerMinAggregateOutputType = {
-  id: number | null
   userId: number | null
 }
 
 export type ManagerMaxAggregateOutputType = {
-  id: number | null
   userId: number | null
 }
 
 export type ManagerCountAggregateOutputType = {
-  id: number
   userId: number
   _all: number
 }
 
 
 export type ManagerAvgAggregateInputType = {
-  id?: true
   userId?: true
 }
 
 export type ManagerSumAggregateInputType = {
-  id?: true
   userId?: true
 }
 
 export type ManagerMinAggregateInputType = {
-  id?: true
   userId?: true
 }
 
 export type ManagerMaxAggregateInputType = {
-  id?: true
   userId?: true
 }
 
 export type ManagerCountAggregateInputType = {
-  id?: true
   userId?: true
   _all?: true
 }
@@ -166,7 +156,6 @@ export type ManagerGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 export type ManagerGroupByOutputType = {
-  id: number
   userId: number
   _count: ManagerCountAggregateOutputType | null
   _avg: ManagerAvgAggregateOutputType | null
@@ -194,28 +183,24 @@ export type ManagerWhereInput = {
   AND?: Prisma.ManagerWhereInput | Prisma.ManagerWhereInput[]
   OR?: Prisma.ManagerWhereInput[]
   NOT?: Prisma.ManagerWhereInput | Prisma.ManagerWhereInput[]
-  id?: Prisma.IntFilter<"Manager"> | number
   userId?: Prisma.IntFilter<"Manager"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type ManagerOrderByWithRelationInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type ManagerWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
   userId?: number
   AND?: Prisma.ManagerWhereInput | Prisma.ManagerWhereInput[]
   OR?: Prisma.ManagerWhereInput[]
   NOT?: Prisma.ManagerWhereInput | Prisma.ManagerWhereInput[]
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id" | "userId">
+}, "userId">
 
 export type ManagerOrderByWithAggregationInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.ManagerCountOrderByAggregateInput
   _avg?: Prisma.ManagerAvgOrderByAggregateInput
@@ -228,7 +213,6 @@ export type ManagerScalarWhereWithAggregatesInput = {
   AND?: Prisma.ManagerScalarWhereWithAggregatesInput | Prisma.ManagerScalarWhereWithAggregatesInput[]
   OR?: Prisma.ManagerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ManagerScalarWhereWithAggregatesInput | Prisma.ManagerScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Manager"> | number
   userId?: Prisma.IntWithAggregatesFilter<"Manager"> | number
 }
 
@@ -237,7 +221,6 @@ export type ManagerCreateInput = {
 }
 
 export type ManagerUncheckedCreateInput = {
-  id?: number
   userId: number
 }
 
@@ -246,12 +229,10 @@ export type ManagerUpdateInput = {
 }
 
 export type ManagerUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ManagerCreateManyInput = {
-  id?: number
   userId: number
 }
 
@@ -260,7 +241,6 @@ export type ManagerUpdateManyMutationInput = {
 }
 
 export type ManagerUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -270,27 +250,22 @@ export type ManagerNullableScalarRelationFilter = {
 }
 
 export type ManagerCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ManagerAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ManagerMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ManagerMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ManagerSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -331,7 +306,7 @@ export type ManagerCreateWithoutUserInput = {
 }
 
 export type ManagerUncheckedCreateWithoutUserInput = {
-  id?: number
+
 }
 
 export type ManagerCreateOrConnectWithoutUserInput = {
@@ -355,35 +330,31 @@ export type ManagerUpdateWithoutUserInput = {
 }
 
 export type ManagerUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+
 }
 
 
 
 export type ManagerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["manager"]>
 
 export type ManagerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["manager"]>
 
 export type ManagerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["manager"]>
 
 export type ManagerSelectScalar = {
-  id?: boolean
   userId?: boolean
 }
 
-export type ManagerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId", ExtArgs["result"]["manager"]>
+export type ManagerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId", ExtArgs["result"]["manager"]>
 export type ManagerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -400,7 +371,6 @@ export type $ManagerPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
     userId: number
   }, ExtArgs["result"]["manager"]>
   composites: {}
@@ -485,8 +455,8 @@ export interface ManagerDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    * // Get first 10 Managers
    * const managers = await prisma.manager.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const managerWithIdOnly = await prisma.manager.findMany({ select: { id: true } })
+   * // Only select the `userId`
+   * const managerWithUserIdOnly = await prisma.manager.findMany({ select: { userId: true } })
    * 
    */
   findMany<T extends ManagerFindManyArgs>(args?: Prisma.SelectSubset<T, ManagerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ManagerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -530,9 +500,9 @@ export interface ManagerDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *   ]
    * })
    * 
-   * // Create many Managers and only return the `id`
-   * const managerWithIdOnly = await prisma.manager.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many Managers and only return the `userId`
+   * const managerWithUserIdOnly = await prisma.manager.createManyAndReturn({
+   *   select: { userId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -621,9 +591,9 @@ export interface ManagerDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *   ]
    * })
    * 
-   * // Update zero or more Managers and only return the `id`
-   * const managerWithIdOnly = await prisma.manager.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more Managers and only return the `userId`
+   * const managerWithUserIdOnly = await prisma.manager.updateManyAndReturn({
+   *   select: { userId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -826,7 +796,6 @@ export interface Prisma__ManagerClient<T, Null = never, ExtArgs extends runtime.
  * Fields of the Manager model
  */
 export interface ManagerFieldRefs {
-  readonly id: Prisma.FieldRef<"Manager", 'Int'>
   readonly userId: Prisma.FieldRef<"Manager", 'Int'>
 }
     

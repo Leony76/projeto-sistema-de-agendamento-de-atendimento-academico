@@ -4,7 +4,7 @@ export const loginSchema = z.discriminatedUnion("role", [
   z.object({
     role: z
       .literal("STUDENT"),
-    identifier: z
+    ra: z
       .string()
       .trim()
       .length(11, "RA inválido"),
@@ -13,10 +13,11 @@ export const loginSchema = z.discriminatedUnion("role", [
       .trim()
       .min(6, "Senha muito curta"),
   }),
+
   z.object({
     role: z
-      .literal("PROFESSOR"),
-    identifier: z
+      .literal("PROFESSOR/MANAGER"),
+    email: z
       .email("E-mail inválido")
       .trim()
       .max(255, 'O e-mail deve ter até 255 caracteres'),

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaArrowCircleLeft, FaExclamation, FaFilter } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaCalendarCheck, FaExclamation, FaFilter } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -19,7 +19,6 @@ import { getAvailableSlots, TO_SCHEDULE_PROFESSORS } from '@frontend/constants/m
 import type { ToScheduleProfessors } from '@shared/types/toScheduleProfessors.type';
 import { DAYS } from '@frontend/constants/days.const';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
-import { unknown } from 'zod';
 import { useToast } from '@frontend/contexts/ToastContext';
 
 const Schedule = ():React.JSX.Element => {
@@ -132,7 +131,8 @@ const Schedule = ():React.JSX.Element => {
       `}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
-            <h3 className='self-center font-semibold text-lg text-cyan-500'>
+            <h3 className='flex items-center gap-1.5 self-center font-semibold text-lg text-cyan-500'>
+              <FaCalendarCheck />
               Agendamento
             </h3>
 

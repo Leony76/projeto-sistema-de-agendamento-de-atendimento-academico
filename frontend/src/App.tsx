@@ -7,26 +7,39 @@ import Requests from './web/( authenticated )/Solicitations';
 import History from './web/( authenticated )/History';
 import { UserDetails } from './components/misc/UserDetails';
 import { ToastProvider } from './contexts/ToastContext';
+import { AuthenticatedRoute } from './routes/AuthenticatedRoute';
+import { RoleRoute } from './routes/RoleRoute';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (
     <ToastProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/"         element={<Login/>} />
-          <Route path="/register" element={<Register/>} />
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/"         element={<Login/>} />
+            <Route path="/register" element={<Register/>} />
 
-          <Route path="/home"     element={<Home/>} >
-            <Route path="student/:id"   element={<UserDetails/>} />
-            <Route path="professor/:id" element={<UserDetails/>} />
-            <Route path="manager/:id"   element={<UserDetails/>} />
-          </Route>
+            <Route element={<AuthenticatedRoute/>}>
+              <Route element={<RoleRoute allowedRoles={['MANAGER', 'PROFESSOR', 'STUDENT']}/>}>
+                <Route path="/home" element={<Home/>}>
+                  <Route element={<RoleRoute allowedRoles={['MANAGER']}/>}>
+                    <Route path="professor/:id" element={<UserDetails/>} />
+                    <Route path="student/:id"   element={<UserDetails/>} />
+                    <Route path="manager/:id"   element={<UserDetails/>} />
+                  </Route>
+                </Route>
 
-          <Route path="/schedule" element={<Schedule/>} />
-          <Route path="/solicitations" element={<Requests/>} />
-          <Route path="/history"  element={<History/>} />
-        </Routes>
-      </BrowserRouter>
+                <Route element={<RoleRoute allowedRoles={['STUDENT', 'PROFESSOR']}/>}>
+                  <Route path="/schedule"      element={<Schedule/>} />
+                  <Route path="/solicitations" element={<Requests/>} />
+                  <Route path="/history"       element={<History/>}  />
+                </Route>
+              </Route>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </ToastProvider>
   );
 }

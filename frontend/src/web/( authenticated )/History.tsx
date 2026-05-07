@@ -10,12 +10,13 @@ import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppointmentsHistory.map.filter';
 import { FaClipboardQuestion } from 'react-icons/fa6';
 import { filterProfessorAppointmentsHistory } from '@frontend/utils/filters/filterProfessorAppointmentsHistory.util';
-import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter';
 import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
 import { PROFESSOR_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/professor/history.mock';
 import { STUDENT_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/student/history.mock';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -24,7 +25,11 @@ type FilterValue = {
 
 const History = ():React.JSX.Element => {
 
-  const role = LOGGED_USER_DATA.role === 'PROFESSOR' 
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to={'/'}/>;
+
+  const role = user.role === 'PROFESSOR' 
    ? 'PROFESSOR'
    : 'STUDENT'
   ;
@@ -115,7 +120,7 @@ const History = ():React.JSX.Element => {
   return (
     <Layout 
     selectedTab='HISTORY'
-    from={LOGGED_USER_DATA.role}
+    from={user.role}
     >
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>

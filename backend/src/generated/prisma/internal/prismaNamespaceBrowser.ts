@@ -54,13 +54,13 @@ export const ModelName = {
   User: 'User',
   Student: 'Student',
   Professor: 'Professor',
+  Manager: 'Manager',
   Room: 'Room',
   ProfessorAvailability: 'ProfessorAvailability',
   Appointment: 'Appointment',
   Solicitation: 'Solicitation',
   History: 'History',
-  Discipline: 'Discipline',
-  Manager: 'Manager'
+  Discipline: 'Discipline'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,12 +81,14 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  name: 'name',
   email: 'email',
   password: 'password',
   photo: 'photo',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  role: 'role'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -105,6 +107,13 @@ export const ProfessorScalarFieldEnum = {
 } as const
 
 export type ProfessorScalarFieldEnum = (typeof ProfessorScalarFieldEnum)[keyof typeof ProfessorScalarFieldEnum]
+
+
+export const ManagerScalarFieldEnum = {
+  userId: 'userId'
+} as const
+
+export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeof ManagerScalarFieldEnum]
 
 
 export const RoomScalarFieldEnum = {
@@ -183,14 +192,6 @@ export const DisciplineScalarFieldEnum = {
 } as const
 
 export type DisciplineScalarFieldEnum = (typeof DisciplineScalarFieldEnum)[keyof typeof DisciplineScalarFieldEnum]
-
-
-export const ManagerScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId'
-} as const
-
-export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeof ManagerScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -190,7 +190,7 @@ export type RoomGroupByOutputType = {
   name: string
   status: $Enums.RoomStatus
   registeredAt: Date
-  updatedAt: Date
+  updatedAt: Date | null
   deletedAt: Date | null
   _count: RoomCountAggregateOutputType | null
   _avg: RoomAvgAggregateOutputType | null
@@ -222,7 +222,7 @@ export type RoomWhereInput = {
   name?: Prisma.StringFilter<"Room"> | string
   status?: Prisma.EnumRoomStatusFilter<"Room"> | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFilter<"Room"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"Room"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Room"> | Date | string | null
   appointments?: Prisma.AppointmentListRelationFilter
 }
@@ -232,7 +232,7 @@ export type RoomOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
 }
@@ -245,7 +245,7 @@ export type RoomWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Room"> | string
   status?: Prisma.EnumRoomStatusFilter<"Room"> | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFilter<"Room"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"Room"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Room"> | Date | string | null
   appointments?: Prisma.AppointmentListRelationFilter
 }, "id">
@@ -255,7 +255,7 @@ export type RoomOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.RoomCountOrderByAggregateInput
   _avg?: Prisma.RoomAvgOrderByAggregateInput
@@ -272,7 +272,7 @@ export type RoomScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Room"> | string
   status?: Prisma.EnumRoomStatusWithAggregatesFilter<"Room"> | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeWithAggregatesFilter<"Room"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Room"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Room"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Room"> | Date | string | null
 }
 
@@ -280,7 +280,7 @@ export type RoomCreateInput = {
   name: string
   status: $Enums.RoomStatus
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   appointments?: Prisma.AppointmentCreateNestedManyWithoutRoomInput
 }
@@ -290,7 +290,7 @@ export type RoomUncheckedCreateInput = {
   name: string
   status: $Enums.RoomStatus
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutRoomInput
 }
@@ -299,7 +299,7 @@ export type RoomUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointments?: Prisma.AppointmentUpdateManyWithoutRoomNestedInput
 }
@@ -309,7 +309,7 @@ export type RoomUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutRoomNestedInput
 }
@@ -319,7 +319,7 @@ export type RoomCreateManyInput = {
   name: string
   status: $Enums.RoomStatus
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
 }
 
@@ -327,7 +327,7 @@ export type RoomUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -336,7 +336,7 @@ export type RoomUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -402,7 +402,7 @@ export type RoomCreateWithoutAppointmentsInput = {
   name: string
   status: $Enums.RoomStatus
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
 }
 
@@ -411,7 +411,7 @@ export type RoomUncheckedCreateWithoutAppointmentsInput = {
   name: string
   status: $Enums.RoomStatus
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
 }
 
@@ -435,7 +435,7 @@ export type RoomUpdateWithoutAppointmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -444,7 +444,7 @@ export type RoomUncheckedUpdateWithoutAppointmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -535,7 +535,7 @@ export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     status: $Enums.RoomStatus
     registeredAt: Date
-    updatedAt: Date
+    updatedAt: Date | null
     deletedAt: Date | null
   }, ExtArgs["result"]["room"]>
   composites: {}

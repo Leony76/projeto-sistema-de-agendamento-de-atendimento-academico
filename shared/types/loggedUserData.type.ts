@@ -1,4 +1,4 @@
-import { UserRole } from "../../backend/generated/prisma/enums";
+import { UserRole } from "@shared/types/userRole.type";
 import { Discipline } from "./disciplines.type";
 
 export type LoggedUserData = {
@@ -7,6 +7,6 @@ export type LoggedUserData = {
   email        : string; 
   photo?       : string;
   role         : UserRole;
-  ra?          : number;
+  ra?          : string;
   disciplines? : Discipline[];
 };

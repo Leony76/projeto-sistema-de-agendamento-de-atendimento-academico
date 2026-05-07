@@ -1,6 +1,3 @@
-import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
-import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
-import type { AppointmentStatus } from '@shared/types/appointmentStatus.type';
 import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
 import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import { formatTime } from '@frontend/utils/formats/formatTime.util';

@@ -1,6 +1,5 @@
 import { Button } from '@frontend/components/button'
 import { Input } from '@frontend/components/input'
-import type { UserRole } from '@shared/types/userRole.type'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
@@ -8,11 +7,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginFormData } from '@frontend/schemas/login.schema'
 import { useToast } from '@frontend/contexts/ToastContext'
 import { AuthService } from '@frontend/services/auth.service'
+import { useAuth } from '@frontend/hooks/useAuth.hook'
+import type { LoginResponse } from '@shared/types/loginResponse.type'
 
 const Login = (): React.JSX.Element => {
 
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
+
+  const [selectedTab, setSelectedTab] = useState<'STUDENT' | 'PROFESSOR/MANAGER'>('STUDENT');
 
   const { 
     register, 
@@ -22,47 +26,79 @@ const Login = (): React.JSX.Element => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      role       : 'STUDENT',
-      identifier : '',
+      role       : selectedTab,
+      ra         : '',
+      email      : '',  
       password   : '',
     }
   });
 
-  const handleTabChange = (tab: Exclude<UserRole, 'MANAGER'>): void => {
+  const handleTabChange = (tab: 'STUDENT' | 'PROFESSOR/MANAGER'): void => {
     setSelectedTab(tab);
     setValue('role', tab);
   };
 
-  const [selectedTab, setSelectedTab] = useState<Exclude<UserRole, 'MANAGER'>>('STUDENT');
 
   const INPUT_MAP = {
-    PROFESSOR: {
-      label: 'E-mail',
-      placeholder: 'Insira seu E-mail',
-      type: 'email',
-      maxLengh: 255,
+    'PROFESSOR/MANAGER': {
+      label       : 'E-mail',
+      placeholder : 'Insira seu E-mail',
+      type        : 'email',
+      maxLengh    : 255,
+      identifier  : 'email',
+      error       : (errors as any).email?.message,
     }, 
     STUDENT: {
-      label: 'RA',
-      placeholder: 'Insira seu RA',
-      type: 'number',
-      maxLengh: 11,
+      label       : 'RA',
+      placeholder : 'Insira seu RA',
+      type        : 'number',
+      maxLengh    : 11,
+      identifier  : 'ra',
+      error       : (errors as any).ra?.message,
     },
-  };
+  } as const;
 
   const handleLogin = async(data: LoginFormData): Promise<void> => {
     try {
+      switch (data.role) {
+        case 'PROFESSOR/MANAGER':{
+          const response: LoginResponse = await AuthService.login({
+            role     : 'PROFESSOR/MANAGER',
+            email    : data.email,
+            password : data.password,
+          });
 
+          login(
+            response.token,
+            response.user,
+          );
+          
+          navigate('/home');
+          break;
 
-      await AuthService.login({ 
-        email: data
-      });
+        } default: {
+
+          const response: LoginResponse = await AuthService.login({ 
+            role     : 'STUDENT',
+            ra       : data.ra,
+            password : data.password,
+          });
+
+          login(
+            response.token,
+            response.user,
+          );
+            
+          navigate('/home');
+          break;
+        }
+      }
     } catch (error:unknown) {
       if (error instanceof Error) {
-        toast('Houve um erro ao realizar o cadastro!: ' + error.message, 'error');
+        console.error(error);
+        toast(error.message, 'error');
       }
     }
-    navigate('/home');
   };
 
   return (
@@ -92,10 +128,10 @@ const Login = (): React.JSX.Element => {
           </button>
 
           <button 
-          onClick={() => handleTabChange('PROFESSOR')}
+          onClick={() => handleTabChange('PROFESSOR/MANAGER')}
           className={`
             cursor-pointer py-2 flex-1 border-b-2 
-            ${ selectedTab === 'PROFESSOR' 
+            ${ selectedTab === 'PROFESSOR/MANAGER' 
               ? 'bg-linear-to-t from-cyan-100 to-transparent border-cyan-500/20 text-cyan-300' 
               : 'border-cyan-500/50 text-cyan-500' 
             }
@@ -108,8 +144,8 @@ const Login = (): React.JSX.Element => {
           label={INPUT_MAP[selectedTab].label}
           placeholder={INPUT_MAP[selectedTab].placeholder}
           type={INPUT_MAP[selectedTab].type}
-          error={errors.identifier?.message} 
-          {...register('identifier', {
+          error={INPUT_MAP[selectedTab].error} 
+          {...register(INPUT_MAP[selectedTab].identifier, {
             setValueAs: (v) => v.trim(), 
           })}
         />

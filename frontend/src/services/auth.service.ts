@@ -1,23 +1,22 @@
-import type { RegisterUser } from '@shared/types/registerUser.type';
+import type { RegisterManager, RegisterProfessor, RegisterStudent } from '@shared/types/registerUser.type';
+import type { LoginProfessorOrManager, LoginStudent } from '@shared/types/loginUser.type';
+import type { LoginResponse } from '@shared/types/loginResponse.type';
 import { api } from './api.service';
-
-type LoginUser = {
-  email: string;
-  password: string;
-};
 
 export class AuthService {
 
-  static async register(data: RegisterUser) {
-    const response = await api.post('/register', data);
+  static async register(data: RegisterStudent | RegisterProfessor | RegisterManager) {
+
+    const response = await api.post('auth/register', data);
 
     return response.data;
   };
 
 
 
-  static async login(data: LoginUser) {
-    const response = await api.post('/login', data);
+  static async login(data: LoginStudent | LoginProfessorOrManager) {
+
+    const response = await api.post<LoginResponse>('auth/login', data);
 
     return response.data;
   };

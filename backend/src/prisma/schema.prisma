@@ -9,14 +9,17 @@ datasource db {
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
-  email         String     @unique
-  password      String
-  photo         String?
+  id           Int        @id @default(autoincrement())
+  name         String
+  email        String     @unique
+  password     String
+  photo        String?
   
-  createdAt     DateTime   @default(now()) @map("created_at")
-  updatedAt     DateTime   @updatedAt      @map("updated_at")
-  deletedAt     DateTime?  @map("deleted_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime?   @updatedAt      @map("updated_at")
+  deletedAt    DateTime?  @map("deleted_at")
+
+  role         UserRole   @map("user_role")  @default(STUDENT)  
 
   student      Student?
   professor    Professor?
@@ -26,8 +29,8 @@ model User {
 }
 
 model Student {
-  userId  Int  @unique @map("user_id")     
-  ra      Int  @unique
+  userId  Int    @unique @map("user_id")     
+  ra      String @unique
 
   user    User @relation(fields: [userId], references: [id])
 
@@ -49,13 +52,21 @@ model Professor {
   @@map("professors")
 }
 
+model Manager {
+  userId  Int  @unique      
+  user    User @relation(fields: [userId], references: [id])
+  
+  @@map("managers")
+}
+
+
 model Room {
   id           Int        @id @default(autoincrement())
   name         String
   status       RoomStatus
 
   registeredAt DateTime  @default(now())  @map("registered_at")
-  updatedAt    DateTime   @updatedAt       @map("updated_at")
+  updatedAt    DateTime?   @updatedAt       @map("updated_at")
   deletedAt    DateTime?  @map("deleted_at")               
 
   appointments Appointment[]
@@ -67,7 +78,7 @@ model ProfessorAvailability {
   id           Int   @id @default(autoincrement())
 
   registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  updatedAt     DateTime?   @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
   startTime    Int
@@ -110,7 +121,7 @@ model Solicitation {
   dateTime   DateTime
 
   registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  updatedAt     DateTime?   @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
   status     SolicitationStatus  @default(UNCONFIRMED)
@@ -128,7 +139,7 @@ model History {
   id Int        @id        @default(autoincrement())
 
   registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  updatedAt     DateTime?  @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
   appointmentId  Int           @unique
@@ -142,7 +153,7 @@ model Discipline {
   name         String
 
   registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime   @updatedAt      @map("updated_at")
+  updatedAt     DateTime?  @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
   professorId  Int 
@@ -150,16 +161,6 @@ model Discipline {
 
   @@map("disciplines")
 }
-
-model Manager {
-  id      Int  @id @default(autoincrement())
-  userId  Int  @unique      
-  user    User @relation(fields: [userId], references: [id])
-  
-  @@map("managers")
-}
-
-
 
 enum UserRole {
   STUDENT

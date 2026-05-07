@@ -4,7 +4,7 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { registerSchema, type RegisterFormData } from '@frontend/schemas/register.schema';
 import { AuthService } from '@frontend/services/auth.service';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { RegisterUser } from '@shared/types/registerUser.type';
+import type { RegisterStudent, RegisterUser } from '@shared/types/registerUser.type';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -30,7 +30,11 @@ const Register = (): React.JSX.Element => {
 
   const handleRegister = async( data: RegisterFormData ): Promise<void> => {
     try {
-      const user: RegisterUser = { ...data };
+      const user: RegisterStudent = { 
+        ...data, 
+        ra   : data.ra,
+        role : 'STUDENT' 
+      };
 
       await AuthService.register(user);
 

@@ -13,13 +13,33 @@ export class AuthController {
 
 
   static async login(req: Request, res: Response) {
-    const { email, password } = req.body;
+    
+    const { role, password } = req.body;
 
-    const result = await AuthService.login(
-      email,
-      password
-    );
+    switch (role as 'STUDENT' | 'PROFESSOR/MANAGER') {
+      case 'STUDENT': {
+        const { ra } = req.body;
 
-    return res.status(302).json(result);
+        const result = await AuthService.login({
+          role,
+          ra,
+          password,
+        });
+
+        return res.status(200).json(result);
+
+      } case 'PROFESSOR/MANAGER' : {
+
+        const { email } = req.body;
+
+        const result = await AuthService.login({
+          role,
+          email,
+          password,
+        });
+
+        return res.status(200).json(result);
+      }
+    }
   }
 }

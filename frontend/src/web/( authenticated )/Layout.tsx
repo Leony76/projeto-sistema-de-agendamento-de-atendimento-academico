@@ -1,12 +1,14 @@
 import type { UserRole } from '@shared/types/userRole.type';
-import React, { type JSX } from 'react'
+import React, { useState, type JSX } from 'react'
 import { AiFillSchedule } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
 import { FaExclamation, FaHistory } from 'react-icons/fa';
 import { IoHome } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 import ExpansibleImage from '@frontend/components/misc/ExpansibleImage';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Modal } from '@frontend/components/modal';
 
 type SystemTabs = 'HOME' | 'REQUESTS' | 'TO_SCHEDULE' | 'HISTORY';
 type AsideTab = {
@@ -23,6 +25,9 @@ type Props = {
 };
 
 const Layout = (props:Props): React.JSX.Element => {
+
+  const { user, logout } = useAuth();
+  const [ logoutConfirm, setLogoutConfirm ] = useState<boolean>(false);
 
   const ASIDE_TABS_RENDER: Record<UserRole, AsideTab[]> = {
     STUDENT: [
@@ -51,12 +56,12 @@ const Layout = (props:Props): React.JSX.Element => {
     STUDENT: {
       label: 'Aluno:',
       secondaryLabel: 'RA:',
-      secondaryLabelValue: LOGGED_USER_DATA.ra?.toString(),
+      secondaryLabelValue: user?.role === 'STUDENT' ? user.ra : '',
     },
     PROFESSOR: {
       label: 'Professor:',
       secondaryLabel: 'Disciplina(s):',
-      secondaryLabelValue: formatter.format(LOGGED_USER_DATA.disciplines?.map((discipline => discipline.name)) ?? ['']),
+      secondaryLabelValue: user?.role === 'PROFESSOR' ? formatter.format(user.disciplines?.map((discipline) => discipline)) : [],
     },
     MANAGER: {
       label: 'Gestor:',
@@ -64,9 +69,27 @@ const Layout = (props:Props): React.JSX.Element => {
   } as const;
 
   const config = HEADER_INFOS_FOR_ROLE_CONFIG[props.from];
+  
+  if (!user) return <Navigate to={'/'}/>
+
+  const profilePhoto = (user.photo === '' || user.photo === null)
+    ? 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original'
+    : user?.photo
+  ;
+
+  console.log(user?.photo)
 
   return (
     <div className='flex flex-col h-screen'>
+
+      <Modal.ConfirmAction
+        title='Sair do sistema'
+        message='Tem certeza em sair do sistema?'
+        onAccept={logout}
+        onCloseRequest={() => setLogoutConfirm(false)}
+        visible={logoutConfirm}
+      />
+
       <header className='flex justify-between items-center bg-cyan-100/50 py-2 px-3 border-b border-b-cyan-300'>
         <h3 className='text-cyan-600 text-lg font-semibold'>
           Sistema de Agendamento Acadêmico Online
@@ -77,7 +100,7 @@ const Layout = (props:Props): React.JSX.Element => {
             { config.label } {''} 
 
             <span className='text-cyan-400 font-normal'>
-              { LOGGED_USER_DATA.name }
+              { user?.name }
             </span>
           </span>
 
@@ -98,8 +121,8 @@ const Layout = (props:Props): React.JSX.Element => {
           <ExpansibleImage
             imagePaddingDisabled
             image={{
-              name : LOGGED_USER_DATA.name,
-              uri  : LOGGED_USER_DATA.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
+              name : user?.name,
+              uri  : profilePhoto,
               size : 'w-8 h-8',
             }}
           />
@@ -124,13 +147,13 @@ const Layout = (props:Props): React.JSX.Element => {
             </Link>
           ))}
 
-          <Link
-          to={'/'}
-          className={`flex mt-auto justify-center hover items-center py-1 gap-1 text-red-500 hover:bg-red-100/50`}
+          <button
+          className={`flex mt-auto cursor-pointer justify-center hover items-center py-1 gap-1 text-red-500 hover:bg-red-100/50`}
+          onClick={() => setLogoutConfirm(true)}
           >
             <BiLogOut size={20}/>
             Sair
-          </Link>
+          </button>
         </aside>
 
         <main className='p-3 h-full min-h-0 overflow-hidden'>

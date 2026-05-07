@@ -57,6 +57,11 @@ export type Student = Prisma.StudentModel
  */
 export type Professor = Prisma.ProfessorModel
 /**
+ * Model Manager
+ * 
+ */
+export type Manager = Prisma.ManagerModel
+/**
  * Model Room
  * 
  */
@@ -86,8 +91,3 @@ export type History = Prisma.HistoryModel
  * 
  */
 export type Discipline = Prisma.DisciplineModel
-/**
- * Model Manager
- * 
- */
-export type Manager = Prisma.ManagerModel

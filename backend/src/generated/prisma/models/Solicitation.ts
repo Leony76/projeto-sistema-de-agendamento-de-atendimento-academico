@@ -209,7 +209,7 @@ export type SolicitationGroupByOutputType = {
   id: number
   dateTime: Date
   registeredAt: Date
-  updatedAt: Date
+  updatedAt: Date | null
   deletedAt: Date | null
   status: $Enums.SolicitationStatus
   studentId: number
@@ -243,7 +243,7 @@ export type SolicitationWhereInput = {
   id?: Prisma.IntFilter<"Solicitation"> | number
   dateTime?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
   registeredAt?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"Solicitation"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Solicitation"> | Date | string | null
   status?: Prisma.EnumSolicitationStatusFilter<"Solicitation"> | $Enums.SolicitationStatus
   studentId?: Prisma.IntFilter<"Solicitation"> | number
@@ -256,7 +256,7 @@ export type SolicitationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   dateTime?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -272,7 +272,7 @@ export type SolicitationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SolicitationWhereInput | Prisma.SolicitationWhereInput[]
   dateTime?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
   registeredAt?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"Solicitation"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Solicitation"> | Date | string | null
   status?: Prisma.EnumSolicitationStatusFilter<"Solicitation"> | $Enums.SolicitationStatus
   studentId?: Prisma.IntFilter<"Solicitation"> | number
@@ -285,7 +285,7 @@ export type SolicitationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   dateTime?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -304,7 +304,7 @@ export type SolicitationScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Solicitation"> | number
   dateTime?: Prisma.DateTimeWithAggregatesFilter<"Solicitation"> | Date | string
   registeredAt?: Prisma.DateTimeWithAggregatesFilter<"Solicitation"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Solicitation"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Solicitation"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Solicitation"> | Date | string | null
   status?: Prisma.EnumSolicitationStatusWithAggregatesFilter<"Solicitation"> | $Enums.SolicitationStatus
   studentId?: Prisma.IntWithAggregatesFilter<"Solicitation"> | number
@@ -314,7 +314,7 @@ export type SolicitationScalarWhereWithAggregatesInput = {
 export type SolicitationCreateInput = {
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   student: Prisma.StudentCreateNestedOneWithoutSolicitationsInput
@@ -325,7 +325,7 @@ export type SolicitationUncheckedCreateInput = {
   id?: number
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   studentId: number
@@ -335,7 +335,7 @@ export type SolicitationUncheckedCreateInput = {
 export type SolicitationUpdateInput = {
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   student?: Prisma.StudentUpdateOneRequiredWithoutSolicitationsNestedInput
@@ -346,7 +346,7 @@ export type SolicitationUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -357,7 +357,7 @@ export type SolicitationCreateManyInput = {
   id?: number
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   studentId: number
@@ -367,7 +367,7 @@ export type SolicitationCreateManyInput = {
 export type SolicitationUpdateManyMutationInput = {
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
 }
@@ -376,7 +376,7 @@ export type SolicitationUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -529,7 +529,7 @@ export type EnumSolicitationStatusFieldUpdateOperationsInput = {
 export type SolicitationCreateWithoutStudentInput = {
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   professor: Prisma.ProfessorCreateNestedOneWithoutSolicitationsInput
@@ -539,7 +539,7 @@ export type SolicitationUncheckedCreateWithoutStudentInput = {
   id?: number
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   professorId: number
@@ -578,7 +578,7 @@ export type SolicitationScalarWhereInput = {
   id?: Prisma.IntFilter<"Solicitation"> | number
   dateTime?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
   registeredAt?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Solicitation"> | Date | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"Solicitation"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Solicitation"> | Date | string | null
   status?: Prisma.EnumSolicitationStatusFilter<"Solicitation"> | $Enums.SolicitationStatus
   studentId?: Prisma.IntFilter<"Solicitation"> | number
@@ -588,7 +588,7 @@ export type SolicitationScalarWhereInput = {
 export type SolicitationCreateWithoutProfessorInput = {
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   student: Prisma.StudentCreateNestedOneWithoutSolicitationsInput
@@ -598,7 +598,7 @@ export type SolicitationUncheckedCreateWithoutProfessorInput = {
   id?: number
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   studentId: number
@@ -634,7 +634,7 @@ export type SolicitationCreateManyStudentInput = {
   id?: number
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   professorId: number
@@ -643,7 +643,7 @@ export type SolicitationCreateManyStudentInput = {
 export type SolicitationUpdateWithoutStudentInput = {
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   professor?: Prisma.ProfessorUpdateOneRequiredWithoutSolicitationsNestedInput
@@ -653,7 +653,7 @@ export type SolicitationUncheckedUpdateWithoutStudentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -663,7 +663,7 @@ export type SolicitationUncheckedUpdateManyWithoutStudentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -673,7 +673,7 @@ export type SolicitationCreateManyProfessorInput = {
   id?: number
   dateTime: Date | string
   registeredAt?: Date | string
-  updatedAt?: Date | string
+  updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   status?: $Enums.SolicitationStatus
   studentId: number
@@ -682,7 +682,7 @@ export type SolicitationCreateManyProfessorInput = {
 export type SolicitationUpdateWithoutProfessorInput = {
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   student?: Prisma.StudentUpdateOneRequiredWithoutSolicitationsNestedInput
@@ -692,7 +692,7 @@ export type SolicitationUncheckedUpdateWithoutProfessorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -702,7 +702,7 @@ export type SolicitationUncheckedUpdateManyWithoutProfessorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   dateTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumSolicitationStatusFieldUpdateOperationsInput | $Enums.SolicitationStatus
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -784,7 +784,7 @@ export type $SolicitationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     id: number
     dateTime: Date
     registeredAt: Date
-    updatedAt: Date
+    updatedAt: Date | null
     deletedAt: Date | null
     status: $Enums.SolicitationStatus
     studentId: number

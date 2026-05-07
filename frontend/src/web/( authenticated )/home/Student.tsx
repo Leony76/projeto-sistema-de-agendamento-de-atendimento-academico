@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
-import { FaCalendarAlt, FaFilter, FaRegClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaFilter, FaHistory, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
@@ -40,7 +40,7 @@ const Student = (): React.JSX.Element => {
   const BRIEF_RENDER = [
     { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: briefInfos?.appointmentsMade     },
     { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: briefInfos?.pendingSolicitations! },
-    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: briefInfos?.nextAppointmentDateTime ? formatDateTime(briefInfos?.nextAppointmentDateTime) : '??'},
+    { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: briefInfos?.nextAppointmentDateTime ? formatDateTime(briefInfos?.nextAppointmentDateTime) : '--/--/--, --:--'},
   ];
 
   const noContent = noContentFound(
@@ -167,7 +167,7 @@ const Student = (): React.JSX.Element => {
               Último agendamento
             </h2>
             
-            { lastAppointment &&
+            { lastAppointment ? (
               <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
                 <h3 className='font-bold text-orange-400 text-sm'>
                   { formatDateTime(lastAppointment.dateTime) }
@@ -187,7 +187,14 @@ const Student = (): React.JSX.Element => {
                   </label>
                 </div>
               </div>
-            }
+            ) : (
+              <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
+                <NoContent 
+                  Icon={() => <FaHistory />}
+                  message='Nenhum agendamento realizado!'
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

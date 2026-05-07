@@ -387,13 +387,13 @@ export const ModelName = {
   User: 'User',
   Student: 'Student',
   Professor: 'Professor',
+  Manager: 'Manager',
   Room: 'Room',
   ProfessorAvailability: 'ProfessorAvailability',
   Appointment: 'Appointment',
   Solicitation: 'Solicitation',
   History: 'History',
-  Discipline: 'Discipline',
-  Manager: 'Manager'
+  Discipline: 'Discipline'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "professor" | "room" | "professorAvailability" | "appointment" | "solicitation" | "history" | "discipline" | "manager"
+    modelProps: "user" | "student" | "professor" | "manager" | "room" | "professorAvailability" | "appointment" | "solicitation" | "history" | "discipline"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -632,6 +632,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProfessorCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProfessorCountAggregateOutputType> | number
+        }
+      }
+    }
+    Manager: {
+      payload: Prisma.$ManagerPayload<ExtArgs>
+      fields: Prisma.ManagerFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ManagerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ManagerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
+        }
+        findFirst: {
+          args: Prisma.ManagerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ManagerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
+        }
+        findMany: {
+          args: Prisma.ManagerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>[]
+        }
+        create: {
+          args: Prisma.ManagerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
+        }
+        createMany: {
+          args: Prisma.ManagerCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ManagerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>[]
+        }
+        delete: {
+          args: Prisma.ManagerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
+        }
+        update: {
+          args: Prisma.ManagerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
+        }
+        deleteMany: {
+          args: Prisma.ManagerDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ManagerUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ManagerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>[]
+        }
+        upsert: {
+          args: Prisma.ManagerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
+        }
+        aggregate: {
+          args: Prisma.ManagerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateManager>
+        }
+        groupBy: {
+          args: Prisma.ManagerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ManagerGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ManagerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ManagerCountAggregateOutputType> | number
         }
       }
     }
@@ -1079,80 +1153,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Manager: {
-      payload: Prisma.$ManagerPayload<ExtArgs>
-      fields: Prisma.ManagerFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ManagerFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ManagerFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
-        }
-        findFirst: {
-          args: Prisma.ManagerFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ManagerFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
-        }
-        findMany: {
-          args: Prisma.ManagerFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>[]
-        }
-        create: {
-          args: Prisma.ManagerCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
-        }
-        createMany: {
-          args: Prisma.ManagerCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ManagerCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>[]
-        }
-        delete: {
-          args: Prisma.ManagerDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
-        }
-        update: {
-          args: Prisma.ManagerUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
-        }
-        deleteMany: {
-          args: Prisma.ManagerDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ManagerUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ManagerUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>[]
-        }
-        upsert: {
-          args: Prisma.ManagerUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ManagerPayload>
-        }
-        aggregate: {
-          args: Prisma.ManagerAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateManager>
-        }
-        groupBy: {
-          args: Prisma.ManagerGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ManagerGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ManagerCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ManagerCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -1194,12 +1194,14 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  name: 'name',
   email: 'email',
   password: 'password',
   photo: 'photo',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  role: 'role'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -1218,6 +1220,13 @@ export const ProfessorScalarFieldEnum = {
 } as const
 
 export type ProfessorScalarFieldEnum = (typeof ProfessorScalarFieldEnum)[keyof typeof ProfessorScalarFieldEnum]
+
+
+export const ManagerScalarFieldEnum = {
+  userId: 'userId'
+} as const
+
+export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeof ManagerScalarFieldEnum]
 
 
 export const RoomScalarFieldEnum = {
@@ -1298,14 +1307,6 @@ export const DisciplineScalarFieldEnum = {
 export type DisciplineScalarFieldEnum = (typeof DisciplineScalarFieldEnum)[keyof typeof DisciplineScalarFieldEnum]
 
 
-export const ManagerScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId'
-} as const
-
-export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeof ManagerScalarFieldEnum]
-
-
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1375,6 +1376,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole'
+ */
+export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole[]'
+ */
+export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
     
 
 
@@ -1546,13 +1561,13 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   student?: Prisma.StudentOmit
   professor?: Prisma.ProfessorOmit
+  manager?: Prisma.ManagerOmit
   room?: Prisma.RoomOmit
   professorAvailability?: Prisma.ProfessorAvailabilityOmit
   appointment?: Prisma.AppointmentOmit
   solicitation?: Prisma.SolicitationOmit
   history?: Prisma.HistoryOmit
   discipline?: Prisma.DisciplineOmit
-  manager?: Prisma.ManagerOmit
 }
 
 /* Types for Logging */
