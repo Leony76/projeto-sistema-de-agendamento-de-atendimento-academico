@@ -3,16 +3,14 @@ import { AuthService } from './auth.service';
 
 export class AuthController {
 
-  static async register(req: Request, res: Response) {
+  public static async register(req: Request, res: Response) {
 
     const user = await AuthService.register(req.body);
 
     return res.status(201).json(user);
   }
 
-
-
-  static async login(req: Request, res: Response) {
+  public static async login(req: Request, res: Response) {
     
     const { role, password } = req.body;
 

@@ -11,7 +11,7 @@ import { AuthenticatedRoute } from './routes/AuthenticatedRoute';
 import { RoleRoute } from './routes/RoleRoute';
 import { AuthProvider } from './contexts/AuthContext';
 
-function App() {
+function App(): React.JSX.Element {
   return (
     <ToastProvider>
       <AuthProvider>

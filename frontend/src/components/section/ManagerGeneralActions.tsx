@@ -13,7 +13,7 @@ type Props = {
 const ManagerGeneralActions = (props:Props): React.JSX.Element => {
 
   return (
-    <div className='flex flex-col min-h-0 items-center p-2 gap-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
+    <div className='flex flex-col min-h-0 max-h-35 items-center p-2 gap-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
       <h3 className='font-semibold text-lg text-cyan-500'>
         Ações gerais
       </h3>

@@ -4,17 +4,16 @@ import type React from 'react';
 import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaHouseUser, FaPercent } from 'react-icons/fa';
 import { MdMeetingRoom } from 'react-icons/md';
 import NoContent from '../misc/NoContent';
-import { useNavigate } from 'react-router-dom';
+import { FaClipboardQuestion } from 'react-icons/fa6';
 
-type Props = Reports & {
+type Props = {
+  reports: Reports | null,
   onBack: () => void;
 };
 
 const ManagerReports = (props:Props): React.JSX.Element => {
 
-  const navigate = useNavigate();
-
-  const ListItem = (props : {label: string, value: string | number}):React.JSX.Element => {
+  const ListItem = (props: {label: string, value: string | number}):React.JSX.Element => {
     return (
       <li className='text-orange-400 font-semibold ml-1'>
         { props.label }: {''}
@@ -25,40 +24,11 @@ const ManagerReports = (props:Props): React.JSX.Element => {
     );
   };
 
-  const reportsRenderMap = {
-    appointments: [
-      { label: 'Totais'      , value: props.appointments.count     },
-      { label: 'Feitos'      , value: props.appointments.done      },
-      { label: 'Cancelados  ', value: props.appointments.canceled  },
-    ],
-    solicitations: [
-      { label: 'Totais'      , value: props.solicitations.count    },
-      { label: 'Aceitos'     , value: props.solicitations.accepted },
-      { label: 'Rejeitados  ', value: props.solicitations.rejected },
-    ],
-    rooms: [
-      { label: 'Reservados'  , value: props.rooms.reserved  },
-      { label: 'Disponíveis' , value: props.rooms.available },
-    ],
-    registered: [
-      { label: 'Alunos'      , value: props.registered.students   },
-      { label: 'Professores' , value: props.registered.professors },
-      { label: 'Gestores'    , value: props.registered.managers   },
-    ],
-    rate: [
-      { label: 'Cancelamento de atendimentos'      , value: props.rate.appointments.cancellation },
-      { label: 'Desistência de agendamento'        , value: props.rate.appointments.withdrawal   },
-      { label: 'Comparecimento a agendamento'      , value: props.rate.appointments.attendance   },
-      { label: 'Aceitação a solicitação de alunos' , value: props.rate.solicitations.acceptance  },
-      { label: 'Rejeição a solicitação de alunos'  , value: props.rate.solicitations.rejection   },
-    ],
-  } as const;
-
-  if (!props) return (
+  if (!props.reports) return (
     <div className='relative flex flex-col gap-2 items-center p-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
       <button 
-      onClick={() => navigate('/home')}
-      className='absolute top-4 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'>
+      onClick={props.onBack}
+      className='absolute top-3 left-3 text-cyan-500 hover:brightness-95 active:brightness-90 cursor-pointer'>
         <FaArrowCircleLeft size={20}/>
       </button>
       
@@ -66,11 +36,43 @@ const ManagerReports = (props:Props): React.JSX.Element => {
         Relatórios
       </h3>
 
-      <div className='flex flex-col flex-1 min-h-0 w-full border gap-1 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
-        <NoContent message='Não foi possível carregar os relatórios do sistema!'/>
+      <div className='flex flex-col flex-1 min-h-0 w-full border gap-1 overflow-auto bg-white p-3 rounded-xl border-cyan-300'>
+        <NoContent 
+          Icon={() => <FaClipboardQuestion size={20}/>}
+          message='Não foi possível carregar os relatórios do sistema!'
+        />
       </div>
     </div> 
   );
+
+  const reportsRenderMap = {
+    appointments: [
+      { label: 'Totais'      , value: props.reports.appointments.count     },
+      { label: 'Feitos'      , value: props.reports.appointments.done      },
+      { label: 'Cancelados  ', value: props.reports.appointments.canceled  },
+    ],
+    solicitations: [
+      { label: 'Totais'      , value: props.reports.solicitations.count    },
+      { label: 'Aceitos'     , value: props.reports.solicitations.accepted },
+      { label: 'Rejeitados  ', value: props.reports.solicitations.rejected },
+    ],
+    rooms: [
+      { label: 'Reservados'  , value: props.reports.rooms.reserved  },
+      { label: 'Disponíveis' , value: props.reports.rooms.available },
+    ],
+    registered: [
+      { label: 'Alunos'      , value: props.reports.registered.students   },
+      { label: 'Professores' , value: props.reports.registered.professors },
+      { label: 'Gestores'    , value: props.reports.registered.managers   },
+    ],
+    rate: [
+      { label: 'Cancelamento de atendimentos'      , value: props.reports.rate.appointments.cancellation },
+      { label: 'Desistência de agendamento'        , value: props.reports.rate.appointments.withdrawal   },
+      { label: 'Comparecimento a agendamento'      , value: props.reports.rate.appointments.attendance   },
+      { label: 'Aceitação a solicitação de alunos' , value: props.reports.rate.solicitations.acceptance  },
+      { label: 'Rejeição a solicitação de alunos'  , value: props.reports.rate.solicitations.rejection   },
+    ],
+  } as const;
 
   return (
     <div className='relative flex flex-col gap-2 items-center p-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>

@@ -24,15 +24,19 @@ import type { Reports } from '@shared/types/reports.type';
 import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
-import { SYSTEM_GENERAL_METRICS } from '@frontend/constants/mocks/dto/manager/systemGeneralMetrics.mock';
 import type { SystemGeneralMetrics } from '@shared/types/systemGeneralMetrics.type';
 import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@shared/types/registeredUsers.type';
-import { REGISTERED_PROFESSORS } from '@frontend/constants/mocks/dto/manager/registeredProfessor.mock';
-import { REGISTERED_STUDENTS } from '@frontend/constants/mocks/dto/manager/registeredStudents.mock';
-import { REGISTERED_MANAGERS } from '@frontend/constants/mocks/dto/manager/registeredManagers.mock';
-import { ROOMS_DETAILS } from '@frontend/constants/mocks/dto/manager/rooms.mock';
 import type { Room } from '@shared/types/room.type';
-import { SYSTEM_REPORTS } from '@frontend/constants/mocks/dto/manager/systemReports.mock';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { DisciplineService } from '@frontend/services/discipline.service';
+import type { SelectOption } from '@shared/types/selectOptions.type';
+// import { SYSTEM_GENERAL_METRICS } from '@frontend/constants/mocks/dto/manager/systemGeneralMetrics.mock';
+// import { REGISTERED_PROFESSORS } from '@frontend/constants/mocks/dto/manager/registeredProfessor.mock';
+// import { REGISTERED_STUDENTS } from '@frontend/constants/mocks/dto/manager/registeredStudents.mock';
+// import { REGISTERED_MANAGERS } from '@frontend/constants/mocks/dto/manager/registeredManagers.mock';
+// import { ROOMS_DETAILS } from '@frontend/constants/mocks/dto/manager/rooms.mock';
+// import { SYSTEM_REPORTS } from '@frontend/constants/mocks/dto/manager/systemReports.mock';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -41,11 +45,11 @@ type FilterValue = {
 };
 
 const Manager = (): React.JSX.Element => {
-    
+  
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
-  
   const [searchValue, setSearchValue] = useState<string>('');
   
   const [filterValue, setFilterValue] = useState<FilterValue>({
@@ -63,16 +67,17 @@ const Manager = (): React.JSX.Element => {
   const [ registeredManagers,   setRegisteredManagers ] = useState<RegisteredManager[]>([]);
 
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [ newProfessorDisciplinesOptions, setNewProfessorDisciplinesOptions ] = useState<SelectOption[]>([]);
   
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   const [generalActions, setGeneralActions] = useState<ManagerGeneralActions | null>(null);
   const [userRoleList, setUserRoleList] = useState<UserRole>('STUDENT');
 
   const BRIEF_RENDER = [
-    { icon: <GrSchedule className='text-cyan-500' size={24}/>          , label: 'Agendamentos' , value: systemGeneralMetrics?.appointments ?? '?'  },
-    { icon: <FaRegClock className='text-cyan-500' size={28}/>          , label: 'Solicitações' , value: systemGeneralMetrics?.solicitations ?? '?' },
-    { icon: <PiStudentBold className='text-cyan-500' size={28}/>       , label: 'Alunos'       , value: systemGeneralMetrics?.student ?? '?'       },
-    { icon: <FaChalkboardTeacher className='text-cyan-500' size={28}/> , label: 'Professores'  , value: systemGeneralMetrics?.professors ?? '?'    },
+    { icon: <GrSchedule className='text-cyan-500' size={24}/>          , label: 'Agendamentos' , value: systemGeneralMetrics?.appointments ?? '0'  },
+    { icon: <FaRegClock className='text-cyan-500' size={28}/>          , label: 'Solicitações' , value: systemGeneralMetrics?.solicitations ?? '0' },
+    { icon: <PiStudentBold className='text-cyan-500' size={28}/>       , label: 'Alunos'       , value: systemGeneralMetrics?.student ?? '0'       },
+    { icon: <FaChalkboardTeacher className='text-cyan-500' size={28}/> , label: 'Professores'  , value: systemGeneralMetrics?.professors ?? '0'    },
   ];
 
   const filteredUsersListDataByRoleMap = {
@@ -154,23 +159,18 @@ const Manager = (): React.JSX.Element => {
   useEffect(() => {
     (async() => {
       try {
-        const [ response1, response2, response3, response4, response5, response6 ] = [
-          SYSTEM_GENERAL_METRICS,
-          REGISTERED_STUDENTS,
-          REGISTERED_PROFESSORS,
-          REGISTERED_MANAGERS,
-          ROOMS_DETAILS,
-          SYSTEM_REPORTS,
-        ]; 
+        const [ disciplineNames ] = await Promise.all([
+          DisciplineService.getUnboundNames(),
+        ]);
 
-        setSystemGeneralMetrics(response1);
-        setRegisteredProfessors(response3);
-        setRegisteredStudents(response2);
-        setRegisteredManagers(response4);
-        setSystemReports(response6);
-        setRooms(response5);
+        setNewProfessorDisciplinesOptions(
+          disciplineNames.map((name) => ({
+            label: name,
+            value: name,
+          })),
+        );
       } catch (error:unknown) {
-        if (error instanceof Error) console.error(error.message);
+        toast(apiError(error), 'error');
       } 
     })();
   },[]);
@@ -192,7 +192,7 @@ const Manager = (): React.JSX.Element => {
                 label={item.label}
                 value={item.value}
               />  
-            )) }
+            ))}
           </div>
 
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -255,17 +255,18 @@ const Manager = (): React.JSX.Element => {
         
         <div className={`
           grid gap-y-3 min-h-0
-          ${ (generalActions) ? 'grid-rows-1' : 'grid-rows-[300px_140px]' }
+          ${ (generalActions) ? 'grid-rows-1' : 'grid-rows-[300px_1fr]' }
         `}>
           { generalActions === 'USER_DETAILS' ? (
             <Outlet />
           ) : generalActions === 'NEW_USER' ? (
             <Form.NewUser
               onBack={() => setGeneralActions(null)}
+              newProfessorDisciplines={newProfessorDisciplinesOptions}
             />
           ) : generalActions === 'REPORTS' ? (
             <Section.ManagerReports
-              {...systemReports!}
+              reports={systemReports}
               onBack={() => setGeneralActions(null)}
             />
           ) : generalActions === 'DELETE_USERS' ? (

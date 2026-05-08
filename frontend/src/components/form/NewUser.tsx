@@ -6,17 +6,23 @@ import { useForm, type FieldErrors } from 'react-hook-form';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Select } from '../select';
-import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
 import { TiInfoLarge } from 'react-icons/ti';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { SelectOption } from '@shared/types/selectOptions.type';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { ManagerService } from '@frontend/services/manager.service';
+import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 
 type Props = {
-  onBack : () => void;
+  onBack                  : () => void;
+  newProfessorDisciplines : SelectOption[];
 };
 
 const NewUser = (props:Props): React.JSX.Element => {
 
   const [newUserRole, setNewUserRole] = useState<UserRole>('STUDENT');
+  const { toast } = useToast();
 
   const { 
     register,
@@ -28,17 +34,25 @@ const NewUser = (props:Props): React.JSX.Element => {
   } = useForm<NewUserFormData>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
-      role  : newUserRole,
-      email : '',
-      name  : '',
-      ra    : '',
+      role        : newUserRole,
+      disciplines : [],
+      email       : '',
+      name        : '',
+      ra          : '',
     },
   });
 
   const handleNewUser = async(data: NewUserFormData): Promise<void> => {
-    alert('Cadastro foi um sucesso!')
-    console.log(data);
-    reset();
+    try {
+      await ManagerService.registerNewUser(data);
+      
+      toast(`Cadastro de ${USER_ROLES[newUserRole].toLowerCase()} realizado com sucesso!`);
+      
+      props.onBack();
+      reset();
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    }
   };
 
   useEffect(() => {
@@ -122,15 +136,16 @@ const NewUser = (props:Props): React.JSX.Element => {
       { newUserRole === 'PROFESSOR' &&
         <div className='w-full'>
           <Select.Default
-            optionsSchema='DISCIPLINES'
-            value={watch('discipline')}
-            gridConfig='grid-cols-3' 
+            multipleOptions
+            value={watch('disciplines')}
+            externalOptionsSchema={props.newProfessorDisciplines}
+            gridConfig='grid-cols-2' 
             label='Disciplina do professor'
             selectedOptionPlaceholderShow
             placeholder='Selecione a disciplina'
-            error={(errors as FieldErrors<NewProfessorFormData>).discipline?.message}
+            error={(errors as FieldErrors<NewProfessorFormData>).disciplines?.message}
             onSelect={(value) => {
-              setValue('discipline', value as keyof typeof DISCIPLINES_VALUE_MAP, {
+              setValue('disciplines', value as string[], {
                 shouldValidate: true,
                 shouldDirty: true,
               });

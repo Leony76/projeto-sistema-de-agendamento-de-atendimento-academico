@@ -9,6 +9,7 @@ import { useToast } from '@frontend/contexts/ToastContext'
 import { AuthService } from '@frontend/services/auth.service'
 import { useAuth } from '@frontend/hooks/useAuth.hook'
 import type { LoginResponse } from '@shared/types/loginResponse.type'
+import { apiError } from '@frontend/utils/misc/apiError.util'
 
 const Login = (): React.JSX.Element => {
 
@@ -94,10 +95,7 @@ const Login = (): React.JSX.Element => {
         }
       }
     } catch (error:unknown) {
-      if (error instanceof Error) {
-        console.error(error);
-        toast(error.message, 'error');
-      }
+      toast(apiError(error), 'error');
     }
   };
 

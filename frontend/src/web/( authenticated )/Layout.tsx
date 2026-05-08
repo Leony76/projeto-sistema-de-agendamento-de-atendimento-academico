@@ -5,7 +5,6 @@ import { BiLogOut } from 'react-icons/bi';
 import { FaExclamation, FaHistory } from 'react-icons/fa';
 import { IoHome } from 'react-icons/io5';
 import { Link, Navigate } from 'react-router-dom';
-import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
 import ExpansibleImage from '@frontend/components/misc/ExpansibleImage';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Modal } from '@frontend/components/modal';

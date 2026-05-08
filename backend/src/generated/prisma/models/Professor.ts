@@ -382,10 +382,12 @@ export type ProfessorCreateNestedOneWithoutDisciplinesInput = {
   connect?: Prisma.ProfessorWhereUniqueInput
 }
 
-export type ProfessorUpdateOneRequiredWithoutDisciplinesNestedInput = {
+export type ProfessorUpdateOneWithoutDisciplinesNestedInput = {
   create?: Prisma.XOR<Prisma.ProfessorCreateWithoutDisciplinesInput, Prisma.ProfessorUncheckedCreateWithoutDisciplinesInput>
   connectOrCreate?: Prisma.ProfessorCreateOrConnectWithoutDisciplinesInput
   upsert?: Prisma.ProfessorUpsertWithoutDisciplinesInput
+  disconnect?: Prisma.ProfessorWhereInput | boolean
+  delete?: Prisma.ProfessorWhereInput | boolean
   connect?: Prisma.ProfessorWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfessorUpdateToOneWithWhereWithoutDisciplinesInput, Prisma.ProfessorUpdateWithoutDisciplinesInput>, Prisma.ProfessorUncheckedUpdateWithoutDisciplinesInput>
 }

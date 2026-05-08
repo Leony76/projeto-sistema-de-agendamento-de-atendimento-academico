@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { DISCIPLINES } from '@frontend/constants/maps/disciplines.map';
 
 export const newStudentSchema = z.object({
   name: z
@@ -29,9 +28,9 @@ export const newProfessorSchema = z.object({
     .email("E-mail inválido")
     .trim()
     .max(255, 'O e-mail deve ter até 255 caracteres'),
-  discipline: z.enum(DISCIPLINES, {
-    message: 'A disciplina é obrigatória'
-  })
+  disciplines: z
+    .array(z.string())
+    .min(1, 'Selecione pelo menos uma disciplina'),
 });
 
 export type NewProfessorFormData = z.infer<typeof newProfessorSchema>;

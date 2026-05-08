@@ -195,7 +195,7 @@ export type DisciplineGroupByOutputType = {
   registeredAt: Date
   updatedAt: Date | null
   deletedAt: Date | null
-  professorId: number
+  professorId: number | null
   _count: DisciplineCountAggregateOutputType | null
   _avg: DisciplineAvgAggregateOutputType | null
   _sum: DisciplineSumAggregateOutputType | null
@@ -227,8 +227,8 @@ export type DisciplineWhereInput = {
   registeredAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
-  professorId?: Prisma.IntFilter<"Discipline"> | number
-  professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
+  professorId?: Prisma.IntNullableFilter<"Discipline"> | number | null
+  professor?: Prisma.XOR<Prisma.ProfessorNullableScalarRelationFilter, Prisma.ProfessorWhereInput> | null
 }
 
 export type DisciplineOrderByWithRelationInput = {
@@ -237,7 +237,7 @@ export type DisciplineOrderByWithRelationInput = {
   registeredAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  professorId?: Prisma.SortOrder
+  professorId?: Prisma.SortOrderInput | Prisma.SortOrder
   professor?: Prisma.ProfessorOrderByWithRelationInput
 }
 
@@ -250,8 +250,8 @@ export type DisciplineWhereUniqueInput = Prisma.AtLeast<{
   registeredAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
-  professorId?: Prisma.IntFilter<"Discipline"> | number
-  professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
+  professorId?: Prisma.IntNullableFilter<"Discipline"> | number | null
+  professor?: Prisma.XOR<Prisma.ProfessorNullableScalarRelationFilter, Prisma.ProfessorWhereInput> | null
 }, "id">
 
 export type DisciplineOrderByWithAggregationInput = {
@@ -260,7 +260,7 @@ export type DisciplineOrderByWithAggregationInput = {
   registeredAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  professorId?: Prisma.SortOrder
+  professorId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DisciplineCountOrderByAggregateInput
   _avg?: Prisma.DisciplineAvgOrderByAggregateInput
   _max?: Prisma.DisciplineMaxOrderByAggregateInput
@@ -277,7 +277,7 @@ export type DisciplineScalarWhereWithAggregatesInput = {
   registeredAt?: Prisma.DateTimeWithAggregatesFilter<"Discipline"> | Date | string
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Discipline"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Discipline"> | Date | string | null
-  professorId?: Prisma.IntWithAggregatesFilter<"Discipline"> | number
+  professorId?: Prisma.IntNullableWithAggregatesFilter<"Discipline"> | number | null
 }
 
 export type DisciplineCreateInput = {
@@ -285,7 +285,7 @@ export type DisciplineCreateInput = {
   registeredAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
-  professor: Prisma.ProfessorCreateNestedOneWithoutDisciplinesInput
+  professor?: Prisma.ProfessorCreateNestedOneWithoutDisciplinesInput
 }
 
 export type DisciplineUncheckedCreateInput = {
@@ -294,7 +294,7 @@ export type DisciplineUncheckedCreateInput = {
   registeredAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
-  professorId: number
+  professorId?: number | null
 }
 
 export type DisciplineUpdateInput = {
@@ -302,7 +302,7 @@ export type DisciplineUpdateInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  professor?: Prisma.ProfessorUpdateOneRequiredWithoutDisciplinesNestedInput
+  professor?: Prisma.ProfessorUpdateOneWithoutDisciplinesNestedInput
 }
 
 export type DisciplineUncheckedUpdateInput = {
@@ -311,7 +311,7 @@ export type DisciplineUncheckedUpdateInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  professorId?: Prisma.IntFieldUpdateOperationsInput | number
+  professorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type DisciplineCreateManyInput = {
@@ -320,7 +320,7 @@ export type DisciplineCreateManyInput = {
   registeredAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
-  professorId: number
+  professorId?: number | null
 }
 
 export type DisciplineUpdateManyMutationInput = {
@@ -336,7 +336,7 @@ export type DisciplineUncheckedUpdateManyInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  professorId?: Prisma.IntFieldUpdateOperationsInput | number
+  professorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type DisciplineListRelationFilter = {
@@ -428,6 +428,14 @@ export type DisciplineUncheckedUpdateManyWithoutProfessorNestedInput = {
   deleteMany?: Prisma.DisciplineScalarWhereInput | Prisma.DisciplineScalarWhereInput[]
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type DisciplineCreateWithoutProfessorInput = {
   name: string
   registeredAt?: Date | string
@@ -478,7 +486,7 @@ export type DisciplineScalarWhereInput = {
   registeredAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
-  professorId?: Prisma.IntFilter<"Discipline"> | number
+  professorId?: Prisma.IntNullableFilter<"Discipline"> | number | null
 }
 
 export type DisciplineCreateManyProfessorInput = {
@@ -521,7 +529,7 @@ export type DisciplineSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   deletedAt?: boolean
   professorId?: boolean
-  professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
+  professor?: boolean | Prisma.Discipline$professorArgs<ExtArgs>
 }, ExtArgs["result"]["discipline"]>
 
 export type DisciplineSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -531,7 +539,7 @@ export type DisciplineSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   updatedAt?: boolean
   deletedAt?: boolean
   professorId?: boolean
-  professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
+  professor?: boolean | Prisma.Discipline$professorArgs<ExtArgs>
 }, ExtArgs["result"]["discipline"]>
 
 export type DisciplineSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -541,7 +549,7 @@ export type DisciplineSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   updatedAt?: boolean
   deletedAt?: boolean
   professorId?: boolean
-  professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
+  professor?: boolean | Prisma.Discipline$professorArgs<ExtArgs>
 }, ExtArgs["result"]["discipline"]>
 
 export type DisciplineSelectScalar = {
@@ -555,19 +563,19 @@ export type DisciplineSelectScalar = {
 
 export type DisciplineOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "registeredAt" | "updatedAt" | "deletedAt" | "professorId", ExtArgs["result"]["discipline"]>
 export type DisciplineInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
+  professor?: boolean | Prisma.Discipline$professorArgs<ExtArgs>
 }
 export type DisciplineIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
+  professor?: boolean | Prisma.Discipline$professorArgs<ExtArgs>
 }
 export type DisciplineIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
+  professor?: boolean | Prisma.Discipline$professorArgs<ExtArgs>
 }
 
 export type $DisciplinePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Discipline"
   objects: {
-    professor: Prisma.$ProfessorPayload<ExtArgs>
+    professor: Prisma.$ProfessorPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -575,7 +583,7 @@ export type $DisciplinePayload<ExtArgs extends runtime.Types.Extensions.Internal
     registeredAt: Date
     updatedAt: Date | null
     deletedAt: Date | null
-    professorId: number
+    professorId: number | null
   }, ExtArgs["result"]["discipline"]>
   composites: {}
 }
@@ -970,7 +978,7 @@ readonly fields: DisciplineFieldRefs;
  */
 export interface Prisma__DisciplineClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  professor<T extends Prisma.ProfessorDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfessorDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfessorClient<runtime.Types.Result.GetResult<Prisma.$ProfessorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  professor<T extends Prisma.Discipline$professorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Discipline$professorArgs<ExtArgs>>): Prisma.Prisma__ProfessorClient<runtime.Types.Result.GetResult<Prisma.$ProfessorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1404,6 +1412,25 @@ export type DisciplineDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Disciplines to delete.
    */
   limit?: number
+}
+
+/**
+ * Discipline.professor
+ */
+export type Discipline$professorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Professor
+   */
+  select?: Prisma.ProfessorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Professor
+   */
+  omit?: Prisma.ProfessorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProfessorInclude<ExtArgs> | null
+  where?: Prisma.ProfessorWhereInput
 }
 
 /**

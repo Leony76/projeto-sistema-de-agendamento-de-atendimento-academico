@@ -2,25 +2,28 @@ import { SELECT_OPTIONS_SCHEMA_MAP } from '@frontend/constants/maps/selectOption
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import type { SelectOptionsSchema } from '@shared/types/selectOptionsSchema.type';
 import { forwardRef, useState, type ButtonHTMLAttributes } from 'react'
+import type { SelectOption } from '@shared/types/selectOptions.type';
 
 type Props<T> = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
-  label?: string;
-  error?: string;
-  placeholder: string;
-  textSize?: 'BASE' | 'LG' | 'SM';
-  selectedOptionPlaceholderShow? : boolean;
-  optionsSchema: SelectOptionsSchema;
-  onSelect: (value: T) => void;
-  gridConfig?: `grid-cols-${number}`;
-  value?: T;
-  Icon?: React.ElementType;
-  customStyle?: {
-    label?: string;
-    input?: string;
-    container?: string;
-    options?: {
-      container?: string;
-      button?: string;
+  label?                          : string;
+  error?                          : string;
+  placeholder                     : string;
+  textSize?                       : 'BASE' | 'LG' | 'SM';
+  selectedOptionPlaceholderShow?  : boolean;
+  optionsSchema?                  : SelectOptionsSchema;
+  externalOptionsSchema?          : SelectOption[];
+  multipleOptions?                : boolean;
+  onSelect                        : (value: T | T[]) => void;
+  value?                          : T | T[];
+  gridConfig?                     : `grid-cols-${number}`;
+  Icon?                           : React.ElementType;
+  customStyle? : {
+    label?     : string;
+    input?     : string;
+    container? : string;
+    options? : {
+      container? : string;
+      button?    : string;
     };
   };
 };
@@ -35,14 +38,23 @@ const Default = forwardRef(
       error, 
       customStyle, 
     } = props;
+
+    const isMultiple = props.multipleOptions;
+    const selectedValues = Array.isArray(props.value)
+      ? props.value
+      : props.value
+        ? [props.value]
+        : []
+    ;
+
+    const optionsSchema = props.externalOptionsSchema ?? SELECT_OPTIONS_SCHEMA_MAP[props.optionsSchema!];
     
+    const selectedOptions = optionsSchema.filter(item => selectedValues.includes(item.value as T));
+
     const Icon = props.Icon;
     
     const [showOptions, setShowOptions] = useState<boolean>(false);
     const { containerRef } = useCloseModalOnMouseClickOutside(setShowOptions);
-
-    const selectedOption = SELECT_OPTIONS_SCHEMA_MAP[props.optionsSchema]
-      .find(item => item.value === props.value);
     
     return (
       <div className={`flex-1 flex flex-col gap-1 w-full ${customStyle?.container ?? ''}`}>
@@ -71,7 +83,9 @@ const Default = forwardRef(
     
             <span className={`mb-0.5`}>
               { props.selectedOptionPlaceholderShow ? (
-                selectedOption?.label ?? props.placeholder 
+                selectedOptions.length > 0
+                  ? selectedOptions.map(item => item.label).join(', ')
+                  : props.placeholder
               ) : (
                 props.placeholder 
               )}
@@ -84,17 +98,31 @@ const Default = forwardRef(
               ${ props.customStyle?.options?.container ?? '' }
               ${ props.gridConfig ? `grid ${props.gridConfig}` : '' }
             `}>
-              {SELECT_OPTIONS_SCHEMA_MAP[props.optionsSchema].map(( item ) => (
+              {optionsSchema.map(( item ) => (
                 <button
                 key={item.value}
                 onClick={() => {
-                  props.onSelect(item.value as T);
-                  setShowOptions(false);
+                  const value = item.value as T;
+
+                  if (isMultiple) {
+
+                    const alreadySelected = selectedValues.includes(value);
+                    const updatedValues = alreadySelected
+                      ? selectedValues.filter(v => v !== value)
+                      : [...selectedValues, value]
+                    ;
+
+
+                    props.onSelect(updatedValues as T[]);
+                  } else {
+                    props.onSelect(value);
+                    setShowOptions(false);
+                  }
                 }}
                 className={`
                   w-full text-left text-sm text-orange-500 py-1.5 hover:bg-amber-100/30 cursor-pointer px-2              
                   ${props.customStyle?.options?.button}
-                  ${item.value === props.value ? 'bg-amber-100/70' : ''}
+                  ${selectedValues.includes(item.value as T) ? 'bg-amber-100/70' : ''}
                   ${ props.gridConfig ? 'text-center! rounded-xl' : '' }
                 `}
                 >

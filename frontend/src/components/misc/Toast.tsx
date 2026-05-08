@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { IoIosClose } from 'react-icons/io';
 import { IoClose, IoWarning } from 'react-icons/io5';
+import { MdErrorOutline } from 'react-icons/md';
 
 type Props = {
   toast   : Toast;
@@ -37,7 +38,7 @@ const ToastItem = (props: Props) => {
 
   const bgColors = {
     success: { colorSchema: 'bg-green-100 border-green-500 text-green-500', Icon: <FaCheck /> },
-    error: { colorSchema: 'bg-red-100 border-red-500 text-red-500', Icon: <IoClose size={24} /> },
+    error: { colorSchema: 'bg-red-100 border-red-500 text-red-500', Icon: <MdErrorOutline size={22}/> },
     warning: { colorSchema: 'bg-yellow-50 border-yellow-500 text-yellow-500', Icon: <IoWarning size={24} /> },
   };
 

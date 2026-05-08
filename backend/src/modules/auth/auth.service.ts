@@ -1,52 +1,37 @@
 import bcrypt from 'bcrypt';
-import { prisma } from '@backend/lib/prisma';
 import type { RegisterManager, RegisterProfessor, RegisterStudent } from '@shared/types/registerUser.type';
 import type { LoginProfessorOrManager, LoginStudent } from '@shared/types/loginUser.type';
 import { generateToken } from '@backend/lib/jwt';
-import type { AuthUserBasicInfos } from '@shared/types/authUserBasicInfos.type';
 import type { LoginResponse } from '@shared/types/loginResponse.type';
+import { ApiError } from '@backend/utils/apiError.util';
+import { AuthRepository } from './auth.repository';
+
+type Register = RegisterStudent | RegisterManager | RegisterProfessor;
+type Login = LoginStudent | LoginProfessorOrManager;
 
 export class AuthService {
   
-  static async register( data: RegisterStudent | RegisterManager | RegisterProfessor ) {
+  public static async register(data: Register) {
     
     switch (data.role) {
-      case 'STUDENT':
+      case ( 'STUDENT' ):
 
         const [ raAlreadyTaken, emailAlreadyTaken ] = await Promise.all([
-          prisma.student.findUnique({ where: { ra: data.ra } }),
-          prisma.user.findUnique({ where: { email: data.email } }),
+          AuthRepository.raAlreadyTaken(data.ra),
+          AuthRepository.emailAlreadyTaken(data.email),
         ]);
     
-        if (emailAlreadyTaken) throw new Error('Este e-mail já está em uso');
-        if (raAlreadyTaken) throw new Error('Este RA já está cadastrado');
+        if (emailAlreadyTaken) throw new ApiError('Este e-mail já está em uso', 422);
+        if (raAlreadyTaken) throw new ApiError('Este RA já está cadastrado', 422);
     
         const hashedPassword = await bcrypt.hash(data.password, 10);
         
-        return await prisma.$transaction( async(tx) => {
-          const user = await tx.user.create({
-            data: {
-              name     : data.name,
-              email    : data.email,
-              password : hashedPassword,
-            },
-          });
-
-          const student = await tx.student.create({
-            data: {
-              userId : user.id,
-              ra     : data.ra,
-            },
-          });
-
-          return {
-            student : user.name,
-            email   : user.email,
-            ra      : student.ra,
-          };
+        return await AuthRepository.registerStudent({
+          ...data,
+          password : hashedPassword,
         });
 
-      case 'PROFESSOR':
+      case ( 'PROFESSOR' ):
         //
         return;
       default:
@@ -55,63 +40,49 @@ export class AuthService {
     }
   };
 
-
-
-  static async login(data: LoginStudent | LoginProfessorOrManager): Promise<LoginResponse> {
+  public static async login(data: Login): Promise<LoginResponse> {
     
     switch (data.role) {
-      case 'STUDENT': {
-        const student = await prisma.student.findUnique({
-          where   : { ra: data.ra },
-          include : { user: true  }
-        });
+      case ( 'STUDENT' ): {
+
+        const student = await AuthRepository.getStudentByRa(data.ra);
     
-        if (!student) throw new Error('Credenciais inválidas');
+        if (!student) throw new ApiError('Credenciais inválidas', 401);
     
         const passwordMatch = await bcrypt.compare(
           data.password,
           student.user.password,
         );
     
-        if (!passwordMatch) throw new Error('Credenciais inválidas');
+        if (!passwordMatch) throw new ApiError('Credenciais inválidas', 401);
     
         const token = generateToken(student.user.id);
 
-        const studentBasicData: AuthUserBasicInfos = {
-          id           : student.user.id,
-          email        : student.user.email,
-          name         : student.user.name,
-          registeredAt : student.user.createdAt.toISOString(),
-          photo        : student.user.photo ?? '',
-          ra           : student.ra,
-          role         : 'STUDENT',
-        }; 
-    
         return {
-          user: studentBasicData,
           token,
+          user : {
+            id           : student.user.id,
+            email        : student.user.email,
+            name         : student.user.name,
+            registeredAt : student.user.createdAt.toISOString(),
+            photo        : student.user.photo ?? '',
+            ra           : student.ra,
+            role         : 'STUDENT',
+          },
         };
 
-      } case 'PROFESSOR/MANAGER': {
+      } case ( 'PROFESSOR/MANAGER' ): {
 
-        const user = await prisma.user.findUnique({
-          where: { email: data.email },
-          include: {
-            manager   : true,
-            professor : { 
-              include : { disciplines: true },
-            },
-          },
-        });
+        const user = await AuthRepository.getUserByEmail(data.email);
     
-        if (!user) throw new Error('Credenciais inválidas');
+        if (!user) throw new ApiError('Credenciais inválidas', );
        
         const passwordMatch = await bcrypt.compare(
           data.password,
           user.password,
         );
 
-        if (!passwordMatch) throw new Error('Credenciais inválidas');
+        if (!passwordMatch) throw new ApiError('Credenciais inválidas', 401);
 
         const token = generateToken(user.id);
 
@@ -124,30 +95,22 @@ export class AuthService {
         };
 
         if (user.role === 'MANAGER') {
-          const managerBasicData: AuthUserBasicInfos = {
-            ...basicData,
-            role : 'MANAGER',
-          } 
-
           return {
-            user: managerBasicData,
             token,
-          };
-          
+            user: {
+              ...basicData,
+              role : 'MANAGER',
+            },
+          };     
         } else {
-
-          const professorBasicData: AuthUserBasicInfos = {
-            ...basicData,
-            disciplines  : user.professor?.disciplines.map((discipline) => discipline.name) ?? [],
-            role         : 'PROFESSOR',
-          }; 
-  
-          const response: LoginResponse = {
-            user: professorBasicData,
+          return {
             token,
+            user: {
+              ...basicData,
+              disciplines  : user.professor?.disciplines.map((discipline) => discipline.name) ?? [],
+              role         : 'PROFESSOR',
+            },
           };
-  
-          return response;
         }
       }
     }
