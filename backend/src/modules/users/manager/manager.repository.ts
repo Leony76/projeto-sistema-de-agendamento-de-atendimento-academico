@@ -1,5 +1,4 @@
 import { prisma } from "@backend/lib/prisma";
-import type { ManagerRegisterStudent } from "@shared/types/managerRegisterUser.type";
 
 export class ManagerRepository {
   
@@ -24,24 +23,4 @@ export class ManagerRepository {
       where: { ra }
     });
   };
-
-  public static async registerStudent(
-    data: ManagerRegisterStudent & { 
-      temporaryPassword: string 
-    }
-  ) {
-    return await prisma.user.create({
-      data: {
-        email    : data.email,
-        name     : data.name,
-        role     : data.role,
-        password : data.temporaryPassword,
-        student: {
-          create: {
-            ra: data.ra,
-          }
-        }
-      }
-    });
-  }
 }

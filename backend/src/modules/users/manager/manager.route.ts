@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { ManagerController } from './manager.controller';
 
 const managerRoutes = Router();
 
-managerRoutes.post( '/register-new-user' , ManagerController.registerNewUser );
+// managerRoutes.post( '/register/student' ,  );
+// managerRoutes.post( '/register/professor' , );
+// managerRoutes.post( '/register/manager' , );
 
 export default managerRoutes;

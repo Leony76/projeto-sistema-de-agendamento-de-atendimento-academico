@@ -1,14 +1,13 @@
+import type { NewStudentFormData } from "@shared/schemas/newUser.schema";
 import { api } from "./api.service";
-import type { ManagerRegisterUser } from '@shared/types/managerRegisterUser.type'
+import type { ApiResponse } from '@shared/types/apiResponse.type';
 
 export class ManagerService {
 
-  public static async registerNewUser(data: ManagerRegisterUser): Promise<{
-    message: string,
-    success: boolean,
-    student: string,
-  }> {
-    const response = await api.post<ManagerRegisterUser>('manager/register-new-user', data);
+  public static async registerStudent(
+    data : NewStudentFormData,
+  ): Promise<ApiResponse<NewStudentFormData>> {
+    const response = await api.post<ApiResponse<NewStudentFormData>>('manager/register/student', data);
 
     return response.data;
   };

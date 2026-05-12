@@ -3,10 +3,10 @@ import { ManagerService } from './manager.service';
 
 export class ManagerController {
 
-  public static async registerNewUser(req: Request, res: Response) {
+  public static async registerStudent(req: Request, res: Response) {
     
-    const result = await ManagerService.registerNewUser(req.body);
+    // const result = await ManagerService.registerNewUser(req.body);
 
-    return res.status(201).json(result);
+    // return res.status(201).json(result);
   };
 }

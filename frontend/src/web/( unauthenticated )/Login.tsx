@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema, type LoginFormData } from '@frontend/schemas/login.schema'
 import { useToast } from '@frontend/contexts/ToastContext'
 import { AuthService } from '@frontend/services/auth.service'
 import { useAuth } from '@frontend/hooks/useAuth.hook'
-import type { LoginResponse } from '@shared/types/loginResponse.type'
 import { apiError } from '@frontend/utils/misc/apiError.util'
+import { loginSchema, type LoginFormData } from '@shared/schemas/login.schema'
+
+type LoginAs = 'STUDENT' | 'GENERIC';
 
 const Login = (): React.JSX.Element => {
 
@@ -17,7 +18,7 @@ const Login = (): React.JSX.Element => {
   const { toast } = useToast();
   const { login } = useAuth();
 
-  const [selectedTab, setSelectedTab] = useState<'STUDENT' | 'PROFESSOR/MANAGER'>('STUDENT');
+  const [selectedTab, setSelectedTab] = useState<LoginAs>('STUDENT');
 
   const { 
     register, 
@@ -34,14 +35,14 @@ const Login = (): React.JSX.Element => {
     }
   });
 
-  const handleTabChange = (tab: 'STUDENT' | 'PROFESSOR/MANAGER'): void => {
+  const handleTabChange = (tab: LoginAs): void => {
     setSelectedTab(tab);
     setValue('role', tab);
   };
 
 
-  const INPUT_MAP = {
-    'PROFESSOR/MANAGER': {
+  const INPUT_MAP: Record<LoginAs, any> = {
+    'GENERIC': {
       label       : 'E-mail',
       placeholder : 'Insira seu E-mail',
       type        : 'email',
@@ -57,43 +58,32 @@ const Login = (): React.JSX.Element => {
       identifier  : 'ra',
       error       : (errors as any).ra?.message,
     },
-  } as const;
+  };
 
   const handleLogin = async(data: LoginFormData): Promise<void> => {
     try {
+      let response;
+
       switch (data.role) {
-        case 'PROFESSOR/MANAGER':{
-          const response: LoginResponse = await AuthService.login({
-            role     : 'PROFESSOR/MANAGER',
-            email    : data.email,
-            password : data.password,
-          });
-
-          login(
-            response.token,
-            response.user,
-          );
-          
-          navigate('/home');
+        case 'STUDENT': {
+          response = await AuthService.loginAsStudent(data);
           break;
-
         } default: {
-
-          const response: LoginResponse = await AuthService.login({ 
-            role     : 'STUDENT',
-            ra       : data.ra,
-            password : data.password,
-          });
-
-          login(
-            response.token,
-            response.user,
-          );
-            
-          navigate('/home');
+          response = await AuthService.loginAsGeneric(data);
           break;
         }
       }
+      
+      // if (response.success) {
+      alert(response.message);
+
+      login( 
+        response.data.token, 
+        response.data.user, 
+      );
+          
+      navigate('/home');
+      // }
     } catch (error:unknown) {
       toast(apiError(error), 'error');
     }
@@ -126,10 +116,10 @@ const Login = (): React.JSX.Element => {
           </button>
 
           <button 
-          onClick={() => handleTabChange('PROFESSOR/MANAGER')}
+          onClick={() => handleTabChange('GENERIC')}
           className={`
             cursor-pointer py-2 flex-1 border-b-2 
-            ${ selectedTab === 'PROFESSOR/MANAGER' 
+            ${ selectedTab === 'GENERIC' 
               ? 'bg-linear-to-t from-cyan-100 to-transparent border-cyan-500/20 text-cyan-300' 
               : 'border-cyan-500/50 text-cyan-500' 
             }

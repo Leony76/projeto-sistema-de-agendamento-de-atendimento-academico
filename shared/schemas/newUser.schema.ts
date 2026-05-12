@@ -14,6 +14,8 @@ export const newStudentSchema = z.object({
     .email("E-mail inválido")
     .trim()
     .max(255, 'O e-mail deve ter até 255 caracteres'),  
+  role: z
+    .literal('STUDENT'),
 });
 
 export type NewStudentFormData = z.infer<typeof newStudentSchema>;
@@ -31,6 +33,8 @@ export const newProfessorSchema = z.object({
   disciplines: z
     .array(z.string())
     .min(1, 'Selecione pelo menos uma disciplina'),
+  role: z
+    .literal('PROFESSOR'),
 });
 
 export type NewProfessorFormData = z.infer<typeof newProfessorSchema>;
@@ -45,21 +49,20 @@ export const newManagerSchema = z.object({
     .email("E-mail inválido")
     .trim()
     .max(255, 'O e-mail deve ter até 255 caracteres'),
+  role: z
+    .literal('MANAGER'),
 });
 
 export type NewManagerFormData = z.infer<typeof newManagerSchema>;
 
 export const newUserSchema = z.discriminatedUnion('role', [
   z.object({
-    role: z.literal('STUDENT'),
     ...newStudentSchema.shape,
   }),
   z.object({
-    role: z.literal('PROFESSOR'),
     ...newProfessorSchema.shape,
   }),
   z.object({
-    role: z.literal('MANAGER'),
     ...newManagerSchema.shape,
   }),
 ]);

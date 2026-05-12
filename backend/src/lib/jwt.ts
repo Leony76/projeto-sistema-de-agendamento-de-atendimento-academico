@@ -3,6 +3,9 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env["JWT_SECRET"]!;
 
 export const generateToken = (userId: number) => {
+
+  console.log('JWT:', process.env['JWT_SECRET']);
+  
   return jwt.sign(
     { sub: userId },
     JWT_SECRET, 

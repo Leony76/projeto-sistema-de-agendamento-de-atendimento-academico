@@ -202,4 +202,4 @@ const Student = (): React.JSX.Element => {
   )
 }
 
-export default Student
+export default Student;

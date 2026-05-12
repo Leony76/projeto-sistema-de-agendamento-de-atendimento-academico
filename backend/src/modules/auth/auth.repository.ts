@@ -1,5 +1,5 @@
 import { prisma } from "@backend/lib/prisma";
-import type { RegisterStudent } from "@shared/types/registerUser.type";
+import type { RegisterStudentFormData } from "@shared/schemas/register.schema";
 
 export class AuthRepository {
   
@@ -38,29 +38,21 @@ export class AuthRepository {
     });
   };
 
-  public static async registerStudent(data: Omit<RegisterStudent, 'role'>) {
-    return await prisma.$transaction( async(tx) => {
-      const user = await tx.user.create({
-        data: {
-          name     : data.name,
-          email    : data.email,
-          password : data.password,
+  public static async selfStudentRegistration(data: Omit<RegisterStudentFormData, 'repeatPassword'>) {
+    return await prisma.user.create({
+      data: {
+        name     : data.name,
+        email    : data.email,
+        password : data.password,
+        student: {
+          create: {
+            ra: data.ra,
+          },
         },
-      });
-
-      const student = await tx.student.create({
-        data: {
-          userId : user.id,
-          ra     : data.ra,
-        },
-      });
-
-      return {
-        id     : user.id, 
-        name   : user.name,
-        email  : user.email,
-        ra     : student.ra,
-      };
+      },
+      include: {
+        student: true,
+      },
     });
   }
 }

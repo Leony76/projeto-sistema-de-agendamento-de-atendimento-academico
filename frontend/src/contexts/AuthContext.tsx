@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import type { AuthUserBasicInfos } from '@shared/types/authUserBasicInfos.type';
+import { type AuthUserBasicInfos } from '@shared/types/authUserBasicInfos.type';
 
 type AuthContextType = {
   token           : string | null;
@@ -7,7 +7,7 @@ type AuthContextType = {
   isAuthenticated : boolean;
   loading         : boolean;
 
-  login  : ( token : string, user  : AuthUserBasicInfos ) => void;
+  login  : ( token : string, user : AuthUserBasicInfos ) => void;
   logout : () => void;
 };
 

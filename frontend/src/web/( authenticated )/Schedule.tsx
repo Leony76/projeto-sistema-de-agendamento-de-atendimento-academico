@@ -7,7 +7,7 @@ import { Card } from '@frontend/components/card';
 import '@frontend/css/calendar.css';
 import { Button } from '@frontend/components/button';
 import { useForm } from 'react-hook-form';
-import { appointmentSolicitationSchema, type AppointmentSolicitationFormData } from '@frontend/schemas/appointmentSolicitation.schema';
+import { appointmentSolicitationSchema, type AppointmentSolicitationFormData } from '@shared/schemas/appointmentSolicitation.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Warning from '@frontend/components/misc/Warning';
 import { formatMergeDateWithTime } from '@frontend/utils/formats/formatMergeDateWithTime.util';

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import routes from './routes';
 import cors from 'cors';
@@ -6,7 +7,7 @@ import { apiErrorMiddleware } from './middleware/apiError.middleware';
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: process.env['BACKEND_BASE_URL']
 }));
 
 app.use(express.json());

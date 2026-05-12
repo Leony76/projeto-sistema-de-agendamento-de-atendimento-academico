@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 
 const authRoutes = Router();
 
-authRoutes.post( '/register' , AuthController.register );
-authRoutes.post( '/login'    , AuthController.login    );
+authRoutes.post( '/register/student' , AuthController.selfStudentRegistration );
+authRoutes.post( '/login/student'    , AuthController.loginAsStudent );
 
 export default authRoutes;

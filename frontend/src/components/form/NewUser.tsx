@@ -1,4 +1,4 @@
-import { newUserSchema, type NewProfessorFormData, type NewStudentFormData, type NewUserFormData } from '@frontend/schemas/newUser.schema';
+import { newUserSchema, type NewProfessorFormData, type NewStudentFormData, type NewUserFormData } from '@shared/schemas/newUser.schema';
 import type { UserRole } from '@shared/types/userRole.type'
 import React, { useEffect, useState } from 'react'
 import { FaArrowCircleLeft, FaUserPlus } from 'react-icons/fa';
@@ -44,10 +44,16 @@ const NewUser = (props:Props): React.JSX.Element => {
 
   const handleNewUser = async(data: NewUserFormData): Promise<void> => {
     try {
-      const response = await ManagerService.registerNewUser(data);
+      let response;
+
+      switch (data.role) {
+        case 'MANAGER': response = await ManagerService.registerStudent(data); break;
+        case 'PROFESSOR': response = await ManagerService.registerNewUser(data); break;
+        case 'STUDENT': response = await ManagerService.registerNewUser(data); break;
+      }
 
       console.log(response);
-      toast();
+      toast('');
       
       props.onBack();
       reset();
