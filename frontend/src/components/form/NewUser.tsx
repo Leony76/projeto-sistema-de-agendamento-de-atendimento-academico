@@ -44,9 +44,10 @@ const NewUser = (props:Props): React.JSX.Element => {
 
   const handleNewUser = async(data: NewUserFormData): Promise<void> => {
     try {
-      await ManagerService.registerNewUser(data);
-      
-      toast(`Cadastro de ${USER_ROLES[newUserRole].toLowerCase()} realizado com sucesso!`);
+      const response = await ManagerService.registerNewUser(data);
+
+      console.log(response);
+      toast();
       
       props.onBack();
       reset();

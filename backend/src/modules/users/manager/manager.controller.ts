@@ -5,8 +5,8 @@ export class ManagerController {
 
   public static async registerNewUser(req: Request, res: Response) {
     
-    const user = await ManagerService.registerNewUser(req.body);
+    const result = await ManagerService.registerNewUser(req.body);
 
-    return res.status(201).json(user);
+    return res.status(201).json(result);
   };
 }
