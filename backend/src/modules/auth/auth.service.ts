@@ -4,6 +4,7 @@ import { ApiError } from '@backend/utils/apiError.util';
 import { AuthRepository } from './auth.repository';
 import type * as L from '@shared/types/dtos/login.type.dto'; 
 import type * as R from '@shared/types/dtos/register.type.dto'; 
+import { generateTemporaryPassword } from '@backend/utils/generateTemporaryPassword.util';
 
 export class AuthService {
 
@@ -58,6 +59,69 @@ export class AuthService {
         role         : 'STUDENT'
       },
     }
+  };
+
+
+
+  public static async managerRegistersProfessor(
+    data: R.ManagerRegistersProfessorRequest
+  ): Promise<R.ManagerRegistersProfessorResponse> {
+
+    const [
+      professorAlreadyRegistered,
+      professorsDisciplineAlreadyTaken,
+    ] = await Promise.all([
+      AuthRepository.getUserByEmail(data.email),
+      AuthRepository.professorsDisciplineAlreadyTaken(data.disciplines),
+    ]);
+
+    if (professorAlreadyRegistered) 
+      throw new ApiError('Esse professor já está cadastrado no sistema');
+    if (professorsDisciplineAlreadyTaken)
+      throw new ApiError('Uma ou mais disciplinas já possuem professor')
+
+    const temporaryPassword = generateTemporaryPassword(8);
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    const professorRegistered = await AuthRepository.registerProfessor({
+      ...data,
+      password: hashedPassword
+    });
+
+    if (!professorRegistered)
+      throw new ApiError('Houve um erro no cadastro do professor. Tente novamente mais tarde!');
+
+    return {
+      name        : professorRegistered.name,
+      email       : professorRegistered.email,
+      disciplines : professorRegistered.professor?.disciplines.map(
+        (discipline) => discipline.name
+      ) ?? [],
+    }
+  };
+
+  
+
+  public static async managerRegistersManager(
+    data: R.ManagerRegistersManagerRequest
+  ): Promise<R.ManagerRegistersManagerResponse> {
+
+    const [ managerAlreadyRegistered ] = await Promise.all([
+      AuthRepository.emailAlreadyTaken(data.email),
+    ]);
+
+    if (managerAlreadyRegistered)
+      throw new ApiError('Já estpa cadastrado um gestor com esse e-mail');
+
+    const temporaryPassword = generateTemporaryPassword(8);
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+    
+    const managerRegistered = await AuthRepository.registerManager({
+      ...data,
+      password : hashedPassword,
+    });
+
+    return { ...managerRegistered };
   };
 
 

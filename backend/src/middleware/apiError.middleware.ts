@@ -20,6 +20,6 @@ export const apiErrorMiddleware = (
   console.error(error);
 
   return response.status(500).json({
-    message: 'Erro interno do servidor' + error,
+    message: 'Erro interno do servidor: ' + error,
   });
 };

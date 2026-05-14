@@ -25,18 +25,13 @@ import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import type { SystemGeneralMetrics } from '@shared/types/systemGeneralMetrics.type';
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@shared/types/registeredUsers.type';
 import type { Room } from '@shared/types/room.type';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { DisciplineService } from '@frontend/services/discipline.service';
 import type { SelectOption } from '@shared/types/selectOptions.type';
-// import { SYSTEM_GENERAL_METRICS } from '@frontend/constants/mocks/dto/manager/systemGeneralMetrics.mock';
-// import { REGISTERED_PROFESSORS } from '@frontend/constants/mocks/dto/manager/registeredProfessor.mock';
-// import { REGISTERED_STUDENTS } from '@frontend/constants/mocks/dto/manager/registeredStudents.mock';
-// import { REGISTERED_MANAGERS } from '@frontend/constants/mocks/dto/manager/registeredManagers.mock';
-// import { ROOMS_DETAILS } from '@frontend/constants/mocks/dto/manager/rooms.mock';
-// import { SYSTEM_REPORTS } from '@frontend/constants/mocks/dto/manager/systemReports.mock';
+import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
+import { UserService } from '@frontend/services/user.service';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -62,9 +57,9 @@ const Manager = (): React.JSX.Element => {
 
   const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<SystemGeneralMetrics['count'] | null>(null);
 
-  const [ registeredProfessors, setRegisteredProfessors ] = useState<RegisteredProfessor[]>([]);
-  const [ registeredStudents,   setRegisteredStudents ] = useState<RegisteredStudent[]>([]);
-  const [ registeredManagers,   setRegisteredManagers ] = useState<RegisteredManager[]>([]);
+  const [ activeProfessors, setActiveProfessors ] = useState<ActiveProfessorsToManagerList[]>([]);
+  const [ activeStudents,   setActiveStudents ] = useState<ActiveStudentsToManagerList[]>([]);
+  const [ activeManagers,   setActiveManagers ] = useState<ActiveManagersToManagerList[]>([]);
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [ newProfessorDisciplinesOptions, setNewProfessorDisciplinesOptions ] = useState<SelectOption[]>([]);
@@ -82,17 +77,19 @@ const Manager = (): React.JSX.Element => {
 
   const filteredUsersListDataByRoleMap = {
     STUDENT: filterRegisteredStudents(
-      registeredStudents,
+      activeStudents,
       searchValue,
       filterValue.student,
     ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
+
     PROFESSOR: filterRegisteredProfessors(
-      registeredProfessors,
+      activeProfessors,
       searchValue,
       filterValue.professor,
     ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
+
     MANAGER: filterRegisteredManagers(
-      registeredManagers,
+      activeManagers,
       searchValue,
       filterValue.manager,
     ).map((rest) => ({ ...rest, from: 'MANAGER' as const })),
@@ -106,6 +103,7 @@ const Manager = (): React.JSX.Element => {
         prev => ({ ...prev, student: value
       })),
     },
+
     PROFESSOR: {
       schema : 'REGISTERED_PROFESSORS_FILTER',
       value  : filterValue.professor,
@@ -113,6 +111,7 @@ const Manager = (): React.JSX.Element => {
         prev => ({ ...prev, professor: value
       })),
     },
+
     MANAGER: {
       schema : 'REGISTERED_MANAGERS_FILTER',
       value  : filterValue.manager,
@@ -154,6 +153,30 @@ const Manager = (): React.JSX.Element => {
       setGeneralActions(null);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    (async() => {
+      try {
+        switch (userRoleList) {
+          case 'STUDENT':
+            const students: ActiveStudentsToManagerList[] = await UserService.getActiveStudentsToManagerList();
+            setActiveStudents(students);
+            break;
+          case 'PROFESSOR':
+            const professors: ActiveProfessorsToManagerList[] = await UserService.getActiveProfessorsToManagerList();
+            setActiveProfessors(professors);
+            break;
+          case 'MANAGER':
+            const managers: ActiveManagersToManagerList[] = await UserService.getActiveManagersToManagerList();
+            setActiveManagers(managers);
+            break
+          ;
+        }
+      } catch (error:unknown) {
+        toast(apiError(error), 'error');
+      }
+    })();
+  }, [userRoleList]);
 
   useEffect(() => {
     (async() => {
@@ -262,6 +285,7 @@ const Manager = (): React.JSX.Element => {
             <Form.NewUser
               onBack={() => setGeneralActions(null)}
               newProfessorDisciplines={newProfessorDisciplinesOptions}
+              setNewProfessorDisciplinesOptions={setNewProfessorDisciplinesOptions}
             />
           ) : generalActions === 'REPORTS' ? (
             <Section.ManagerReports

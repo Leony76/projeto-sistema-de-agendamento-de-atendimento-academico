@@ -1,11 +1,11 @@
 import type { REGISTERED_STUDENTS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredStudent } from "@shared/types/registeredUsers.type";
+import type { ActiveStudentsToManagerList } from "@shared/types/dtos/managerUsersList.dto";
 
 export const filterRegisteredStudents = (
-  registeredStudentsData : RegisteredStudent[],
+  registeredStudentsData : ActiveStudentsToManagerList[],
   searchValue            : string,
   filterValue            : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'],
-): RegisteredStudent[] => {
+): ActiveStudentsToManagerList[] => {
   
   return registeredStudentsData.filter((student) => {
     const search = searchValue.toLowerCase();
@@ -20,10 +20,6 @@ export const filterRegisteredStudents = (
       student.id.toString().includes(search)
       ||
       student.registeredAt.toLowerCase().includes(search)
-      ||
-      student.solicitations.toString().includes(search)
-      ||
-      student.appointments.toString().includes(search)
     ;
 
     if (!filterValue) return matchesSearch;
@@ -38,18 +34,6 @@ export const filterRegisteredStudents = (
 
       case 'mostOld':
         return new Date(a.registeredAt).getTime() - new Date(b.registeredAt).getTime();
-
-      case 'mostSolicitations':
-        return b.solicitations - a.solicitations;
-
-      case 'leastSolicitations':
-        return a.solicitations - b.solicitations;
-
-      case 'mostAppointments':
-        return b.appointments - a.appointments;
-
-      case 'leastAppointments':
-        return a.appointments - b.appointments;
 
       case 'AZStudentName':
         return a.name.localeCompare(b.name);

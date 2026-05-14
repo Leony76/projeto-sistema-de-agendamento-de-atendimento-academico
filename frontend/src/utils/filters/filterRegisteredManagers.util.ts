@@ -1,11 +1,11 @@
 import type { REGISTERED_MANAGERS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredManager } from "@shared/types/registeredUsers.type";
+import type { ActiveManagersToManagerList } from "@shared/types/dtos/managerUsersList.dto";
 
 export const filterRegisteredManagers = (
-  registeredManagersData : RegisteredManager[],
+  registeredManagersData : ActiveManagersToManagerList[],
   searchValue            : string,
   filterValue            : typeof REGISTERED_MANAGERS_FILTER_MAP[number]['value'],
-): RegisteredManager[] => {
+): ActiveManagersToManagerList[] => {
   
   return registeredManagersData.filter(( manager ) => {
     const search = searchValue.toLowerCase();

@@ -16,7 +16,7 @@ model User {
   photo        String?
   
   createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime?   @updatedAt      @map("updated_at")
+  updatedAt    DateTime?  @updatedAt      @map("updated_at")
   deletedAt    DateTime?  @map("deleted_at")
 
   role         UserRole   @map("user_role")  @default(STUDENT)  
@@ -41,7 +41,7 @@ model Student {
 }
 
 model Professor {
-  userId        Int  @unique       
+  userId        Int  @unique @map("user_id")       
   user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   disciplines   Discipline[]
@@ -53,7 +53,7 @@ model Professor {
 }
 
 model Manager {
-  userId  Int  @unique      
+  userId  Int  @unique @map("user_id")     
   user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@map("managers")
@@ -99,7 +99,7 @@ model Appointment {
   updatedAt     DateTime   @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
-  roomId       Int         
+  roomId       Int         @map("room_id") 
   room         Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   studentId    Int          @map("student_id")

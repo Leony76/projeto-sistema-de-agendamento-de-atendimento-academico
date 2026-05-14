@@ -65,7 +65,7 @@ export class AuthController {
     const loggedUser: L.LoginResponse<L.LoginAsGenericResponse> = await AuthService.loginAsGeneric(request);
 
     const response: ApiResponse<L.LoginResponse<L.LoginAsGenericResponse>> = {
-      message : 'Login realizado com sucesso!',
+      message : 'Aluno cadastrado com sucesso!',
       success : true,
       data    : loggedUser,
     };
@@ -75,35 +75,35 @@ export class AuthController {
 
 
 
-  // public static async managerRegistersProfessor(req: Request, res: Response) {
+  public static async managerRegistersProfessor(req: Request, res: Response) {
     
-  //   const request: R.ManagerRegistersProfessorRequest = req.body;
+    const request: R.ManagerRegistersProfessorRequest = req.body;
 
-  //   const loggedUser: L.LoginResponse<L.LoginAsGenericResponse> = await AuthService.loginAsGeneric(request);
+    const professorRgistered: R.ManagerRegistersProfessorResponse = await AuthService.managerRegistersProfessor(request);
 
-  //   const response: ApiResponse<L.LoginResponse<L.LoginAsGenericResponse>> = {
-  //     message : 'Login realizado com sucesso!',
-  //     success : true,
-  //     data    : loggedUser,
-  //   };
+    const response: ApiResponse<R.ManagerRegistersProfessorResponse> = {
+      message : 'Professor cadastrado com sucesso!',
+      success : true,
+      data    : professorRgistered,
+    };
 
-  //   return res.status(200).json(response);
-  // }
+    return res.status(200).json(response);
+  }
 
 
 
-  // public static async managerRegistersManager(req: Request, res: Response) {
+  public static async managerRegistersManager(req: Request, res: Response) {
     
-  //   const request: R.ManagerRegistersManagerRequest = req.body;
+    const request: R.ManagerRegistersManagerRequest = req.body;
 
-  //   const loggedUser: L.LoginResponse<L.LoginAsGenericResponse> = await AuthService.loginAsGeneric(request);
+    const managerRegistered: R.ManagerRegistersManagerResponse = await AuthService.managerRegistersManager(request);
 
-  //   const response: ApiResponse<L.LoginResponse<L.LoginAsGenericResponse>> = {
-  //     message : 'Login realizado com sucesso!',
-  //     success : true,
-  //     data    : loggedUser,
-  //   };
+    const response: ApiResponse<R.ManagerRegistersManagerResponse> = {
+      message : 'Gestor cadastrado com sucesso!',
+      success : true,
+      data    : managerRegistered,
+    };
 
-  //   return res.status(200).json(response);
-  // }
+    return res.status(200).json(response);
+  }
 }

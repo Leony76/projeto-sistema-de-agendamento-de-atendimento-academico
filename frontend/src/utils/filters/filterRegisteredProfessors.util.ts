@@ -1,11 +1,11 @@
 import type { REGISTERED_PROFESSORS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
-import type { RegisteredProfessor } from "@shared/types/registeredUsers.type";
+import type { ActiveProfessorsToManagerList } from "@shared/types/dtos/managerUsersList.dto";
 
 export const filterRegisteredProfessors = (
-  registeredProfessorsData : RegisteredProfessor[],
+  registeredProfessorsData : ActiveProfessorsToManagerList[],
   searchValue              : string,
   filterValue              : typeof REGISTERED_PROFESSORS_FILTER_MAP[number]['value'],
-): RegisteredProfessor[] => {
+): ActiveProfessorsToManagerList[] => {
   
   return registeredProfessorsData.filter(( professor ) => {
     const search = searchValue.toLowerCase();
@@ -13,15 +13,11 @@ export const filterRegisteredProfessors = (
     const matchesSearch =
       professor.name.toLowerCase().includes(search) 
       ||
-      professor.disciplines.some((discipline) => discipline.name.toLowerCase().includes(search))
+      professor.disciplines.some((discipline) => discipline.toLowerCase().includes(search))
       ||
       professor.id.toString().includes(search)
       ||
       professor.registeredAt.toLowerCase().includes(search)
-      ||
-      professor.solicitations.toString().includes(search)
-      ||
-      professor.appointments.toString().includes(search)
     ;
 
     if (!filterValue) return matchesSearch;
@@ -30,8 +26,8 @@ export const filterRegisteredProfessors = (
   }).sort((a, b) => {
     if (!filterValue) return 0;
 
-    const getDisciplinesString = (professor: RegisteredProfessor) =>
-      professor.disciplines.map(discipline => discipline.name).join(', ');
+    const getDisciplinesString = (professor: ActiveProfessorsToManagerList) =>
+      professor.disciplines.map(discipline => discipline).join(', ');
 
     switch (filterValue) {
       case 'mostRecent':
@@ -39,19 +35,7 @@ export const filterRegisteredProfessors = (
 
       case 'mostOld':
         return new Date(a.registeredAt).getTime() - new Date(b.registeredAt).getTime();
-
-      case 'mostSolicitations':
-        return b.solicitations - a.solicitations;
-
-      case 'leastSolicitations':
-        return a.solicitations - b.solicitations;
-
-      case 'mostAppointments':
-        return b.appointments - a.appointments;
-
-      case 'leastAppointments':
-        return a.appointments - b.appointments;
-
+    
       case 'AZProfessorName':
         return a.name.localeCompare(b.name);
 

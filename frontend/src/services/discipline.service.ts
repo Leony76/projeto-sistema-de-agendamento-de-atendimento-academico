@@ -1,11 +1,19 @@
+import type { ApiResponse } from "@shared/types/apiResponse.type";
 import { api } from "./api.service";
 
 export class DisciplineService {
 
-  static async getUnboundNames() {
+  public static async getUnboundNames() {
     
     const response = await api.get<string[]>('discipline/get-unbound-names');
 
     return response.data;
   };
+
+  public static async addDiscipline(name: string) {
+
+    const response = await api.post<ApiResponse<string>>('discipline/add', { name });
+
+    return response.data;
+  }
 }

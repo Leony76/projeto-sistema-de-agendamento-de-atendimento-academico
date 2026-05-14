@@ -4,15 +4,15 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@shared/types/registeredUsers.type';
 import { FaTrashAlt } from 'react-icons/fa';
+import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
 
 type Props = {
   onClick: () => void;
 } & (
-  | RegisteredStudent   & { from: 'STUDENT'   } 
-  | RegisteredProfessor & { from: 'PROFESSOR' }
-  | RegisteredManager   & { from: 'MANAGER'   }
+  | ActiveStudentsToManagerList   & { from: 'STUDENT'   } 
+  | ActiveProfessorsToManagerList & { from: 'PROFESSOR' }
+  | ActiveManagersToManagerList   & { from: 'MANAGER'   }
 );
 
 const UserGeneralInfo = (props:Props): React.JSX.Element => {
@@ -23,7 +23,7 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
 
   const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
   const disciplines = props.from === 'PROFESSOR' 
-    ? props.disciplines.map((discipline) => discipline.name)
+    ? props.disciplines.map((name) => name)
     : []
   ;
 
@@ -62,7 +62,7 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
       <ExpansibleImage
         image={{
           name : props.name,
-          uri  : props.photo,
+          uri  : props.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
           size : 'h-25 w-25'
         }}
       />
@@ -80,6 +80,16 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
             Identificador: <span className='text-green-500 font-bold'>{ props.id }</span>
           </label>
 
+          <label className='text-xs text-orange-400 font-semibold'>
+            E-mail: <span className='text-cyan-500 font-normal'>{ props.email }</span>
+          </label>
+
+          { props.from === 'STUDENT' &&        
+            <label className='text-xs text-orange-400 font-semibold'>
+              RA: <span className='text-cyan-500 font-normal'>{ props.ra }</span>
+            </label>
+          }
+
           { props.from === 'PROFESSOR' && 
             <label className='text-xs text-orange-400 font-semibold'>
               Disciplina: <span className='text-cyan-500 font-normal'>{ formatter.format(disciplines) }</span>
@@ -89,18 +99,6 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
           <label className='text-xs text-orange-400 font-semibold'>
             Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDate(props.registeredAt) }</span>
           </label>
-
-          { props.from !== 'MANAGER' &&
-            <label className='text-xs text-orange-400 font-semibold'>
-              Agendamentos: <span className='text-cyan-500 font-normal'>{ props.appointments }</span>
-            </label>
-          }
-
-          { props.from !== 'MANAGER' &&
-            <label className='text-xs text-orange-400 font-semibold'>
-              Solicitações: <span className='text-cyan-500 font-normal'>{ props.solicitations }</span>
-            </label>
-          }
         </div>
       </div>  
     </div>
