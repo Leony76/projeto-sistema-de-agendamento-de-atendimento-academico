@@ -1,11 +1,11 @@
-import type { NewStudentFormData } from '@shared/schemas/newUser.schema'
+import type { ManagerRegistersStudentFormData } from '@shared/schemas/newUser.schema'
 import { ManagerRepository } from './manager.repository'
 import { ApiError } from '@backend/utils/apiError.util';
 import { generateTemporaryPassword } from '@backend/utils/generateTemporaryPassword.util';
 
 export class ManagerService {
 
-  public static async registerStudent(data: NewStudentFormData) {
+  public static async registerStudent(data: ManagerRegistersStudentFormData) {
 
     const [
       studentAlreadyRegisteredByRa,

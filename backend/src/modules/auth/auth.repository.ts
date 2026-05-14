@@ -1,5 +1,6 @@
 import { prisma } from "@backend/lib/prisma";
-import type { RegisterStudentFormData } from "@shared/schemas/register.schema";
+import type * as R from '@shared/types/dtos/register.type.dto';
+import type * as L from '@shared/types/dtos/login.type.dto';
 
 export class AuthRepository {
   
@@ -38,7 +39,7 @@ export class AuthRepository {
     });
   };
 
-  public static async selfStudentRegistration(data: Omit<RegisterStudentFormData, 'repeatPassword'>) {
+  public static async registerStudent(data: R.StudentRegistersHimselfRequest) {
     return await prisma.user.create({
       data: {
         name     : data.name,
@@ -46,7 +47,7 @@ export class AuthRepository {
         password : data.password,
         student: {
           create: {
-            ra: data.ra,
+            ra : data.ra,
           },
         },
       },

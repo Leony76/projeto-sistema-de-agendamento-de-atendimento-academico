@@ -32,7 +32,7 @@ model Student {
   userId  Int    @unique @map("user_id")     
   ra      String @unique
 
-  user    User @relation(fields: [userId], references: [id])
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   appointments  Appointment[]  
   solicitations Solicitation[]  
@@ -42,7 +42,7 @@ model Student {
 
 model Professor {
   userId        Int  @unique       
-  user          User @relation(fields: [userId], references: [id])
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   disciplines   Discipline[]
   appointments  Appointment[]  
@@ -54,7 +54,7 @@ model Professor {
 
 model Manager {
   userId  Int  @unique      
-  user    User @relation(fields: [userId], references: [id])
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@map("managers")
 }
@@ -65,8 +65,8 @@ model Room {
   name         String
   status       RoomStatus
 
-  registeredAt DateTime  @default(now())  @map("registered_at")
-  updatedAt    DateTime?   @updatedAt       @map("updated_at")
+  registeredAt DateTime   @default(now())  @map("registered_at")
+  updatedAt    DateTime?  @updatedAt       @map("updated_at")
   deletedAt    DateTime?  @map("deleted_at")               
 
   appointments Appointment[]
@@ -75,10 +75,9 @@ model Room {
 }
 
 model ProfessorAvailability {
-  id           Int   @id @default(autoincrement())
-
+  id            Int        @id @default(autoincrement())
   registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime?   @updatedAt      @map("updated_at")
+  updatedAt     DateTime?  @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
   startTime    Int
@@ -86,28 +85,28 @@ model ProfessorAvailability {
   dayOfWeek    DayOfWeek   
 
   professorId  Int
-  professor    Professor   @relation(fields: [professorId], references: [userId])
+  professor    Professor   @relation(fields: [professorId], references: [userId], onDelete: Cascade)
 
   @@map("professor_availabilities")
 }
 
 model Appointment {
-  id         Int       @id  @default(autoincrement())
-  reason     String
-  dateTime   DateTime       @map("date_time")
+  id            Int        @id  @default(autoincrement())
+  reason        String
+  dateTime      DateTime   @map("date_time")
 
   registeredAt  DateTime   @default(now()) @map("registered_at")
   updatedAt     DateTime   @updatedAt      @map("updated_at")
   deletedAt     DateTime?  @map("deleted_at")
 
   roomId       Int         
-  room         Room         @relation(fields: [roomId], references: [id])
+  room         Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   studentId    Int          @map("student_id")
-  student      Student      @relation(fields: [studentId], references: [userId]) 
+  student      Student      @relation(fields: [studentId], references: [userId], onDelete: Cascade) 
 
   professorId  Int          @map("professor_id")
-  professor    Professor    @relation(fields: [professorId], references: [userId]) 
+  professor    Professor    @relation(fields: [professorId], references: [userId], onDelete: Cascade) 
 
   history      History?
 
@@ -117,47 +116,47 @@ model Appointment {
 }
 
 model Solicitation {
-  id         Int     @id         @default(autoincrement())
-  dateTime   DateTime
+  id            Int                 @id               @default(autoincrement())
+  dateTime      DateTime
 
-  registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime?   @updatedAt      @map("updated_at")
-  deletedAt     DateTime?  @map("deleted_at")
+  registeredAt  DateTime            @default(now())   @map("registered_at")
+  updatedAt     DateTime?           @updatedAt        @map("updated_at")
+  deletedAt     DateTime?           @map("deleted_at")
 
-  status     SolicitationStatus  @default(UNCONFIRMED)
+  status        SolicitationStatus  @default(UNCONFIRMED)
 
-  studentId    Int          @map("student_id")
-  student      Student      @relation(fields: [studentId], references: [userId]) 
-
-  professorId  Int          @map("professor_id")
-  professor    Professor    @relation(fields: [professorId], references: [userId])  
+  studentId     Int                 @map("student_id")
+  student       Student             @relation(fields: [studentId], references: [userId], onDelete: Cascade) 
+ 
+  professorId   Int                 @map("professor_id")
+  professor     Professor           @relation(fields: [professorId], references: [userId], onDelete: Cascade)  
 
   @@map("solicitations")
 }
 
 model History {
-  id Int        @id        @default(autoincrement())
+  id Int         @id            @default(autoincrement())
 
-  registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime?  @updatedAt      @map("updated_at")
-  deletedAt     DateTime?  @map("deleted_at")
+  registeredAt   DateTime       @default(now())      @map("registered_at")
+  updatedAt      DateTime?      @updatedAt           @map("updated_at")
+  deletedAt      DateTime?      @map("deleted_at")
 
   appointmentId  Int           @unique
-  appointment    Appointment   @relation(fields: [appointmentId], references: [id])
+  appointment    Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
 
   @@map("history")
 }
 
 model Discipline {
-  id           Int        @id @default(autoincrement())
-  name         String
+  id            Int         @id @default(autoincrement())
+  name          String
 
-  registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime?  @updatedAt      @map("updated_at")
-  deletedAt     DateTime?  @map("deleted_at")
+  registeredAt  DateTime    @default(now()) @map("registered_at")
+  updatedAt     DateTime?   @updatedAt      @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
 
-  professorId  Int?        @map("professor_id")
-  professor    Professor?  @relation(fields: [professorId], references: [userId])
+  professorId   Int?        @map("professor_id")
+  professor     Professor?  @relation(fields: [professorId], references: [userId], onDelete: Cascade)
 
   @@map("disciplines")
 }

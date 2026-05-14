@@ -149,7 +149,6 @@ const Manager = (): React.JSX.Element => {
     },
   );
   
-
   useEffect(() => {
     if (location.pathname === '/home') {
       setGeneralActions(null);

@@ -50,7 +50,7 @@ const Login = (): React.JSX.Element => {
       identifier  : 'email',
       error       : (errors as any).email?.message,
     }, 
-    STUDENT: {
+    'STUDENT': {
       label       : 'RA',
       placeholder : 'Insira seu RA',
       type        : 'number',
@@ -73,17 +73,17 @@ const Login = (): React.JSX.Element => {
           break;
         }
       }
-      
-      // if (response.success) {
-      alert(response.message);
 
       login( 
         response.data.token, 
         response.data.user, 
       );
           
-      navigate('/home');
-      // }
+      navigate('/home', {
+        state: {
+          success: `Bem-vindo(a) de volta, ${response.data.user.name.split(' ')[0]}!`,
+        }
+      });
     } catch (error:unknown) {
       toast(apiError(error), 'error');
     }

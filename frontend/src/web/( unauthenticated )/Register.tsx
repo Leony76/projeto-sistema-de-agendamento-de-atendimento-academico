@@ -1,23 +1,26 @@
 import { Button } from '@frontend/components/button'
 import { Input } from '@frontend/components/input'
 import { useToast } from '@frontend/contexts/ToastContext';
-import { registerSchema, type RegisterStudentFormData } from '@shared/schemas/register.schema';
+import { studentRegisterHimselfSchema, type StudentRegistersHimselfFormData } from '@shared/schemas/studentRegistersHimself.schema';
 import { AuthService } from '@frontend/services/auth.service';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom'
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
 
 const Register = (): React.JSX.Element => {
 
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth(); 
 
   const { 
     register, 
     handleSubmit, 
     formState: { errors } 
-  } = useForm<RegisterStudentFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<StudentRegistersHimselfFormData>({
+    resolver: zodResolver(studentRegisterHimselfSchema),
     defaultValues: {
       email          : '',
       password       : '',
@@ -27,21 +30,27 @@ const Register = (): React.JSX.Element => {
     },
   });
 
-  const handleRegister = async( data: RegisterStudentFormData ): Promise<void> => {
+  const handleRegister = async( data: StudentRegistersHimselfFormData ): Promise<void> => {
     try {
-      const response = await AuthService.registerAsStudent(data);
-      
+      const response = await AuthService.studentRegisterHimself(data);
+
       if (response.success) {
-        alert(response.message);
-        navigate('/home');
+        login(
+          response.data.token,
+          response.data.user,
+        );
+
+        navigate('/home', {
+          state: {
+            success: 'Cadastro realizado com sucesso!',
+          }
+        });
       }
 
     } catch (error:unknown) {
-      if (error instanceof Error) {
-        toast('Houve um erro ao realizar o cadastro!: ' + error.message, 'error');
-      }
+      toast(apiError(error), 'error');
     }
-  } ;
+  };
 
   return (
     <div className='grid grid-cols-[1fr_450px] min-h-screen'>

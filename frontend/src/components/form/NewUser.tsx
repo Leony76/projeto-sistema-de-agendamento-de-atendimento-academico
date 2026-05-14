@@ -1,4 +1,4 @@
-import { newUserSchema, type NewProfessorFormData, type NewStudentFormData, type NewUserFormData } from '@shared/schemas/newUser.schema';
+import { newUserSchema, type ManagerRegistersProfessorFormData, type ManagerRegistersStudentFormData, type ManagerRegistersUserFormData } from '@shared/schemas/newUser.schema';
 import type { UserRole } from '@shared/types/userRole.type'
 import React, { useEffect, useState } from 'react'
 import { FaArrowCircleLeft, FaUserPlus } from 'react-icons/fa';
@@ -11,8 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { SelectOption } from '@shared/types/selectOptions.type';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
-import { ManagerService } from '@frontend/services/manager.service';
-import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
+import { AuthService } from '@frontend/services/auth.service';
 
 type Props = {
   onBack                  : () => void;
@@ -31,7 +30,7 @@ const NewUser = (props:Props): React.JSX.Element => {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<NewUserFormData>({
+  } = useForm<ManagerRegistersUserFormData>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
       role        : newUserRole,
@@ -42,17 +41,17 @@ const NewUser = (props:Props): React.JSX.Element => {
     },
   });
 
-  const handleNewUser = async(data: NewUserFormData): Promise<void> => {
+  const handleNewUser = async(data: ManagerRegistersUserFormData): Promise<void> => {
     try {
       let response;
 
       switch (data.role) {
-        case 'MANAGER': response = await ManagerService.registerStudent(data); break;
-        case 'PROFESSOR': response = await ManagerService.registerNewUser(data); break;
-        case 'STUDENT': response = await ManagerService.registerNewUser(data); break;
+        case 'STUDENT'  : response = AuthService.registerStudent(data);   break;
+        case 'PROFESSOR': response = AuthService.registerProfessor(data); break;
+        case 'MANAGER'  : response = AuthService.registerManager(data);   break;
       }
 
-      console.log(response);
+
       toast('');
       
       props.onBack();
@@ -128,7 +127,7 @@ const NewUser = (props:Props): React.JSX.Element => {
           customStyle={{ input: 'h-8' }}
           placeholder='Insira o RA'
           { ...register('ra') }
-          error={(errors as FieldErrors<NewStudentFormData>).ra?.message}
+          error={(errors as FieldErrors<ManagerRegistersStudentFormData>).ra?.message}
         />
       }
 
@@ -150,7 +149,7 @@ const NewUser = (props:Props): React.JSX.Element => {
             label='Disciplina do professor'
             selectedOptionPlaceholderShow
             placeholder='Selecione a disciplina'
-            error={(errors as FieldErrors<NewProfessorFormData>).disciplines?.message}
+            error={(errors as FieldErrors<ManagerRegistersProfessorFormData>).disciplines?.message}
             onSelect={(value) => {
               setValue('disciplines', value as string[], {
                 shouldValidate: true,
