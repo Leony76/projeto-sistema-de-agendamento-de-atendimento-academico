@@ -11,12 +11,11 @@ import { STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_F
 import { FaClipboardQuestion } from 'react-icons/fa6';
 import { filterProfessorAppointmentsHistory } from '@frontend/utils/filters/filterProfessorAppointmentsHistory.util';
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTORY_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter';
-import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
-import { PROFESSOR_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/professor/history.mock';
-import { STUDENT_APPOINTMENTS_HISTORY } from '@frontend/constants/mocks/dto/student/history.mock';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
+import type { Appointment } from '@shared/types/appointment.type';
+import type { Professor, Student } from '@shared/types/userBasicInfos.type';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -40,8 +39,8 @@ const History = ():React.JSX.Element => {
     student   : 'none',
   });
 
-  const [studentAppointmentHistory, setStudentAppointmentHistory] = useState<StudentAppointmentHistory[]>([]);
-  const [professorAppointmentHistory, setProfessorAppointmentHistory] = useState<ProfessorAppointmentHistory[]>([]);
+  const [studentAppointmentHistory, setStudentAppointmentHistory] = useState<Appointment<Pick<Professor, 'name' | 'photo'>>[]>([]);
+  const [professorAppointmentHistory, setProfessorAppointmentHistory] = useState<Appointment<Pick<Student, 'name' | 'photo'>>[]>([]);
 
   const filteredAppointmentHistoryByRole = {
     STUDENT: filterStudentAppointmentsHistory(
@@ -104,13 +103,7 @@ const History = ():React.JSX.Element => {
   useEffect(() => {
     (async() => {
       try {
-        const [ response1, response2 ] = [
-          STUDENT_APPOINTMENTS_HISTORY,
-          PROFESSOR_APPOINTMENTS_HISTORY,
-        ];
-
-        setStudentAppointmentHistory(response1);
-        setProfessorAppointmentHistory(response2);
+        
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
       }

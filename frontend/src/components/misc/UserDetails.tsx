@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ExpansibleImage from './ExpansibleImage';
 import NoContent from './NoContent';
-import type { UserDetails as UserDetailsType } from '@shared/types/userDetails.type';
+import type { UserGeneralInfosResponse } from '@shared/types/dtos/userGeneralInfos.dto';
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Select } from '../select';
 import { Input } from '../input';
@@ -18,10 +18,8 @@ import { Button } from '../button';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
-import { getUserGeneralInfos } from '@frontend/constants/mocks/dto/manager/userGeneralInfos.mock';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { TiInfoLarge } from 'react-icons/ti';
-import type { UserRole } from '../../../../backend/generated/prisma/enums';
 
 type SearchValue = {
   appointment  : string;
@@ -33,6 +31,7 @@ type FilterValue = {
     appointments  : typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'];
     solicitations : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
   };
+
   professor : {
     appointments  : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'];
     solicitations : typeof STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP[number]['value'];
@@ -43,7 +42,7 @@ export const UserDetails = (): React.JSX.Element => {
 
   const { id } = useParams();
 
-  const [ user, setUser ] = useState<UserDetailsType | null>(null);
+  const [ user, setUser ] = useState<UserGeneralInfosResponse | null>(null);
   const navigate = useNavigate();
 
   const [searchValue, setSearchValue] = useState<SearchValue>({
@@ -63,18 +62,21 @@ export const UserDetails = (): React.JSX.Element => {
         searchValue.appointment,
         userDetailsFilter.professor.appointments,
       ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
+
       solicitations: filterStudentSolicitationsFromProfessorView(
         user?.role === 'PROFESSOR' ? user.solicitationsList : [],
         searchValue.solicitation,
         userDetailsFilter.professor.solicitations,
       ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
     },
+
     STUDENT: {
       appointments: filterStudentAppointments(
         user?.role === 'STUDENT' ? user.appointmentsList : [],
         searchValue.appointment,
         userDetailsFilter.student.appointments,
       ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
+
       solicitations: filterStudentSolicitations(
         user?.role === 'STUDENT' ? user.solicitationsList : [],
         searchValue.solicitation,
@@ -103,6 +105,7 @@ export const UserDetails = (): React.JSX.Element => {
           ...prev, student: { ...prev.student, appointments: value }
         })),
       },
+
       solicitations: {
         schema : 'STUDENT_SOLICITATIONS_FILTER',
         value  : userDetailsFilter.student.solicitations,
@@ -111,6 +114,7 @@ export const UserDetails = (): React.JSX.Element => {
         })),
       },
     },
+
     PROFESSOR: {
       appointments: {
         schema : 'PROFESSOR_APPOINTMENT_FILTER',
@@ -119,6 +123,7 @@ export const UserDetails = (): React.JSX.Element => {
           ...prev, professor: { ...prev.professor, appointments: value }
         })),
       },
+
       solicitations: {
         schema : 'STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER',
         value  : userDetailsFilter.professor.solicitations,
@@ -135,7 +140,7 @@ export const UserDetails = (): React.JSX.Element => {
     (async(id:number):Promise<void> => {
       try {
         
-        const user = getUserGeneralInfos(id);
+        const res
 
         setUser(user ?? null);
       } catch (error:unknown) {
@@ -206,7 +211,7 @@ export const UserDetails = (): React.JSX.Element => {
       <ExpansibleImage
         image={{
           name : user.name,
-          uri  : user.photo,
+          uri  : user.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
           size : 'h-35 w-35', 
         }}
       />
@@ -236,11 +241,11 @@ export const UserDetails = (): React.JSX.Element => {
             { user.role !== 'MANAGER' &&
               <>
                 <li className='text-sm text-orange-400 font-semibold'>
-                  Agendamentos: <span className='text-cyan-500 font-normal'>{ user.appointments }</span>
+                  Agendamentos: <span className='text-cyan-500 font-normal'>{ user.appointmentsList.length ?? 'Nenhuma' }</span>
                 </li>
 
                 <li className='text-sm text-orange-400 font-semibold'>
-                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointments }</span>
+                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.solicitationsList.length ?? 'Nenhuma' }</span>
                 </li>
               </>
             }

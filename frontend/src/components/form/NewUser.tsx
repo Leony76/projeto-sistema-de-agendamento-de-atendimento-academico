@@ -19,15 +19,15 @@ import Warning from '../misc/Warning';
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 
 type Props = {
-  onBack                            : () => void;
-  newProfessorDisciplines           : SelectOption[];
-  setNewProfessorDisciplinesOptions : (value: SelectOption[]) => void;
+  onBack       : () => void;
+  refreshUsers : () => void;
 };
 
 const NewUser = (props:Props): React.JSX.Element => {
 
   const { toast } = useToast();
 
+  const [ newProfessorDisciplinesOptions, setNewProfessorDisciplinesOptions ] = useState<SelectOption[]>([]);
   const [newUserRole, setNewUserRole] = useState<UserRole>('STUDENT');
   const [newDiscipline, setNewDiscipline] = useState<{ inputShow: boolean, error: string, name: string }>({
     inputShow : false,
@@ -74,7 +74,7 @@ const NewUser = (props:Props): React.JSX.Element => {
       
       const updatedDisciplines = await DisciplineService.getUnboundNames();
       
-      props.setNewProfessorDisciplinesOptions(
+      setNewProfessorDisciplinesOptions(
         updatedDisciplines.map((name) => ({
           label: name,
           value: name,
@@ -107,10 +107,11 @@ const NewUser = (props:Props): React.JSX.Element => {
       
       toast(response.message);
       console.log(response.data);
-      
+      props.refreshUsers();
+
       const updatedDisciplines = await DisciplineService.getUnboundNames();
 
-      props.setNewProfessorDisciplinesOptions(
+      setNewProfessorDisciplinesOptions(
         updatedDisciplines.map((name) => ({
           label: name,
           value: name,
@@ -123,6 +124,25 @@ const NewUser = (props:Props): React.JSX.Element => {
       toast(apiError(error), 'error');
     }
   };
+
+  useEffect(() => {
+    (async() => {
+      try {
+        const [ disciplineNames ] = await Promise.all([
+          DisciplineService.getUnboundNames(),
+        ]);
+
+        setNewProfessorDisciplinesOptions(
+          disciplineNames.map((name) => ({
+            label: name,
+            value: name,
+          })),
+        );
+      } catch (error:unknown) {
+        toast(apiError(error), 'error');
+      } 
+    })();
+  },[]);
 
   useEffect(() => {
     setValue('role', newUserRole);
@@ -210,7 +230,7 @@ const NewUser = (props:Props): React.JSX.Element => {
             <Select.Default
               multipleOptions
               value={watch('disciplines')}
-              externalOptionsSchema={props.newProfessorDisciplines}
+              externalOptionsSchema={newProfessorDisciplinesOptions}
               gridConfig='grid-cols-2' 
               label='Disciplina(s) do professor'
               selectedOptionPlaceholderShow

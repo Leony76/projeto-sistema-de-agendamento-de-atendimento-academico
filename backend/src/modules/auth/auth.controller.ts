@@ -60,14 +60,14 @@ export class AuthController {
 
   public static async managerRegistersStudent(req: Request, res: Response) {
     
-    const request: L.LoginAsGenericRequest = req.body;
+    const request: R.ManagerRegistersStudentRequest = req.body;
 
-    const loggedUser: L.LoginResponse<L.LoginAsGenericResponse> = await AuthService.loginAsGeneric(request);
+    const studentRegistered: R.ManagersRegistersStudentResponse = await AuthService.managerRegistersStudent(request);
 
-    const response: ApiResponse<L.LoginResponse<L.LoginAsGenericResponse>> = {
+    const response: ApiResponse<R.ManagersRegistersStudentResponse> = {
       message : 'Aluno cadastrado com sucesso!',
       success : true,
-      data    : loggedUser,
+      data    : studentRegistered,
     };
 
     return res.status(200).json(response);

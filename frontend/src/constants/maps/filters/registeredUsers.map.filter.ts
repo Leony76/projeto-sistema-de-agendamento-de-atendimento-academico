@@ -4,10 +4,6 @@ export const REGISTERED_STUDENTS_FILTER_MAP = [
   { value: 'ZAStudentName'     , label: 'Alunos [Z-A]'        },
   { value: 'mostRecent'        , label: 'Mais recentes'       },
   { value: 'mostOld'           , label: 'Mais antigos'        },
-  { value: 'mostSolicitations'  , label: 'Mais Solicitações'  },
-  { value: 'leastSolicitations' , label: 'Menos Solicitações' },
-  { value: 'mostAppointments'  , label: 'Mais Agendamentos'   },
-  { value: 'leastAppointments' , label: 'Menos Agendamentos'  },
 ] as const;
 
 export const REGISTERED_STUDENTS_FILTER_VALUE_MAP =
@@ -17,16 +13,12 @@ export const REGISTERED_STUDENTS_FILTER_VALUE_MAP =
 
 export const REGISTERED_PROFESSORS_FILTER_MAP = [
   { value: 'none'              , label: 'Nenhum'              },
-  { value: 'AZProfessorName'   , label: 'Professores [A-Z]' },
-  { value: 'ZAProfessorName'   , label: 'Professores [Z-A]' },
-  { value: 'AZDisciplineName'  , label: 'Disciplina  [A-Z]' },
-  { value: 'ZADisciplineName'  , label: 'Disciplina  [Z-A]' },
+  { value: 'AZProfessorName'   , label: 'Professores [A-Z]'   },
+  { value: 'ZAProfessorName'   , label: 'Professores [Z-A]'   },
+  { value: 'AZDisciplineName'  , label: 'Disciplina  [A-Z]'   },
+  { value: 'ZADisciplineName'  , label: 'Disciplina  [Z-A]'   },
   { value: 'mostRecent'        , label: 'Mais recentes'       },
   { value: 'mostOld'           , label: 'Mais antigos'        },
-  { value: 'mostSolicitations'  , label: 'Mais Solicitações'  },
-  { value: 'leastSolicitations' , label: 'Menos Solicitações' },
-  { value: 'mostAppointments'  , label: 'Mais Agendamentos'   },
-  { value: 'leastAppointments' , label: 'Menos Agendamentos'  },
 ] as const;
 
 export const REGISTERED_PROFESSORS_FILTER_VALUE_MAP =

@@ -1,7 +1,5 @@
 import { ManagerRegistersManagerFormData, ManagerRegistersProfessorFormData, ManagerRegistersStudentFormData } from "@shared/schemas/newUser.schema";
-import { Manager } from "../manager.type";
-import { Professor } from "../professor.type";
-import { Student } from "../student.type";
+import { Student, Professor, Manager } from "../userBasicInfos.type";
 import { StudentRegistersHimselfFormData } from "@shared/schemas/studentRegistersHimself.schema";
 
 export type StudentRegistersHimselfRequest = Omit<StudentRegistersHimselfFormData, 'repeatPassword'>;

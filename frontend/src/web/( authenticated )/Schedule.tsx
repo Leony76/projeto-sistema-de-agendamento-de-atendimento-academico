@@ -15,9 +15,7 @@ import { filterToScheduleProfessors } from '@frontend/utils/filters/filterToSche
 import NoContent from '@frontend/components/misc/NoContent';
 import { FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/toScheduleProfessors.map.filter';
-import { getAvailableSlots, TO_SCHEDULE_PROFESSORS } from '@frontend/constants/mocks/dto/professor/toScheduleProfessors.mock';
 import type { ToScheduleProfessors } from '@shared/types/toScheduleProfessors.type';
-import { DAYS } from '@frontend/constants/days.const';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { useToast } from '@frontend/contexts/ToastContext';
 
@@ -83,12 +81,6 @@ const Schedule = ():React.JSX.Element => {
       return;
     }
 
-    const result = getAvailableSlots({
-      professorId: selectedProfessorData.id,
-      date: watch('appointmentDate'),
-    });
-
-    setAvailableSlots(result.slots);
 
   }, [selectedProfessorData, appointmentDate]);
 
@@ -106,9 +98,9 @@ const Schedule = ():React.JSX.Element => {
   useEffect(() => {
     const getData = async():Promise<void> => {
       try {
-        const response = TO_SCHEDULE_PROFESSORS;
+        // const response = TO_SCHEDULE_PROFESSORS;
 
-        setToScheduleProfessors(response);
+        // setToScheduleProfessors(response);
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -215,19 +207,19 @@ const Schedule = ():React.JSX.Element => {
                   value={watch('appointmentDate')}
                   onChange={(date) => setValue('appointmentDate', date as string, { shouldValidate: true })}
                   error={errors.appointmentDate?.message}
-                  disabledDate={(date) => {
-                    if (!selectedProfessorData) return true;
+                  // disabledDate={(date) => {
+                  //   if (!selectedProfessorData) return true;
 
-                    const day = DAYS[date.getDay()];
+                  //   const day = DAYS[date.getDay()];
 
-                    const dayAvailability = selectedProfessorData.availability.filter(
-                      (a) => a.dayOfWeek === day
-                    );
+                  //   const dayAvailability = selectedProfessorData.availability.filter(
+                  //     (a) => a.dayOfWeek === day
+                  //   );
 
-                    if (dayAvailability.length === 0) return true;
+                  //   if (dayAvailability.length === 0) return true;
 
-                    return false;
-                  }}
+                  //   return false;
+                  // }}
                 />
 
                 <div className='space-y-1'>

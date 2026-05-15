@@ -10,12 +10,11 @@ import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterStudentSolicitationsFromProfessorView.util';
-import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
-import { STUDENT_SOLICITATIONS } from '@frontend/constants/mocks/dto/student/solicitations.mock';
-import { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW } from '@frontend/constants/mocks/dto/professor/solicitations.mock';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
+import type { Solicitation } from '@shared/types/solicitation.type';
+import type { Professor, Student } from '@shared/types/userBasicInfos.type';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -39,8 +38,8 @@ const Requests = ():React.JSX.Element => {
     student   : 'none',
   });
 
-  const [studentSolicitations, setStudentSolicitations] = useState<StudentSolicitation[]>([]);
-  const [studentSolicitationsFromPRofessorView, setStudentSolicitationsFromProfessorView] = useState<StudentSolicitationFromProfessorView[]>([]);
+  const [studentSolicitations, setStudentSolicitations] = useState<Solicitation<Pick<Professor, 'name' | 'photo'>>[]>([]);
+  const [studentSolicitationsToProfessor, setStudentSolicitationsToProfessor] = useState<Solicitation<Pick<Student, 'name' | 'photo'>>[]>([]);
 
   const filteredSolicitationsByRole = {
     STUDENT: filterStudentSolicitations(
@@ -50,7 +49,7 @@ const Requests = ():React.JSX.Element => {
     ).map(rest => ({ ...rest, from: 'STUDENT' as const })), 
 
     PROFESSOR: filterStudentSolicitationsFromProfessorView(
-      studentSolicitationsFromPRofessorView,
+      studentSolicitationsToProfessor,
       searchValue,
       filterValue.professor
     ).map(rest => ({ ...rest, from: 'PROFESSOR' as const })), 
@@ -106,13 +105,13 @@ const Requests = ():React.JSX.Element => {
   useEffect(() => {
     (async() => {
       try {
-        const [reponse1, response2] = [
-          STUDENT_SOLICITATIONS,
-          STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW,
-        ];
+        // const [reponse1, response2] = [
+        //   STUDENT_SOLICITATIONS,
+        //   STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW,
+        // ];
 
-        setStudentSolicitations(reponse1);
-        setStudentSolicitationsFromProfessorView(response2);
+        // setStudentSolicitations(reponse1);
+        // setStudentSolicitationsFromProfessorView(response2);
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
       }

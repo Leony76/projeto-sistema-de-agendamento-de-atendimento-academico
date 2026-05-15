@@ -1,4 +1,3 @@
-import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdEdit } from 'react-icons/md';
@@ -6,6 +5,7 @@ import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalO
 import ExpansibleImage from '../misc/ExpansibleImage';
 import { FaTrashAlt } from 'react-icons/fa';
 import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
+import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 
 type Props = {
   onClick: () => void;
@@ -97,7 +97,7 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
           }
 
           <label className='text-xs text-orange-400 font-semibold'>
-            Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDate(props.registeredAt) }</span>
+            Data de cadastro: <span className='text-cyan-500 font-normal'>{ formatDateTime(props.registeredAt) }</span>
           </label>
         </div>
       </div>  

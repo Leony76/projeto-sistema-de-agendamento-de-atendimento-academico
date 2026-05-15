@@ -1,4 +1,3 @@
-import type { StudentAppointment, ProfessorAppointment } from '@shared/types/appointment.type';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import React, { useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -8,16 +7,23 @@ import { Button } from '../button';
 import { FaCheck } from 'react-icons/fa';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
-import { LOGGED_USER_DATA } from '@frontend/constants/mocks/loggedUserData.mock';
+import type { Appointment } from '@shared/types/appointment.type';
+import type { Professor, Student } from '@shared/types/userBasicInfos.type';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Navigate } from 'react-router-dom';
 
 type Props = {
   smVersion?: boolean;
 } & (
-  | StudentAppointment &   { from: 'STUDENT' } 
-  | ProfessorAppointment & { from: 'PROFESSOR'}
+  | Appointment<Pick<Student, 'photo' | 'name'>> & { from: 'PROFESSOR' }
+  | Appointment<Pick<Professor, 'photo' | 'name'>> & { from: 'STUDENT' }
 );
 
 const Appointment = (props:Props): React.JSX.Element => {
+
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to={'/'}/>
 
   const [expandedReason, setExpandedReason] = useState<boolean>(false);
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
@@ -26,11 +32,6 @@ const Appointment = (props:Props): React.JSX.Element => {
   const reason: string = (props.reason.length > 80 && !expandedReason) 
     ? props.reason.slice(0, 80) + '...'
     : props.reason
-  ;
-
-  const entity = props.from === 'PROFESSOR'
-    ? props.student
-    : props.professor
   ;
 
   return (
@@ -75,8 +76,8 @@ const Appointment = (props:Props): React.JSX.Element => {
           
           <ExpansibleImage
             image={{
-              name : entity.name,
-              uri  : entity.photo,
+              name : props.user.name,
+              uri  : props.user.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
               size: props.from === 'STUDENT' ? 'h-25 w-25' : 'h-30 w-30'
             }}
           />       
@@ -93,7 +94,7 @@ const Appointment = (props:Props): React.JSX.Element => {
           ${ props.from === 'PROFESSOR' ? 'text-xs' : 'text-[13px]' }
         `}>
           <label className='text-orange-400 font-semibold'>
-            { props.from === 'PROFESSOR' ? 'Aluno:' : 'Professor:'} <span className='text-cyan-500 font-normal'>{ props.from === 'PROFESSOR' ? props.student.name : props.professor.name }</span>
+            { props.from === 'PROFESSOR' ? 'Aluno:' : 'Professor:'} <span className='text-cyan-500 font-normal'>{ props.user.name }</span>
           </label>
 
           <label className='text-orange-400 font-semibold'>
@@ -112,7 +113,7 @@ const Appointment = (props:Props): React.JSX.Element => {
           </label>
         </div>
 
-        { (props.from === 'PROFESSOR' && LOGGED_USER_DATA.role === 'PROFESSOR') &&
+        { user.role === 'PROFESSOR' &&
           <Button.Default
             label='Marcar como concluído'
             Icon={() => <FaCheck />}

@@ -1,7 +1,5 @@
 import { LoginAsManagerFormData, LoginAsProfessorFormData, LoginAsStudentFormData } from "@shared/schemas/login.schema";
-import { Student } from "../student.type";
-import { Professor } from "../professor.type";
-import { Manager } from "../manager.type";
+import { Student, Professor, Manager } from "../userBasicInfos.type";
 
 export type LoginAsStudentRequest   = LoginAsStudentFormData;
 export type LoginAsProfessorRequest = LoginAsProfessorFormData;

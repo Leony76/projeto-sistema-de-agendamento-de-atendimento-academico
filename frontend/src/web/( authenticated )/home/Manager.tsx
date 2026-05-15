@@ -28,8 +28,6 @@ import type { SystemGeneralMetrics } from '@shared/types/systemGeneralMetrics.ty
 import type { Room } from '@shared/types/room.type';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
-import { DisciplineService } from '@frontend/services/discipline.service';
-import type { SelectOption } from '@shared/types/selectOptions.type';
 import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
 import { UserService } from '@frontend/services/user.service';
 
@@ -54,6 +52,7 @@ const Manager = (): React.JSX.Element => {
   });
   
   const [systemReports, setSystemReports] = useState<Reports | null>(null);
+  const [refreshUsers, setRefreshUsers] = useState(0);
 
   const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<SystemGeneralMetrics['count'] | null>(null);
 
@@ -62,7 +61,6 @@ const Manager = (): React.JSX.Element => {
   const [ activeManagers,   setActiveManagers ] = useState<ActiveManagersToManagerList[]>([]);
 
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [ newProfessorDisciplinesOptions, setNewProfessorDisciplinesOptions ] = useState<SelectOption[]>([]);
   
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   const [generalActions, setGeneralActions] = useState<ManagerGeneralActions | null>(null);
@@ -159,43 +157,28 @@ const Manager = (): React.JSX.Element => {
       try {
         switch (userRoleList) {
           case 'STUDENT':
+            if (activeStudents.length > 0) break;
             const students: ActiveStudentsToManagerList[] = await UserService.getActiveStudentsToManagerList();
             setActiveStudents(students);
             break;
           case 'PROFESSOR':
+            if (activeProfessors.length > 0) break;
             const professors: ActiveProfessorsToManagerList[] = await UserService.getActiveProfessorsToManagerList();
             setActiveProfessors(professors);
             break;
           case 'MANAGER':
+            if (activeManagers.length > 0) break;
             const managers: ActiveManagersToManagerList[] = await UserService.getActiveManagersToManagerList();
             setActiveManagers(managers);
-            break
-          ;
+            break;
+          default: 
+            throw new Error('Permissão de usuário inválido');
         }
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
     })();
-  }, [userRoleList]);
-
-  useEffect(() => {
-    (async() => {
-      try {
-        const [ disciplineNames ] = await Promise.all([
-          DisciplineService.getUnboundNames(),
-        ]);
-
-        setNewProfessorDisciplinesOptions(
-          disciplineNames.map((name) => ({
-            label: name,
-            value: name,
-          })),
-        );
-      } catch (error:unknown) {
-        toast(apiError(error), 'error');
-      } 
-    })();
-  },[]);
+  }, [userRoleList, refreshUsers]);
 
   return (
     <Layout 
@@ -260,7 +243,11 @@ const Manager = (): React.JSX.Element => {
                     key={user.id}
                     { ...user }
                     onClick={() => {
-                      navigate(`/home/student/${user.id}`);
+                      navigate(`/home/student/${user.id}`, {
+                        state: { 
+                          role: user.from.toLowerCase(),
+                        }
+                      });
                       setGeneralActions('USER_DETAILS');
                     }}
                   />
@@ -284,8 +271,7 @@ const Manager = (): React.JSX.Element => {
           ) : generalActions === 'NEW_USER' ? (
             <Form.NewUser
               onBack={() => setGeneralActions(null)}
-              newProfessorDisciplines={newProfessorDisciplinesOptions}
-              setNewProfessorDisciplinesOptions={setNewProfessorDisciplinesOptions}
+              refreshUsers={() => setRefreshUsers(prev => prev + 1)}
             />
           ) : generalActions === 'REPORTS' ? (
             <Section.ManagerReports

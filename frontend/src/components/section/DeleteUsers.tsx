@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { FaArrowCircleLeft, FaTrashAlt } from 'react-icons/fa';
 import { Input } from '../input';
-import type { RegisteredManager, RegisteredProfessor, RegisteredStudent } from '@frontend/types/registeredUsers.type';
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { FaUserXmark } from 'react-icons/fa6';
 import ExpansibleImage from '../misc/ExpansibleImage';
@@ -10,10 +9,11 @@ import type { UserRole } from '@shared/types/userRole.type';
 import { Button } from '../button';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { Modal } from '../modal';
+import type { ActiveManagersToManagerList, ActiveProfessorsToManagerList, ActiveStudentsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
 
 type Props = {
   onBack   : () => void;
-  filteredUsersListDataByRoleMap : (RegisteredStudent | RegisteredManager | RegisteredProfessor)[];
+  filteredUsersListDataByRoleMap : (ActiveManagersToManagerList | ActiveStudentsToManagerList | ActiveProfessorsToManagerList)[];
   userRoleList : UserRole;
 };
 
@@ -22,7 +22,7 @@ const DeleteUsers = (props:Props): React.JSX.Element => {
   const { toast } = useToast();
   const [modal, setModal] = useState<'REMOVE_USERS' | null>(null);
   const [excludeUserSearchValue, setExcludeUserSearchValue] = useState<string>('');
-  const [usersToDelete, setUsersToDelete] = useState<(RegisteredStudent | RegisteredManager | RegisteredProfessor)[]>([]);
+  const [usersToDelete, setUsersToDelete] = useState<(ActiveManagersToManagerList | ActiveStudentsToManagerList | ActiveProfessorsToManagerList)[]>([]);
   
   const filteredUsersToDelete = props.filteredUsersListDataByRoleMap.filter((user) => {
     const search = excludeUserSearchValue.toLowerCase();
@@ -122,7 +122,7 @@ const DeleteUsers = (props:Props): React.JSX.Element => {
                     <ExpansibleImage
                       image={{
                         name : user.name,
-                        uri  : user.photo,
+                        uri  : user.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
                         size : 'h-12 w-12'
                       }}
                     />

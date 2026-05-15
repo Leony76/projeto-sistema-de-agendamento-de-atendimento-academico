@@ -14,12 +14,10 @@ import { filterStudentAppointments } from '@frontend/utils/filters/filterStudent
 import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
-import type { StudentAppointment } from '@shared/types/appointment.type';
-import { STUDENT_APPOINTMENTS } from '@frontend/constants/mocks/dto/student/appointments.mock';
-import { STUDENT_BRIEF_INFOS_DATA } from '@frontend/constants/mocks/dto/student/briefInfos.mock';
 import type { StudentBriefInfos } from '@shared/types/studentBriefInfos.type';
-import { STUDENT_LAST_APPOINTMENT } from '@frontend/constants/mocks/dto/student/lastAppointment.mock';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
+import type { Appointment } from '@shared/types/appointment.type';
+import type { Professor } from '@shared/types/userBasicInfos.type';
 
 const Student = (): React.JSX.Element => {
 
@@ -27,9 +25,9 @@ const Student = (): React.JSX.Element => {
   const [filterValue, setFilterValue] = useState<typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
-  const [appointments, setAppointments] = useState<StudentAppointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment<Pick<Professor, 'name' | 'photo'>>[]>([]);
   const [briefInfos, setBriefInfos] = useState<StudentBriefInfos | null>(null);
-  const [lastAppointment, setLastAppointment] = useState<StudentAppointment | null>(null);
+  const [lastAppointment, setLastAppointment] = useState<Appointment<Pick<Professor, 'name'>> | null>(null);
 
   const filteredStudentAppointmentsData = filterStudentAppointments(
     appointments,
@@ -57,19 +55,7 @@ const Student = (): React.JSX.Element => {
   useEffect(() => {
     const getData = async(): Promise<void> => {
       try {
-        const [
-          appointments, 
-          briefInfos,
-          lastAppointment,
-        ] = [
-          STUDENT_APPOINTMENTS, 
-          STUDENT_BRIEF_INFOS_DATA,
-          STUDENT_LAST_APPOINTMENT,
-        ];
-
-        setAppointments(appointments);
-        if (briefInfos) setBriefInfos(briefInfos);
-        if (lastAppointment) setLastAppointment(lastAppointment);
+        
       } catch ( error:unknown ) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -175,7 +161,7 @@ const Student = (): React.JSX.Element => {
                 
                 <div className='flex flex-col'>
                   <label className=' text-orange-400 font-semibold text-xs'>
-                    Professor: <span className='text-cyan-500 font-normal'> { lastAppointment.professor.name } </span>
+                    Professor: <span className='text-cyan-500 font-normal'> { lastAppointment.user.name } </span>
                   </label>
 
                   <label className=' text-orange-400 font-semibold text-xs'>

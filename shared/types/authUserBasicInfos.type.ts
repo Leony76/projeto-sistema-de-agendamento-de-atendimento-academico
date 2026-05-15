@@ -1,4 +1,4 @@
-import { LoginAsStudentResponse, LoginAsProfessorResponse, LoginAsManagerResponse } from "./loginResponse.type";
+import type { LoginAsStudentResponse, LoginAsProfessorResponse, LoginAsManagerResponse } from '@shared/types/dtos/login.type.dto';
 
 export type AuthUserBasicInfos = 
 | LoginAsStudentResponse

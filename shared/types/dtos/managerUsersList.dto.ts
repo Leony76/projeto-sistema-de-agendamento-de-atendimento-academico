@@ -1,6 +1,4 @@
-import { Manager } from "../manager.type";
-import { Professor } from "../professor.type";
-import { Student } from "../student.type";
+import { Student, Professor, Manager } from "../userBasicInfos.type";
 
 
 export type ActiveManagersToManagerListResponse   = Manager;

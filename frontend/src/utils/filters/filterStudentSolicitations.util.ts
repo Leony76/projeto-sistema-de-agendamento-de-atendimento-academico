@@ -1,20 +1,19 @@
-import type { StudentSolicitation } from "@shared/types/solicitation.type";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
 import { STUDENT_SOLICITATIONS_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
+import type { Solicitation } from "@shared/types/solicitation.type";
+import type { Professor } from "@shared/types/userBasicInfos.type";
 
 export const filterStudentSolicitations = (
-  studentSolicitationsData : StudentSolicitation[],
+  studentSolicitationsData : Solicitation<Pick<Professor, 'name' | 'photo'>>[],
   searchValue              : string,
   filterValue              : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'],
-): StudentSolicitation[] => {
+): Solicitation<Pick<Professor, 'name' | 'photo'>>[] => {
   return studentSolicitationsData.filter((solicitation) => {
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      solicitation.professor.name.toLowerCase().includes(search) 
-      ||
-      solicitation.professor.disciplines.some(discipline => discipline.name.toLowerCase().includes(search))
+      solicitation.user.name.toLowerCase().includes(search) 
       ||
       formatTime(solicitation.appoitmentDateTime).toLowerCase().includes(search)
       ||
@@ -39,22 +38,12 @@ export const filterStudentSolicitations = (
   .sort((a, b) => {
     if (!filterValue) return 0;
 
-    const getDisciplinesString = (s: StudentSolicitation) =>
-      s.professor.disciplines.map(d => d.name).join(', ')
-    ;
-
     switch (filterValue) {
       case 'AZProfessorName':
-        return a.professor.name.localeCompare(b.professor.name);
+        return a.user.name.localeCompare(b.user.name);
 
       case 'ZAProfessorName':
-        return b.professor.name.localeCompare(a.professor.name);
-
-      case 'AZDisciplines':
-        return getDisciplinesString(a).localeCompare(getDisciplinesString(b));
-
-      case 'ZADisciplines':
-        return getDisciplinesString(b).localeCompare(getDisciplinesString(a));
+        return b.user.name.localeCompare(a.user.name);
 
       case 'mostRecent':
         return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();

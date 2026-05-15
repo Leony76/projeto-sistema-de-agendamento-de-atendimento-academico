@@ -1,17 +1,18 @@
 import type { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "@frontend/constants/maps/filters/professorAppointments.map.filter";
-import type { ProfessorAppointment } from "@shared/types/appointment.type";
+import type { Appointment } from "@shared/types/appointment.type";
+import type { Student } from "@shared/types/userBasicInfos.type";
 
 export const filterProfessorAppointments = (
-  professorAppoitmentsData : ProfessorAppointment[],
+  professorAppoitmentsData : Appointment<Pick<Student, 'name' | 'photo'>>[],
   searchValue            : string,
   filterValue            : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'],
-): ProfessorAppointment[] => {
+): Appointment<Pick<Student, 'name' | 'photo'>>[] => {
   
   return professorAppoitmentsData.filter((appointment) => {
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      appointment.student.name.toLowerCase().includes(search) 
+      appointment.user.name.toLowerCase().includes(search) 
       ||
       appointment.reason.toLowerCase().includes(search)
       ||
@@ -51,10 +52,10 @@ export const filterProfessorAppointments = (
         return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
 
       case 'AZStudentName':
-        return a.student.name.localeCompare(b.student.name);
+        return a.user.name.localeCompare(b.user.name);
 
       case 'ZAStudentName':
-        return b.student.name.localeCompare(a.student.name);
+        return b.user.name.localeCompare(a.user.name);
       
 
       default:

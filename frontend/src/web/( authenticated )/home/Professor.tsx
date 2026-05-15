@@ -13,14 +13,12 @@ import NoContent from '@frontend/components/misc/NoContent';
 import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
-import type { ProfessorAppointment } from '@shared/types/appointment.type';
-import { PROFESSOR_APPOINTMENTS } from '@frontend/constants/mocks/dto/professor/appointments.mock';
 import type { ProfessorAvailability } from '@shared/types/professorAvailability.type';
-import { PROFESSOR_AVAILABILITY } from '@frontend/constants/mocks/dto/professor/availability.mock';
-import { PROFESSOR_BRIEF_INFOS } from '@frontend/constants/mocks/dto/professor/briefInfos.mock';
 import type { ProfessorBriefInfos } from '@shared/types/professorBriefInfos.type';
 import { Section } from '@frontend/components/section';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
+import type { Appointment } from '@shared/types/appointment.type';
+import type { Student } from '@shared/types/userBasicInfos.type';
 
 const Professor = (): React.JSX.Element => {
 
@@ -30,7 +28,7 @@ const Professor = (): React.JSX.Element => {
   
   const [ availability, setAvailability ] = useState<ProfessorAvailability[]>([]);
   
-  const [ professorAppointments, setProfessorAppointments ] = useState<ProfessorAppointment[]>([]);
+  const [ professorAppointments, setProfessorAppointments ] = useState<Appointment<Pick<Student, 'name' | 'photo'>>[]>([]);
   const [ professorBriefInfos, setProfessorBriefInfos ] = useState<ProfessorBriefInfos | null>(null);
 
   const BRIEF_RENDER = [
@@ -59,15 +57,7 @@ const Professor = (): React.JSX.Element => {
   useEffect(() => {
     (async() => {
       try {
-        const [ response1, response2, response3 ] = [
-          PROFESSOR_APPOINTMENTS,
-          PROFESSOR_AVAILABILITY,
-          PROFESSOR_BRIEF_INFOS,
-        ];
-
-        setProfessorAppointments(response1);
-        setAvailability(response2);
-        setProfessorBriefInfos(response3);
+      
       } catch (error:unknown) {
         if (error instanceof Error) console.error(error.message);
       }

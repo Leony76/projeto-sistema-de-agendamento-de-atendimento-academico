@@ -63,20 +63,54 @@ export class AuthService {
 
 
 
+  public static async managerRegistersStudent(
+    data: R.ManagerRegistersStudentRequest
+  ): Promise<R.ManagersRegistersStudentResponse> {
+
+    const [ emailAlreadyTaken, raAlreadyTaken ] = await Promise.all([
+      AuthRepository.emailAlreadyTaken(data.email),
+      AuthRepository.raAlreadyTaken(data.ra),
+    ]);
+
+    if (emailAlreadyTaken)
+      throw new ApiError('Já há um aluno cadastrado com esse RA');
+    if (raAlreadyTaken)
+      throw new ApiError('Já há um aluno cadastrado com esse e-mail');
+
+    const temporaryPassword = generateTemporaryPassword(8);
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    const studentRegistered = await AuthRepository.registerStudent({
+      ...data,
+      password: hashedPassword,
+    });
+
+    if (!studentRegistered.student || !studentRegistered)
+      throw new ApiError('Não foi possível cadastrar o aluno');
+
+    return {
+      email : studentRegistered.email,
+      name  : studentRegistered.name,
+      ra    : studentRegistered.student.ra,
+    }
+  }
+
+
+
   public static async managerRegistersProfessor(
     data: R.ManagerRegistersProfessorRequest
   ): Promise<R.ManagerRegistersProfessorResponse> {
 
     const [
-      professorAlreadyRegistered,
+      emailAlreadyTaken,
       professorsDisciplineAlreadyTaken,
     ] = await Promise.all([
-      AuthRepository.getUserByEmail(data.email),
+      AuthRepository.emailAlreadyTaken(data.email),
       AuthRepository.professorsDisciplineAlreadyTaken(data.disciplines),
     ]);
 
-    if (professorAlreadyRegistered) 
-      throw new ApiError('Esse professor já está cadastrado no sistema');
+    if (emailAlreadyTaken) 
+      throw new ApiError('Já há professor cadastrado com esse e-mail');
     if (professorsDisciplineAlreadyTaken)
       throw new ApiError('Uma ou mais disciplinas já possuem professor')
 
