@@ -7,4 +7,10 @@ userRoutes.get( '/manager-list/active-students'  , UserController.getActiveStude
 userRoutes.get( '/manager-list/active-professors', UserController.getActiveProfessorsToManagerList );
 userRoutes.get( '/manager-list/active-managers'  , UserController.getActiveManagersToManagerList   );
 
+userRoutes.get( '/student/:id/general-infos'  , UserController.getStudentGeneralInfos   );
+userRoutes.get( '/professor/:id/general-infos', UserController.getProfessorGeneralInfos );
+userRoutes.get( '/manager/:id/general-infos'  , UserController.getManagerGeneralInfos   );
+
+userRoutes.post( '/exclude'  , UserController.excludeUsers );
+
 export default userRoutes;

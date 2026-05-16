@@ -1,3 +1,4 @@
+import type { ApiResponse } from "@shared/types/apiResponse.type";
 import { api } from "./api.service";
 import type * as U from '@shared/types/dtos/managerUsersList.dto'; 
 import type { ManagerGeneralInfosResponse, ProfessorGeneralInfosResponse, StudentGeneralInfosResponse } from '@shared/types/dtos/userGeneralInfos.dto';
@@ -40,5 +41,12 @@ export class UserService {
   
   public static async getManagerGeneralInfosById(id: number) {
     return this.getUserGeneralInfosById<ManagerGeneralInfosResponse>('manager', id);
+  }
+
+  public static async excludeUsers(ids: number[]) {
+
+    const response = await api.post<ApiResponse<number[]>>('/user/exclude', { ids });
+
+    return response.data;
   }
 }

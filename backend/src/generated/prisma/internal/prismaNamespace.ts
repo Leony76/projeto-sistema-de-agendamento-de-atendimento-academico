@@ -1261,10 +1261,12 @@ export const AppointmentScalarFieldEnum = {
   dateTime: 'dateTime',
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
+  status: 'status',
   deletedAt: 'deletedAt',
   roomId: 'roomId',
   studentId: 'studentId',
-  professorId: 'professorId'
+  professorId: 'professorId',
+  solicitationId: 'solicitationId'
 } as const
 
 export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
@@ -1272,11 +1274,13 @@ export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[key
 
 export const SolicitationScalarFieldEnum = {
   id: 'id',
+  reason: 'reason',
   dateTime: 'dateTime',
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
   status: 'status',
+  roomId: 'roomId',
   studentId: 'studentId',
   professorId: 'professorId'
 } as const
@@ -1418,6 +1422,20 @@ export type EnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'DayOfWeek[]'
  */
 export type ListEnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DayOfWeek[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AppointmentStatus'
+ */
+export type EnumAppointmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppointmentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AppointmentStatus[]'
+ */
+export type ListEnumAppointmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppointmentStatus[]'>
     
 
 

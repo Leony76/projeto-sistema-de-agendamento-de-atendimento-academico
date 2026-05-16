@@ -2,10 +2,11 @@ import type { Room } from "@shared/types/room.type";
 import { formatDateTime } from "@frontend/utils/formats/formatDateTime.util";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
-import { MdMeetingRoom } from "react-icons/md";
+import { MdMeetingRoom, MdOutlineNoMeetingRoom } from "react-icons/md";
 import { Button } from "../button";
 import { ROOM_STATUS_MAP } from "@frontend/constants/maps/roomStatus.map";
 import { useState } from "react";
+import NoContent from "../misc/NoContent";
 
 type Props = {
   onBack : () => void;
@@ -38,7 +39,12 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
 
       <div className={`
         flex-1 min-h-0 w-full border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300
-        ${ onDetails ? 'flex flex-col' : 'grid grid-cols-5' }
+        ${ onDetails 
+          ? 'flex flex-col' 
+          : props.rooms.length > 0
+            ? 'grid grid-cols-5' 
+            : ''
+        }
       `}>
         { (onDetails && selectedRoom) ? (
           <div>
@@ -75,26 +81,33 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
             </ul>
           </div>
         ) : (
-          props.rooms.map((room) => {
-
-            const isReserved = room.status === 'RESERVED';
-
-            return (
-              <Button.Default
-                label={room.name}   
-                selected={isReserved}                     
-                onClick={() => {
-                  setSelectedRoom(room);
-                  setOnDetails(true);
-                }}                   
-                customStyle={{ button: `
-                  h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
-                  ${ isReserved 
-                    ? 'bg-orange-500 text-orange-100! border-orange-50' 
-                    : 'bg-orange-50 text-orange-500 border-orange-500' 
-                }`}}
-              />        
-          )})
+          props.rooms.length > 0 ? (
+            props.rooms.map((room) => {
+  
+              const isReserved = room.status === 'RESERVED';
+  
+              return (
+                <Button.Default
+                  label={room.name}   
+                  selected={isReserved}                     
+                  onClick={() => {
+                    setSelectedRoom(room);
+                    setOnDetails(true);
+                  }}                   
+                  customStyle={{ button: `
+                    h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
+                    ${ isReserved 
+                      ? 'bg-orange-500 text-orange-100! border-orange-50' 
+                      : 'bg-orange-50 text-orange-500 border-orange-500' 
+                  }`}}
+                />        
+            )})
+          ) : (
+            <NoContent 
+              message="Nenhuma sala cadastrada no sistema"
+              Icon={() => <MdOutlineNoMeetingRoom size={22}/>}
+            />
+          )
         ) }
       </div>
     </div>

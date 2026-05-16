@@ -148,10 +148,12 @@ export const AppointmentScalarFieldEnum = {
   dateTime: 'dateTime',
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
+  status: 'status',
   deletedAt: 'deletedAt',
   roomId: 'roomId',
   studentId: 'studentId',
-  professorId: 'professorId'
+  professorId: 'professorId',
+  solicitationId: 'solicitationId'
 } as const
 
 export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
@@ -159,11 +161,13 @@ export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[key
 
 export const SolicitationScalarFieldEnum = {
   id: 'id',
+  reason: 'reason',
   dateTime: 'dateTime',
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
   status: 'status',
+  roomId: 'roomId',
   studentId: 'studentId',
   professorId: 'professorId'
 } as const

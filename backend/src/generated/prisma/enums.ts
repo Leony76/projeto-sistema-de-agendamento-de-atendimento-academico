@@ -18,10 +18,21 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
-export const SolicitationStatus = {
+export const AppointmentStatus = {
+  CANCELED: 'CANCELED',
   CONFIRMED: 'CONFIRMED',
   UNCONFIRMED: 'UNCONFIRMED',
-  CANCELED: 'CANCELED'
+  DONE: 'DONE',
+  NO_SHOW: 'NO_SHOW'
+} as const
+
+export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+
+
+export const SolicitationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
 } as const
 
 export type SolicitationStatus = (typeof SolicitationStatus)[keyof typeof SolicitationStatus]

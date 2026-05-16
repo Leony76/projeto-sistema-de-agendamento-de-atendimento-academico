@@ -20,16 +20,17 @@ import { filterRegisteredManagers } from '@frontend/utils/filters/filterRegister
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Form } from '@frontend/components/form';
 import { Section } from '@frontend/components/section';
-import type { Reports } from '@shared/types/reports.type';
+import type { SystemReports } from '@shared/types/reports.type';
 import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
-import type { SystemGeneralMetrics } from '@shared/types/systemGeneralMetrics.type';
 import type { Room } from '@shared/types/room.type';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
+import type { ManagerHomeBriefInfosResponse as ManagerHomeBriefInfos } from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserService } from '@frontend/services/user.service';
+import { MiscService } from '@frontend/services/misc.service';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -51,10 +52,10 @@ const Manager = (): React.JSX.Element => {
     manager   : 'none',
   });
   
-  const [systemReports, setSystemReports] = useState<Reports | null>(null);
+  const [systemReports, setSystemReports] = useState<SystemReports | null>(null);
   const [refreshUsers, setRefreshUsers] = useState(0);
 
-  const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<SystemGeneralMetrics['count'] | null>(null);
+  const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<ManagerHomeBriefInfos | null>(null);
 
   const [ activeProfessors, setActiveProfessors ] = useState<ActiveProfessorsToManagerList[]>([]);
   const [ activeStudents,   setActiveStudents ] = useState<ActiveStudentsToManagerList[]>([]);
@@ -69,7 +70,7 @@ const Manager = (): React.JSX.Element => {
   const BRIEF_RENDER = [
     { icon: <GrSchedule className='text-cyan-500' size={24}/>          , label: 'Agendamentos' , value: systemGeneralMetrics?.appointments ?? '0'  },
     { icon: <FaRegClock className='text-cyan-500' size={28}/>          , label: 'Solicitações' , value: systemGeneralMetrics?.solicitations ?? '0' },
-    { icon: <PiStudentBold className='text-cyan-500' size={28}/>       , label: 'Alunos'       , value: systemGeneralMetrics?.student ?? '0'       },
+    { icon: <PiStudentBold className='text-cyan-500' size={28}/>       , label: 'Alunos'       , value: systemGeneralMetrics?.students ?? '0'       },
     { icon: <FaChalkboardTeacher className='text-cyan-500' size={28}/> , label: 'Professores'  , value: systemGeneralMetrics?.professors ?? '0'    },
   ];
 
@@ -157,23 +158,26 @@ const Manager = (): React.JSX.Element => {
       try {
         switch (userRoleList) {
           case 'STUDENT':
-            if (activeStudents.length > 0) break;
             const students: ActiveStudentsToManagerList[] = await UserService.getActiveStudentsToManagerList();
             setActiveStudents(students);
             break;
           case 'PROFESSOR':
-            if (activeProfessors.length > 0) break;
             const professors: ActiveProfessorsToManagerList[] = await UserService.getActiveProfessorsToManagerList();
             setActiveProfessors(professors);
             break;
           case 'MANAGER':
-            if (activeManagers.length > 0) break;
             const managers: ActiveManagersToManagerList[] = await UserService.getActiveManagersToManagerList();
             setActiveManagers(managers);
             break;
           default: 
             throw new Error('Permissão de usuário inválido');
         }
+
+        const [ systemReports ] = await Promise.all([
+          MiscService.getSystemReports(),
+        ]);
+
+        setSystemReports(systemReports);
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
@@ -242,13 +246,12 @@ const Manager = (): React.JSX.Element => {
                   <Card.UserGeneralInfo
                     key={user.id}
                     { ...user }
-                    onClick={() => {
-                      navigate(`/home/student/${user.id}`, {
-                        state: { 
-                          role: user.from.toLowerCase(),
-                        }
-                      });
-                      setGeneralActions('USER_DETAILS');
+                    onClick={{
+                      exclude     : () => setRefreshUsers(prev => prev + 1),
+                      userDetails : () => {
+                        navigate(`/home/${user.from.toLowerCase()}/${user.id}`);
+                        setGeneralActions('USER_DETAILS');
+                      },
                     }}
                   />
                 )) 
@@ -282,7 +285,10 @@ const Manager = (): React.JSX.Element => {
             <Section.DeleteUsers
               filteredUsersListDataByRoleMap={filteredUsersListDataByRoleMap[userRoleList]}
               userRoleList={userRoleList}
-              onBack={() => setGeneralActions(null)}
+              onBack={() => {
+                setGeneralActions(null)
+                setRefreshUsers(prev => prev + 1);
+              }}
             />            
           ) : (
             <>

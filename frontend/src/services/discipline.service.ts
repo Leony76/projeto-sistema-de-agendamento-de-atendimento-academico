@@ -5,7 +5,7 @@ export class DisciplineService {
 
   public static async getUnboundNames() {
     
-    const response = await api.get<string[]>('discipline/get-unbound-names');
+    const response = await api.get<string[]>('discipline/unbound-names');
 
     return response.data;
   };

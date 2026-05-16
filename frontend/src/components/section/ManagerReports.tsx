@@ -1,4 +1,4 @@
-import type { Reports } from '@shared/types/reports.type';
+import type { SystemReports } from '@shared/types/reports.type';
 import { formatPercentage } from '@frontend/utils/formats/formatPercentage.util';
 import type React from 'react';
 import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaHouseUser, FaPercent } from 'react-icons/fa';
@@ -7,7 +7,7 @@ import NoContent from '../misc/NoContent';
 import { FaClipboardQuestion } from 'react-icons/fa6';
 
 type Props = {
-  reports: Reports | null,
+  reports: SystemReports | null,
   onBack: () => void;
 };
 

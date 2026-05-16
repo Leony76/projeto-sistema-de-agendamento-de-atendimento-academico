@@ -10,6 +10,10 @@ import { Button } from '../button';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { Modal } from '../modal';
 import type { ActiveManagersToManagerList, ActiveProfessorsToManagerList, ActiveStudentsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { UserService } from '@frontend/services/user.service';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Navigate } from 'react-router-dom';
 
 type Props = {
   onBack   : () => void;
@@ -19,10 +23,17 @@ type Props = {
 
 const DeleteUsers = (props:Props): React.JSX.Element => {
 
+  const { user } = useAuth();
+  
+  if (!user) return <Navigate to='/'/>
+
   const { toast } = useToast();
+
+  const loggedUserId = user.id; 
+
   const [modal, setModal] = useState<'REMOVE_USERS' | null>(null);
   const [excludeUserSearchValue, setExcludeUserSearchValue] = useState<string>('');
-  const [usersToDelete, setUsersToDelete] = useState<(ActiveManagersToManagerList | ActiveStudentsToManagerList | ActiveProfessorsToManagerList)[]>([]);
+  const [usersToDelete, setUsersToDelete] = useState<number[]>([]);
   
   const filteredUsersToDelete = props.filteredUsersListDataByRoleMap.filter((user) => {
     const search = excludeUserSearchValue.toLowerCase();
@@ -33,39 +44,45 @@ const DeleteUsers = (props:Props): React.JSX.Element => {
     return searchByName || searchById;
   });
 
-  const handleDeleteUsers = async(): Promise<void> => {
-    toast('Usuários deletados com sucesso!');
-    setModal(null);
-    props.onBack();
+  const usersAvailableToDelete = filteredUsersToDelete.filter(
+    (user) => user.id !== loggedUserId
+  );
+
+  const handleExcludeUsers = async(ids: number[]): Promise<void> => {
+    try {
+      const response = await UserService.excludeUsers(ids);
+
+      if (response.success) {
+        toast(response.message);
+
+        setModal(null);
+        props.onBack();
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    }
   };
 
-  const handleAddNewUserToDelete = (id:number) => {
-    if (!id) return;
-
+  const handleAddNewUserToDelete = (id: number) => {
     setUsersToDelete((prev) => {
-      const alreadySelected = prev.some((user) => user.id === id);
+
+      const alreadySelected = prev.includes(id);
 
       if (alreadySelected) {
-        return prev.filter((user) => user.id !== id);
+        return prev.filter((userId) => userId !== id);
       }
 
-      const userToAdd = props.filteredUsersListDataByRoleMap.find(
-        (user) => user.id === id
-      );
-
-      if (!userToAdd) return prev;
-
-      return [...prev, userToAdd];
+      return [...prev, id];
     });
   };
 
   return (
     <>
       <Modal.ConfirmAction
-        title='Deletar usuário(s)'
-        message='Tem certeza em remover esse(s) usuário(s)?'
+        title='Excluir usuário(s)'
+        message='Tem certeza em excluir esse(s) usuário(s)?'
         visible={modal === 'REMOVE_USERS'}
-        onAccept={handleDeleteUsers}
+        onAccept={() => handleExcludeUsers(usersToDelete)}
         onCloseRequest={() => setModal(null)}
       />
 
@@ -99,10 +116,10 @@ const DeleteUsers = (props:Props): React.JSX.Element => {
         }
 
         <div className='flex-1 min-h-0 w-full flex flex-col border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300'>
-          { filteredUsersToDelete.length > 0 ? (
-            filteredUsersToDelete.map(( user ) => {
+          { usersAvailableToDelete.length > 0 ? (
+            usersAvailableToDelete.map(( user ) => {
               
-              const isSelected = usersToDelete.some((u) => u.id === user.id);
+              const isSelected = usersToDelete.includes(user.id);
 
               return (
                 <button 
@@ -144,9 +161,12 @@ const DeleteUsers = (props:Props): React.JSX.Element => {
                 </button>       
             )})
           ) : (
-            <NoContent 
-              message={`Nenhum resultado para "${ excludeUserSearchValue }"`}
+            <NoContent
               Icon={() => <FaUserXmark size={22}/>}
+              message={excludeUserSearchValue
+                ? `Nenhum resultado para "${excludeUserSearchValue}"`
+                : 'Nenhum usuário disponível para exclusão'
+              }
             />
           )}
         </div>

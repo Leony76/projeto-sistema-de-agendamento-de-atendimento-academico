@@ -212,7 +212,7 @@ export type ProfessorAvailabilityGroupByArgs<ExtArgs extends runtime.Types.Exten
 export type ProfessorAvailabilityGroupByOutputType = {
   id: number
   registeredAt: Date
-  updatedAt: Date | null
+  updatedAt: Date
   deletedAt: Date | null
   startTime: number
   endTime: number
@@ -246,7 +246,7 @@ export type ProfessorAvailabilityWhereInput = {
   NOT?: Prisma.ProfessorAvailabilityWhereInput | Prisma.ProfessorAvailabilityWhereInput[]
   id?: Prisma.IntFilter<"ProfessorAvailability"> | number
   registeredAt?: Prisma.DateTimeFilter<"ProfessorAvailability"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
+  updatedAt?: Prisma.DateTimeFilter<"ProfessorAvailability"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
@@ -258,7 +258,7 @@ export type ProfessorAvailabilityWhereInput = {
 export type ProfessorAvailabilityOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
@@ -273,7 +273,7 @@ export type ProfessorAvailabilityWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProfessorAvailabilityWhereInput[]
   NOT?: Prisma.ProfessorAvailabilityWhereInput | Prisma.ProfessorAvailabilityWhereInput[]
   registeredAt?: Prisma.DateTimeFilter<"ProfessorAvailability"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
+  updatedAt?: Prisma.DateTimeFilter<"ProfessorAvailability"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
@@ -285,7 +285,7 @@ export type ProfessorAvailabilityWhereUniqueInput = Prisma.AtLeast<{
 export type ProfessorAvailabilityOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
@@ -304,7 +304,7 @@ export type ProfessorAvailabilityScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProfessorAvailabilityScalarWhereWithAggregatesInput | Prisma.ProfessorAvailabilityScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProfessorAvailability"> | number
   registeredAt?: Prisma.DateTimeWithAggregatesFilter<"ProfessorAvailability"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProfessorAvailability"> | Date | string | null
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProfessorAvailability"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntWithAggregatesFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntWithAggregatesFilter<"ProfessorAvailability"> | number
@@ -314,7 +314,7 @@ export type ProfessorAvailabilityScalarWhereWithAggregatesInput = {
 
 export type ProfessorAvailabilityCreateInput = {
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
@@ -325,7 +325,7 @@ export type ProfessorAvailabilityCreateInput = {
 export type ProfessorAvailabilityUncheckedCreateInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
@@ -335,7 +335,7 @@ export type ProfessorAvailabilityUncheckedCreateInput = {
 
 export type ProfessorAvailabilityUpdateInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -346,7 +346,7 @@ export type ProfessorAvailabilityUpdateInput = {
 export type ProfessorAvailabilityUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -357,7 +357,7 @@ export type ProfessorAvailabilityUncheckedUpdateInput = {
 export type ProfessorAvailabilityCreateManyInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
@@ -367,7 +367,7 @@ export type ProfessorAvailabilityCreateManyInput = {
 
 export type ProfessorAvailabilityUpdateManyMutationInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -377,7 +377,7 @@ export type ProfessorAvailabilityUpdateManyMutationInput = {
 export type ProfessorAvailabilityUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -490,7 +490,7 @@ export type EnumDayOfWeekFieldUpdateOperationsInput = {
 
 export type ProfessorAvailabilityCreateWithoutProfessorInput = {
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
@@ -500,7 +500,7 @@ export type ProfessorAvailabilityCreateWithoutProfessorInput = {
 export type ProfessorAvailabilityUncheckedCreateWithoutProfessorInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
@@ -539,7 +539,7 @@ export type ProfessorAvailabilityScalarWhereInput = {
   NOT?: Prisma.ProfessorAvailabilityScalarWhereInput | Prisma.ProfessorAvailabilityScalarWhereInput[]
   id?: Prisma.IntFilter<"ProfessorAvailability"> | number
   registeredAt?: Prisma.DateTimeFilter<"ProfessorAvailability"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
+  updatedAt?: Prisma.DateTimeFilter<"ProfessorAvailability"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
@@ -550,7 +550,7 @@ export type ProfessorAvailabilityScalarWhereInput = {
 export type ProfessorAvailabilityCreateManyProfessorInput = {
   id?: number
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
@@ -559,7 +559,7 @@ export type ProfessorAvailabilityCreateManyProfessorInput = {
 
 export type ProfessorAvailabilityUpdateWithoutProfessorInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -569,7 +569,7 @@ export type ProfessorAvailabilityUpdateWithoutProfessorInput = {
 export type ProfessorAvailabilityUncheckedUpdateWithoutProfessorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -579,7 +579,7 @@ export type ProfessorAvailabilityUncheckedUpdateWithoutProfessorInput = {
 export type ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
@@ -654,7 +654,7 @@ export type $ProfessorAvailabilityPayload<ExtArgs extends runtime.Types.Extensio
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     registeredAt: Date
-    updatedAt: Date | null
+    updatedAt: Date
     deletedAt: Date | null
     startTime: number
     endTime: number

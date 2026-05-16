@@ -1,4 +1,4 @@
-export type Reports = {
+export type SystemReports = {
   appointments : {
     count   : number;
     done    : number;

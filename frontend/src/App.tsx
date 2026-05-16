@@ -24,9 +24,7 @@ function App(): React.JSX.Element {
               <Route element={<RoleRoute allowedRoles={['MANAGER', 'PROFESSOR', 'STUDENT']}/>}>
                 <Route path="/home" element={<Home/>}>
                   <Route element={<RoleRoute allowedRoles={['MANAGER']}/>}>
-                    <Route path="professor/:id" element={<UserDetails/>} />
-                    <Route path="student/:id"   element={<UserDetails/>} />
-                    <Route path="manager/:id"   element={<UserDetails/>} />
+                    <Route path=":role/:id"   element={<UserDetails/>} />
                   </Route>
                 </Route>
 

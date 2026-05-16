@@ -193,7 +193,7 @@ export type DisciplineGroupByOutputType = {
   id: number
   name: string
   registeredAt: Date
-  updatedAt: Date | null
+  updatedAt: Date
   deletedAt: Date | null
   professorId: number | null
   _count: DisciplineCountAggregateOutputType | null
@@ -225,7 +225,7 @@ export type DisciplineWhereInput = {
   id?: Prisma.IntFilter<"Discipline"> | number
   name?: Prisma.StringFilter<"Discipline"> | string
   registeredAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
+  updatedAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
   professorId?: Prisma.IntNullableFilter<"Discipline"> | number | null
   professor?: Prisma.XOR<Prisma.ProfessorNullableScalarRelationFilter, Prisma.ProfessorWhereInput> | null
@@ -235,7 +235,7 @@ export type DisciplineOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   professorId?: Prisma.SortOrderInput | Prisma.SortOrder
   professor?: Prisma.ProfessorOrderByWithRelationInput
@@ -248,7 +248,7 @@ export type DisciplineWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DisciplineWhereInput | Prisma.DisciplineWhereInput[]
   name?: Prisma.StringFilter<"Discipline"> | string
   registeredAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
+  updatedAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
   professorId?: Prisma.IntNullableFilter<"Discipline"> | number | null
   professor?: Prisma.XOR<Prisma.ProfessorNullableScalarRelationFilter, Prisma.ProfessorWhereInput> | null
@@ -258,7 +258,7 @@ export type DisciplineOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   professorId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DisciplineCountOrderByAggregateInput
@@ -275,7 +275,7 @@ export type DisciplineScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Discipline"> | number
   name?: Prisma.StringWithAggregatesFilter<"Discipline"> | string
   registeredAt?: Prisma.DateTimeWithAggregatesFilter<"Discipline"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Discipline"> | Date | string | null
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Discipline"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Discipline"> | Date | string | null
   professorId?: Prisma.IntNullableWithAggregatesFilter<"Discipline"> | number | null
 }
@@ -283,7 +283,7 @@ export type DisciplineScalarWhereWithAggregatesInput = {
 export type DisciplineCreateInput = {
   name: string
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   professor?: Prisma.ProfessorCreateNestedOneWithoutDisciplinesInput
 }
@@ -292,7 +292,7 @@ export type DisciplineUncheckedCreateInput = {
   id?: number
   name: string
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   professorId?: number | null
 }
@@ -300,7 +300,7 @@ export type DisciplineUncheckedCreateInput = {
 export type DisciplineUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   professor?: Prisma.ProfessorUpdateOneWithoutDisciplinesNestedInput
 }
@@ -309,7 +309,7 @@ export type DisciplineUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   professorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
@@ -318,7 +318,7 @@ export type DisciplineCreateManyInput = {
   id?: number
   name: string
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
   professorId?: number | null
 }
@@ -326,7 +326,7 @@ export type DisciplineCreateManyInput = {
 export type DisciplineUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -334,7 +334,7 @@ export type DisciplineUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   professorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
@@ -428,18 +428,10 @@ export type DisciplineUncheckedUpdateManyWithoutProfessorNestedInput = {
   deleteMany?: Prisma.DisciplineScalarWhereInput | Prisma.DisciplineScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type DisciplineCreateWithoutProfessorInput = {
   name: string
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
 }
 
@@ -447,7 +439,7 @@ export type DisciplineUncheckedCreateWithoutProfessorInput = {
   id?: number
   name: string
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
 }
 
@@ -484,7 +476,7 @@ export type DisciplineScalarWhereInput = {
   id?: Prisma.IntFilter<"Discipline"> | number
   name?: Prisma.StringFilter<"Discipline"> | string
   registeredAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
+  updatedAt?: Prisma.DateTimeFilter<"Discipline"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Discipline"> | Date | string | null
   professorId?: Prisma.IntNullableFilter<"Discipline"> | number | null
 }
@@ -493,14 +485,14 @@ export type DisciplineCreateManyProfessorInput = {
   id?: number
   name: string
   registeredAt?: Date | string
-  updatedAt?: Date | string | null
+  updatedAt?: Date | string
   deletedAt?: Date | string | null
 }
 
 export type DisciplineUpdateWithoutProfessorInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -508,7 +500,7 @@ export type DisciplineUncheckedUpdateWithoutProfessorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -516,7 +508,7 @@ export type DisciplineUncheckedUpdateManyWithoutProfessorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -581,7 +573,7 @@ export type $DisciplinePayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: number
     name: string
     registeredAt: Date
-    updatedAt: Date | null
+    updatedAt: Date
     deletedAt: Date | null
     professorId: number | null
   }, ExtArgs["result"]["discipline"]>

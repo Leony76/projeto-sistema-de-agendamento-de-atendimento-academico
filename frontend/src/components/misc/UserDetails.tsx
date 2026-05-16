@@ -20,6 +20,10 @@ import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_
 import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP, STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentSolicitations.map.filter';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { TiInfoLarge } from 'react-icons/ti';
+import { UserService } from '@frontend/services/user.service';
+import type { UserRole } from '@shared/types/userRole.type';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { useToast } from '@frontend/contexts/ToastContext';
 
 type SearchValue = {
   appointment  : string;
@@ -40,10 +44,13 @@ type FilterValue = {
 
 export const UserDetails = (): React.JSX.Element => {
 
-  const { id } = useParams();
+  const { id, role } = useParams();
+  const { toast } = useToast();
 
   const [ user, setUser ] = useState<UserGeneralInfosResponse | null>(null);
   const navigate = useNavigate();
+
+  const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
 
   const [searchValue, setSearchValue] = useState<SearchValue>({
     appointment  : '',
@@ -135,16 +142,22 @@ export const UserDetails = (): React.JSX.Element => {
   } as const;
   
   useEffect(() => {
-    if (!id) return;
+    if (!id || !role) return;
 
-    (async(id:number):Promise<void> => {
+    (async(id: number):Promise<void> => {
       try {
-        
-        const res
+        let response: UserGeneralInfosResponse | null;
 
-        setUser(user ?? null);
+        switch (role.toLocaleUpperCase() as UserRole) {
+          case 'STUDENT'   : response = await UserService.getStudentGeneralInfosById(id);   break;
+          case 'MANAGER'   : response = await UserService.getManagerGeneralInfosById(id);   break;
+          case 'PROFESSOR' : response = await UserService.getProfessorGeneralInfosById(id); break;
+          default: throw new Error('Permissão de usuário inválido');
+        }
+        
+        setUser(response);
       } catch (error:unknown) {
-        if (error instanceof Error) console.error(error.message);
+        toast(apiError(error), 'error');
       }
     })(Number(id));
   },[id]);
@@ -253,6 +266,12 @@ export const UserDetails = (): React.JSX.Element => {
             { user.role === 'STUDENT' &&
               <li className='text-sm text-orange-400 font-semibold'>
                 E-mail: <span className='text-cyan-500 font-normal'>{ user.email }</span>
+              </li>
+            }
+
+            { user.role === 'PROFESSOR' &&
+              <li className='text-sm text-orange-400 font-semibold'>
+                Diciplina(s): <span className='text-cyan-500 font-normal'>{ formatter.format(user.disciplines) }</span>
               </li>
             }
 
