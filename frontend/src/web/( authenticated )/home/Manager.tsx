@@ -133,7 +133,7 @@ const Manager = (): React.JSX.Element => {
   };
 
   const noContent = noContentFound(
-    `Nenhum ${USER_ROLES[userRoleList]} cadastrado(a) no momento!`,
+    `Nenhum ${USER_ROLES[userRoleList].toLocaleLowerCase()} cadastrado(a) no momento!`,
     userNotFoundByFilterByRoleMap[userRoleList],
     searchValue,
     filterValue && (
@@ -173,11 +173,13 @@ const Manager = (): React.JSX.Element => {
             throw new Error('Permissão de usuário inválido');
         }
 
-        const [ systemReports ] = await Promise.all([
+        const [ systemReports, managerBriefInfos ] = await Promise.all([
           MiscService.getSystemReports(),
+          UserService.getManagerHomeBriefInfos(),
         ]);
 
         setSystemReports(systemReports);
+        setSystemGeneralMetrics(managerBriefInfos);
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }

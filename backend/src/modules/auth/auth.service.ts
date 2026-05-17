@@ -5,6 +5,7 @@ import { AuthRepository } from './auth.repository';
 import type * as L from '@shared/types/dtos/login.type.dto'; 
 import type * as R from '@shared/types/dtos/register.type.dto'; 
 import { generateTemporaryPassword } from '@backend/utils/generateTemporaryPassword.util';
+import { MailService } from '../mail/mail.service';
 
 export class AuthService {
 
@@ -75,7 +76,7 @@ export class AuthService {
     if (emailAlreadyTaken)
       throw new ApiError('Já há um aluno cadastrado com esse RA');
     if (raAlreadyTaken)
-      throw new ApiError('Já há um aluno cadastrado com esse e-mail');
+      throw new ApiError('Já há um usuário cadastrado com esse e-mail');
 
     const temporaryPassword = generateTemporaryPassword(8);
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
@@ -88,10 +89,16 @@ export class AuthService {
     if (!studentRegistered.student || !studentRegistered)
       throw new ApiError('Não foi possível cadastrar o aluno');
 
+    await MailService.sendTemporaryPasswordEmail(
+      studentRegistered.email,
+      studentRegistered.name,
+      temporaryPassword,
+      studentRegistered.student.ra,
+    );
+    
     return {
-      email : studentRegistered.email,
-      name  : studentRegistered.name,
-      ra    : studentRegistered.student.ra,
+      ...studentRegistered,
+      ra : studentRegistered.student.ra,
     }
   }
 
@@ -110,7 +117,7 @@ export class AuthService {
     ]);
 
     if (emailAlreadyTaken) 
-      throw new ApiError('Já há professor cadastrado com esse e-mail');
+      throw new ApiError('Já há um usuário cadastrado com esse e-mail');
     if (professorsDisciplineAlreadyTaken)
       throw new ApiError('Uma ou mais disciplinas já possuem professor')
 
@@ -124,7 +131,13 @@ export class AuthService {
 
     if (!professorRegistered)
       throw new ApiError('Houve um erro no cadastro do professor. Tente novamente mais tarde!');
-
+    
+    await MailService.sendTemporaryPasswordEmail(
+      professorRegistered.email,
+      professorRegistered.name,
+      temporaryPassword,
+    );
+    
     return {
       name        : professorRegistered.name,
       email       : professorRegistered.email,
@@ -133,20 +146,20 @@ export class AuthService {
       ) ?? [],
     }
   };
-
   
-
+  
+  
   public static async managerRegistersManager(
     data: R.ManagerRegistersManagerRequest
   ): Promise<R.ManagerRegistersManagerResponse> {
-
+    
     const [ managerAlreadyRegistered ] = await Promise.all([
       AuthRepository.emailAlreadyTaken(data.email),
     ]);
-
+    
     if (managerAlreadyRegistered)
-      throw new ApiError('Já estpa cadastrado um gestor com esse e-mail');
-
+      throw new ApiError('Já está cadastrado um usuário com esse e-mail');
+    
     const temporaryPassword = generateTemporaryPassword(8);
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
     
@@ -154,6 +167,15 @@ export class AuthService {
       ...data,
       password : hashedPassword,
     });
+
+    if (!managerRegistered)
+      throw new ApiError('Houve um erro no cadastro do gestor. Tente novamente mais tarde!');
+
+    await MailService.sendTemporaryPasswordEmail(
+      managerRegistered.email,
+      managerRegistered.name,
+      temporaryPassword,
+    );
 
     return { ...managerRegistered };
   };

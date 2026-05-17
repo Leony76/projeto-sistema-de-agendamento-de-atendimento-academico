@@ -11,6 +11,10 @@ userRoutes.get( '/student/:id/general-infos'  , UserController.getStudentGeneral
 userRoutes.get( '/professor/:id/general-infos', UserController.getProfessorGeneralInfos );
 userRoutes.get( '/manager/:id/general-infos'  , UserController.getManagerGeneralInfos   );
 
+userRoutes.get('/manager-brief-infos'       , UserController.getManagerBriefInfos );
+userRoutes.get('/student-brief-infos/:id'   , UserController.getStudentBriefInfos );
+userRoutes.get('/professor-brief-infos/:id' , UserController.getProfessorBriefInfos );
+
 userRoutes.post( '/exclude'  , UserController.excludeUsers );
 
 export default userRoutes;

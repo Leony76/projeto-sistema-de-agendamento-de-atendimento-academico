@@ -7,7 +7,7 @@ import { apiErrorMiddleware } from './middleware/apiError.middleware';
 const app = express();
 
 app.use(cors({
-  origin: process.env['BACKEND_BASE_URL']
+  origin: process.env['FRONTEND_BASE_URL']
 }));
 
 app.use(express.json());

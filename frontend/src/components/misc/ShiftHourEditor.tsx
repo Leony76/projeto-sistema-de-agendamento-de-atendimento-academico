@@ -18,8 +18,8 @@ type Props = {
 const ShiftHourEditor = (props:Props): React.JSX.Element => {
 
   const limitsPlaceholder: Record<Shift, { start: string, end: string }> = {
-    AFTERNOON : { start: '13:00', end: '18:00' },
     MORNING   : { start: '07:00', end: '11:30' },
+    AFTERNOON : { start: '13:00', end: '18:00' },
   };
 
   return (

@@ -1,9 +1,9 @@
 import type * as U from '@shared/types/dtos/managerUsersList.dto'; 
 import type * as G from '@shared/types/dtos/userGeneralInfos.dto'; 
+import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserRepository } from './user.repository';
-import { ApiError } from '@backend/utils/apiError.util';
-import type { ApiResponse } from '@shared/types/apiResponse.type';
 import { prisma } from '@backend/lib/prisma';
+import { ApiError } from '@backend/utils/apiError.util';
 
 export class UserService {
 
@@ -79,7 +79,7 @@ export class UserService {
     
     const professorInfos = await UserRepository.getProfessorGeneralInfos(id);
     
-    if (!professorInfos) throw new ApiError('Informações do aluno não foram encontradas!');
+    if (!professorInfos) throw new ApiError('Informações do professor não foram encontradas!');
     
     return {
       id: professorInfos.user.id,
@@ -116,7 +116,7 @@ export class UserService {
     
     const managerInfos = await UserRepository.getManagerGeneralInfos(id);
     
-    if (!managerInfos) throw new ApiError('Informações do aluno não foram encontradas!');
+    if (!managerInfos) throw new ApiError('Informações do gestor não foram encontradas!');
     
     return {
       id           : managerInfos.user.id,
@@ -144,5 +144,38 @@ export class UserService {
     });
 
     return ids;
+  }
+
+  public static async getManagerBriefInfos(): Promise<Brief.ManagerHomeBriefInfosResponse> {
+
+    const brief = await UserRepository.getManagerBriefInfos();
+
+    if (!brief) throw new ApiError('Não foi possível trazer o resumo das métricas do sistema');
+    
+    return brief;
+  }
+
+  public static async getProfessorBriefInfos(id: number): Promise<Brief.ProfessorHomeBriefInfosResponse> {
+
+    const brief = await UserRepository.getProfessorBriefInfos(id);
+
+    if (!brief) throw new ApiError('Não foi possível trazer o resumo das suas métricas');
+    
+    return {
+      ...brief,
+      nextAppointmentDateTime: brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
+    };
+  }
+
+  public static async getStudentBriefInfos(id: number): Promise<Brief.StudentHomeBriefInfosResponse> {
+
+    const brief = await UserRepository.getStudentBriefInfos(id);
+
+    if (!brief) throw new ApiError('Não foi possível trazer o resumo das suas métricas');
+    
+    return {
+      ...brief,
+      nextAppointmentDateTime: brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
+    };
   }
 }

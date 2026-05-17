@@ -14,19 +14,25 @@ import { filterStudentAppointments } from '@frontend/utils/filters/filterStudent
 import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
-import type { StudentBriefInfos } from '@shared/types/studentBriefInfos.type';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import type { Appointment } from '@shared/types/appointment.type';
 import type { Professor } from '@shared/types/userBasicInfos.type';
+import type { StudentHomeBriefInfosResponse as StudentHomeBriefInfos } from '@shared/types/dtos/userHomeBriefInfos.dto';
+import { UserService } from '@frontend/services/user.service';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Navigate } from 'react-router-dom';
 
 const Student = (): React.JSX.Element => {
+
+  const { user } = useAuth();
+  if (!user) return <Navigate to={'/'}/>
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
   const [appointments, setAppointments] = useState<Appointment<Pick<Professor, 'name' | 'photo'>>[]>([]);
-  const [briefInfos, setBriefInfos] = useState<StudentBriefInfos | null>(null);
+  const [briefInfos, setBriefInfos] = useState<StudentHomeBriefInfos | null>(null);
   const [lastAppointment, setLastAppointment] = useState<Appointment<Pick<Professor, 'name'>> | null>(null);
 
   const filteredStudentAppointmentsData = filterStudentAppointments(
@@ -36,8 +42,8 @@ const Student = (): React.JSX.Element => {
   );
 
   const BRIEF_RENDER = [
-    { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: briefInfos?.appointmentsMade     },
-    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: briefInfos?.pendingSolicitations! },
+    { id: 1, icon: <GrSchedule className='text-cyan-500' size={28}/>             , label: 'Agendamentos feitos'      , value: briefInfos?.appointmentsMade ?? 0     },
+    { id: 2, icon: <FaRegClock className='text-cyan-500' size={28}/>             ,  label: 'Solicitações pendentes'  , value: briefInfos?.pendingSolicitations ?? 0 },
     { id: 3, icon: <RiCalendarScheduleFill className='text-cyan-500' size={28}/> ,  label: 'Próximo agendamento'     , value: briefInfos?.nextAppointmentDateTime ? formatDateTime(briefInfos?.nextAppointmentDateTime) : '--/--/--, --:--'},
   ];
 
@@ -53,15 +59,17 @@ const Student = (): React.JSX.Element => {
   );
 
   useEffect(() => {
-    const getData = async(): Promise<void> => {
+    (async(id: number): Promise<void> => {
       try {
-        
+        const [ studentBriefInfos ] = await Promise.all([
+          UserService.getStudentHomeBriefInfos(id),
+        ]);
+
+        setBriefInfos(studentBriefInfos);
       } catch ( error:unknown ) {
         if (error instanceof Error) console.error(error.message);
       }
-    };
-
-    getData();
+    })(user.id);
   },[]);
 
   return (

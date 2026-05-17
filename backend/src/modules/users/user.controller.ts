@@ -68,4 +68,29 @@ export class UserController {
 
     res.status(200).json(response);
   }
+
+  public static async getManagerBriefInfos(req: Request, res: Response) {
+    
+    const response = await UserService.getManagerBriefInfos();
+
+    return res.status(200).json(response);
+  }
+
+  public static async getProfessorBriefInfos(req: Request, res: Response) {
+
+    const { id } = req.params; 
+    
+    const response = await UserService.getProfessorBriefInfos(Number(id));
+    
+    return res.status(200).json(response);
+  }
+  
+  public static async getStudentBriefInfos(req: Request, res: Response) {
+
+    const { id } = req.params; 
+    
+    const response = await UserService.getStudentBriefInfos(Number(id));
+
+    return res.status(200).json(response);
+  }
 }

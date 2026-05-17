@@ -1,6 +1,7 @@
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import { api } from "./api.service";
 import type * as U from '@shared/types/dtos/managerUsersList.dto'; 
+import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
 import type { ManagerGeneralInfosResponse, ProfessorGeneralInfosResponse, StudentGeneralInfosResponse } from '@shared/types/dtos/userGeneralInfos.dto';
 
 export class UserService {
@@ -16,6 +17,18 @@ export class UserService {
 
     const response = await api.get<T>(`/user/${role}/${id}/general-infos`);
 
+    return response.data;
+  }
+
+  private static async getUserHomeBriefInfos<T>(role: 'professor' | 'student' | 'manager', id?: number) {
+    let response;
+
+    if (role === 'manager') {
+      response = await api.get<T>(`/user/${role}-brief-infos`);
+      return response.data;
+    }
+
+    response = await api.get<T>(`/user/${role}-brief-infos/${id}`);
     return response.data;
   }
 
@@ -48,5 +61,17 @@ export class UserService {
     const response = await api.post<ApiResponse<number[]>>('/user/exclude', { ids });
 
     return response.data;
+  }
+
+  public static async getManagerHomeBriefInfos() {
+    return this.getUserHomeBriefInfos<Brief.ManagerHomeBriefInfosResponse>('manager');
+  }
+  
+  public static async getProfessorHomeBriefInfos(id: number) {
+    return this.getUserHomeBriefInfos<Brief.ProfessorHomeBriefInfosResponse>('professor', id);
+  }
+  
+  public static async getStudentHomeBriefInfos(id: number) {
+    return this.getUserHomeBriefInfos<Brief.StudentHomeBriefInfosResponse>('student', id);
   }
 }

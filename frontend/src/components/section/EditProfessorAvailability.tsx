@@ -10,6 +10,10 @@ import { isValidHours } from '@frontend/utils/misc/isValidHour.util';
 import type { Shift } from '@shared/types/shifts.type';
 import type { Hours } from '@shared/types/availableHours.type';
 import ShiftHourEditor from '../misc/ShiftHourEditor';
+import { ProfessorAvailabilityService } from '@frontend/services/professorAvailability.service';
+import type { NewProfessorAvailabilityRequest } from '@shared/types/dtos/newProfessorAvailability.dto';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Navigate } from 'react-router-dom';
 
 type Props = {
   availability: ProfessorAvailability[];
@@ -17,11 +21,14 @@ type Props = {
 
 const EditProfessorAvailability = (props:Props): React.JSX.Element => {
 
+  const { user } = useAuth();
+  if (!user) return <Navigate to={'/'}/>
+
   const { toast } = useToast();
 
   const GENERAL_CONFIGS = {
     morning: { start: 420, end: 690    },
-    afternoom: { start: 780, end: 1080 },
+    afternoon: { start: 780, end: 1080 },
   };
 
   const [ editingAvailabilityDay, setEditingAvailabilityDay ] = useState<AvailableDays | null>(null);
@@ -52,7 +59,8 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
         setNewAvailableShiftHours(null);
         return;
       }
-      handleNewAvailability();
+
+      handleNewAvailability(user.id);
     }
 
     setEditing(prev => prev === shift ? null : shift);
@@ -98,10 +106,20 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
     }
   }
 
-  const handleNewAvailability = async (): Promise<void> => {
+  const handleNewAvailability = async (professorId: number): Promise<void> => {
     try {
-  
-      toast('Nova disponibilidade salva com sucesso!');
+      
+      // if (!editingAvailabilityDay || )
+
+      // const newAvailability: NewProfessorAvailabilityRequest = {
+      //   dayOfWeek: editingAvailabilityDay,
+      //   endHour: new
+      // }
+
+      // const response = await ProfessorAvailabilityService.defineNewAvailability(
+      //   professorId,
+      //   {}
+      // );
 
       setNewAvailableShiftHours(null);
   
@@ -199,7 +217,7 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
                     newHours={newAfternoonHours}
                     backupHours={backupAfternoonHours}
                     newShiftHours={newAvailableShiftHours}
-                    shiftLimit={GENERAL_CONFIGS.afternoom}
+                    shiftLimit={GENERAL_CONFIGS.afternoon}
                     setNewShiftHours={setNewAvailableShiftHours}
                     setNewHours={setNewAfternoonHours}
                   />

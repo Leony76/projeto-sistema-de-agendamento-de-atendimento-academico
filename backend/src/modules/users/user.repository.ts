@@ -188,7 +188,6 @@ export class UserRepository {
     return await prisma.manager.findUnique({
       where  : { userId: id },
       select : {
-        ra   : true,
         user : {
           select: {
             id        : true,
@@ -200,5 +199,100 @@ export class UserRepository {
         },
       },
     });
+  }
+
+  public static async getManagerBriefInfos() {
+    
+    const [ appointments, solicitations, students, professors ] = await Promise.all([
+      prisma.appointment.count(),
+      prisma.solicitation.count(),
+      prisma.student.count(),
+      prisma.professor.count(),
+    ]);
+
+    return {
+      appointments, 
+      solicitations,
+      students, 
+      professors
+    }
+  }
+
+  public static async getProfessorBriefInfos(id: number) {
+    
+    const [ appointmentsConfirmed, pendingSolicitations, nextAppointmentDateTime ] = await Promise.all([
+      prisma.appointment.count({
+        where: {
+          professorId : id,
+          status      : 'CONFIRMED',
+        }
+      }),
+      
+      prisma.solicitation.count({
+        where: {
+          professorId : id,
+          status      : 'PENDING'
+        }
+      }),
+
+      prisma.appointment.findFirst({
+        where: {
+          professorId: id,
+          dateTime: { gte: new Date() },
+          status: 'CONFIRMED',
+        },
+        orderBy: {
+          dateTime: 'asc',
+        },
+        select: {
+          dateTime: true,
+        },
+      })
+    ]);
+
+    return {
+      appointmentsConfirmed,
+      pendingSolicitations, 
+      nextAppointmentDateTime,
+    }
+  }
+
+  public static async getStudentBriefInfos(id: number) {
+    
+    const [ appointmentsMade, pendingSolicitations, nextAppointmentDateTime ] = await Promise.all([
+      prisma.appointment.count({
+        where: {
+          studentId : id,
+          status    : 'DONE',
+        }
+      }),
+      
+      prisma.solicitation.count({
+        where: {
+          studentId : id,
+          status    : 'PENDING'
+        }
+      }),
+
+      prisma.appointment.findFirst({
+        where: {
+          studentId: id,
+          dateTime: { gte: new Date() },
+          status: 'CONFIRMED',
+        },
+        orderBy: {
+          dateTime: 'asc',
+        },
+        select: {
+          dateTime: true,
+        },
+      })
+    ]);
+
+    return {
+      appointmentsMade,
+      pendingSolicitations, 
+      nextAppointmentDateTime,
+    }
   }
 }
