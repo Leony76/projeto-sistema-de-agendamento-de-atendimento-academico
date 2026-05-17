@@ -1,10 +1,13 @@
 import { AvailableDays } from "./availableDays.type";
 
-export type ProfessorAvailability = {
-  readonly          id : number;
-  readonly professorId : number;
+export type Shift = 'MORNING' | 'AFTERNOON';
 
+export type ShiftHours = {
+  start : string; 
+  end   : string; 
+};
+
+export type ProfessorAvailability = {
   dayOfWeek : AvailableDays;
-  startHour : number;
-  endHour   : number;
+  shift     : Record<Shift, ShiftHours>;
 }

@@ -1,192 +1,85 @@
 import React from 'react'
-import type { Shift } from '@shared/types/shifts.type';
-import type { Hours } from '@shared/types/availableHours.type';
-import { formatHoursToMinutes } from '@frontend/utils/formats/formatHoursInMinutes.util';
+import type { ShiftHours } from '@shared/types/professorAvailability.type';
 import { formatTimeInput } from '@frontend/utils/formats/formatTimeToInput.util';
+import { formatHoursToMinutes } from '@frontend/utils/formats/formatHoursInMinutes.util';
 
 type Props = {
-  shift            : Shift;
-  editing          : Shift | null;
-  newHours         : Hours | null;
-  newShiftHours    : Hours | null;
-  backupHours      : Hours | null;
-  shiftLimit       : { start: number, end: number };
-  setNewHours      : React.Dispatch<React.SetStateAction<Hours | null>>;
-  setNewShiftHours : React.Dispatch<React.SetStateAction<Hours | null>>;
+  newShiftHours   : ShiftHours;
+  oldShiftHours   : ShiftHours;
+  shiftHoursLimit : ShiftHours;
+  editing    : boolean;
+  onChange   : {
+    start : (value: string) => void;
+    end   : (value: string) => void;
+  };
+  onRestore : {
+    start : () => void;
+    end   : () => void;
+  };
 };
 
-const ShiftHourEditor = (props:Props): React.JSX.Element => {
-
-  const limitsPlaceholder: Record<Shift, { start: string, end: string }> = {
-    MORNING   : { start: '07:00', end: '11:30' },
-    AFTERNOON : { start: '13:00', end: '18:00' },
-  };
+const ShiftHourEditor = (props:Props): React.JSX.Element => { 
 
   return (
-    props.newHours ? (
-      <div className='flex gap-1'>
-        <input
-          placeholder={'XX:XX'}
-          readOnly={props.editing !== props.shift} 
-          className='min-w-0 w-10 text-center outline-none'
-          type="text"
-          value={props.newHours.start}
-          onBlur={() => {
-            if (!props.newHours || !props.backupHours) return;
-
-            const currentStart = props.newHours.start;
-
-            if (!currentStart) {
-              props.setNewHours(props.backupHours);
-              return;
-            }
-
-            const value = formatHoursToMinutes(currentStart);
-
-            props.setNewHours(prev => {
-              if (!prev) return prev;
-
-              if (value > props.shiftLimit.end)   
-                return { ...prev, start: limitsPlaceholder[props.shift].end };
-              if (value < props.shiftLimit.start) 
-                return { ...prev, start: limitsPlaceholder[props.shift].start };
-
-              return prev;
-            });
-          }}
-          onChange={(e) => {
-            const value = formatTimeInput(e.target.value);                         
-
-            props.setNewHours(prev => {
-              if (!prev) 
-                return { start: value ?? '', end: '' }; 
-              else 
-                return { ...prev, start: value ?? '' };
-            });
-          }}
-        />
-
-        <span>ás</span>
-        
-        <input
-          placeholder={'XX:XX'} 
-          readOnly={props.editing !== props.shift} 
-          className='min-w-0 w-10 text-center outline-none'
-          type="text"
-          value={props.newHours.end}
-          onBlur={() => {
-            if (!props.newHours || !props.backupHours) return;
-
-            const currentEnd = props.newHours.end;
-
-            if (!currentEnd) {
-              props.setNewHours(props.backupHours);
-              return;
-            }
-
-            const value = formatHoursToMinutes(currentEnd);
-
-            props.setNewHours(prev => {
-              if (!prev) return prev;
-
-              if (value > props.shiftLimit.end)   
-                return { ...prev, end: limitsPlaceholder[props.shift].end };
-              if (value < props.shiftLimit.start) 
-                return { ...prev, end: limitsPlaceholder[props.shift].start };
-
-              return prev;
-            });
-          }}
-          onChange={(e) => {
-            const value = formatTimeInput(e.target.value);                         
-
-            props.setNewHours(prev => {
-              if (!prev) 
-                return { start: '', end: value ?? '' }; 
-              else 
-                return { ...prev, end: value ?? '' };
-            });
-          }}
-        />
-      </div>
-    ) : (
-      props.editing === props.shift ? (
-        <div className='flex gap-1'>
-          <input
-            placeholder={'XX:XX'}
-            readOnly={props.editing !== props.shift} 
-            className='min-w-0 w-10 text-center outline-none'
-            type="text"
-            value={props.newShiftHours?.start}
-            onBlur={() => {
-              if (!props.newShiftHours?.start) return;
-
-              const value = formatHoursToMinutes(props.newShiftHours.start);
-
-              props.setNewShiftHours(prev => {
-                
-                if (!prev) return prev;
-
-                if (value > props.shiftLimit.end)   
-                  return { ...prev, start: limitsPlaceholder[props.shift].end };
-                if (value < props.shiftLimit.start) 
-                  return { ...prev, start: limitsPlaceholder[props.shift].start };
-
-                return prev;
-              });
-            }}
-            onChange={(e) => {
-              const value = formatTimeInput(e.target.value);                         
-
-              props.setNewShiftHours(prev => {
-                if (!prev) 
-                  return { start: value ?? '', end: '' }; 
-                else 
-                  return { ...prev, start: value ?? '' };
-              });
-            }}
-          />
-
-          <span>ás</span>
+    <div className='flex gap-1'>
+      <input
+        placeholder={'XX:XX'}
+        readOnly={!props.editing}
+        className='min-w-0 w-10 text-center outline-none'
+        type="text"
+        value={props.newShiftHours.start}
+        onChange={(e) => props.onChange.start(
+          formatTimeInput(e.target.value)
+        )}
+        onBlur={() => {
+          if (!props.newShiftHours.start.trim()) {
+            props.onRestore.start();
+            return
+          } 
           
-          <input
-            placeholder={'XX:XX'} 
-            readOnly={props.editing !== props.shift} 
-            className='min-w-0 w-10 text-center outline-none'
-            type="text"
-            value={props.newShiftHours?.end}
-            onBlur={() => {
-              if (!props.newShiftHours?.end) return;
-              
-              const value = formatHoursToMinutes(props.newShiftHours.end);
+          const value = formatHoursToMinutes(props.newShiftHours.start);
+          const min   = formatHoursToMinutes(props.shiftHoursLimit.start);
+          const max   = formatHoursToMinutes(props.shiftHoursLimit.end);
 
-              props.setNewShiftHours(prev => {
-                if (!prev) return prev;
+          if (value < min) {
+            props.onChange.start(props.shiftHoursLimit.start);
+          } if (value > max) {
+            props.onChange.start(props.shiftHoursLimit.end);
+          }
+        }}
+      />
 
-                if (value > props.shiftLimit.end)   
-                  return { ...prev, end: limitsPlaceholder[props.shift].end };
-                if (value < props.shiftLimit.start) 
-                  return { ...prev, end: limitsPlaceholder[props.shift].start };
+      <span>
+        ás
+      </span>
+      
+      <input
+        placeholder='XX:XX'
+        readOnly={!props.editing}
+        className='min-w-0 w-10 text-center outline-none'
+        type='text'
+        value={props.newShiftHours.end}
+        onChange={(e) => props.onChange.end(
+          formatTimeInput(e.target.value)
+        )}
+        onBlur={() => {
+          if (!props.newShiftHours.end.trim()) {
+            props.onRestore.end();
+            return;
+          }
 
-                return prev;
-              });
-            }}
-            onChange={(e) => {
-              const value = formatTimeInput(e.target.value);                         
+          const value = formatHoursToMinutes(props.newShiftHours.end);
+          const min   = formatHoursToMinutes(props.shiftHoursLimit.start);
+          const max   = formatHoursToMinutes(props.shiftHoursLimit.end);
 
-              props.setNewShiftHours(prev => {
-                if (!prev) 
-                  return { start: '', end: value ?? '' }; 
-                else 
-                  return { ...prev, end: value ?? '' };
-              });
-            }}
-          />
-        </div>
-      ) : (
-        <div>Não disponível</div>
-      )
-    )
+          if (value < min) {
+            props.onChange.end(props.shiftHoursLimit.start);
+          } if (value > max) {
+            props.onChange.end(props.shiftHoursLimit.end);
+          }
+        }}
+      />
+    </div>
   )
 }
 

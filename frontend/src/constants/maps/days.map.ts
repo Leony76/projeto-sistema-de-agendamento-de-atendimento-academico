@@ -1,7 +1,6 @@
 import type { AvailableDays } from "@shared/types/availableDays.type";
 
 export const AVAILABLE_DAYS = [
-  { value: 'SUNDAY'    , label: 'Domingo'       }, 
   { value: 'MONDAY'    , label: 'Segunda-Feira' },
   { value: 'TUESDAY'   , label: 'Terça-Feira'   },
   { value: 'WEDNESDAY' , label: 'Quarta-Feira'  },
@@ -11,7 +10,6 @@ export const AVAILABLE_DAYS = [
 ] as const;
 
 export const AVAILABLE_DAYS_MAP = {
-  SUNDAY     : 'Domingo',
   MONDAY     : 'Segunda-feira',
   TUESDAY    : 'Terça-feira',
   WEDNESDAY  : 'Quarta-feira', 
@@ -21,11 +19,10 @@ export const AVAILABLE_DAYS_MAP = {
 } as const;
 
 export const DAYS_BY_INDEX_MAP: Record<AvailableDays, number> = {
-  SUNDAY    : 0,
-  MONDAY    : 1,
-  TUESDAY   : 2,
-  WEDNESDAY : 3,
-  THURSDAY  : 4,
-  FRIDAY    : 5,
-  SATURDAY  : 6,
+  MONDAY    : 0,
+  TUESDAY   : 1,
+  WEDNESDAY : 2,
+  THURSDAY  : 3,
+  FRIDAY    : 4,
+  SATURDAY  : 5,
 };

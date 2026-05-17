@@ -23,6 +23,23 @@ import { UserService } from '@frontend/services/user.service';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
 
+const PROFESSOR_AVAILABILIT_MOCK: ProfessorAvailability[] = [
+  {
+    dayOfWeek: 'MONDAY',
+    shift: {
+      MORNING   : { start: '420', end: '690'  },
+      AFTERNOON : { start: '780', end: '1080' },
+    }
+  },
+  {
+    dayOfWeek: 'THURSDAY',
+    shift: {
+      MORNING   : { start: '420', end: '630'  },
+      AFTERNOON : { start: '780', end: '1020' },
+    }
+  },
+];
+
 const Professor = (): React.JSX.Element => {
 
   const { user } = useAuth();
@@ -32,7 +49,7 @@ const Professor = (): React.JSX.Element => {
   const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   
-  const [ availability, setAvailability ] = useState<ProfessorAvailability[]>([]);
+  const [ availability, setAvailability ] = useState<ProfessorAvailability[]>(PROFESSOR_AVAILABILIT_MOCK);
   
   const [ professorAppointments, setProfessorAppointments ] = useState<Appointment<Pick<Student, 'name' | 'photo'>>[]>([]);
   const [ professorBriefInfos, setProfessorBriefInfos ] = useState<ProfessorHomeBriefInfos | null>(null);

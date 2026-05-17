@@ -1,7 +1,15 @@
-export const formatTimeInput = (value: string) => {
-  const numbers = value.replace(/\D/g, '').slice(0, 4);
+export const formatTimeInput = (value: string): string => {
 
-  if (numbers.length <= 2) return numbers;
-  
-  return `${numbers.slice(0, 2)}:${numbers.slice(2)}`;
+  const numbers = value.replace(/\D/g, '');
+
+  const limited = numbers.slice(0, 4);
+
+  if (limited.length <= 2) {
+    return limited;
+  }
+
+  const hours = limited.slice(0, 2);
+  const minutes = limited.slice(2);
+
+  return `${hours}:${minutes}`;
 };
