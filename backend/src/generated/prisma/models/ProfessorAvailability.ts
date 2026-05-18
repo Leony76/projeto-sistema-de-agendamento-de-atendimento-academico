@@ -47,7 +47,8 @@ export type ProfessorAvailabilityMinAggregateOutputType = {
   deletedAt: Date | null
   startTime: number | null
   endTime: number | null
-  dayOfWeek: $Enums.DayOfWeek | null
+  shift: $Enums.Shift | null
+  dayOfWeek: $Enums.AvailableDay | null
   professorId: number | null
 }
 
@@ -58,7 +59,8 @@ export type ProfessorAvailabilityMaxAggregateOutputType = {
   deletedAt: Date | null
   startTime: number | null
   endTime: number | null
-  dayOfWeek: $Enums.DayOfWeek | null
+  shift: $Enums.Shift | null
+  dayOfWeek: $Enums.AvailableDay | null
   professorId: number | null
 }
 
@@ -69,6 +71,7 @@ export type ProfessorAvailabilityCountAggregateOutputType = {
   deletedAt: number
   startTime: number
   endTime: number
+  shift: number
   dayOfWeek: number
   professorId: number
   _all: number
@@ -96,6 +99,7 @@ export type ProfessorAvailabilityMinAggregateInputType = {
   deletedAt?: true
   startTime?: true
   endTime?: true
+  shift?: true
   dayOfWeek?: true
   professorId?: true
 }
@@ -107,6 +111,7 @@ export type ProfessorAvailabilityMaxAggregateInputType = {
   deletedAt?: true
   startTime?: true
   endTime?: true
+  shift?: true
   dayOfWeek?: true
   professorId?: true
 }
@@ -118,6 +123,7 @@ export type ProfessorAvailabilityCountAggregateInputType = {
   deletedAt?: true
   startTime?: true
   endTime?: true
+  shift?: true
   dayOfWeek?: true
   professorId?: true
   _all?: true
@@ -216,7 +222,8 @@ export type ProfessorAvailabilityGroupByOutputType = {
   deletedAt: Date | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
   professorId: number
   _count: ProfessorAvailabilityCountAggregateOutputType | null
   _avg: ProfessorAvailabilityAvgAggregateOutputType | null
@@ -250,7 +257,8 @@ export type ProfessorAvailabilityWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFilter<"ProfessorAvailability"> | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFilter<"ProfessorAvailability"> | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFilter<"ProfessorAvailability"> | $Enums.AvailableDay
   professorId?: Prisma.IntFilter<"ProfessorAvailability"> | number
   professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
 }
@@ -262,6 +270,7 @@ export type ProfessorAvailabilityOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
   professor?: Prisma.ProfessorOrderByWithRelationInput
@@ -269,6 +278,7 @@ export type ProfessorAvailabilityOrderByWithRelationInput = {
 
 export type ProfessorAvailabilityWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  professorId_dayOfWeek_shift?: Prisma.ProfessorAvailabilityProfessorIdDayOfWeekShiftCompoundUniqueInput
   AND?: Prisma.ProfessorAvailabilityWhereInput | Prisma.ProfessorAvailabilityWhereInput[]
   OR?: Prisma.ProfessorAvailabilityWhereInput[]
   NOT?: Prisma.ProfessorAvailabilityWhereInput | Prisma.ProfessorAvailabilityWhereInput[]
@@ -277,10 +287,11 @@ export type ProfessorAvailabilityWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFilter<"ProfessorAvailability"> | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFilter<"ProfessorAvailability"> | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFilter<"ProfessorAvailability"> | $Enums.AvailableDay
   professorId?: Prisma.IntFilter<"ProfessorAvailability"> | number
   professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
-}, "id">
+}, "id" | "professorId_dayOfWeek_shift">
 
 export type ProfessorAvailabilityOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -289,6 +300,7 @@ export type ProfessorAvailabilityOrderByWithAggregationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
   _count?: Prisma.ProfessorAvailabilityCountOrderByAggregateInput
@@ -308,7 +320,8 @@ export type ProfessorAvailabilityScalarWhereWithAggregatesInput = {
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntWithAggregatesFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntWithAggregatesFilter<"ProfessorAvailability"> | number
-  dayOfWeek?: Prisma.EnumDayOfWeekWithAggregatesFilter<"ProfessorAvailability"> | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftWithAggregatesFilter<"ProfessorAvailability"> | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayWithAggregatesFilter<"ProfessorAvailability"> | $Enums.AvailableDay
   professorId?: Prisma.IntWithAggregatesFilter<"ProfessorAvailability"> | number
 }
 
@@ -318,7 +331,8 @@ export type ProfessorAvailabilityCreateInput = {
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
   professor: Prisma.ProfessorCreateNestedOneWithoutAvailabilityInput
 }
 
@@ -329,7 +343,8 @@ export type ProfessorAvailabilityUncheckedCreateInput = {
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
   professorId: number
 }
 
@@ -339,7 +354,8 @@ export type ProfessorAvailabilityUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
   professor?: Prisma.ProfessorUpdateOneRequiredWithoutAvailabilityNestedInput
 }
 
@@ -350,7 +366,8 @@ export type ProfessorAvailabilityUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -361,7 +378,8 @@ export type ProfessorAvailabilityCreateManyInput = {
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
   professorId: number
 }
 
@@ -371,7 +389,8 @@ export type ProfessorAvailabilityUpdateManyMutationInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityUncheckedUpdateManyInput = {
@@ -381,7 +400,8 @@ export type ProfessorAvailabilityUncheckedUpdateManyInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -395,6 +415,12 @@ export type ProfessorAvailabilityOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type ProfessorAvailabilityProfessorIdDayOfWeekShiftCompoundUniqueInput = {
+  professorId: number
+  dayOfWeek: $Enums.AvailableDay
+  shift: $Enums.Shift
+}
+
 export type ProfessorAvailabilityCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   registeredAt?: Prisma.SortOrder
@@ -402,6 +428,7 @@ export type ProfessorAvailabilityCountOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
 }
@@ -420,6 +447,7 @@ export type ProfessorAvailabilityMaxOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
 }
@@ -431,6 +459,7 @@ export type ProfessorAvailabilityMinOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
 }
@@ -484,8 +513,12 @@ export type ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorNestedInput 
   deleteMany?: Prisma.ProfessorAvailabilityScalarWhereInput | Prisma.ProfessorAvailabilityScalarWhereInput[]
 }
 
-export type EnumDayOfWeekFieldUpdateOperationsInput = {
-  set?: $Enums.DayOfWeek
+export type EnumShiftFieldUpdateOperationsInput = {
+  set?: $Enums.Shift
+}
+
+export type EnumAvailableDayFieldUpdateOperationsInput = {
+  set?: $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityCreateWithoutProfessorInput = {
@@ -494,7 +527,8 @@ export type ProfessorAvailabilityCreateWithoutProfessorInput = {
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityUncheckedCreateWithoutProfessorInput = {
@@ -504,7 +538,8 @@ export type ProfessorAvailabilityUncheckedCreateWithoutProfessorInput = {
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityCreateOrConnectWithoutProfessorInput = {
@@ -543,7 +578,8 @@ export type ProfessorAvailabilityScalarWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"ProfessorAvailability"> | Date | string | null
   startTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
   endTime?: Prisma.IntFilter<"ProfessorAvailability"> | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFilter<"ProfessorAvailability"> | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFilter<"ProfessorAvailability"> | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFilter<"ProfessorAvailability"> | $Enums.AvailableDay
   professorId?: Prisma.IntFilter<"ProfessorAvailability"> | number
 }
 
@@ -554,7 +590,8 @@ export type ProfessorAvailabilityCreateManyProfessorInput = {
   deletedAt?: Date | string | null
   startTime: number
   endTime: number
-  dayOfWeek: $Enums.DayOfWeek
+  shift: $Enums.Shift
+  dayOfWeek: $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityUpdateWithoutProfessorInput = {
@@ -563,7 +600,8 @@ export type ProfessorAvailabilityUpdateWithoutProfessorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityUncheckedUpdateWithoutProfessorInput = {
@@ -573,7 +611,8 @@ export type ProfessorAvailabilityUncheckedUpdateWithoutProfessorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
 }
 
 export type ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorInput = {
@@ -583,7 +622,8 @@ export type ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startTime?: Prisma.IntFieldUpdateOperationsInput | number
   endTime?: Prisma.IntFieldUpdateOperationsInput | number
-  dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  shift?: Prisma.EnumShiftFieldUpdateOperationsInput | $Enums.Shift
+  dayOfWeek?: Prisma.EnumAvailableDayFieldUpdateOperationsInput | $Enums.AvailableDay
 }
 
 
@@ -595,6 +635,7 @@ export type ProfessorAvailabilitySelect<ExtArgs extends runtime.Types.Extensions
   deletedAt?: boolean
   startTime?: boolean
   endTime?: boolean
+  shift?: boolean
   dayOfWeek?: boolean
   professorId?: boolean
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
@@ -607,6 +648,7 @@ export type ProfessorAvailabilitySelectCreateManyAndReturn<ExtArgs extends runti
   deletedAt?: boolean
   startTime?: boolean
   endTime?: boolean
+  shift?: boolean
   dayOfWeek?: boolean
   professorId?: boolean
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
@@ -619,6 +661,7 @@ export type ProfessorAvailabilitySelectUpdateManyAndReturn<ExtArgs extends runti
   deletedAt?: boolean
   startTime?: boolean
   endTime?: boolean
+  shift?: boolean
   dayOfWeek?: boolean
   professorId?: boolean
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
@@ -631,11 +674,12 @@ export type ProfessorAvailabilitySelectScalar = {
   deletedAt?: boolean
   startTime?: boolean
   endTime?: boolean
+  shift?: boolean
   dayOfWeek?: boolean
   professorId?: boolean
 }
 
-export type ProfessorAvailabilityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "registeredAt" | "updatedAt" | "deletedAt" | "startTime" | "endTime" | "dayOfWeek" | "professorId", ExtArgs["result"]["professorAvailability"]>
+export type ProfessorAvailabilityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "registeredAt" | "updatedAt" | "deletedAt" | "startTime" | "endTime" | "shift" | "dayOfWeek" | "professorId", ExtArgs["result"]["professorAvailability"]>
 export type ProfessorAvailabilityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
 }
@@ -658,7 +702,8 @@ export type $ProfessorAvailabilityPayload<ExtArgs extends runtime.Types.Extensio
     deletedAt: Date | null
     startTime: number
     endTime: number
-    dayOfWeek: $Enums.DayOfWeek
+    shift: $Enums.Shift
+    dayOfWeek: $Enums.AvailableDay
     professorId: number
   }, ExtArgs["result"]["professorAvailability"]>
   composites: {}
@@ -1090,7 +1135,8 @@ export interface ProfessorAvailabilityFieldRefs {
   readonly deletedAt: Prisma.FieldRef<"ProfessorAvailability", 'DateTime'>
   readonly startTime: Prisma.FieldRef<"ProfessorAvailability", 'Int'>
   readonly endTime: Prisma.FieldRef<"ProfessorAvailability", 'Int'>
-  readonly dayOfWeek: Prisma.FieldRef<"ProfessorAvailability", 'DayOfWeek'>
+  readonly shift: Prisma.FieldRef<"ProfessorAvailability", 'Shift'>
+  readonly dayOfWeek: Prisma.FieldRef<"ProfessorAvailability", 'AvailableDay'>
   readonly professorId: Prisma.FieldRef<"ProfessorAvailability", 'Int'>
 }
     

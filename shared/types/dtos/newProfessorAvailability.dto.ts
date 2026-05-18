@@ -1,7 +1,6 @@
 import { ProfessorAvailability } from "../professorAvailability.type"
 
-export type NewProfessorAvailabilityRequest = 
-  Omit<ProfessorAvailability, 'id' | 'professorId'>;
+export type NewProfessorAvailabilityRequest  = ProfessorAvailability;
+export type NewProfessorAvailabilityResponse = Omit<ProfessorAvailability, 'shift'>
 
-export type NewProfessorAvailabilityResponse = 
-  Omit<ProfessorAvailability, 'id' | 'professorId'>
+export type ProfessorAvailabilityResponse = ProfessorAvailability;

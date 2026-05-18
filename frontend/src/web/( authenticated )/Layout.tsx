@@ -76,8 +76,6 @@ const Layout = (props:Props): React.JSX.Element => {
     : user?.photo
   ;
 
-  console.log(user?.photo)
-
   return (
     <div className='flex flex-col h-screen'>
 

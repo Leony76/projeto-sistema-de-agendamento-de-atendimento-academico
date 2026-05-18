@@ -18,6 +18,14 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const Shift = {
+  MORNING: 'MORNING',
+  AFTERNOON: 'AFTERNOON'
+} as const
+
+export type Shift = (typeof Shift)[keyof typeof Shift]
+
+
 export const AppointmentStatus = {
   CANCELED: 'CANCELED',
   CONFIRMED: 'CONFIRMED',
@@ -47,14 +55,13 @@ export const RoomStatus = {
 export type RoomStatus = (typeof RoomStatus)[keyof typeof RoomStatus]
 
 
-export const DayOfWeek = {
+export const AvailableDay = {
   MONDAY: 'MONDAY',
   TUESDAY: 'TUESDAY',
   WEDNESDAY: 'WEDNESDAY',
   THURSDAY: 'THURSDAY',
   FRIDAY: 'FRIDAY',
-  SATURDAY: 'SATURDAY',
-  SUNDAY: 'SUNDAY'
+  SATURDAY: 'SATURDAY'
 } as const
 
-export type DayOfWeek = (typeof DayOfWeek)[keyof typeof DayOfWeek]
+export type AvailableDay = (typeof AvailableDay)[keyof typeof AvailableDay]

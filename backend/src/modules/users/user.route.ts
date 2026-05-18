@@ -15,6 +15,6 @@ userRoutes.get('/manager-brief-infos'       , UserController.getManagerBriefInfo
 userRoutes.get('/student-brief-infos/:id'   , UserController.getStudentBriefInfos );
 userRoutes.get('/professor-brief-infos/:id' , UserController.getProfessorBriefInfos );
 
-userRoutes.post( '/exclude'  , UserController.excludeUsers );
+userRoutes.post( '/exclude' , UserController.excludeUsers );
 
 export default userRoutes;

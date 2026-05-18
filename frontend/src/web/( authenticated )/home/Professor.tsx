@@ -22,34 +22,23 @@ import type { Student } from '@shared/types/userBasicInfos.type';
 import { UserService } from '@frontend/services/user.service';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
-
-const PROFESSOR_AVAILABILIT_MOCK: ProfessorAvailability[] = [
-  {
-    dayOfWeek: 'MONDAY',
-    shift: {
-      MORNING   : { start: '420', end: '690'  },
-      AFTERNOON : { start: '780', end: '1080' },
-    }
-  },
-  {
-    dayOfWeek: 'THURSDAY',
-    shift: {
-      MORNING   : { start: '420', end: '630'  },
-      AFTERNOON : { start: '780', end: '1020' },
-    }
-  },
-];
+import { ProfessorService } from '@frontend/services/professor.service';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
 
 const Professor = (): React.JSX.Element => {
 
   const { user } = useAuth();
   if (!user) return <Navigate to={'/'}/>
 
+  const { toast } = useToast();
+
   const [searchValue, setSearchValue] = useState<string>('');
+  const [refresh , setRefresh] = useState({ availability: 0 });
   const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   
-  const [ availability, setAvailability ] = useState<ProfessorAvailability[]>(PROFESSOR_AVAILABILIT_MOCK);
+  const [ availability, setAvailability ] = useState<ProfessorAvailability[]>([]);
   
   const [ professorAppointments, setProfessorAppointments ] = useState<Appointment<Pick<Student, 'name' | 'photo'>>[]>([]);
   const [ professorBriefInfos, setProfessorBriefInfos ] = useState<ProfessorHomeBriefInfos | null>(null);
@@ -80,16 +69,30 @@ const Professor = (): React.JSX.Element => {
   useEffect(() => {
     (async(id: number) => {
       try {
-        const [ professorBriefInfos ] = await Promise.all([
+        const [ professorBriefInfos, availability ] = await Promise.all([
           UserService.getProfessorHomeBriefInfos(id),
+          ProfessorService.getAvailability(id),
         ]);
 
         setProfessorBriefInfos(professorBriefInfos);
+        setAvailability(availability)
       } catch (error:unknown) {
-        if (error instanceof Error) console.error(error.message);
+        toast(apiError(error), 'error');
       }
     })(user.id);
   },[]);
+
+  useEffect(() => {
+    (async(id: number) => {
+      try {
+        const availability = await ProfessorService.getAvailability(id);
+
+        setAvailability(availability)
+      } catch (error:unknown) {
+        toast(apiError(error), 'error');
+      }
+    })(user.id);
+  },[refresh.availability]);
 
   return (
     <Layout 
@@ -169,6 +172,7 @@ const Professor = (): React.JSX.Element => {
           <div className='relative flex self-start flex-col gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
             <Section.EditProfessorAvailability
               availability={availability}
+              refresh={() => setRefresh(prev => ({ ...prev, availability: prev.availability + 1 })) }
             />
           </div>
         </div>

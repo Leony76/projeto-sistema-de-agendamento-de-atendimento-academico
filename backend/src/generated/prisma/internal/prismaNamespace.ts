@@ -1248,6 +1248,7 @@ export const ProfessorAvailabilityScalarFieldEnum = {
   deletedAt: 'deletedAt',
   startTime: 'startTime',
   endTime: 'endTime',
+  shift: 'shift',
   dayOfWeek: 'dayOfWeek',
   professorId: 'professorId'
 } as const
@@ -1412,16 +1413,30 @@ export type ListEnumRoomStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
- * Reference to a field of type 'DayOfWeek'
+ * Reference to a field of type 'Shift'
  */
-export type EnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DayOfWeek'>
+export type EnumShiftFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Shift'>
     
 
 
 /**
- * Reference to a field of type 'DayOfWeek[]'
+ * Reference to a field of type 'Shift[]'
  */
-export type ListEnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DayOfWeek[]'>
+export type ListEnumShiftFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Shift[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AvailableDay'
+ */
+export type EnumAvailableDayFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AvailableDay'>
+    
+
+
+/**
+ * Reference to a field of type 'AvailableDay[]'
+ */
+export type ListEnumAvailableDayFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AvailableDay[]'>
     
 
 

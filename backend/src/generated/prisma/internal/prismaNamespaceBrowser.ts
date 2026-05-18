@@ -135,6 +135,7 @@ export const ProfessorAvailabilityScalarFieldEnum = {
   deletedAt: 'deletedAt',
   startTime: 'startTime',
   endTime: 'endTime',
+  shift: 'shift',
   dayOfWeek: 'dayOfWeek',
   professorId: 'professorId'
 } as const

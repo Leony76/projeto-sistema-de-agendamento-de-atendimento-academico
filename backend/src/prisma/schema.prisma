@@ -76,19 +76,21 @@ model Room {
 }
 
 model ProfessorAvailability {
-  id            Int        @id @default(autoincrement())
-  registeredAt  DateTime   @default(now()) @map("registered_at")
-  updatedAt     DateTime   @updatedAt      @map("updated_at")
-  deletedAt     DateTime?  @map("deleted_at")
+  id            Int         @id @default(autoincrement())
+  registeredAt  DateTime    @default(now()) @map("registered_at")
+  updatedAt     DateTime    @updatedAt      @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
 
-  startTime    Int
-  endTime      Int 
-  dayOfWeek    DayOfWeek   
+  startTime     Int
+  endTime       Int 
+  shift         Shift
+  dayOfWeek     AvailableDay   
 
-  professorId  Int
-  professor    Professor   @relation(fields: [professorId], references: [userId], onDelete: Cascade)
+  professorId   Int
+  professor     Professor   @relation(fields: [professorId], references: [userId], onDelete: Cascade)
 
-  @@map("professor_availabilities")
+  @@unique([professorId, dayOfWeek, shift])
+  @@map("professors_availabilities")
 }
 
 model Appointment {
@@ -178,6 +180,11 @@ enum UserRole {
   MANAGER
 }
 
+enum Shift {
+  MORNING
+  AFTERNOON
+}
+
 enum AppointmentStatus {
   CANCELED
   CONFIRMED
@@ -198,13 +205,12 @@ enum RoomStatus {
   UNAVAILABLE
 }
 
-enum DayOfWeek {
+enum AvailableDay {
   MONDAY
   TUESDAY
   WEDNESDAY
   THURSDAY
   FRIDAY
   SATURDAY
-  SUNDAY
 }
 

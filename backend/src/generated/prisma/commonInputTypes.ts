@@ -196,21 +196,38 @@ export type EnumRoomStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumRoomStatusFilter<$PrismaModel>
 }
 
-export type EnumDayOfWeekFilter<$PrismaModel = never> = {
-  equals?: $Enums.DayOfWeek | Prisma.EnumDayOfWeekFieldRefInput<$PrismaModel>
-  in?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  notIn?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumDayOfWeekFilter<$PrismaModel> | $Enums.DayOfWeek
+export type EnumShiftFilter<$PrismaModel = never> = {
+  equals?: $Enums.Shift | Prisma.EnumShiftFieldRefInput<$PrismaModel>
+  in?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShiftFilter<$PrismaModel> | $Enums.Shift
 }
 
-export type EnumDayOfWeekWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.DayOfWeek | Prisma.EnumDayOfWeekFieldRefInput<$PrismaModel>
-  in?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  notIn?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumDayOfWeekWithAggregatesFilter<$PrismaModel> | $Enums.DayOfWeek
+export type EnumAvailableDayFilter<$PrismaModel = never> = {
+  equals?: $Enums.AvailableDay | Prisma.EnumAvailableDayFieldRefInput<$PrismaModel>
+  in?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAvailableDayFilter<$PrismaModel> | $Enums.AvailableDay
+}
+
+export type EnumShiftWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Shift | Prisma.EnumShiftFieldRefInput<$PrismaModel>
+  in?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShiftWithAggregatesFilter<$PrismaModel> | $Enums.Shift
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumDayOfWeekFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumDayOfWeekFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShiftFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShiftFilter<$PrismaModel>
+}
+
+export type EnumAvailableDayWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AvailableDay | Prisma.EnumAvailableDayFieldRefInput<$PrismaModel>
+  in?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAvailableDayWithAggregatesFilter<$PrismaModel> | $Enums.AvailableDay
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAvailableDayFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAvailableDayFilter<$PrismaModel>
 }
 
 export type EnumAppointmentStatusFilter<$PrismaModel = never> = {
@@ -469,21 +486,38 @@ export type NestedEnumRoomStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumRoomStatusFilter<$PrismaModel>
 }
 
-export type NestedEnumDayOfWeekFilter<$PrismaModel = never> = {
-  equals?: $Enums.DayOfWeek | Prisma.EnumDayOfWeekFieldRefInput<$PrismaModel>
-  in?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  notIn?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumDayOfWeekFilter<$PrismaModel> | $Enums.DayOfWeek
+export type NestedEnumShiftFilter<$PrismaModel = never> = {
+  equals?: $Enums.Shift | Prisma.EnumShiftFieldRefInput<$PrismaModel>
+  in?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShiftFilter<$PrismaModel> | $Enums.Shift
 }
 
-export type NestedEnumDayOfWeekWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.DayOfWeek | Prisma.EnumDayOfWeekFieldRefInput<$PrismaModel>
-  in?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  notIn?: $Enums.DayOfWeek[] | Prisma.ListEnumDayOfWeekFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumDayOfWeekWithAggregatesFilter<$PrismaModel> | $Enums.DayOfWeek
+export type NestedEnumAvailableDayFilter<$PrismaModel = never> = {
+  equals?: $Enums.AvailableDay | Prisma.EnumAvailableDayFieldRefInput<$PrismaModel>
+  in?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAvailableDayFilter<$PrismaModel> | $Enums.AvailableDay
+}
+
+export type NestedEnumShiftWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Shift | Prisma.EnumShiftFieldRefInput<$PrismaModel>
+  in?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Shift[] | Prisma.ListEnumShiftFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShiftWithAggregatesFilter<$PrismaModel> | $Enums.Shift
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumDayOfWeekFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumDayOfWeekFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShiftFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShiftFilter<$PrismaModel>
+}
+
+export type NestedEnumAvailableDayWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AvailableDay | Prisma.EnumAvailableDayFieldRefInput<$PrismaModel>
+  in?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AvailableDay[] | Prisma.ListEnumAvailableDayFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAvailableDayWithAggregatesFilter<$PrismaModel> | $Enums.AvailableDay
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAvailableDayFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAvailableDayFilter<$PrismaModel>
 }
 
 export type NestedEnumAppointmentStatusFilter<$PrismaModel = never> = {
