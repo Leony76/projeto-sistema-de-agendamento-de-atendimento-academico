@@ -61,7 +61,7 @@ const ShiftHourEditor = (props:Props): React.JSX.Element => {
           />
 
           <span>
-            ás
+            às
           </span>
           
           <input

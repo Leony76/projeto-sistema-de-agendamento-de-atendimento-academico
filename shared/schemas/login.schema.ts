@@ -4,8 +4,8 @@ import { defaultFieldsConfigPresets } from './defaultFieldsConfigPresets.schema.
 export const loginAsStudentSchema = z.object({
   ra: z
     .string()
-    .trim()
-    .length(11, "RA inválido"),
+    .regex(/^\d+$/, 'RA deve conter apenas números')
+    .length(11, 'RA deve possuir 11 dígitos'),
   password: z
     .string()
     .trim()

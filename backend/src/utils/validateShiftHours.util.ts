@@ -1,8 +1,8 @@
 import type { ShiftHours } from "@shared/types/professorAvailability.type";
 
 export const validateShiftHours = (
-  shift: ShiftHours,
-  shiftName: 'manhã' | 'tarde',
+  shift     : ShiftHours,
+  shiftName : 'manhã' | 'tarde',
 ): string | null => {
 
   const { start, end } = shift;
@@ -24,9 +24,20 @@ export const validateShiftHours = (
   if (!timeRegex.test(end)) {
     return `Horário final inválido no turno ${shiftName}`;
   }
-
+  
   const [startHour, startMinute] = start.split(':').map(Number);
   const [endHour, endMinute] = end.split(':').map(Number);
+
+  if (
+    startHour   === undefined ||
+    startMinute === undefined ||
+    endHour     === undefined ||
+    endMinute   === undefined ||
+    isNaN(startHour)   ||
+    isNaN(startMinute) ||
+    isNaN(endHour)     ||
+    isNaN(endMinute)   
+  ) return String(NaN);
 
   const startInMinutes = (startHour * 60) + startMinute;
   const endInMinutes = (endHour * 60) + endMinute;

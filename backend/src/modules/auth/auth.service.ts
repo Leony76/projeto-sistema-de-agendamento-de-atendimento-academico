@@ -9,6 +9,30 @@ import { MailService } from '../mail/mail.service';
 
 export class AuthService {
 
+  private static async ensureUserDoesNotExist(email: string, ra?: string): Promise<void> {
+
+    const emailPromise = AuthRepository.emailAlreadyTaken(email);
+
+    if (ra) {
+      const [emailAlreadyTaken, raAlreadyTaken] = await Promise.all([
+        emailPromise,
+        AuthRepository.raAlreadyTaken(ra),
+      ]);
+
+      if (emailAlreadyTaken)
+        throw new ApiError('Já há um usuário cadastrado com esse e-mail', 422);
+      if (raAlreadyTaken)
+        throw new ApiError('Já há um aluno cadastrado com esse RA', 422);
+
+      return;
+    }
+
+    const emailAlreadyTaken = await emailPromise;
+
+    if (emailAlreadyTaken)
+      throw new ApiError('Já há um usuário cadastrado com esse e-mail', 422);
+  }
+
   private static async validatePassword(
     passwordRequest : string, 
     userPassword    : string
@@ -23,21 +47,17 @@ export class AuthService {
     ;
   }
 
-
+  private static async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 10);
+  }
 
   public static async studentRegistersHimself(
     data : R.StudentRegistersHimselfRequest
   ): Promise<L.LoginResponse<R.StudentRegistersHimselfResponse>> {
 
-    const [ raAlreadyTaken, emailAlreadyTaken ] = await Promise.all([
-      AuthRepository.raAlreadyTaken(data.ra),
-      AuthRepository.emailAlreadyTaken(data.email),
-    ]);
+    await this.ensureUserDoesNotExist(data.email, data.ra);
 
-    if (emailAlreadyTaken) throw new ApiError('Este e-mail já está em uso', 422);
-    if (raAlreadyTaken) throw new ApiError('Este RA já está cadastrado', 422);
-
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await this.hashPassword(data.password);
 
     const registeredStudent = await AuthRepository.registerStudent({
       ...data,
@@ -45,14 +65,13 @@ export class AuthService {
     });
 
     if (!registeredStudent.student) 
-      throw new ApiError('Houve um erro no seu cadastro. Tente novamente mais tarde!')
-    ;
+      throw new ApiError('Houve um erro no seu cadastro. Tente novamente mais tarde!', 500);
 
     const token = generateToken(registeredStudent.id);
     
     return {
       token,
-      user: {
+      user : {
         ...registeredStudent,
         photo        : registeredStudent.photo ?? '',
         registeredAt : registeredStudent.createdAt.toISOString(),  
@@ -68,18 +87,10 @@ export class AuthService {
     data: R.ManagerRegistersStudentRequest
   ): Promise<R.ManagersRegistersStudentResponse> {
 
-    const [ emailAlreadyTaken, raAlreadyTaken ] = await Promise.all([
-      AuthRepository.emailAlreadyTaken(data.email),
-      AuthRepository.raAlreadyTaken(data.ra),
-    ]);
-
-    if (emailAlreadyTaken)
-      throw new ApiError('Já há um aluno cadastrado com esse RA');
-    if (raAlreadyTaken)
-      throw new ApiError('Já há um usuário cadastrado com esse e-mail');
+    await this.ensureUserDoesNotExist(data.email, data.ra);
 
     const temporaryPassword = generateTemporaryPassword(8);
-    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+    const hashedPassword = await this.hashPassword(temporaryPassword);
 
     const studentRegistered = await AuthRepository.registerStudent({
       ...data,
@@ -87,7 +98,7 @@ export class AuthService {
     });
 
     if (!studentRegistered.student || !studentRegistered)
-      throw new ApiError('Não foi possível cadastrar o aluno');
+      throw new ApiError('Houve um erro ao tentar cadastrar o aluno. Tente novamente mais tarde!', 500);
 
     await MailService.sendTemporaryPasswordEmail(
       studentRegistered.email,
@@ -108,21 +119,15 @@ export class AuthService {
     data: R.ManagerRegistersProfessorRequest
   ): Promise<R.ManagerRegistersProfessorResponse> {
 
-    const [
-      emailAlreadyTaken,
-      professorsDisciplineAlreadyTaken,
-    ] = await Promise.all([
-      AuthRepository.emailAlreadyTaken(data.email),
-      AuthRepository.professorsDisciplineAlreadyTaken(data.disciplines),
-    ]);
+    await this.ensureUserDoesNotExist(data.email);
 
-    if (emailAlreadyTaken) 
-      throw new ApiError('Já há um usuário cadastrado com esse e-mail');
+    const professorsDisciplineAlreadyTaken = await AuthRepository.professorsDisciplineAlreadyTaken(data.disciplines);
+
     if (professorsDisciplineAlreadyTaken)
-      throw new ApiError('Uma ou mais disciplinas já possuem professor')
+      throw new ApiError('Uma ou mais disciplinas já possuem professor', 409)
 
     const temporaryPassword = generateTemporaryPassword(8);
-    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+    const hashedPassword = await this.hashPassword(temporaryPassword);
 
     const professorRegistered = await AuthRepository.registerProfessor({
       ...data,
@@ -153,15 +158,10 @@ export class AuthService {
     data: R.ManagerRegistersManagerRequest
   ): Promise<R.ManagerRegistersManagerResponse> {
     
-    const [ managerAlreadyRegistered ] = await Promise.all([
-      AuthRepository.emailAlreadyTaken(data.email),
-    ]);
-    
-    if (managerAlreadyRegistered)
-      throw new ApiError('Já está cadastrado um usuário com esse e-mail');
+    await this.ensureUserDoesNotExist(data.email);
     
     const temporaryPassword = generateTemporaryPassword(8);
-    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+    const hashedPassword = await this.hashPassword(temporaryPassword);
     
     const managerRegistered = await AuthRepository.registerManager({
       ...data,
@@ -169,7 +169,7 @@ export class AuthService {
     });
 
     if (!managerRegistered)
-      throw new ApiError('Houve um erro no cadastro do gestor. Tente novamente mais tarde!');
+      throw new ApiError('Houve um erro no cadastro do gestor. Tente novamente mais tarde!', 500);
 
     await MailService.sendTemporaryPasswordEmail(
       managerRegistered.email,
@@ -189,10 +189,9 @@ export class AuthService {
     const student = await AuthRepository.getStudentByRa(data.ra);
 
     if (!student) 
-      throw new ApiError('Credenciais inválidas', 401)
-    ;
+      throw new ApiError('Credenciais inválidas', 401);
 
-    this.validatePassword(data.password, student.user.password);
+    await this.validatePassword(data.password, student.user.password);
 
     const token = generateToken(student.user.id);
 
@@ -217,8 +216,7 @@ export class AuthService {
     const user = await AuthRepository.getUserByEmail(data.email);
 
     if (!user) 
-      throw new ApiError('Credenciais inválidas', 401)
-    ;
+      throw new ApiError('Credenciais inválidas', 401);
 
     await this.validatePassword(data.password, user.password);
 

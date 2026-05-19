@@ -9,8 +9,8 @@ export const studentRegisterHimselfSchema = z.object({
     .max(255, 'O nome completo deve ter até 255 caracteres'),
   ra: z
     .string()
-    .trim()
-    .length(11, "RA inválido"),
+    .regex(/^\d+$/, 'RA deve conter apenas números')
+    .length(11, 'RA deve possuir 11 dígitos'),
   email: z
     .email(defaultFieldsConfigPresets.email.invalid)
     .trim()

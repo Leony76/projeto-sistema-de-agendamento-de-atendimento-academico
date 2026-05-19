@@ -49,8 +49,8 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
   };
 
   const SHIFT_LABELS: Record<Shift, string> = {
-    MORNING   : 'Ás manhãs',
-    AFTERNOON : 'Ás tardes',
+    MORNING   : 'Às manhãs',
+    AFTERNOON : 'Às tardes',
   };
 
   const SHIFT_HOURS_LIMITS: ProfessorAvailability['shift'] = {
