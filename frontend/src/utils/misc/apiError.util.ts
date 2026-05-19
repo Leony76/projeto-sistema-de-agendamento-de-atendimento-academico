@@ -1,9 +1,14 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const apiError = (error: unknown) => {
-  if (axios.isAxiosError(error)) { 
+
+  if (axios.isAxiosError(error)) {
     return error.response?.data?.message || 'Erro inesperado';
   }
 
-  if (error instanceof Error) return error.message;
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return 'Erro inesperado';
 };

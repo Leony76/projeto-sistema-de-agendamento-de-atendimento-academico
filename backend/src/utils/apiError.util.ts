@@ -1,9 +1,16 @@
+export type ValidationError = {
+  field: string;
+  message: string;
+};
+
 export class ApiError extends Error {
+
   public readonly statusCode: number;
 
   constructor(
-    message: string, 
-    statusCode = 400
+    message: string,
+    statusCode = 400,
+    public errors?: ValidationError[],
   ) {
     super(message);
 

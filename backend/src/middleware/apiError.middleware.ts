@@ -13,7 +13,8 @@ export const apiErrorMiddleware = (
 ) => {
   if (error instanceof ApiError) {
     return response.status(error.statusCode).json({
-      message: error.message,
+      message : error.message,
+      errors  : error.errors ?? null,
     });
   }
 
