@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { UserController } from './user.controller';
+import { validate } from '@backend/utils/validator.util';
+import { changePasswordSchema } from '@backend/schemas/newPassword.schema';
 
 const userRoutes = Router();
+
+userRoutes.get( '/:role/:id/me' , UserController.getUserBasicInfos );
 
 userRoutes.get( '/manager-list/active-students'  , UserController.getActiveStudentsToManagerList   );
 userRoutes.get( '/manager-list/active-professors', UserController.getActiveProfessorsToManagerList );
@@ -16,5 +20,10 @@ userRoutes.get('/student-brief-infos/:id'   , UserController.getStudentBriefInfo
 userRoutes.get('/professor-brief-infos/:id' , UserController.getProfessorBriefInfos );
 
 userRoutes.post( '/exclude' , UserController.excludeUsers );
+userRoutes.patch(
+  '/:id/change-temporary-password', 
+  validate(changePasswordSchema),
+  UserController.changeUserTemporaryPassword
+);
 
 export default userRoutes;

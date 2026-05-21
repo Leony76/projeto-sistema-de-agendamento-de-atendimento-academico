@@ -1,5 +1,8 @@
 import { createContext, useEffect, useState } from 'react';
 import { type AuthUserBasicInfos } from '@shared/types/authUserBasicInfos.type';
+import { useToast } from './ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { UserService } from '@frontend/services/user.service';
 
 type AuthContextType = {
   token           : string | null;
@@ -14,6 +17,8 @@ type AuthContextType = {
 export const AuthContext = createContext({} as AuthContextType);
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
+
+  const { toast } = useToast();
 
   const [token, setToken] = useState<string | null>(localStorage.getItem('@token'));
   const [loading, setLoading] = useState<boolean>(true);
@@ -51,17 +56,31 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   };
 
   useEffect(() => {
+    (async() => {
+      try {
+        const localStorageToken = localStorage.getItem('@token');
+        const localStorageUser = localStorage.getItem('@user');
+    
+        if (localStorageToken && localStorageUser) {
+          setToken(localStorageToken);
+          
+          const user: AuthUserBasicInfos = JSON.parse(localStorageUser);
 
-    const token = localStorage.getItem('@token');
-    const user = localStorage.getItem('@user');
+          if (!user) throw new Error('Não foi possível carregar seus dados');
 
-    if (token && user) {
+          const response = await UserService.me(user.id, user.role); 
 
-      setToken(token);
-      setUser(JSON.parse(user));
-    }
+          if (response) { setUser(response); return }
+          if (user) { setUser(user); return };
 
-    setLoading(false);
+          setUser(null);
+        }
+      } catch(error:unknown) {
+        toast(apiError(error), 'error');
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   return (

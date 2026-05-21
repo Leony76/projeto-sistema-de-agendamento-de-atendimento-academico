@@ -3,6 +3,8 @@ import { api } from "./api.service";
 import type * as U from '@shared/types/dtos/managerUsersList.dto'; 
 import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
 import type { ManagerGeneralInfosResponse, ProfessorGeneralInfosResponse, StudentGeneralInfosResponse } from '@shared/types/dtos/userGeneralInfos.dto';
+import type { AuthUserBasicInfos } from "@shared/types/authUserBasicInfos.type";
+import type { UserRole } from "@shared/types/userRole.type";
 
 export class UserService {
 
@@ -32,6 +34,13 @@ export class UserService {
     return response.data;
   }
 
+  public static async me(id: number, role: UserRole) {
+
+    const response = await api.get<AuthUserBasicInfos>(`/user/${role}/${id}/me`);
+
+    return response.data;
+  }
+
   public static async getActiveProfessorsToManagerList() {
     return this.getActiveUsersToManagerList<U.ActiveProfessorsToManagerListResponse[]>('professors');
   }
@@ -56,13 +65,6 @@ export class UserService {
     return this.getUserGeneralInfosById<ManagerGeneralInfosResponse>('manager', id);
   }
 
-  public static async excludeUsers(ids: number[]) {
-
-    const response = await api.post<ApiResponse<number[]>>('/user/exclude', { ids });
-
-    return response.data;
-  }
-
   public static async getManagerHomeBriefInfos() {
     return this.getUserHomeBriefInfos<Brief.ManagerHomeBriefInfosResponse>('manager');
   }
@@ -73,5 +75,23 @@ export class UserService {
   
   public static async getStudentHomeBriefInfos(id: number) {
     return this.getUserHomeBriefInfos<Brief.StudentHomeBriefInfosResponse>('student', id);
+  }
+
+  public static async excludeUsers(ids: number[]) {
+
+    const response = await api.post<
+      ApiResponse<number[]>>
+        ('/user/exclude', { ids });
+
+    return response.data;
+  }
+
+  public static async changeUserTemporaryPassword(userId: number, newPassword: string) {
+
+    const response = await api.patch<
+      ApiResponse<{success: boolean}>>
+        (`/user/${userId}/change-temporary-password`, { newPassword });
+
+    return response.data;
   }
 }

@@ -6,6 +6,9 @@ import type * as L from '@shared/types/dtos/login.type.dto';
 import type * as R from '@shared/types/dtos/register.type.dto'; 
 import { generateTemporaryPassword } from '@backend/utils/generateTemporaryPassword.util';
 import { MailService } from '../mail/mail.service';
+import { studentBasicInfosFromRegistrationMapper, studentBasicInfosMapper } from './mappers/studentBasicInfos.mapper';
+import { professorBasicInfosMapper } from './mappers/professorBasicInfos.mapper';
+import { managerBasicInfosMapper } from './mappers/managerBasicInfos.mapper';
 
 export class AuthService {
 
@@ -33,6 +36,8 @@ export class AuthService {
       throw new ApiError('Já há um usuário cadastrado com esse e-mail', 422);
   }
 
+
+  
   private static async validatePassword(
     passwordRequest : string, 
     userPassword    : string
@@ -47,9 +52,13 @@ export class AuthService {
     ;
   }
 
-  private static async hashPassword(password: string): Promise<string> {
+
+
+  public static async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }
+
+
 
   public static async studentRegistersHimself(
     data : R.StudentRegistersHimselfRequest
@@ -71,13 +80,7 @@ export class AuthService {
     
     return {
       token,
-      user : {
-        ...registeredStudent,
-        photo        : registeredStudent.photo ?? '',
-        registeredAt : registeredStudent.createdAt.toISOString(),  
-        ra           : registeredStudent.student.ra,
-        role         : 'STUDENT'
-      },
+      user : studentBasicInfosFromRegistrationMapper(registeredStudent),
     }
   };
 
@@ -95,7 +98,7 @@ export class AuthService {
     const studentRegistered = await AuthRepository.registerStudent({
       ...data,
       password: hashedPassword,
-    });
+    }, true);
 
     if (!studentRegistered.student || !studentRegistered)
       throw new ApiError('Houve um erro ao tentar cadastrar o aluno. Tente novamente mais tarde!', 500);
@@ -108,8 +111,9 @@ export class AuthService {
     );
     
     return {
-      ...studentRegistered,
-      ra : studentRegistered.student.ra,
+      name  : studentRegistered.name,
+      email : studentRegistered.email,
+      ra    : studentRegistered.student.ra,
     }
   }
 
@@ -177,7 +181,10 @@ export class AuthService {
       temporaryPassword,
     );
 
-    return { ...managerRegistered };
+    return { 
+      email : managerRegistered.email,
+      name  : managerRegistered.name,
+    };
   };
 
 
@@ -188,8 +195,7 @@ export class AuthService {
 
     const student = await AuthRepository.getStudentByRa(data.ra);
 
-    if (!student) 
-      throw new ApiError('Credenciais inválidas', 401);
+    if (!student) throw new ApiError('Credenciais inválidas', 401);
 
     await this.validatePassword(data.password, student.user.password);
 
@@ -197,13 +203,7 @@ export class AuthService {
 
     return {
       token,
-      user : {
-        ...student.user,
-        registeredAt : student.user.createdAt.toISOString(),
-        photo        : student.user.photo ?? '',
-        ra           : student.ra,
-        role         : 'STUDENT'
-      },
+      user : studentBasicInfosMapper(student),
     };
   }
 
@@ -226,23 +226,12 @@ export class AuthService {
       case 'PROFESSOR':
         return {
           token,
-          user: {
-            ...user,
-            role         : 'PROFESSOR',
-            disciplines  : user.professor?.disciplines.map((discipline) => discipline.name) ?? [],
-            photo        : user.photo ?? '',
-            registeredAt : user.createdAt.toISOString(),
-          }
+          user: professorBasicInfosMapper(user),
         }
       default:
         return {
           token,
-          user: {
-            ...user,
-            role         : 'MANAGER',
-            photo        : user.photo ?? '',
-            registeredAt : user.createdAt.toISOString(),
-          }
+          user: managerBasicInfosMapper(user),
         }
     }
   }

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { AuthController } from './auth.controller';
 import { validate } from '@backend/utils/validator.util';
-import { newManagerSchema, newProfessorSchema, newStudentSchema } from '@shared/schemas/newUser.schema';
-import { studentRegisterHimselfSchema } from '@shared/schemas/studentRegistersHimself.schema';
-import { loginAsGenericSchema, loginAsStudentSchema } from '@shared/schemas/login.schema';
+import { newManagerSchema, newProfessorSchema, newStudentSchema,  } from '@backend/schemas/newUser.schema'; 
+import { studentRegisterHimselfSchema } from '@backend/schemas/studentRegistersHimself.schema'; 
+import { loginAsGenericSchema, loginAsStudentSchema } from '@backend/schemas/login.schema'; 
 
 const authRoutes = Router();
 

@@ -3,9 +3,9 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Warning from '../misc/Warning';
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
-  label?: string;
-  error?: string;
-  customStyle?: {
+  label?       : string;
+  error?       : string;
+  customStyle? : {
     label?     : string;
     input?     : string;
     container? : string;

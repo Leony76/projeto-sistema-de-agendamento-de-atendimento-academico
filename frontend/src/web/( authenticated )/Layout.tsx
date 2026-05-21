@@ -1,5 +1,5 @@
 import type { UserRole } from '@shared/types/userRole.type';
-import React, { useState, type JSX } from 'react'
+import React, { useEffect, useState, type JSX } from 'react'
 import { AiFillSchedule } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
 import { FaExclamation, FaHistory } from 'react-icons/fa';
@@ -8,6 +8,15 @@ import { Link, Navigate } from 'react-router-dom';
 import ExpansibleImage from '@frontend/components/misc/ExpansibleImage';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Modal } from '@frontend/components/modal';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { newPasswordSchema, type NewPasswordFormData } from '@shared/schemas/newPassword.schema';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { UserService } from '@frontend/services/user.service';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { Button } from '@frontend/components/button';
+import { Input } from '@frontend/components/input';
+import { RiShieldCheckFill } from 'react-icons/ri';
 
 type SystemTabs = 'HOME' | 'REQUESTS' | 'TO_SCHEDULE' | 'HISTORY';
 type AsideTab = {
@@ -26,7 +35,49 @@ type Props = {
 const Layout = (props:Props): React.JSX.Element => {
 
   const { user, logout } = useAuth();
+  if (!user) return <Navigate to={'/'}/>
+
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<NewPasswordFormData>({
+    resolver: zodResolver(newPasswordSchema),
+    defaultValues: {
+      newPassword       : '',
+      repeatNewPassword : '',
+    },
+  });
+
+  const { toast } = useToast();
+
   const [ logoutConfirm, setLogoutConfirm ] = useState<boolean>(false);
+  const [modal, setModal] = useState<'TEMPORARY_PASSWORD' | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleDefineNewPassword = async(data: NewPasswordFormData): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const response = await UserService.changeUserTemporaryPassword(user.id, data.newPassword);
+
+      if (response.success) toast(response.message);
+      setModal(null);
+    } catch(error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (user.hasTemporaryPassword === true) {
+        setModal('TEMPORARY_PASSWORD');
+      }
+    }, 3000);
+  }, [user.hasTemporaryPassword]);
 
   const ASIDE_TABS_RENDER: Record<UserRole, AsideTab[]> = {
     STUDENT: [
@@ -86,6 +137,46 @@ const Layout = (props:Props): React.JSX.Element => {
         onCloseRequest={() => setLogoutConfirm(false)}
         visible={logoutConfirm}
       />
+
+      <Modal.Default
+      title='Definir senha'
+      visible={modal === 'TEMPORARY_PASSWORD'}
+      onCloseRequest={() => setModal(null)}
+      containerMaxWidth='max-w-100'
+      containerPadding='p-3'
+      noImplicitClose
+      >
+        <p className='text-sm text-orange-500'>
+          Para sua segurança, defina uma nova senha de acesso a sua conta.
+        </p>
+
+        <Input.Default
+          label='Nova senha'
+          placeholder='Insira a nova senha'
+          type='password'
+          maxLength={51}
+          { ...register('newPassword')}
+          error={errors.newPassword?.message}
+        />
+
+        <Input.Default
+          label='Repetir nova senha'
+          placeholder='Insira novamente a nova senha'
+          type='password'
+          maxLength={51}
+          { ...register('repeatNewPassword')}
+          error={errors.repeatNewPassword?.message}
+        />
+
+        <Button.Default
+          customStyle={{ button: 'mt-2 font-semibold', icon: 'text-xl' }}
+          label={loading ? 'Salvando' : 'Salvar'}
+          disabled={loading}
+          loading={loading}     
+          onClick={handleSubmit(handleDefineNewPassword)}
+          Icon={() => <RiShieldCheckFill/>}
+        />
+      </Modal.Default>
 
       <header className='flex justify-between items-center bg-cyan-100/50 py-2 px-3 border-b border-b-cyan-300'>
         <h3 className='text-cyan-600 text-lg font-semibold'>

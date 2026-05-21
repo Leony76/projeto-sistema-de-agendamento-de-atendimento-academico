@@ -1,11 +1,14 @@
 import type React from "react";
 import type { ButtonHTMLAttributes } from "react";
+import Loading from "../misc/Loading";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   onClick   : () => void;
   selected? : boolean;
   label     : React.ReactNode;
   Icon?     : React.ElementType;
+  loading?  : boolean; 
+  loadingColor?: `text-${string}-${number}` | `text-[${string}]`;
   customStyle?: {
     button? : string;
     icon?   : string;
@@ -30,11 +33,16 @@ const Default = (props:Props): React.JSX.Element => {
       }
     `}
     > 
-      { Icon && 
+      {(Icon && !props.loading) ? (
         <span className={props.customStyle?.icon ?? ''}>
           <Icon/> 
         </span>
-      }
+      ) : props.loading && (
+        <Loading 
+          size={20}
+          className={props.loadingColor ?? 'text-cyan-500'}
+        />
+      )}
 
       { props.label }
     </button>

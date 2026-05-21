@@ -295,4 +295,25 @@ export class UserRepository {
       nextAppointmentDateTime,
     }
   }
+
+  public static async getUserPasswordById(userId: number) {
+    const data =  await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        password: true,
+      },
+    });
+
+    return data?.password;
+  }
+
+  public static async changeUserTemporaryPassword(userId: number, newPassword: string) {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: {
+        password          : newPassword,
+        temporaryPassword : false,
+      },
+    });
+  }
 }

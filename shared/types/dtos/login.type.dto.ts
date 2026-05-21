@@ -11,9 +11,18 @@ export type LoginAsGenericRequest  = {
   password : string;
 }
 
-export type LoginAsStudentResponse   = Student   & { role: 'STUDENT' };
-export type LoginAsProfessorResponse = Professor & { role : 'PROFESSOR'};
-export type LoginAsManagerResponse   = Manager   & { role : 'MANAGER' };
+export type LoginAsStudentResponse  = Student   & { 
+  role: 'STUDENT' 
+  hasTemporaryPassword: boolean;
+};
+export type LoginAsProfessorResponse = Professor & { 
+  role : 'PROFESSOR'
+  hasTemporaryPassword: boolean;
+};
+export type LoginAsManagerResponse   = Manager   & { 
+  role : 'MANAGER' 
+  hasTemporaryPassword: boolean;
+};
 
 export type LoginResponse<T> = {
   user  : T

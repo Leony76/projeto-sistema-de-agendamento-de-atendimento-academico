@@ -24,7 +24,6 @@ export function validate(schema: ZodTypeAny) {
       if (error instanceof ZodError) {
         return next(new ApiError(error.issues[0]?.message || 'Erro de validação', 400));
       }
-
       next(error);
     }
   };
