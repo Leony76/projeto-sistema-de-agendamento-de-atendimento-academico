@@ -15,11 +15,14 @@ import { filterToScheduleProfessors } from '@frontend/utils/filters/filterToSche
 import NoContent from '@frontend/components/misc/NoContent';
 import { FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { TO_SCHEDULE_PROFESSORS_FILTER_MAP, TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/toScheduleProfessors.map.filter';
-import type { ToScheduleProfessors } from '@shared/types/toScheduleProfessors.type';
+import type { AvailableProfessorToScheduleResponse as AvailableProfessorToSchedule } from '@shared/types/dtos/availableProfessorToSchedule';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { ScheduleService } from '@frontend/services/schedule.service';
+import { DAYS_BY_INDEX_MAP } from '@shared/utils/days.map';
 
-const Schedule = ():React.JSX.Element => {
+const Schedule = (): React.JSX.Element => {
 
   const {
     handleSubmit,
@@ -45,9 +48,9 @@ const Schedule = ():React.JSX.Element => {
 
   const [showToScheduleForm, setShowToScheduleForm] = useState<boolean>(false);
 
-  const [selectedProfessorData, setSelectedProfessorData] = useState<ToScheduleProfessors | null>(null);
-  const [toScheduleProfessors, setToScheduleProfessors] = useState<ToScheduleProfessors[]>([]);
-  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [selectedProfessorData, setSelectedProfessorData] = useState<AvailableProfessorToSchedule | null>(null);
+  const [professorAvailabilitySlots, setProfessorAvailabilitySlots] = useState<string[]>([]);
+  const [toScheduleProfessors, setToScheduleProfessors] = useState<AvailableProfessorToSchedule[]>([]);
   const appointmentDate = watch('appointmentDate');
 
   const handleAppointmentSolicitation = async(data: AppointmentSolicitationFormData): Promise<void> => {
@@ -75,15 +78,6 @@ const Schedule = ():React.JSX.Element => {
     register('professorName');
   }, [register]);
 
-  useEffect(() => {
-    if (!selectedProfessorData || !watch('appointmentDate')) {
-      setAvailableSlots([]);
-      return;
-    }
-
-
-  }, [selectedProfessorData, appointmentDate]);
-
   const noContent = noContentFound(
     'Nenhum professor disponível para agendamento no momento!',
     TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP[filterValue as keyof typeof TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP],
@@ -96,17 +90,40 @@ const Schedule = ():React.JSX.Element => {
   );
 
   useEffect(() => {
-    const getData = async():Promise<void> => {
+    if (!selectedProfessorData || !appointmentDate) {
+      setProfessorAvailabilitySlots([]);
+      return;
+    }
+
+    (async () => {
       try {
-        // const response = TO_SCHEDULE_PROFESSORS;
 
-        // setToScheduleProfessors(response);
+        const slots = await ScheduleService.getProfessorAvailableSlotsToSchedule(
+          selectedProfessorData.id,
+          new Date(appointmentDate),
+        );
+
+        setProfessorAvailabilitySlots(slots);
+
       } catch (error:unknown) {
-        if (error instanceof Error) console.error(error.message);
+        toast(apiError(error), 'error');
       }
-    };
+    })();
 
-    getData();
+  }, [selectedProfessorData, appointmentDate]);
+
+  useEffect(() => {
+    (async():Promise<void> => {
+      try {
+        const [ availableProfessors ] = await Promise.all([
+          ScheduleService.getAvailableProfessorsToSchedule(),
+        ]);
+
+        setToScheduleProfessors(availableProfessors);
+      } catch (error:unknown) {
+        toast(apiError(error), 'error');
+      }
+    })();
   }, []);
 
   return (
@@ -155,7 +172,7 @@ const Schedule = ():React.JSX.Element => {
                     onClick={{ toSchedule: () => {
                       reset();
                       setShowToScheduleForm(true);
-                      setSelectedProfessorData(professor);
+                      setSelectedProfessorData(professor)
                       setValue('professorName', professor.name);
                     }}}
                   />
@@ -207,19 +224,13 @@ const Schedule = ():React.JSX.Element => {
                   value={watch('appointmentDate')}
                   onChange={(date) => setValue('appointmentDate', date as string, { shouldValidate: true })}
                   error={errors.appointmentDate?.message}
-                  // disabledDate={(date) => {
-                  //   if (!selectedProfessorData) return true;
+                  disabledDate={(date) => {
+                    if (!selectedProfessorData) return true;
 
-                  //   const day = DAYS[date.getDay()];
+                    const day = DAYS_BY_INDEX_MAP[date.getDay()];
 
-                  //   const dayAvailability = selectedProfessorData.availability.filter(
-                  //     (a) => a.dayOfWeek === day
-                  //   );
-
-                  //   if (dayAvailability.length === 0) return true;
-
-                  //   return false;
-                  // }}
+                    return !selectedProfessorData.availableDays.includes(day);
+                  }}
                 />
 
                 <div className='space-y-1'>
@@ -238,8 +249,8 @@ const Schedule = ():React.JSX.Element => {
                         </p>
 
                         <div className='flex flex-wrap gap-2 mt-2'>
-                          {availableSlots.length > 0 ? (
-                            availableSlots.map((hour) => (
+                          {professorAvailabilitySlots.length > 0 ? (
+                            professorAvailabilitySlots.map((hour) => (
                               <Button.Default
                                 key={hour}
                                 label={hour}

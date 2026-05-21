@@ -8,7 +8,7 @@ export type Room =
 } | {
   readonly id : number;
   name        : string;
-  status : 'RESERVED';
+  status      : 'RESERVED';
   appointmentDate : string;
   occupants : {
     student   : string;

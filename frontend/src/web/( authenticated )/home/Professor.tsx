@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { FaCalendarAlt, FaFilter, FaRegClock } from 'react-icons/fa';
-import { RiCalendarScheduleFill, RiShieldCheckFill } from 'react-icons/ri';
+import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -25,11 +25,6 @@ import { Navigate } from 'react-router-dom';
 import { ProfessorService } from '@frontend/services/professor.service';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
-import { Modal } from '@frontend/components/modal';
-import { useForm } from 'react-hook-form';
-import { newPasswordSchema, type NewPasswordFormData } from '@shared/schemas/newPassword.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@frontend/components/button';
 
 const Professor = (): React.JSX.Element => {
 

@@ -1,4 +1,4 @@
-import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@frontend/constants/maps/days.map';
+import { AVAILABLE_DAYS, AVAILABLE_DAYS_MAP } from '@shared/utils/days.map';
 import React, { useState } from 'react'
 import { FaArrowCircleLeft, FaCalendarPlus, FaCheckSquare, FaEdit } from 'react-icons/fa';
 import { Button } from '../button';

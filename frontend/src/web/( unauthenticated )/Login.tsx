@@ -19,6 +19,7 @@ const Login = (): React.JSX.Element => {
   const { login } = useAuth();
 
   const [selectedTab, setSelectedTab] = useState<LoginAs>('STUDENT');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { 
     register, 
@@ -62,6 +63,8 @@ const Login = (): React.JSX.Element => {
 
   const handleLogin = async(data: LoginFormData): Promise<void> => {
     try {
+      setLoading(true);
+
       let response;
 
       switch (data.role) {
@@ -86,6 +89,8 @@ const Login = (): React.JSX.Element => {
       });
     } catch (error:unknown) {
       toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -153,7 +158,9 @@ const Login = (): React.JSX.Element => {
         </Link>
 
         <Button.Default
-          label='Entrar'
+          label={loading ? 'Entrando' : 'Entrar'}
+          loading={loading}
+          disabled={loading}
           onClick={handleSubmit(handleLogin)}
         />
       

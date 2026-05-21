@@ -31,6 +31,7 @@ import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActivePr
 import type { ManagerHomeBriefInfosResponse as ManagerHomeBriefInfos } from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserService } from '@frontend/services/user.service';
 import { MiscService } from '@frontend/services/misc.service';
+import { RoomService } from '@frontend/services/room.service';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -173,13 +174,15 @@ const Manager = (): React.JSX.Element => {
             throw new Error('Permissão de usuário inválido');
         }
 
-        const [ systemReports, managerBriefInfos ] = await Promise.all([
+        const [ systemReports, managerBriefInfos, rooms ] = await Promise.all([
           MiscService.getSystemReports(),
           UserService.getManagerHomeBriefInfos(),
+          RoomService.getRooms(),
         ]);
 
         setSystemReports(systemReports);
         setSystemGeneralMetrics(managerBriefInfos);
+        setRooms(rooms);
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }

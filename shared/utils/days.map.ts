@@ -18,11 +18,20 @@ export const AVAILABLE_DAYS_MAP = {
   SATURDAY   : 'Sábado',
 } as const;
 
-export const DAYS_BY_INDEX_MAP: Record<AvailableDays, number> = {
-  MONDAY    : 0,
-  TUESDAY   : 1,
-  WEDNESDAY : 2,
-  THURSDAY  : 3,
-  FRIDAY    : 4,
-  SATURDAY  : 5,
+export const DAYS_TO_INDEX_MAP: Record<AvailableDays, number> = {
+  MONDAY    : 1,
+  TUESDAY   : 2,
+  WEDNESDAY : 3,
+  THURSDAY  : 4,
+  FRIDAY    : 5,
+  SATURDAY  : 6,
+};
+
+export const DAYS_BY_INDEX_MAP: Record<number, AvailableDays> = {
+  1 : 'MONDAY'    ,
+  2 : 'TUESDAY'   ,
+  3 : 'WEDNESDAY' ,
+  4 : 'THURSDAY'  ,
+  5 : 'FRIDAY'    ,
+  6 : 'SATURDAY'  ,
 };

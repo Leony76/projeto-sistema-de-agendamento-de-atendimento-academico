@@ -1,45 +1,26 @@
-import { AVAILABLE_DAYS_MAP } from "@frontend/constants/maps/days.map";
+import { AVAILABLE_DAYS_MAP } from "@shared/utils/days.map";
 import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@frontend/constants/maps/filters/toScheduleProfessors.map.filter";
-import type { ToScheduleProfessors } from "@shared/types/toScheduleProfessors.type";
+import type { AvailableProfessorToScheduleResponse } from "@shared/types/dtos/availableProfessorToSchedule";
 
 export const filterToScheduleProfessors = (
-  professorsData : ToScheduleProfessors[],
+  professorsData : AvailableProfessorToScheduleResponse[],
   searchValue    : string,
   filterValue    : typeof TO_SCHEDULE_PROFESSORS_FILTER_MAP[number]['value'],
-): ToScheduleProfessors[] => {
+): AvailableProfessorToScheduleResponse[] => {
 
   return professorsData.filter((professor) => {
     const search = searchValue.toLowerCase();
 
-    const daysPT = professor.availability.map((a) =>
-      AVAILABLE_DAYS_MAP[a.dayOfWeek].toLowerCase()
+    const daysPT = professor.availableDays.map((day) =>
+      AVAILABLE_DAYS_MAP[day].toLowerCase()
     );
-
-    const hours = professor.availability.map((a) => {
-      const start = `${Math.floor(a.startHour / 60)
-        .toString()
-        .padStart(2, '0')}:${(a.startHour % 60)
-        .toString()
-        .padStart(2, '0')}`
-      ;
-
-      const end = `${Math.floor(a.endHour / 60)
-        .toString()
-        .padStart(2, '0')}:${(a.endHour % 60)
-        .toString()
-        .padStart(2, '0')}`
-      ;
-
-      return `${start} - ${end}`;
-    });
 
     const matchesSearch =
       professor.name.toLowerCase().includes(search) ||
       professor.disciplines.some((d) =>
         d.toLowerCase().includes(search)
       ) ||
-      daysPT.some((day) => day.includes(search)) ||
-      hours.some((hour) => hour.includes(search));
+      daysPT.some((day) => day.includes(search))
 
     if (!filterValue) return matchesSearch;
 
@@ -47,37 +28,37 @@ export const filterToScheduleProfessors = (
       case 'includesMonday':
         return (
           matchesSearch &&
-          professor.availability.some((a) => a.dayOfWeek === 'MONDAY')
+          professor.availableDays.some((day) => day === 'MONDAY')
         );
 
       case 'includesTuesday':
         return (
           matchesSearch &&
-          professor.availability.some((a) => a.dayOfWeek === 'TUESDAY')
+          professor.availableDays.some((day) => day === 'TUESDAY')
         );
 
       case 'includesWednesday':
         return (
           matchesSearch &&
-          professor.availability.some((a) => a.dayOfWeek === 'WEDNESDAY')
+          professor.availableDays.some((day) => day === 'WEDNESDAY')
         );
 
       case 'includesThursday':
         return (
           matchesSearch &&
-          professor.availability.some((a) => a.dayOfWeek === 'THURSDAY')
+          professor.availableDays.some((day) => day === 'THURSDAY')
         );
 
       case 'includesFriday':
         return (
           matchesSearch &&
-          professor.availability.some((a) => a.dayOfWeek === 'FRIDAY')
+          professor.availableDays.some((day) => day === 'FRIDAY')
         );
 
       case 'includesSaturday':
         return (
           matchesSearch &&
-          professor.availability.some((a) => a.dayOfWeek === 'SATURDAY')
+          professor.availableDays.some((day) => day === 'SATURDAY')
         );
 
       default:

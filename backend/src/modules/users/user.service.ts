@@ -2,7 +2,6 @@ import type * as U from '@shared/types/dtos/managerUsersList.dto';
 import type * as G from '@shared/types/dtos/userGeneralInfos.dto'; 
 import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserRepository } from './user.repository';
-import { prisma } from '@backend/lib/prisma';
 import { ApiError } from '@backend/utils/apiError.util';
 import bcrypt from 'bcrypt';
 import { AuthService } from '../auth/auth.service';
@@ -14,6 +13,7 @@ import { professorBasicInfosMapper } from '../auth/mappers/professorBasicInfos.m
 import { managerBasicInfosMapper } from '../auth/mappers/managerBasicInfos.mapper';
 import { studentGeneralInfosMapper } from './mappers/studentGeneralInfos.mapper';
 import { professorGeneralInfosMapper } from './mappers/professorGeneralInfos.mapper';
+import { managerGeneralInfosMapper } from './mappers/managerGeneralInfos.mapper';
 
 export class UserService {
 
@@ -24,21 +24,26 @@ export class UserService {
     switch (role) {
       case 'STUDENT':
         const student = await AuthRepository.getStudentById(userId);
-        if (!student) throw new ApiError(apiError);
+
+        if (!student) throw new ApiError(apiError, 500);
 
         return studentBasicInfosMapper(student);
       case 'PROFESSOR':
         const professor = await AuthRepository.getUserById(userId);
-        if (!professor) throw new ApiError(apiError);
+
+        if (!professor) throw new ApiError(apiError, 500);
 
         return professorBasicInfosMapper(professor);
-      case 'MANAGER':
+      default:
         const manager = await AuthRepository.getUserById(userId);
-        if (!manager) throw new ApiError(apiError);
+
+        if (!manager) throw new ApiError(apiError, 500);
 
         return managerBasicInfosMapper(manager);
     }
   }
+
+
 
   public static async getActiveStudentsToManagerList(): Promise<U.ActiveStudentsToManagerListResponse[]> {
 
@@ -50,6 +55,8 @@ export class UserService {
       ra           : student?.ra ?? '"RA não encontrado"',
     }));
   }
+
+
 
   public static async getActiveProfessorsToManagerList(): Promise<U.ActiveProfessorsToManagerListResponse[]> {
 
@@ -64,6 +71,8 @@ export class UserService {
     }));
   }
 
+
+
   public static async getActiveManagersToManagerList(): Promise<U.ActiveManagersToManagerListResponse[]> {
 
     const activeManagers = await UserRepository.getActiveManagersToManagerList();
@@ -74,6 +83,8 @@ export class UserService {
     }));
   }
 
+
+
   public static async getStudentGeneralInfos(id: number): Promise<G.StudentGeneralInfosResponse> {
 
     const studentInfos = await UserRepository.getStudentGeneralInfos(id);
@@ -82,6 +93,8 @@ export class UserService {
 
     return studentGeneralInfosMapper(studentInfos);
   }
+
+
   
   public static async getProfessorGeneralInfos(id: number): Promise<G.ProfessorGeneralInfosResponse> {
     
@@ -91,6 +104,8 @@ export class UserService {
     
     return professorGeneralInfosMapper(professorInfos);
   }
+
+
   
   public static async getManagerGeneralInfos(id: number): Promise<G.ManagerGeneralInfosResponse> {
     
@@ -98,33 +113,24 @@ export class UserService {
     
     if (!managerInfos) throw new ApiError('Informações do gestor não foram encontradas!');
     
-    return {
-      id           : managerInfos.user.id,
-      role         : 'MANAGER',
-      name         : managerInfos.user.name,
-      email        : managerInfos.user.email,
-      photo        : managerInfos.user.photo,
-      registeredAt : managerInfos.user.createdAt.toISOString(),
-    }
+    return managerGeneralInfosMapper(managerInfos);
   }
+
+
 
   public static async excludeUsers(ids: number[]): Promise<number[]> {
 
     const uniqueIds = [...new Set(ids)];
 
-    if (uniqueIds.length === 0) {
+    if (uniqueIds.length === 0) 
       throw new ApiError('Nenhum usuário informado para exclusão');
-    }
 
-    await prisma.user.updateMany({
-      where: {
-        id: { in: ids },
-      },
-      data: { deletedAt: new Date() },
-    });
+    await UserRepository.excludeUsers(ids);
 
     return ids;
   }
+
+
 
   public static async getManagerBriefInfos(): Promise<Brief.ManagerHomeBriefInfosResponse> {
 
@@ -135,6 +141,8 @@ export class UserService {
     return brief;
   }
 
+
+
   public static async getProfessorBriefInfos(id: number): Promise<Brief.ProfessorHomeBriefInfosResponse> {
 
     const brief = await UserRepository.getProfessorBriefInfos(id);
@@ -142,10 +150,13 @@ export class UserService {
     if (!brief) throw new ApiError('Não foi possível trazer o resumo das suas métricas');
     
     return {
-      ...brief,
-      nextAppointmentDateTime: brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
+      appointmentsConfirmed   : brief.appointmentsConfirmed,
+      pendingSolicitations    : brief.pendingSolicitations,
+      nextAppointmentDateTime : brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
     };
   }
+
+
 
   public static async getStudentBriefInfos(id: number): Promise<Brief.StudentHomeBriefInfosResponse> {
 
@@ -154,8 +165,9 @@ export class UserService {
     if (!brief) throw new ApiError('Não foi possível trazer o resumo das suas métricas');
     
     return {
-      ...brief,
-      nextAppointmentDateTime: brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
+      appointmentsMade        : brief.appointmentsMade,
+      pendingSolicitations    : brief.pendingSolicitations,
+      nextAppointmentDateTime : brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
     };
   }
 

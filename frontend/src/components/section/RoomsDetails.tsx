@@ -7,6 +7,14 @@ import { Button } from "../button";
 import { ROOM_STATUS_MAP } from "@frontend/constants/maps/roomStatus.map";
 import { useState } from "react";
 import NoContent from "../misc/NoContent";
+import { useForm } from "react-hook-form";
+import { newRoomSchema, type NewRoomFormData } from "@shared/schemas/newRoom.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "../input";
+import { TiInfoLarge } from "react-icons/ti";
+import { useToast } from "@frontend/contexts/ToastContext";
+import { apiError } from "@frontend/utils/misc/apiError.util";
+import { RoomService } from "@frontend/services/room.service";
 
 type Props = {
   onBack : () => void;
@@ -15,9 +23,43 @@ type Props = {
 
 const RoomsDetails = (props:Props): React.JSX.Element => {
 
+  const {
+    reset,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<NewRoomFormData>({
+    resolver      : zodResolver(newRoomSchema),
+    defaultValues : { name: '' },
+  });
+
+  const { toast } = useToast();
+
   const [ selectedRoom, setSelectedRoom ] = useState<Room | null>(null);
+  const [ newRoom, setNewRoom ] = useState<boolean>(false);
+  const [ loading, setLoading ] = useState<boolean>(false);
   const [ onDetails, setOnDetails ] = useState<boolean>(false);
-  
+
+  const handleNewRoom = async({ name }: NewRoomFormData): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const response = await RoomService.newRoom(name);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+
+        reset();
+        setNewRoom(false);
+      }
+    } catch(error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='relative p-2  flex gap-2 flex-col items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
       <button 
@@ -25,6 +67,8 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
       onClick={() => {
         if (onDetails) {
           setOnDetails(false);
+        } else if (newRoom) {
+          setNewRoom(false);
         } else {
           props.onBack();
         }
@@ -34,7 +78,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
       </button>
       
       <h3 className='font-semibold text-lg text-cyan-500'>
-        Salas do sistema
+        {newRoom ? 'Nova sala' : 'Salas do sistema'}
       </h3>
 
       <div className={`
@@ -42,11 +86,36 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
         ${ onDetails 
           ? 'flex flex-col' 
           : props.rooms.length > 0
-            ? 'grid grid-cols-5' 
+            ? 'grid grid-cols-3' 
             : ''
         }
       `}>
-        { (onDetails && selectedRoom) ? (
+        {newRoom ? (
+          <div className="space-y-1">
+            <p className="text-xs text-cyan-400 flex gap-2">
+              <TiInfoLarge size={50} className="scale-[1.5]"/>
+              Após a adição, as novas sala seram listadas e poderão ser reservadas automáticamente após uma solicitação de atendimento for aceita.
+            </p>
+
+            <Input.Default
+              label="Nome da sala"
+              customStyle={{ input: 'h-8' }}
+              placeholder="Insira o nome da nova sala"
+              type="text"
+              maxLength={256}
+              minLength={0}
+              { ...register('name')}
+              error={errors.name?.message}
+            />
+
+            <Button.Default
+              label='Adicionar'
+              onClick={handleSubmit(handleNewRoom)}
+              Icon={() => <MdMeetingRoom size={18}/>}
+              customStyle={{ button: 'h-10 font-semibold mt-2' }}
+            />
+          </div>
+        ) : (onDetails && selectedRoom) ? (
           <div>
             <h4 className='text-base font-semibold text-orange-500 flex items-center gap-1'>
               <MdMeetingRoom />
@@ -80,35 +149,46 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
               }
             </ul>
           </div>
+        ) : props.rooms.length > 0 ? (
+           props.rooms.map((room) => {
+
+            const isReserved = room.status === 'RESERVED';
+
+            return (
+              <Button.Default
+                label={room.name}   
+                selected={isReserved}                     
+                onClick={() => {
+                  setSelectedRoom(room);
+                  setOnDetails(true);
+                }}                   
+                customStyle={{ button: `
+                  h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
+                  ${ isReserved 
+                    ? 'bg-orange-500 text-orange-100! border-orange-50' 
+                    : 'bg-orange-50 text-orange-500 border-orange-500' 
+                }`}}
+              />        
+          )})
         ) : (
-          props.rooms.length > 0 ? (
-            props.rooms.map((room) => {
-  
-              const isReserved = room.status === 'RESERVED';
-  
-              return (
+          <div className="h-[85%] flex flex-col justify-center">
+              <div>
+                <NoContent 
+                  message="Nenhuma sala cadastrada no sistema"
+                  Icon={() => <MdOutlineNoMeetingRoom size={22}/>}
+                />
+
                 <Button.Default
-                  label={room.name}   
-                  selected={isReserved}                     
-                  onClick={() => {
-                    setSelectedRoom(room);
-                    setOnDetails(true);
-                  }}                   
-                  customStyle={{ button: `
-                    h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
-                    ${ isReserved 
-                      ? 'bg-orange-500 text-orange-100! border-orange-50' 
-                      : 'bg-orange-50 text-orange-500 border-orange-500' 
-                  }`}}
-                />        
-            )})
-          ) : (
-            <NoContent 
-              message="Nenhuma sala cadastrada no sistema"
-              Icon={() => <MdOutlineNoMeetingRoom size={22}/>}
-            />
-          )
-        ) }
+                  label={loading ? 'Adicionando' :'Adicionar'}
+                  loading={loading}
+                  disabled={loading}
+                  onClick={() => setNewRoom(true)}
+                  Icon={() => <MdMeetingRoom size={18}/>}
+                  customStyle={{ button: 'py-1 font-semibold' }}
+                />
+              </div>
+            </div>
+        )}
       </div>
     </div>
   )

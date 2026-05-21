@@ -29,5 +29,5 @@
   },
   "include": [
     "src"
-, "../shared/schemas"  ]
+, "../shared/schemas", "../shared/utils/generateTimeSlots.util.ts", "../shared/utils/days.map.ts"  ]
 }

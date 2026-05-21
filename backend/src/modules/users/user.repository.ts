@@ -201,6 +201,15 @@ export class UserRepository {
     });
   }
 
+  public static async excludeUsers(ids: number[]) {
+    await prisma.user.updateMany({
+      where: {
+        id: { in: ids },
+      },
+      data: { deletedAt: new Date() },
+    });
+  }
+
   public static async getManagerBriefInfos() {
     
     const [ appointments, solicitations, students, professors ] = await Promise.all([

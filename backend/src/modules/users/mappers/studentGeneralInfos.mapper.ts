@@ -1,114 +1,64 @@
 import type { StudentGeneralInfosResponse } from "@shared/types/dtos/userGeneralInfos.dto";
+import { userAppointmentMapper, type UserAppointment } from "./userAppointment.mapper";
+import { userSolicitationMapper, type UserSolicitation } from "./userSolicitation.mapper";
 
-type StudentAppointment = {
-  id: number;
-  reason: string;
-  dateTime: Date;
-  room: {
-    name: string;
-  };
-  professor: {
-    user: {
-      name: string;
-      photo: string | null;
+type StudentAppointment = Omit<UserAppointment, 'entity'> & {
+  professor : {
+    user : {
+      name  : string;
+      photo : string | null;
     };
   };
 };
 
-export const studentAppointmentMapper = (
-  appointment: StudentAppointment
-) => {
-
-  return {
-    id       : appointment.id,
-    reason   : appointment.reason,
-    room     : appointment.room.name,
-    dateTime : appointment.dateTime.toISOString(),
-
-    user: {
-      name  : appointment.professor.user.name,
-      photo : appointment.professor.user.photo,
-    },
-  };
-};
-
-
-
-type StudentSolicitation = {
-  id: number;
-  dateTime: Date;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
-
-  appointment: {
-    reason: string;
-  } | null;
-
-  professor: {
-    user: {
-      name: string;
-      photo: string | null;
+type StudentSolicitation = Omit<UserSolicitation, 'entity'> & {
+  professor : {
+    user : {
+      name  : string;
+      photo : string | null;
     };
   };
 };
 
-
-
-export const studentSolicitationMapper = (
-  solicitation: StudentSolicitation
-) => {
-
-  return {
-    id                   : solicitation.id,
-    appoitmentDateTime   : solicitation.dateTime.toISOString(),
-    reason               : solicitation.appointment?.reason ?? '',
-    status               : solicitation.status,
-
-    user: {
-      name  : solicitation.professor.user.name,
-      photo : solicitation.professor.user.photo,
-    },
-  };
-};
-
-
-
-type StudentInfos = {
+type StudentGeneralInfos = {
   ra: string;
   user: {
-    id: number;
-    name: string;
-    email: string;
-    photo: string | null;
-    createdAt: Date;
+    id        : number;
+    name      : string;
+    email     : string;
+    photo     : string | null;
+    createdAt : Date;
   };
-  appointments: any[];
-  solicitations: any[];
+  appointments  : StudentAppointment[];
+  solicitations : StudentSolicitation[];
 };
 
 export const studentGeneralInfosMapper = (
-  student: StudentInfos
+  student: StudentGeneralInfos
 ): StudentGeneralInfosResponse => {
-
   return {
     id           : student.user.id,
     name         : student.user.name,
     email        : student.user.email,
     photo        : student.user.photo ?? '',
     ra           : student.ra,
-
     role         : 'STUDENT',
-
-    registeredAt :
-      student.user.createdAt.toISOString(),
+    registeredAt : student.user.createdAt.toISOString(),
 
     appointmentsList:
-      student.appointments.map(
-        studentAppointmentMapper
-      ),
+      student.appointments.map((appointment) =>
+        userAppointmentMapper({
+          ...appointment,
+          entity: appointment.professor,
+      })
+    ),
 
     solicitationsList:
-      student.solicitations.map(
-        studentSolicitationMapper
-      ),
+       student.solicitations.map((solicitation) =>
+        userSolicitationMapper({
+          ...solicitation,
+          entity: solicitation.professor,
+      })
+    ),
   };
 };

@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { type AuthUserBasicInfos } from '@shared/types/authUserBasicInfos.type';
 import { useToast } from './ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
@@ -9,7 +9,6 @@ type AuthContextType = {
   user            : AuthUserBasicInfos | null;
   isAuthenticated : boolean;
   loading         : boolean;
-
   login  : ( token : string, user : AuthUserBasicInfos ) => void;
   logout : () => void;
 };
@@ -60,22 +59,22 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
       try {
         const localStorageToken = localStorage.getItem('@token');
         const localStorageUser = localStorage.getItem('@user');
-    
-        if (localStorageToken && localStorageUser) {
-          setToken(localStorageToken);
-          
-          const user: AuthUserBasicInfos = JSON.parse(localStorageUser);
 
-          if (!user) throw new Error('Não foi possível carregar seus dados');
-
-          const response = await UserService.me(user.id, user.role); 
-
-          if (response) { setUser(response); return }
-          if (user) { setUser(user); return };
-
-          setUser(null);
+        if (!localStorageToken || !localStorageUser) {
+          logout();
+          return;
         }
-      } catch(error:unknown) {
+
+        const parsedUser: AuthUserBasicInfos = JSON.parse(localStorageUser);
+
+        const response = await UserService.me(
+          parsedUser.id,
+          parsedUser.role,
+        );
+
+        setUser(response ?? parsedUser);
+      } catch (error: unknown) {
+        logout();
         toast(apiError(error), 'error');
       } finally {
         setLoading(false);
@@ -83,17 +82,17 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     })();
   }, []);
 
+  const value = useMemo(() => ({
+    token,
+    user,
+    loading,
+    isAuthenticated: !!token && !!user,
+    login,
+    logout,
+  }), [token, user, loading]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        token,
-        user,
-        loading,
-        isAuthenticated: !!token,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       { children }
     </AuthContext.Provider>
   );

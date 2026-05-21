@@ -4,7 +4,7 @@ import { Modal } from '../modal';
 import Calendar from 'react-calendar';
 import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import '@frontend/css/calendar.css';
-import { DAYS_BY_INDEX_MAP } from '@frontend/constants/maps/days.map';
+import { DAYS_TO_INDEX_MAP } from '@shared/utils/days.map';
 import Warning from '../misc/Warning';
 
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
