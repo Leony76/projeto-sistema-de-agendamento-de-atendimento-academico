@@ -17,29 +17,26 @@ export class RoomService {
   }
 
   public static async getAll(): Promise<RoomResponse[]> {
-    
+
     const rooms = await RoomRepository.getRooms();
 
     return rooms.map((room) => {
-      if (room.status === 'RESERVED') {
-        return {
-          id: room.id,
-          name: room.name,
-          status: room.status,
-          appointments: room.appointments.map((appointment) => ({
-            dateTime  : appointment.dateTime.toISOString(),
-            occupants : {
-              student   : appointment.student.user.name,
-              professor : appointment.professor.user.name,
-            }
-          }))
-        };
-      }
+
+      const appointments = room.appointments.map((appointment) => ({
+        dateTime: appointment.dateTime.toISOString(),
+        occupants: {
+          student: appointment.student.user.name,
+          professor: appointment.professor.user.name,
+        }
+      }));
 
       return {
-        id     : room.id,
-        name   : room.name,
-        status : room.status,
+        id: room.id,
+        name: room.name,
+        status: room.status,
+        ...(appointments.length > 0 && {
+          appointments
+        }),
       };
     });
   }

@@ -86,11 +86,11 @@ export class AuthRepository {
 
       const professorAsUser = await tx.user.create({
         data: { 
-          name                : data.name,
-          email               : data.email,
-          password            : data.password,
-          temporaryPassword   : true,
-          role                : 'PROFESSOR',
+          name                 : data.name,
+          email                : data.email,
+          password             : data.password,
+          hasTemporaryPassword : true,
+          role                 : 'PROFESSOR',
         },
       });
 
@@ -137,8 +137,8 @@ export class AuthRepository {
     const managerAsUser = await prisma.user.create({
       data: {
         ...data,
-        password          : data.password,
-        temporaryPassword : true,
+        password             : data.password,
+        hasTemporaryPassword : true,
       }
     });
 
@@ -154,10 +154,10 @@ export class AuthRepository {
   ) {
     return await prisma.user.create({
       data: {
-        email             : data.email,
-        name              : data.name,
-        password          : data.password,
-        temporaryPassword : hasTemporaryPassword ? true : false,
+        email                : data.email,
+        name                 : data.name,
+        password             : data.password,
+        hasTemporaryPassword : hasTemporaryPassword ? true : false,
         student  : {
           create : {
             ra : data.ra,

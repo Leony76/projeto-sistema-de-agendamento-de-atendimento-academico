@@ -179,7 +179,7 @@ export class UserService {
       throw new ApiError('Houve um erro ao alterar a senha. Tente novamente mais tarde!', 500);
     
     if (await bcrypt.compare(newPassword, userCurrentPassword)) 
-      throw new ApiError('A nova senha não pode ser a mesma da anteriora', 409);
+      throw new ApiError('A nova senha não pode ser a mesma da anterior', 409);
 
     const hashedPassword = await AuthService.hashPassword(newPassword);
 

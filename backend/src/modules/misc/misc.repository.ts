@@ -49,12 +49,10 @@ export class MiscRepository {
   }
 
   public static async getRoomsMetrics() {
-    const [ count, reserved, available, unavailable ] = await Promise.all([
-      prisma.room.count(),
 
-      prisma.room.count({
-        where: { status: 'RESERVED' }
-      }),
+    const [ count, available, unavailable, reserved ] = await Promise.all([
+
+      prisma.room.count(),
 
       prisma.room.count({
         where: { status: 'AVAILABLE' }
@@ -63,6 +61,14 @@ export class MiscRepository {
       prisma.room.count({
         where: { status: 'UNAVAILABLE' }
       }),
+
+      prisma.room.count({
+        where: {
+          appointments: {
+            some: {}
+          }
+        }
+      }),
     ]);
 
     return {
@@ -70,7 +76,7 @@ export class MiscRepository {
       reserved,
       available,
       unavailable,
-    }
+    };
   }
 
   public static async getUsersMetrics() {

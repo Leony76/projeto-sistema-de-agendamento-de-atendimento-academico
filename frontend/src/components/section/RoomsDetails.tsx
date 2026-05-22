@@ -62,6 +62,8 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
     }
   };
 
+  const appointments = selectedRoom?.appointments;
+
   return (
     <div className='relative p-2  flex gap-2 flex-col items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
       <button 
@@ -96,7 +98,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
           <div className="space-y-1">
             <p className="text-xs text-cyan-400 flex gap-2">
               <TiInfoLarge size={50} className="scale-[1.5]"/>
-              Após a adição, as novas sala seram listadas e poderão ser reservadas automáticamente após uma solicitação de atendimento for aceita.
+              Após a adição, as novas sala serão listadas e poderão ser reservadas automáticamente após uma solicitação de atendimento for aceita.
             </p>
 
             <Input.Default
@@ -129,14 +131,14 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
                 Status: <span className='text-cyan-400 font-normal'>{ ROOM_STATUS_MAP[selectedRoom.status] }</span>
               </li>
 
-              {selectedRoom.status === 'RESERVED' && (
+              {appointments && appointments.length > 0 && (
                 <>
                   <li className='flex items-center gap-1 text-base font-semibold text-orange-500 list-none'>
                     <IoPeopleSharp />
                     Participantes 
                   </li>
                   
-                  {selectedRoom.appointments.map((appointment, index) => (
+                  {appointments.map((appointment, index) => (
                     <React.Fragment key={index}> 
                       <li className='text-orange-400 font-semibold'>
                         Encontro: {''}
@@ -153,7 +155,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
                         { appointment.occupants.professor } <span className='text-cyan-400 font-normal'>(Professor)</span>
                       </li>
 
-                      { selectedRoom.appointments.length - 1 !== index &&
+                      { appointments.length - 1 !== index &&
                         <div className="h-px bg-gray-100 my-2"/>
                       }
                     </React.Fragment> 
@@ -167,14 +169,14 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
             {props.rooms.map((room) => (
               <Button.Default
                 label={room.name}   
-                selected={room.status === 'RESERVED'}                     
+                selected={Boolean(room.appointments)}                     
                 onClick={() => {
                   setSelectedRoom(room);
                   setOnDetails(true);
                 }}                   
                 customStyle={{ button: `
                   h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
-                  ${ room.status === 'RESERVED' 
+                  ${ appointments && appointments.length > 0 
                     ? 'bg-orange-500 text-orange-100! border-orange-50' 
                     : 'bg-orange-50 text-orange-500 border-orange-500' 
                 }`}}

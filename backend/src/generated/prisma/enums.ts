@@ -48,7 +48,6 @@ export type SolicitationStatus = (typeof SolicitationStatus)[keyof typeof Solici
 
 export const RoomStatus = {
   AVAILABLE: 'AVAILABLE',
-  RESERVED: 'RESERVED',
   UNAVAILABLE: 'UNAVAILABLE'
 } as const
 
