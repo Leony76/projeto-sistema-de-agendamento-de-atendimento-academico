@@ -5,7 +5,7 @@ type LoginAsManagerRequest = {
   name: string;
   email: string;
   photo: string | null;
-  temporaryPassword: boolean;
+  hasTemporaryPassword: boolean;
   createdAt: Date;
 };
 
@@ -19,7 +19,7 @@ export const managerBasicInfosMapper = (
     email                : user.email,
     photo                : user.photo ?? '',
     role                 : 'MANAGER',
-    hasTemporaryPassword : user.temporaryPassword,
+    hasTemporaryPassword : user.hasTemporaryPassword,
     registeredAt         : user.createdAt.toISOString(),
   };
 };

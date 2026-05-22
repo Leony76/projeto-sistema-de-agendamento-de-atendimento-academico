@@ -19,7 +19,7 @@ export class RoomRepository {
             dateTime  : true,
             professor : { select: { user: { select: { name: true } } } },
             student   : { select: { user: { select: { name: true } } } },
-          }
+          },
         }
       }
     });

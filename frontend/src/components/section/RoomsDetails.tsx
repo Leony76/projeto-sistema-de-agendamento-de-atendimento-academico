@@ -1,11 +1,11 @@
 import type { Room } from "@shared/types/room.type";
 import { formatDateTime } from "@frontend/utils/formats/formatDateTime.util";
-import { FaArrowCircleLeft } from "react-icons/fa";
+import { FaArrowCircleLeft, FaPlus } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdMeetingRoom, MdOutlineNoMeetingRoom } from "react-icons/md";
 import { Button } from "../button";
 import { ROOM_STATUS_MAP } from "@frontend/constants/maps/roomStatus.map";
-import { useState } from "react";
+import React, { useState } from "react";
 import NoContent from "../misc/NoContent";
 import { useForm } from "react-hook-form";
 import { newRoomSchema, type NewRoomFormData } from "@shared/schemas/newRoom.schema";
@@ -17,8 +17,9 @@ import { apiError } from "@frontend/utils/misc/apiError.util";
 import { RoomService } from "@frontend/services/room.service";
 
 type Props = {
-  onBack : () => void;
-  rooms  : Room[];
+  onBack  : () => void;
+  refresh : () => void;
+  rooms   : Room[];
 };
 
 const RoomsDetails = (props:Props): React.JSX.Element => {
@@ -51,6 +52,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
         console.log(response.data);
 
         reset();
+        props.refresh();
         setNewRoom(false);
       }
     } catch(error:unknown) {
@@ -85,8 +87,8 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
         flex-1 min-h-0 w-full border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300
         ${ onDetails 
           ? 'flex flex-col' 
-          : props.rooms.length > 0
-            ? 'grid grid-cols-3' 
+          : (props.rooms.length > 0 && !newRoom) 
+            ? 'grid grid-cols-3 content-start' 
             : ''
         }
       `}>
@@ -119,7 +121,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
           <div>
             <h4 className='text-base font-semibold text-orange-500 flex items-center gap-1'>
               <MdMeetingRoom />
-              Sala { selectedRoom.name }
+              { selectedRoom.name }
             </h4> 
 
             <ul className='space-y-1 mt-1 list-disc list-inside text-xs'>
@@ -127,49 +129,72 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
                 Status: <span className='text-cyan-400 font-normal'>{ ROOM_STATUS_MAP[selectedRoom.status] }</span>
               </li>
 
-              { selectedRoom.status === 'RESERVED' &&    
+              {selectedRoom.status === 'RESERVED' && (
                 <>
-                  <li className='text-orange-400 font-semibold'>
-                    Encontro: <span className='text-cyan-400 font-normal'>{ formatDateTime(selectedRoom.appointmentDate) }</span>
-                  </li>
-
-                  <span className='flex items-center gap-1 text-base font-semibold text-orange-500'>
+                  <li className='flex items-center gap-1 text-base font-semibold text-orange-500 list-none'>
                     <IoPeopleSharp />
                     Participantes 
-                  </span>
-
-                  <li className='text-orange-400 font-semibold'>
-                    { selectedRoom.occupants.student } <span className='text-cyan-400 font-normal'>(Aluno)</span>
                   </li>
+                  
+                  {selectedRoom.appointments.map((appointment, index) => (
+                    <React.Fragment key={index}> 
+                      <li className='text-orange-400 font-semibold'>
+                        Encontro: {''}
+                        <span className='text-cyan-400 font-normal'>
+                          { formatDateTime(appointment.dateTime) }
+                        </span>
+                      </li>
 
-                  <li className='text-orange-400 font-semibold'>
-                    { selectedRoom.occupants.professor } <span className='text-cyan-400 font-normal'>(Professor)</span>
-                  </li>
-                </>       
-              }
+                      <li className='text-orange-400 font-semibold'>
+                        { appointment.occupants.student } <span className='text-cyan-400 font-normal'>(Aluno)</span>
+                      </li>
+
+                      <li className='text-orange-400 font-semibold'>
+                        { appointment.occupants.professor } <span className='text-cyan-400 font-normal'>(Professor)</span>
+                      </li>
+
+                      { selectedRoom.appointments.length - 1 !== index &&
+                        <div className="h-px bg-gray-100 my-2"/>
+                      }
+                    </React.Fragment> 
+                  ))}
+                </>
+              )}
             </ul>
           </div>
         ) : props.rooms.length > 0 ? (
-           props.rooms.map((room) => {
-
-            const isReserved = room.status === 'RESERVED';
-
-            return (
+          <>
+            {props.rooms.map((room) => (
               <Button.Default
                 label={room.name}   
-                selected={isReserved}                     
+                selected={room.status === 'RESERVED'}                     
                 onClick={() => {
                   setSelectedRoom(room);
                   setOnDetails(true);
                 }}                   
                 customStyle={{ button: `
                   h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
-                  ${ isReserved 
+                  ${ room.status === 'RESERVED' 
                     ? 'bg-orange-500 text-orange-100! border-orange-50' 
                     : 'bg-orange-50 text-orange-500 border-orange-500' 
                 }`}}
               />        
-          )})
+            ))}
+
+            <Button.Default
+              label=''
+              loading={loading}
+              disabled={loading}
+              onClick={() => setNewRoom(true)}
+              customStyle={{ button: 'py-0.75 font-semibold h-fit text-green-500 border-green-500 bg-green-50' }}
+              Icon={() => 
+                <div className="flex items-center">
+                  <FaPlus size={10}/>
+                  <MdMeetingRoom size={18}/>
+                </div>
+              }
+            />
+          </>
         ) : (
           <div className="h-[85%] flex flex-col justify-center">
               <div>

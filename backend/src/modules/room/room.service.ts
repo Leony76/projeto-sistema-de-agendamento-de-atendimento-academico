@@ -21,36 +21,25 @@ export class RoomService {
     const rooms = await RoomRepository.getRooms();
 
     return rooms.map((room) => {
-      const base = {
-        id     : room.id,
-        name   : room.name,
-        status : room.status,
-      };
-
-      if (room.status !== 'RESERVED') {
-        return base;
-      }
-
-      const currentAppointment = room.appointments[0];
-
-      if (!currentAppointment) {
+      if (room.status === 'RESERVED') {
         return {
-          ...base,
-          status: 'AVAILABLE',
+          id: room.id,
+          name: room.name,
+          status: room.status,
+          appointments: room.appointments.map((appointment) => ({
+            dateTime  : appointment.dateTime.toISOString(),
+            occupants : {
+              student   : appointment.student.user.name,
+              professor : appointment.professor.user.name,
+            }
+          }))
         };
       }
 
       return {
-        ...base,
-        status: 'RESERVED',
-        appointmentDate:
-          currentAppointment.dateTime.toISOString(),
-        occupants: {
-          student:
-            currentAppointment.student.user.name,
-          professor:
-            currentAppointment.professor.user.name,
-        },
+        id     : room.id,
+        name   : room.name,
+        status : room.status,
       };
     });
   }

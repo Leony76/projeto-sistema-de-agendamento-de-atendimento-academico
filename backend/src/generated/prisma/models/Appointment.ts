@@ -242,7 +242,7 @@ export type AppointmentGroupByOutputType = {
   roomId: number
   studentId: number
   professorId: number
-  solicitationId: number | null
+  solicitationId: number
   _count: AppointmentCountAggregateOutputType | null
   _avg: AppointmentAvgAggregateOutputType | null
   _sum: AppointmentSumAggregateOutputType | null
@@ -279,11 +279,11 @@ export type AppointmentWhereInput = {
   roomId?: Prisma.IntFilter<"Appointment"> | number
   studentId?: Prisma.IntFilter<"Appointment"> | number
   professorId?: Prisma.IntFilter<"Appointment"> | number
-  solicitationId?: Prisma.IntNullableFilter<"Appointment"> | number | null
+  solicitationId?: Prisma.IntFilter<"Appointment"> | number
   room?: Prisma.XOR<Prisma.RoomScalarRelationFilter, Prisma.RoomWhereInput>
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
-  solicitation?: Prisma.XOR<Prisma.SolicitationNullableScalarRelationFilter, Prisma.SolicitationWhereInput> | null
+  solicitation?: Prisma.XOR<Prisma.SolicitationScalarRelationFilter, Prisma.SolicitationWhereInput>
   history?: Prisma.XOR<Prisma.HistoryNullableScalarRelationFilter, Prisma.HistoryWhereInput> | null
 }
 
@@ -298,7 +298,7 @@ export type AppointmentOrderByWithRelationInput = {
   roomId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
-  solicitationId?: Prisma.SortOrderInput | Prisma.SortOrder
+  solicitationId?: Prisma.SortOrder
   room?: Prisma.RoomOrderByWithRelationInput
   student?: Prisma.StudentOrderByWithRelationInput
   professor?: Prisma.ProfessorOrderByWithRelationInput
@@ -326,7 +326,7 @@ export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
   room?: Prisma.XOR<Prisma.RoomScalarRelationFilter, Prisma.RoomWhereInput>
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
-  solicitation?: Prisma.XOR<Prisma.SolicitationNullableScalarRelationFilter, Prisma.SolicitationWhereInput> | null
+  solicitation?: Prisma.XOR<Prisma.SolicitationScalarRelationFilter, Prisma.SolicitationWhereInput>
   history?: Prisma.XOR<Prisma.HistoryNullableScalarRelationFilter, Prisma.HistoryWhereInput> | null
 }, "id" | "solicitationId" | "professorId_dateTime" | "roomId_dateTime">
 
@@ -341,7 +341,7 @@ export type AppointmentOrderByWithAggregationInput = {
   roomId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   professorId?: Prisma.SortOrder
-  solicitationId?: Prisma.SortOrderInput | Prisma.SortOrder
+  solicitationId?: Prisma.SortOrder
   _count?: Prisma.AppointmentCountOrderByAggregateInput
   _avg?: Prisma.AppointmentAvgOrderByAggregateInput
   _max?: Prisma.AppointmentMaxOrderByAggregateInput
@@ -363,7 +363,7 @@ export type AppointmentScalarWhereWithAggregatesInput = {
   roomId?: Prisma.IntWithAggregatesFilter<"Appointment"> | number
   studentId?: Prisma.IntWithAggregatesFilter<"Appointment"> | number
   professorId?: Prisma.IntWithAggregatesFilter<"Appointment"> | number
-  solicitationId?: Prisma.IntNullableWithAggregatesFilter<"Appointment"> | number | null
+  solicitationId?: Prisma.IntWithAggregatesFilter<"Appointment"> | number
 }
 
 export type AppointmentCreateInput = {
@@ -376,7 +376,7 @@ export type AppointmentCreateInput = {
   room: Prisma.RoomCreateNestedOneWithoutAppointmentsInput
   student: Prisma.StudentCreateNestedOneWithoutAppointmentsInput
   professor: Prisma.ProfessorCreateNestedOneWithoutAppointmentsInput
-  solicitation?: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
+  solicitation: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
   history?: Prisma.HistoryCreateNestedOneWithoutAppointmentInput
 }
 
@@ -391,7 +391,7 @@ export type AppointmentUncheckedCreateInput = {
   roomId: number
   studentId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
   history?: Prisma.HistoryUncheckedCreateNestedOneWithoutAppointmentInput
 }
 
@@ -405,7 +405,7 @@ export type AppointmentUpdateInput = {
   room?: Prisma.RoomUpdateOneRequiredWithoutAppointmentsNestedInput
   student?: Prisma.StudentUpdateOneRequiredWithoutAppointmentsNestedInput
   professor?: Prisma.ProfessorUpdateOneRequiredWithoutAppointmentsNestedInput
-  solicitation?: Prisma.SolicitationUpdateOneWithoutAppointmentNestedInput
+  solicitation?: Prisma.SolicitationUpdateOneRequiredWithoutAppointmentNestedInput
   history?: Prisma.HistoryUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -420,7 +420,7 @@ export type AppointmentUncheckedUpdateInput = {
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
   history?: Prisma.HistoryUncheckedUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -435,7 +435,7 @@ export type AppointmentCreateManyInput = {
   roomId: number
   studentId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
 }
 
 export type AppointmentUpdateManyMutationInput = {
@@ -458,7 +458,7 @@ export type AppointmentUncheckedUpdateManyInput = {
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type AppointmentListRelationFilter = {
@@ -679,14 +679,6 @@ export type EnumAppointmentStatusFieldUpdateOperationsInput = {
   set?: $Enums.AppointmentStatus
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type AppointmentCreateNestedOneWithoutSolicitationInput = {
   create?: Prisma.XOR<Prisma.AppointmentCreateWithoutSolicitationInput, Prisma.AppointmentUncheckedCreateWithoutSolicitationInput>
   connectOrCreate?: Prisma.AppointmentCreateOrConnectWithoutSolicitationInput
@@ -742,7 +734,7 @@ export type AppointmentCreateWithoutStudentInput = {
   deletedAt?: Date | string | null
   room: Prisma.RoomCreateNestedOneWithoutAppointmentsInput
   professor: Prisma.ProfessorCreateNestedOneWithoutAppointmentsInput
-  solicitation?: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
+  solicitation: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
   history?: Prisma.HistoryCreateNestedOneWithoutAppointmentInput
 }
 
@@ -756,7 +748,7 @@ export type AppointmentUncheckedCreateWithoutStudentInput = {
   deletedAt?: Date | string | null
   roomId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
   history?: Prisma.HistoryUncheckedCreateNestedOneWithoutAppointmentInput
 }
 
@@ -800,7 +792,7 @@ export type AppointmentScalarWhereInput = {
   roomId?: Prisma.IntFilter<"Appointment"> | number
   studentId?: Prisma.IntFilter<"Appointment"> | number
   professorId?: Prisma.IntFilter<"Appointment"> | number
-  solicitationId?: Prisma.IntNullableFilter<"Appointment"> | number | null
+  solicitationId?: Prisma.IntFilter<"Appointment"> | number
 }
 
 export type AppointmentCreateWithoutProfessorInput = {
@@ -812,7 +804,7 @@ export type AppointmentCreateWithoutProfessorInput = {
   deletedAt?: Date | string | null
   room: Prisma.RoomCreateNestedOneWithoutAppointmentsInput
   student: Prisma.StudentCreateNestedOneWithoutAppointmentsInput
-  solicitation?: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
+  solicitation: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
   history?: Prisma.HistoryCreateNestedOneWithoutAppointmentInput
 }
 
@@ -826,7 +818,7 @@ export type AppointmentUncheckedCreateWithoutProfessorInput = {
   deletedAt?: Date | string | null
   roomId: number
   studentId: number
-  solicitationId?: number | null
+  solicitationId: number
   history?: Prisma.HistoryUncheckedCreateNestedOneWithoutAppointmentInput
 }
 
@@ -865,7 +857,7 @@ export type AppointmentCreateWithoutRoomInput = {
   deletedAt?: Date | string | null
   student: Prisma.StudentCreateNestedOneWithoutAppointmentsInput
   professor: Prisma.ProfessorCreateNestedOneWithoutAppointmentsInput
-  solicitation?: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
+  solicitation: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
   history?: Prisma.HistoryCreateNestedOneWithoutAppointmentInput
 }
 
@@ -879,7 +871,7 @@ export type AppointmentUncheckedCreateWithoutRoomInput = {
   deletedAt?: Date | string | null
   studentId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
   history?: Prisma.HistoryUncheckedCreateNestedOneWithoutAppointmentInput
 }
 
@@ -989,7 +981,7 @@ export type AppointmentCreateWithoutHistoryInput = {
   room: Prisma.RoomCreateNestedOneWithoutAppointmentsInput
   student: Prisma.StudentCreateNestedOneWithoutAppointmentsInput
   professor: Prisma.ProfessorCreateNestedOneWithoutAppointmentsInput
-  solicitation?: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
+  solicitation: Prisma.SolicitationCreateNestedOneWithoutAppointmentInput
 }
 
 export type AppointmentUncheckedCreateWithoutHistoryInput = {
@@ -1003,7 +995,7 @@ export type AppointmentUncheckedCreateWithoutHistoryInput = {
   roomId: number
   studentId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
 }
 
 export type AppointmentCreateOrConnectWithoutHistoryInput = {
@@ -1032,7 +1024,7 @@ export type AppointmentUpdateWithoutHistoryInput = {
   room?: Prisma.RoomUpdateOneRequiredWithoutAppointmentsNestedInput
   student?: Prisma.StudentUpdateOneRequiredWithoutAppointmentsNestedInput
   professor?: Prisma.ProfessorUpdateOneRequiredWithoutAppointmentsNestedInput
-  solicitation?: Prisma.SolicitationUpdateOneWithoutAppointmentNestedInput
+  solicitation?: Prisma.SolicitationUpdateOneRequiredWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateWithoutHistoryInput = {
@@ -1046,7 +1038,7 @@ export type AppointmentUncheckedUpdateWithoutHistoryInput = {
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type AppointmentCreateManyStudentInput = {
@@ -1059,7 +1051,7 @@ export type AppointmentCreateManyStudentInput = {
   deletedAt?: Date | string | null
   roomId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
 }
 
 export type AppointmentUpdateWithoutStudentInput = {
@@ -1071,7 +1063,7 @@ export type AppointmentUpdateWithoutStudentInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   room?: Prisma.RoomUpdateOneRequiredWithoutAppointmentsNestedInput
   professor?: Prisma.ProfessorUpdateOneRequiredWithoutAppointmentsNestedInput
-  solicitation?: Prisma.SolicitationUpdateOneWithoutAppointmentNestedInput
+  solicitation?: Prisma.SolicitationUpdateOneRequiredWithoutAppointmentNestedInput
   history?: Prisma.HistoryUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -1085,7 +1077,7 @@ export type AppointmentUncheckedUpdateWithoutStudentInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
   history?: Prisma.HistoryUncheckedUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -1099,7 +1091,7 @@ export type AppointmentUncheckedUpdateManyWithoutStudentInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type AppointmentCreateManyProfessorInput = {
@@ -1112,7 +1104,7 @@ export type AppointmentCreateManyProfessorInput = {
   deletedAt?: Date | string | null
   roomId: number
   studentId: number
-  solicitationId?: number | null
+  solicitationId: number
 }
 
 export type AppointmentUpdateWithoutProfessorInput = {
@@ -1124,7 +1116,7 @@ export type AppointmentUpdateWithoutProfessorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   room?: Prisma.RoomUpdateOneRequiredWithoutAppointmentsNestedInput
   student?: Prisma.StudentUpdateOneRequiredWithoutAppointmentsNestedInput
-  solicitation?: Prisma.SolicitationUpdateOneWithoutAppointmentNestedInput
+  solicitation?: Prisma.SolicitationUpdateOneRequiredWithoutAppointmentNestedInput
   history?: Prisma.HistoryUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -1138,7 +1130,7 @@ export type AppointmentUncheckedUpdateWithoutProfessorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
   history?: Prisma.HistoryUncheckedUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -1152,7 +1144,7 @@ export type AppointmentUncheckedUpdateManyWithoutProfessorInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   roomId?: Prisma.IntFieldUpdateOperationsInput | number
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type AppointmentCreateManyRoomInput = {
@@ -1165,7 +1157,7 @@ export type AppointmentCreateManyRoomInput = {
   deletedAt?: Date | string | null
   studentId: number
   professorId: number
-  solicitationId?: number | null
+  solicitationId: number
 }
 
 export type AppointmentUpdateWithoutRoomInput = {
@@ -1177,7 +1169,7 @@ export type AppointmentUpdateWithoutRoomInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   student?: Prisma.StudentUpdateOneRequiredWithoutAppointmentsNestedInput
   professor?: Prisma.ProfessorUpdateOneRequiredWithoutAppointmentsNestedInput
-  solicitation?: Prisma.SolicitationUpdateOneWithoutAppointmentNestedInput
+  solicitation?: Prisma.SolicitationUpdateOneRequiredWithoutAppointmentNestedInput
   history?: Prisma.HistoryUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -1191,7 +1183,7 @@ export type AppointmentUncheckedUpdateWithoutRoomInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
   history?: Prisma.HistoryUncheckedUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -1205,7 +1197,7 @@ export type AppointmentUncheckedUpdateManyWithoutRoomInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studentId?: Prisma.IntFieldUpdateOperationsInput | number
   professorId?: Prisma.IntFieldUpdateOperationsInput | number
-  solicitationId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  solicitationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -1225,7 +1217,7 @@ export type AppointmentSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
-  solicitation?: boolean | Prisma.Appointment$solicitationArgs<ExtArgs>
+  solicitation?: boolean | Prisma.SolicitationDefaultArgs<ExtArgs>
   history?: boolean | Prisma.Appointment$historyArgs<ExtArgs>
 }, ExtArgs["result"]["appointment"]>
 
@@ -1244,7 +1236,7 @@ export type AppointmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
-  solicitation?: boolean | Prisma.Appointment$solicitationArgs<ExtArgs>
+  solicitation?: boolean | Prisma.SolicitationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointment"]>
 
 export type AppointmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1262,7 +1254,7 @@ export type AppointmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
-  solicitation?: boolean | Prisma.Appointment$solicitationArgs<ExtArgs>
+  solicitation?: boolean | Prisma.SolicitationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointment"]>
 
 export type AppointmentSelectScalar = {
@@ -1284,20 +1276,20 @@ export type AppointmentInclude<ExtArgs extends runtime.Types.Extensions.Internal
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
-  solicitation?: boolean | Prisma.Appointment$solicitationArgs<ExtArgs>
+  solicitation?: boolean | Prisma.SolicitationDefaultArgs<ExtArgs>
   history?: boolean | Prisma.Appointment$historyArgs<ExtArgs>
 }
 export type AppointmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
-  solicitation?: boolean | Prisma.Appointment$solicitationArgs<ExtArgs>
+  solicitation?: boolean | Prisma.SolicitationDefaultArgs<ExtArgs>
 }
 export type AppointmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   professor?: boolean | Prisma.ProfessorDefaultArgs<ExtArgs>
-  solicitation?: boolean | Prisma.Appointment$solicitationArgs<ExtArgs>
+  solicitation?: boolean | Prisma.SolicitationDefaultArgs<ExtArgs>
 }
 
 export type $AppointmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1306,7 +1298,7 @@ export type $AppointmentPayload<ExtArgs extends runtime.Types.Extensions.Interna
     room: Prisma.$RoomPayload<ExtArgs>
     student: Prisma.$StudentPayload<ExtArgs>
     professor: Prisma.$ProfessorPayload<ExtArgs>
-    solicitation: Prisma.$SolicitationPayload<ExtArgs> | null
+    solicitation: Prisma.$SolicitationPayload<ExtArgs>
     history: Prisma.$HistoryPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1320,7 +1312,7 @@ export type $AppointmentPayload<ExtArgs extends runtime.Types.Extensions.Interna
     roomId: number
     studentId: number
     professorId: number
-    solicitationId: number | null
+    solicitationId: number
   }, ExtArgs["result"]["appointment"]>
   composites: {}
 }
@@ -1718,7 +1710,7 @@ export interface Prisma__AppointmentClient<T, Null = never, ExtArgs extends runt
   room<T extends Prisma.RoomDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoomDefaultArgs<ExtArgs>>): Prisma.Prisma__RoomClient<runtime.Types.Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   student<T extends Prisma.StudentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentDefaultArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   professor<T extends Prisma.ProfessorDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfessorDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfessorClient<runtime.Types.Result.GetResult<Prisma.$ProfessorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  solicitation<T extends Prisma.Appointment$solicitationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$solicitationArgs<ExtArgs>>): Prisma.Prisma__SolicitationClient<runtime.Types.Result.GetResult<Prisma.$SolicitationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  solicitation<T extends Prisma.SolicitationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SolicitationDefaultArgs<ExtArgs>>): Prisma.Prisma__SolicitationClient<runtime.Types.Result.GetResult<Prisma.$SolicitationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   history<T extends Prisma.Appointment$historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$historyArgs<ExtArgs>>): Prisma.Prisma__HistoryClient<runtime.Types.Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2158,25 +2150,6 @@ export type AppointmentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many Appointments to delete.
    */
   limit?: number
-}
-
-/**
- * Appointment.solicitation
- */
-export type Appointment$solicitationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Solicitation
-   */
-  select?: Prisma.SolicitationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Solicitation
-   */
-  omit?: Prisma.SolicitationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SolicitationInclude<ExtArgs> | null
-  where?: Prisma.SolicitationWhereInput
 }
 
 /**

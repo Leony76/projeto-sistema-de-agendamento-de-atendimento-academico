@@ -5,7 +5,7 @@ import type { StudentRegistersHimselfResponse } from "@shared/types/dtos/registe
 type LoginAsStudentRequest = {
   user: {
     email: string;
-    temporaryPassword: boolean;
+    hasTemporaryPassword: boolean;
     id: number;
     name: string;
     photo: string | null;
@@ -19,7 +19,7 @@ type LoginAsStudentRequest = {
 export const studentBasicInfosMapper = (student: LoginAsStudentRequest): LoginAsStudentResponse => {
   return {
     email                : student.user.email,
-    hasTemporaryPassword : student.user.temporaryPassword,
+    hasTemporaryPassword : student.user.hasTemporaryPassword,
     id                   : student.user.id,
     name                 : student.user.name,
     photo                : student.user.photo ?? '',
@@ -41,7 +41,7 @@ type SelfRegistredStudentRequest = {
   name: string;
   email: string;
   password: string;
-  temporaryPassword: boolean;
+  hasTemporaryPassword: boolean;
   photo: string | null;
   createdAt: Date;
   updatedAt: Date;

@@ -13,7 +13,7 @@ model User {
   name                  String
   email                 String     @unique
   password              String
-  hasTemporaryPassword  Boolean    @default(false)
+  hasTemporaryPassword  Boolean    @map("has_temporary_password") @default(false)
   photo                 String?
   
   createdAt             DateTime   @default(now()) @map("created_at")
@@ -71,7 +71,6 @@ model Room {
   deletedAt    DateTime?  @map("deleted_at")               
 
   appointments  Appointment[]
-  solicitations Solicitation[]
 
   @@map("rooms")
 }
@@ -101,7 +100,7 @@ model Appointment {
 
   registeredAt  DateTime  @default(now()) @map("registered_at")
   updatedAt     DateTime  @updatedAt      @map("updated_at")
-  status        AppointmentStatus         @default(UNCONFIRMED)
+  status        AppointmentStatus         @default(CONFIRMED)
   deletedAt     DateTime? @map("deleted_at")
 
   roomId        Int       @map("room_id") 
@@ -113,8 +112,8 @@ model Appointment {
   professorId   Int       @map("professor_id")
   professor     Professor @relation(fields: [professorId], references: [userId], onDelete: Cascade) 
 
-  solicitationId Int?          @unique @map("solicitation_id")
-  solicitation   Solicitation? @relation(fields: [solicitationId], references: [id], onDelete: SetNull)
+  solicitationId Int          @unique @map("solicitation_id")
+  solicitation   Solicitation @relation(fields: [solicitationId], references: [id], onDelete: Cascade)
 
   history       History?
 
@@ -133,9 +132,6 @@ model Solicitation {
   deletedAt     DateTime?           @map("deleted_at")
 
   status        SolicitationStatus  @default(PENDING)
-
-  roomId        Int                 @map("room_id")  
-  room          Room                @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   studentId     Int                 @map("student_id")
   student       Student             @relation(fields: [studentId], references: [userId], onDelete: Cascade) 

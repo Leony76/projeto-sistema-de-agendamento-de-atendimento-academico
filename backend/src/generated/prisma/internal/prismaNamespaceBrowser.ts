@@ -84,7 +84,7 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
-  temporaryPassword: 'temporaryPassword',
+  hasTemporaryPassword: 'hasTemporaryPassword',
   photo: 'photo',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -169,7 +169,6 @@ export const SolicitationScalarFieldEnum = {
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
   status: 'status',
-  roomId: 'roomId',
   studentId: 'studentId',
   professorId: 'professorId'
 } as const

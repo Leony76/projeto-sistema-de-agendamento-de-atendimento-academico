@@ -42,6 +42,7 @@ type FilterValue = {
 const Manager = (): React.JSX.Element => {
   
   const { toast } = useToast();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -54,7 +55,7 @@ const Manager = (): React.JSX.Element => {
   });
   
   const [systemReports, setSystemReports] = useState<SystemReports | null>(null);
-  const [refreshUsers, setRefreshUsers] = useState(0);
+  const [refreshData, setRefreshData] = useState(0);
 
   const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<ManagerHomeBriefInfos | null>(null);
 
@@ -187,7 +188,7 @@ const Manager = (): React.JSX.Element => {
         toast(apiError(error), 'error');
       }
     })();
-  }, [userRoleList, refreshUsers]);
+  }, [userRoleList, refreshData]);
 
   return (
     <Layout 
@@ -252,7 +253,7 @@ const Manager = (): React.JSX.Element => {
                     key={user.id}
                     { ...user }
                     onClick={{
-                      exclude     : () => setRefreshUsers(prev => prev + 1),
+                      exclude     : () => setRefreshData(prev => prev + 1),
                       userDetails : () => {
                         navigate(`/home/${user.from.toLowerCase()}/${user.id}`);
                         setGeneralActions('USER_DETAILS');
@@ -279,7 +280,7 @@ const Manager = (): React.JSX.Element => {
           ) : generalActions === 'NEW_USER' ? (
             <Form.NewUser
               onBack={() => setGeneralActions(null)}
-              refreshUsers={() => setRefreshUsers(prev => prev + 1)}
+              refreshUsers={() => setRefreshData(prev => prev + 1)}
             />
           ) : generalActions === 'REPORTS' ? (
             <Section.ManagerReports
@@ -292,7 +293,7 @@ const Manager = (): React.JSX.Element => {
               userRoleList={userRoleList}
               onBack={() => {
                 setGeneralActions(null)
-                setRefreshUsers(prev => prev + 1);
+                setRefreshData(prev => prev + 1);
               }}
             />            
           ) : (
@@ -300,6 +301,7 @@ const Manager = (): React.JSX.Element => {
               { generalActions === 'ROOMS' ? (     
                 <Section.RoomsDetails
                   rooms={rooms}
+                  refresh={() => setRefreshData(prev => prev + 1)}
                   onBack={() => setGeneralActions(null)}
                 />         
               ) : (
