@@ -53,11 +53,6 @@ export type ProfessorAvailability = Prisma.ProfessorAvailabilityModel
  */
 export type Appointment = Prisma.AppointmentModel
 /**
- * Model Solicitation
- * 
- */
-export type Solicitation = Prisma.SolicitationModel
-/**
  * Model History
  * 
  */

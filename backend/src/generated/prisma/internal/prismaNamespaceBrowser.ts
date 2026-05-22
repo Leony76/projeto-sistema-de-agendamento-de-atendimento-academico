@@ -58,7 +58,6 @@ export const ModelName = {
   Room: 'Room',
   ProfessorAvailability: 'ProfessorAvailability',
   Appointment: 'Appointment',
-  Solicitation: 'Solicitation',
   History: 'History',
   Discipline: 'Discipline'
 } as const
@@ -150,30 +149,14 @@ export const AppointmentScalarFieldEnum = {
   dateTime: 'dateTime',
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
-  status: 'status',
   deletedAt: 'deletedAt',
+  status: 'status',
   roomId: 'roomId',
-  studentId: 'studentId',
-  professorId: 'professorId',
-  solicitationId: 'solicitationId'
-} as const
-
-export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
-
-
-export const SolicitationScalarFieldEnum = {
-  id: 'id',
-  reason: 'reason',
-  dateTime: 'dateTime',
-  registeredAt: 'registeredAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt',
-  status: 'status',
   studentId: 'studentId',
   professorId: 'professorId'
 } as const
 
-export type SolicitationScalarFieldEnum = (typeof SolicitationScalarFieldEnum)[keyof typeof SolicitationScalarFieldEnum]
+export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
 
 
 export const HistoryScalarFieldEnum = {

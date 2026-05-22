@@ -194,7 +194,6 @@ export type StudentWhereInput = {
   ra?: Prisma.StringFilter<"Student"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
-  solicitations?: Prisma.SolicitationListRelationFilter
 }
 
 export type StudentOrderByWithRelationInput = {
@@ -202,7 +201,6 @@ export type StudentOrderByWithRelationInput = {
   ra?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
-  solicitations?: Prisma.SolicitationOrderByRelationAggregateInput
 }
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -213,7 +211,6 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
-  solicitations?: Prisma.SolicitationListRelationFilter
 }, "userId" | "ra">
 
 export type StudentOrderByWithAggregationInput = {
@@ -238,28 +235,24 @@ export type StudentCreateInput = {
   ra: string
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutStudentInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateInput = {
   userId: number
   ra: string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutStudentInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUpdateInput = {
   ra?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutStudentNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutStudentNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyInput = {
@@ -355,30 +348,14 @@ export type StudentUpdateOneRequiredWithoutAppointmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.StudentUpdateWithoutAppointmentsInput>, Prisma.StudentUncheckedUpdateWithoutAppointmentsInput>
 }
 
-export type StudentCreateNestedOneWithoutSolicitationsInput = {
-  create?: Prisma.XOR<Prisma.StudentCreateWithoutSolicitationsInput, Prisma.StudentUncheckedCreateWithoutSolicitationsInput>
-  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutSolicitationsInput
-  connect?: Prisma.StudentWhereUniqueInput
-}
-
-export type StudentUpdateOneRequiredWithoutSolicitationsNestedInput = {
-  create?: Prisma.XOR<Prisma.StudentCreateWithoutSolicitationsInput, Prisma.StudentUncheckedCreateWithoutSolicitationsInput>
-  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutSolicitationsInput
-  upsert?: Prisma.StudentUpsertWithoutSolicitationsInput
-  connect?: Prisma.StudentWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutSolicitationsInput, Prisma.StudentUpdateWithoutSolicitationsInput>, Prisma.StudentUncheckedUpdateWithoutSolicitationsInput>
-}
-
 export type StudentCreateWithoutUserInput = {
   ra: string
   appointments?: Prisma.AppointmentCreateNestedManyWithoutStudentInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
   ra: string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutStudentInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutUserInput = {
@@ -400,25 +377,21 @@ export type StudentUpdateToOneWithWhereWithoutUserInput = {
 export type StudentUpdateWithoutUserInput = {
   ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUpdateManyWithoutStudentNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
   ra?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutStudentNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAppointmentsInput = {
   ra: string
   user: Prisma.UserCreateNestedOneWithoutStudentInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAppointmentsInput = {
   userId: number
   ra: string
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutAppointmentsInput = {
@@ -440,53 +413,11 @@ export type StudentUpdateToOneWithWhereWithoutAppointmentsInput = {
 export type StudentUpdateWithoutAppointmentsInput = {
   ra?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAppointmentsInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   ra?: Prisma.StringFieldUpdateOperationsInput | string
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutStudentNestedInput
-}
-
-export type StudentCreateWithoutSolicitationsInput = {
-  ra: string
-  user: Prisma.UserCreateNestedOneWithoutStudentInput
-  appointments?: Prisma.AppointmentCreateNestedManyWithoutStudentInput
-}
-
-export type StudentUncheckedCreateWithoutSolicitationsInput = {
-  userId: number
-  ra: string
-  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutStudentInput
-}
-
-export type StudentCreateOrConnectWithoutSolicitationsInput = {
-  where: Prisma.StudentWhereUniqueInput
-  create: Prisma.XOR<Prisma.StudentCreateWithoutSolicitationsInput, Prisma.StudentUncheckedCreateWithoutSolicitationsInput>
-}
-
-export type StudentUpsertWithoutSolicitationsInput = {
-  update: Prisma.XOR<Prisma.StudentUpdateWithoutSolicitationsInput, Prisma.StudentUncheckedUpdateWithoutSolicitationsInput>
-  create: Prisma.XOR<Prisma.StudentCreateWithoutSolicitationsInput, Prisma.StudentUncheckedCreateWithoutSolicitationsInput>
-  where?: Prisma.StudentWhereInput
-}
-
-export type StudentUpdateToOneWithWhereWithoutSolicitationsInput = {
-  where?: Prisma.StudentWhereInput
-  data: Prisma.XOR<Prisma.StudentUpdateWithoutSolicitationsInput, Prisma.StudentUncheckedUpdateWithoutSolicitationsInput>
-}
-
-export type StudentUpdateWithoutSolicitationsInput = {
-  ra?: Prisma.StringFieldUpdateOperationsInput | string
-  user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
-  appointments?: Prisma.AppointmentUpdateManyWithoutStudentNestedInput
-}
-
-export type StudentUncheckedUpdateWithoutSolicitationsInput = {
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  ra?: Prisma.StringFieldUpdateOperationsInput | string
-  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 
@@ -496,12 +427,10 @@ export type StudentUncheckedUpdateWithoutSolicitationsInput = {
 
 export type StudentCountOutputType = {
   appointments: number
-  solicitations: number
 }
 
 export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   appointments?: boolean | StudentCountOutputTypeCountAppointmentsArgs
-  solicitations?: boolean | StudentCountOutputTypeCountSolicitationsArgs
 }
 
 /**
@@ -521,20 +450,12 @@ export type StudentCountOutputTypeCountAppointmentsArgs<ExtArgs extends runtime.
   where?: Prisma.AppointmentWhereInput
 }
 
-/**
- * StudentCountOutputType without action
- */
-export type StudentCountOutputTypeCountSolicitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SolicitationWhereInput
-}
-
 
 export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   userId?: boolean
   ra?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   appointments?: boolean | Prisma.Student$appointmentsArgs<ExtArgs>
-  solicitations?: boolean | Prisma.Student$solicitationsArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -559,7 +480,6 @@ export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   appointments?: boolean | Prisma.Student$appointmentsArgs<ExtArgs>
-  solicitations?: boolean | Prisma.Student$solicitationsArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -574,7 +494,6 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
-    solicitations: Prisma.$SolicitationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     userId: number
@@ -975,7 +894,6 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   appointments<T extends Prisma.Student$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  solicitations<T extends Prisma.Student$solicitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$solicitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SolicitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1429,30 +1347,6 @@ export type Student$appointmentsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.AppointmentScalarFieldEnum | Prisma.AppointmentScalarFieldEnum[]
-}
-
-/**
- * Student.solicitations
- */
-export type Student$solicitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Solicitation
-   */
-  select?: Prisma.SolicitationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Solicitation
-   */
-  omit?: Prisma.SolicitationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SolicitationInclude<ExtArgs> | null
-  where?: Prisma.SolicitationWhereInput
-  orderBy?: Prisma.SolicitationOrderByWithRelationInput | Prisma.SolicitationOrderByWithRelationInput[]
-  cursor?: Prisma.SolicitationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.SolicitationScalarFieldEnum | Prisma.SolicitationScalarFieldEnum[]
 }
 
 /**

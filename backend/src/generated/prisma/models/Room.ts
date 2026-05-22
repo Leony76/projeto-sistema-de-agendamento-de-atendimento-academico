@@ -375,9 +375,9 @@ export type RoomSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type RoomScalarRelationFilter = {
-  is?: Prisma.RoomWhereInput
-  isNot?: Prisma.RoomWhereInput
+export type RoomNullableScalarRelationFilter = {
+  is?: Prisma.RoomWhereInput | null
+  isNot?: Prisma.RoomWhereInput | null
 }
 
 export type EnumRoomStatusFieldUpdateOperationsInput = {
@@ -390,10 +390,12 @@ export type RoomCreateNestedOneWithoutAppointmentsInput = {
   connect?: Prisma.RoomWhereUniqueInput
 }
 
-export type RoomUpdateOneRequiredWithoutAppointmentsNestedInput = {
+export type RoomUpdateOneWithoutAppointmentsNestedInput = {
   create?: Prisma.XOR<Prisma.RoomCreateWithoutAppointmentsInput, Prisma.RoomUncheckedCreateWithoutAppointmentsInput>
   connectOrCreate?: Prisma.RoomCreateOrConnectWithoutAppointmentsInput
   upsert?: Prisma.RoomUpsertWithoutAppointmentsInput
+  disconnect?: Prisma.RoomWhereInput | boolean
+  delete?: Prisma.RoomWhereInput | boolean
   connect?: Prisma.RoomWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.RoomUpdateWithoutAppointmentsInput>, Prisma.RoomUncheckedUpdateWithoutAppointmentsInput>
 }

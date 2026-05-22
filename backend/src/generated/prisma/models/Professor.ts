@@ -187,7 +187,6 @@ export type ProfessorWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   disciplines?: Prisma.DisciplineListRelationFilter
   appointments?: Prisma.AppointmentListRelationFilter
-  solicitations?: Prisma.SolicitationListRelationFilter
   availability?: Prisma.ProfessorAvailabilityListRelationFilter
 }
 
@@ -196,7 +195,6 @@ export type ProfessorOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   disciplines?: Prisma.DisciplineOrderByRelationAggregateInput
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
-  solicitations?: Prisma.SolicitationOrderByRelationAggregateInput
   availability?: Prisma.ProfessorAvailabilityOrderByRelationAggregateInput
 }
 
@@ -208,7 +206,6 @@ export type ProfessorWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   disciplines?: Prisma.DisciplineListRelationFilter
   appointments?: Prisma.AppointmentListRelationFilter
-  solicitations?: Prisma.SolicitationListRelationFilter
   availability?: Prisma.ProfessorAvailabilityListRelationFilter
 }, "userId">
 
@@ -232,7 +229,6 @@ export type ProfessorCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutProfessorInput
   disciplines?: Prisma.DisciplineCreateNestedManyWithoutProfessorInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityCreateNestedManyWithoutProfessorInput
 }
 
@@ -240,7 +236,6 @@ export type ProfessorUncheckedCreateInput = {
   userId: number
   disciplines?: Prisma.DisciplineUncheckedCreateNestedManyWithoutProfessorInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityUncheckedCreateNestedManyWithoutProfessorInput
 }
 
@@ -248,7 +243,6 @@ export type ProfessorUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutProfessorNestedInput
   disciplines?: Prisma.DisciplineUpdateManyWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUpdateManyWithoutProfessorNestedInput
 }
 
@@ -256,7 +250,6 @@ export type ProfessorUncheckedUpdateInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   disciplines?: Prisma.DisciplineUncheckedUpdateManyWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorNestedInput
 }
 
@@ -362,20 +355,6 @@ export type ProfessorUpdateOneRequiredWithoutAppointmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfessorUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.ProfessorUpdateWithoutAppointmentsInput>, Prisma.ProfessorUncheckedUpdateWithoutAppointmentsInput>
 }
 
-export type ProfessorCreateNestedOneWithoutSolicitationsInput = {
-  create?: Prisma.XOR<Prisma.ProfessorCreateWithoutSolicitationsInput, Prisma.ProfessorUncheckedCreateWithoutSolicitationsInput>
-  connectOrCreate?: Prisma.ProfessorCreateOrConnectWithoutSolicitationsInput
-  connect?: Prisma.ProfessorWhereUniqueInput
-}
-
-export type ProfessorUpdateOneRequiredWithoutSolicitationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProfessorCreateWithoutSolicitationsInput, Prisma.ProfessorUncheckedCreateWithoutSolicitationsInput>
-  connectOrCreate?: Prisma.ProfessorCreateOrConnectWithoutSolicitationsInput
-  upsert?: Prisma.ProfessorUpsertWithoutSolicitationsInput
-  connect?: Prisma.ProfessorWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfessorUpdateToOneWithWhereWithoutSolicitationsInput, Prisma.ProfessorUpdateWithoutSolicitationsInput>, Prisma.ProfessorUncheckedUpdateWithoutSolicitationsInput>
-}
-
 export type ProfessorCreateNestedOneWithoutDisciplinesInput = {
   create?: Prisma.XOR<Prisma.ProfessorCreateWithoutDisciplinesInput, Prisma.ProfessorUncheckedCreateWithoutDisciplinesInput>
   connectOrCreate?: Prisma.ProfessorCreateOrConnectWithoutDisciplinesInput
@@ -395,14 +374,12 @@ export type ProfessorUpdateOneWithoutDisciplinesNestedInput = {
 export type ProfessorCreateWithoutUserInput = {
   disciplines?: Prisma.DisciplineCreateNestedManyWithoutProfessorInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityCreateNestedManyWithoutProfessorInput
 }
 
 export type ProfessorUncheckedCreateWithoutUserInput = {
   disciplines?: Prisma.DisciplineUncheckedCreateNestedManyWithoutProfessorInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityUncheckedCreateNestedManyWithoutProfessorInput
 }
 
@@ -425,14 +402,12 @@ export type ProfessorUpdateToOneWithWhereWithoutUserInput = {
 export type ProfessorUpdateWithoutUserInput = {
   disciplines?: Prisma.DisciplineUpdateManyWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUpdateManyWithoutProfessorNestedInput
 }
 
 export type ProfessorUncheckedUpdateWithoutUserInput = {
   disciplines?: Prisma.DisciplineUncheckedUpdateManyWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorNestedInput
 }
 
@@ -440,14 +415,12 @@ export type ProfessorCreateWithoutAvailabilityInput = {
   user: Prisma.UserCreateNestedOneWithoutProfessorInput
   disciplines?: Prisma.DisciplineCreateNestedManyWithoutProfessorInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutProfessorInput
 }
 
 export type ProfessorUncheckedCreateWithoutAvailabilityInput = {
   userId: number
   disciplines?: Prisma.DisciplineUncheckedCreateNestedManyWithoutProfessorInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutProfessorInput
 }
 
 export type ProfessorCreateOrConnectWithoutAvailabilityInput = {
@@ -470,27 +443,23 @@ export type ProfessorUpdateWithoutAvailabilityInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutProfessorNestedInput
   disciplines?: Prisma.DisciplineUpdateManyWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutProfessorNestedInput
 }
 
 export type ProfessorUncheckedUpdateWithoutAvailabilityInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   disciplines?: Prisma.DisciplineUncheckedUpdateManyWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutProfessorNestedInput
 }
 
 export type ProfessorCreateWithoutAppointmentsInput = {
   user: Prisma.UserCreateNestedOneWithoutProfessorInput
   disciplines?: Prisma.DisciplineCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityCreateNestedManyWithoutProfessorInput
 }
 
 export type ProfessorUncheckedCreateWithoutAppointmentsInput = {
   userId: number
   disciplines?: Prisma.DisciplineUncheckedCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityUncheckedCreateNestedManyWithoutProfessorInput
 }
 
@@ -513,72 +482,24 @@ export type ProfessorUpdateToOneWithWhereWithoutAppointmentsInput = {
 export type ProfessorUpdateWithoutAppointmentsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutProfessorNestedInput
   disciplines?: Prisma.DisciplineUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUpdateManyWithoutProfessorNestedInput
 }
 
 export type ProfessorUncheckedUpdateWithoutAppointmentsInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   disciplines?: Prisma.DisciplineUncheckedUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutProfessorNestedInput
-  availability?: Prisma.ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorNestedInput
-}
-
-export type ProfessorCreateWithoutSolicitationsInput = {
-  user: Prisma.UserCreateNestedOneWithoutProfessorInput
-  disciplines?: Prisma.DisciplineCreateNestedManyWithoutProfessorInput
-  appointments?: Prisma.AppointmentCreateNestedManyWithoutProfessorInput
-  availability?: Prisma.ProfessorAvailabilityCreateNestedManyWithoutProfessorInput
-}
-
-export type ProfessorUncheckedCreateWithoutSolicitationsInput = {
-  userId: number
-  disciplines?: Prisma.DisciplineUncheckedCreateNestedManyWithoutProfessorInput
-  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutProfessorInput
-  availability?: Prisma.ProfessorAvailabilityUncheckedCreateNestedManyWithoutProfessorInput
-}
-
-export type ProfessorCreateOrConnectWithoutSolicitationsInput = {
-  where: Prisma.ProfessorWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProfessorCreateWithoutSolicitationsInput, Prisma.ProfessorUncheckedCreateWithoutSolicitationsInput>
-}
-
-export type ProfessorUpsertWithoutSolicitationsInput = {
-  update: Prisma.XOR<Prisma.ProfessorUpdateWithoutSolicitationsInput, Prisma.ProfessorUncheckedUpdateWithoutSolicitationsInput>
-  create: Prisma.XOR<Prisma.ProfessorCreateWithoutSolicitationsInput, Prisma.ProfessorUncheckedCreateWithoutSolicitationsInput>
-  where?: Prisma.ProfessorWhereInput
-}
-
-export type ProfessorUpdateToOneWithWhereWithoutSolicitationsInput = {
-  where?: Prisma.ProfessorWhereInput
-  data: Prisma.XOR<Prisma.ProfessorUpdateWithoutSolicitationsInput, Prisma.ProfessorUncheckedUpdateWithoutSolicitationsInput>
-}
-
-export type ProfessorUpdateWithoutSolicitationsInput = {
-  user?: Prisma.UserUpdateOneRequiredWithoutProfessorNestedInput
-  disciplines?: Prisma.DisciplineUpdateManyWithoutProfessorNestedInput
-  appointments?: Prisma.AppointmentUpdateManyWithoutProfessorNestedInput
-  availability?: Prisma.ProfessorAvailabilityUpdateManyWithoutProfessorNestedInput
-}
-
-export type ProfessorUncheckedUpdateWithoutSolicitationsInput = {
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  disciplines?: Prisma.DisciplineUncheckedUpdateManyWithoutProfessorNestedInput
-  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorNestedInput
 }
 
 export type ProfessorCreateWithoutDisciplinesInput = {
   user: Prisma.UserCreateNestedOneWithoutProfessorInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityCreateNestedManyWithoutProfessorInput
 }
 
 export type ProfessorUncheckedCreateWithoutDisciplinesInput = {
   userId: number
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutProfessorInput
-  solicitations?: Prisma.SolicitationUncheckedCreateNestedManyWithoutProfessorInput
   availability?: Prisma.ProfessorAvailabilityUncheckedCreateNestedManyWithoutProfessorInput
 }
 
@@ -601,14 +522,12 @@ export type ProfessorUpdateToOneWithWhereWithoutDisciplinesInput = {
 export type ProfessorUpdateWithoutDisciplinesInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutProfessorNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUpdateManyWithoutProfessorNestedInput
 }
 
 export type ProfessorUncheckedUpdateWithoutDisciplinesInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutProfessorNestedInput
-  solicitations?: Prisma.SolicitationUncheckedUpdateManyWithoutProfessorNestedInput
   availability?: Prisma.ProfessorAvailabilityUncheckedUpdateManyWithoutProfessorNestedInput
 }
 
@@ -620,14 +539,12 @@ export type ProfessorUncheckedUpdateWithoutDisciplinesInput = {
 export type ProfessorCountOutputType = {
   disciplines: number
   appointments: number
-  solicitations: number
   availability: number
 }
 
 export type ProfessorCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   disciplines?: boolean | ProfessorCountOutputTypeCountDisciplinesArgs
   appointments?: boolean | ProfessorCountOutputTypeCountAppointmentsArgs
-  solicitations?: boolean | ProfessorCountOutputTypeCountSolicitationsArgs
   availability?: boolean | ProfessorCountOutputTypeCountAvailabilityArgs
 }
 
@@ -658,13 +575,6 @@ export type ProfessorCountOutputTypeCountAppointmentsArgs<ExtArgs extends runtim
 /**
  * ProfessorCountOutputType without action
  */
-export type ProfessorCountOutputTypeCountSolicitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SolicitationWhereInput
-}
-
-/**
- * ProfessorCountOutputType without action
- */
 export type ProfessorCountOutputTypeCountAvailabilityArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProfessorAvailabilityWhereInput
 }
@@ -675,7 +585,6 @@ export type ProfessorSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   disciplines?: boolean | Prisma.Professor$disciplinesArgs<ExtArgs>
   appointments?: boolean | Prisma.Professor$appointmentsArgs<ExtArgs>
-  solicitations?: boolean | Prisma.Professor$solicitationsArgs<ExtArgs>
   availability?: boolean | Prisma.Professor$availabilityArgs<ExtArgs>
   _count?: boolean | Prisma.ProfessorCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["professor"]>
@@ -699,7 +608,6 @@ export type ProfessorInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   disciplines?: boolean | Prisma.Professor$disciplinesArgs<ExtArgs>
   appointments?: boolean | Prisma.Professor$appointmentsArgs<ExtArgs>
-  solicitations?: boolean | Prisma.Professor$solicitationsArgs<ExtArgs>
   availability?: boolean | Prisma.Professor$availabilityArgs<ExtArgs>
   _count?: boolean | Prisma.ProfessorCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -716,7 +624,6 @@ export type $ProfessorPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     user: Prisma.$UserPayload<ExtArgs>
     disciplines: Prisma.$DisciplinePayload<ExtArgs>[]
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
-    solicitations: Prisma.$SolicitationPayload<ExtArgs>[]
     availability: Prisma.$ProfessorAvailabilityPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1118,7 +1025,6 @@ export interface Prisma__ProfessorClient<T, Null = never, ExtArgs extends runtim
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   disciplines<T extends Prisma.Professor$disciplinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Professor$disciplinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DisciplinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   appointments<T extends Prisma.Professor$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Professor$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  solicitations<T extends Prisma.Professor$solicitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Professor$solicitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SolicitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   availability<T extends Prisma.Professor$availabilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Professor$availabilityArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProfessorAvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1596,30 +1502,6 @@ export type Professor$appointmentsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.AppointmentScalarFieldEnum | Prisma.AppointmentScalarFieldEnum[]
-}
-
-/**
- * Professor.solicitations
- */
-export type Professor$solicitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Solicitation
-   */
-  select?: Prisma.SolicitationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Solicitation
-   */
-  omit?: Prisma.SolicitationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SolicitationInclude<ExtArgs> | null
-  where?: Prisma.SolicitationWhereInput
-  orderBy?: Prisma.SolicitationOrderByWithRelationInput | Prisma.SolicitationOrderByWithRelationInput[]
-  cursor?: Prisma.SolicitationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.SolicitationScalarFieldEnum | Prisma.SolicitationScalarFieldEnum[]
 }
 
 /**

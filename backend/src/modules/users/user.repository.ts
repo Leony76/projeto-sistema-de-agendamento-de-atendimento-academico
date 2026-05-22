@@ -70,9 +70,7 @@ export class UserRepository {
     return await prisma.professor.findUnique({
       where  : { userId: id },
       select : {
-        disciplines: {
-          select: { name: true }
-        },
+        disciplines: { select: { name: true }},
         user: {
           select: {
             id        : true,
@@ -82,34 +80,13 @@ export class UserRepository {
             createdAt : true,
           },
         },
-        solicitations: {
-          select: {
-            id       : true,
-            dateTime : true,
-            status   : true,
-            appointment: {
-              select: { reason: true },
-            },
-            student: {
-              select: {
-                user: {
-                  select: {
-                    name  : true,
-                    photo : true,
-                  },
-                },
-              },
-            },
-          },
-        },
         appointments: {
           select: {
             id       : true,
             reason   : true,
             dateTime : true,
-            room: {
-              select: { name: true },
-            },
+            status   : true,
+            room: { select: { name: true }},
             student: {
               select: {
                 user: {
@@ -130,8 +107,8 @@ export class UserRepository {
     return await prisma.student.findUnique({
       where  : { userId: id },
       select : {
-        ra: true,
-        user: {
+        ra   : true,
+        user : {
           select: {
             id        : true,
             name      : true,
@@ -140,34 +117,13 @@ export class UserRepository {
             createdAt : true,
           },
         },
-        solicitations: {
-          select: {
-            id       : true,
-            dateTime : true,
-            status   : true,
-            appointment: {
-              select: { reason: true },
-            },
-            professor: {
-              select: {
-                user: {
-                  select: {
-                    name  : true,
-                    photo : true,
-                  },
-                },
-              },
-            },
-          },
-        },
         appointments: {
           select: {
             id       : true,
             reason   : true,
             dateTime : true,
-            room: {
-              select: { name: true },
-            },
+            status   : true,
+            room     : { select : { name: true }},
             professor: {
               select: {
                 user: {
@@ -214,7 +170,7 @@ export class UserRepository {
     
     const [ appointments, solicitations, students, professors ] = await Promise.all([
       prisma.appointment.count(),
-      prisma.solicitation.count(),
+      prisma.appointment.count({ where: { status: 'PENDING' } }),
       prisma.student.count(),
       prisma.professor.count(),
     ]);
@@ -237,7 +193,7 @@ export class UserRepository {
         }
       }),
       
-      prisma.solicitation.count({
+      prisma.appointment.count({
         where: {
           professorId : id,
           status      : 'PENDING'
@@ -276,7 +232,7 @@ export class UserRepository {
         }
       }),
       
-      prisma.solicitation.count({
+      prisma.appointment.count({
         where: {
           studentId : id,
           status    : 'PENDING'

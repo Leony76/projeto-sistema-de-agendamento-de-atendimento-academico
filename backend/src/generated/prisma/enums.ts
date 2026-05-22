@@ -27,23 +27,16 @@ export type Shift = (typeof Shift)[keyof typeof Shift]
 
 
 export const AppointmentStatus = {
-  CANCELED: 'CANCELED',
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
   CONFIRMED: 'CONFIRMED',
-  UNCONFIRMED: 'UNCONFIRMED',
+  CANCELED: 'CANCELED',
   DONE: 'DONE',
   NO_SHOW: 'NO_SHOW'
 } as const
 
 export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
-
-
-export const SolicitationStatus = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
-} as const
-
-export type SolicitationStatus = (typeof SolicitationStatus)[keyof typeof SolicitationStatus]
 
 
 export const RoomStatus = {

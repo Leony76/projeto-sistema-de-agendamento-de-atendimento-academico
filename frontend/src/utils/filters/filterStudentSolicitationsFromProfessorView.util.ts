@@ -1,23 +1,23 @@
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
 import type { STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
-import type { Solicitation } from "@shared/types/solicitation.type";
 import type { Student } from "@shared/types/userBasicInfos.type";
+import type { Appointment } from "@shared/types/appointment.type";
 
 export const filterStudentSolicitationsFromProfessorView = (
-  studentSolicitationsFromProfessorViewData : Solicitation<Pick<Student, 'name' | 'photo'>>[],
+  studentSolicitationsFromProfessorViewData : Appointment<Pick<Student, 'name' | 'photo'>>[],
   searchValue : string,
   filterValue : typeof STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP[number]['value'],
-): Solicitation<Pick<Student, 'name' | 'photo'>>[] => {
+): Appointment<Pick<Student, 'name' | 'photo'>>[] => {
   return studentSolicitationsFromProfessorViewData.filter((solicitation) => {
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
       solicitation.user.name.toLowerCase().includes(search) 
       ||
-      formatTime(solicitation.appoitmentDateTime).toLowerCase().includes(search)
+      formatTime(solicitation.dateTime).toLowerCase().includes(search)
       ||
-      formatDate(solicitation.appoitmentDateTime).toLowerCase().includes(search)
+      formatDate(solicitation.dateTime).toLowerCase().includes(search)
 
     if (!filterValue) return matchesSearch;
 
@@ -46,10 +46,10 @@ export const filterStudentSolicitationsFromProfessorView = (
         return b.user.name.localeCompare(a.user.name);
 
       case 'mostRecent':
-        return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();
+        return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();
 
       case 'mostOld':
-        return new Date(a.appoitmentDateTime).getTime() - new Date(b.appoitmentDateTime).getTime();
+        return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
 
       default:
         return 0;

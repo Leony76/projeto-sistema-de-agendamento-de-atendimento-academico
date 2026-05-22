@@ -428,14 +428,6 @@ export type DisciplineUncheckedUpdateManyWithoutProfessorNestedInput = {
   deleteMany?: Prisma.DisciplineScalarWhereInput | Prisma.DisciplineScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type DisciplineCreateWithoutProfessorInput = {
   name: string
   registeredAt?: Date | string

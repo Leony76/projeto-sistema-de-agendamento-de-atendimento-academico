@@ -1,16 +1,13 @@
 import { Appointment } from "../appointment.type";
-import { Solicitation } from "../solicitation.type";
 import { Student, Professor, Manager } from "../userBasicInfos.type";
 
 export type StudentGeneralInfosResponse = Student & {
-  appointmentsList  : Appointment<Pick<Professor  , 'name' | 'photo'>>[];
-  solicitationsList : Solicitation<Pick<Professor , 'name' | 'photo'>>[];
+  appointmentsList  : Appointment<Pick<Professor  , 'name'>>[];
   role : 'STUDENT';
 };
 
 export type ProfessorGeneralInfosResponse = Professor & {
-  appointmentsList  : Appointment<Pick<Student  , 'name' | 'photo'>>[];
-  solicitationsList : Solicitation<Pick<Student , 'name' | 'photo'>>[];
+  appointmentsList  : Appointment<Pick<Student  , 'name'>>[];
   role : 'PROFESSOR';
 };
 

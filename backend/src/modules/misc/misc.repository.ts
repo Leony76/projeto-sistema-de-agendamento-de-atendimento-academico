@@ -30,13 +30,15 @@ export class MiscRepository {
 
   public static async getSolicitationsMetrics() {
     const [ count, accepted, rejected ] = await Promise.all([
-      prisma.solicitation.count(),
+      prisma.appointment.count({
+        where: { status: 'PENDING' }
+      }),
 
-      prisma.solicitation.count({
-        where: { status: 'ACCEPTED' }
+      prisma.appointment.count({
+        where: { status: 'CONFIRMED' }
       }), 
 
-      prisma.solicitation.count({
+      prisma.appointment.count({
         where: { status: 'REJECTED' }
       }), 
     ]);

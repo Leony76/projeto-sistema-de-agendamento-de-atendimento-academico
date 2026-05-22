@@ -5,6 +5,10 @@ export const appointmentSolicitationSchema = z.object({
     .string()
     .min(1   , 'O nome do professor deve ser provido')
     .max(255 , 'O nome do professor deve ter até 255 caracteres'),
+  professorId: z
+    .number(),
+  studentId: z
+    .number(),
   appointmentDate: z
     .string()
     .min(1  , 'A data do agendamento deve ser fornecido'),

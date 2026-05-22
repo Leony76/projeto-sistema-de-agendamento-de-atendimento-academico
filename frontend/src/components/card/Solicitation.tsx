@@ -1,4 +1,3 @@
-import type { StudentSolicitation, StudentSolicitationFromProfessorView } from '@shared/types/solicitation.type';
 import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import React, { useState, type JSX } from 'react'
@@ -10,38 +9,39 @@ import { MdEdit } from 'react-icons/md';
 import { TbCancel } from 'react-icons/tb';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
-import type { SolicitationStatus } from '@shared/types/solicitationStatus.type';
-import { SOLICITATION_STATUS_MAP } from '@frontend/constants/maps/solicitationStatus.map';
+import type { Professor, Student } from '@shared/types/userBasicInfos.type';
+import type { Appointment } from '@shared/types/appointment.type';
+import type { AppointmentStatus } from '@backend/generated/prisma/enums';
+import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
 
 type Props = {
   smVersion?: boolean;
 } & (
-  | StudentSolicitation & { from: 'STUDENT' } 
-  | StudentSolicitationFromProfessorView & { from: 'PROFESSOR' }
+  | Appointment<Pick<Professor, 'name' | 'photo' | 'disciplines'>>  & { from: 'STUDENT' } 
+  | Appointment<Pick<Student, 'name' | 'photo'>> & { from: 'PROFESSOR' }
 );
 
 const Solicitation = (props:Props): React.JSX.Element => {
 
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
 
-  const statusTagStyle: Record<SolicitationStatus, { style: string, icon: JSX.Element }> = {
-    REJECTED : { style: 'bg-red-50 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
-    ACCEPTED : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
-    PENDING  : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+  const statusTagStyle: Record<AppointmentStatus, { style: string, icon: JSX.Element }> = {
+    REJECTED  : { style: 'bg-red-50 text-red-400'      , icon: <IoCloseCircleSharp size={20} /> },
+    ACCEPTED  : { style: 'bg-green-100 text-green-400'  , icon: <FaCheckCircle size={17}/>       },
+    PENDING   : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+    CANCELED  : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+    CONFIRMED : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+    DONE      : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
+    NO_SHOW   : { style: 'bg-yellow-100 text-yellow-500', icon: <FaRegClock size={17}/>          },
   };
 
   const { containerRef } = useCloseModalOnMouseClickOutside(setMoreOptions);
 
   const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
   const disciplines = props.from === 'STUDENT' 
-    ? props.professor.disciplines.map(d => d.name) 
+    ? props.user.disciplines.map(name => name) 
     : []
   ;
-
-  const userInfos = props.from === 'STUDENT'
-    ? props.professor
-    : props.student
-  ; 
 
   return (
     <div className='relative self-start px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>
@@ -82,8 +82,8 @@ const Solicitation = (props:Props): React.JSX.Element => {
           
           <ExpansibleImage
             image={{
-              name : userInfos.name,
-              uri  : userInfos.photo,
+              name : props.user.name,
+              uri  : props.user.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
               size : 'h-26 w-26'
             }}
           />
@@ -92,7 +92,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
 
       <div className='flex flex-col flex-1 gap-1'>
         <h3 className='font-bold text-orange-400 break-all w-[90%]'>
-          { userInfos.name }
+          { props.user.name }
         </h3>
         
         <div className='flex flex-col text-xs'>
@@ -103,11 +103,11 @@ const Solicitation = (props:Props): React.JSX.Element => {
           }
 
           <label className='text-orange-400 font-semibold'>
-            Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
+            Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.dateTime) }</span>
           </label>
 
           <label className='text-orange-400 font-semibold'>
-            Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
+            Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.dateTime) }</span>
           </label>
 
           { props.from === 'PROFESSOR' &&
@@ -123,7 +123,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
             { statusTagStyle[props.status].icon }
 
             <span className='mb-px'>
-              { SOLICITATION_STATUS_MAP[props.status] }
+              { APPOINTMENT_STATUS_MAP[props.status] }
             </span>
           </span>
         </div>

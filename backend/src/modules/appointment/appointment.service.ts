@@ -5,6 +5,10 @@ import { DAYS_BY_INDEX_MAP } from '@backend/utils/days.map';
 import { generateTimeSlots } from '@backend/utils/generateTimeSlots.util';
 import { formatDateToHour } from '@backend/utils/formatDateToHour.util';
 import { ApiError } from '@backend/utils/apiError.util';
+import type { AppointmentSolicitationRequest, AppointmentSolicitationResponse, UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+import type { UserRole } from '@backend/generated/prisma/enums';
+import { studentSolicitationsMapper } from './mappers/studentSolicitations.mapper';
+import { professorSolicitationsMapper } from './mappers/professorSolicitations.mapper';
 
 export class AppointmentService {
 
@@ -14,6 +18,8 @@ export class AppointmentService {
 
     return availableProfessors.map(availableProfessorToScheduleMapper);
   }
+
+
 
   public static async getProfessorAvailableSlots(
     professorId : number,
@@ -56,5 +62,31 @@ export class AppointmentService {
     }
 
     return availableSlots.sort();
+  }
+
+
+  public static async solicitateAppointment(
+    data: AppointmentSolicitationRequest
+  ): Promise<AppointmentSolicitationResponse> {
+
+    const solicitate = await AppointmentRepository.solicitateAppointment(data);  
+
+    return {
+      dateTime      : solicitate.dateTime.toISOString(),
+      professorName : solicitate.professor.user.name,
+      reason        : solicitate.reason,
+    }
+  }
+
+
+  public static async getUserSolicitations(role: UserRole, id: number): Promise<UserAppointmentSolicitationResponse[]> {
+    switch (role) {
+      case 'PROFESSOR': 
+        const professorSolicitations = await AppointmentRepository.getProfessorSolicitations(id);
+        return professorSolicitationsMapper(professorSolicitations);
+      default:  
+        const studentSolicitations = await AppointmentRepository.getStudentSolicitations(id);
+        return studentSolicitationsMapper(studentSolicitations);
+    }
   }
 }

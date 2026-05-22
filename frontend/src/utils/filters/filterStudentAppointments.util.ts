@@ -3,10 +3,10 @@ import type { Appointment } from "@shared/types/appointment.type";
 import type { Professor } from "@shared/types/userBasicInfos.type";
 
 export const filterStudentAppointments = (
-  studentAppoitmentsData : Appointment<Pick<Professor, 'name' | 'photo'>>[],
+  studentAppoitmentsData : Appointment<Pick<Professor, 'name'>>[],
   searchValue            : string,
   filterValue            : typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'],
-):  Appointment<Pick<Professor, 'name' | 'photo'>>[] => {
+):  Appointment<Pick<Professor, 'name'>>[] => {
   
   return studentAppoitmentsData.filter((appointment) => {
     const search = searchValue.toLowerCase();
@@ -16,7 +16,7 @@ export const filterStudentAppointments = (
       ||
       appointment.reason.toLowerCase().includes(search)
       ||
-      appointment.room.toLowerCase().includes(search)
+      appointment.room?.toLowerCase().includes(search)
       ||
       appointment.dateTime.toLowerCase().includes(search)
     ;

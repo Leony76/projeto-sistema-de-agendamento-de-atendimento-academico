@@ -7,7 +7,7 @@ import { Button } from '../button';
 import { FaCheck } from 'react-icons/fa';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
 import ExpansibleImage from '../misc/ExpansibleImage';
-import type { Appointment } from '@shared/types/appointment.type';
+import type { Appointment as AppointmentType } from '@shared/types/appointment.type';
 import type { Professor, Student } from '@shared/types/userBasicInfos.type';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
@@ -15,8 +15,8 @@ import { Navigate } from 'react-router-dom';
 type Props = {
   smVersion?: boolean;
 } & (
-  | Appointment<Pick<Student, 'photo' | 'name'>> & { from: 'PROFESSOR' }
-  | Appointment<Pick<Professor, 'photo' | 'name'>> & { from: 'STUDENT' }
+  | AppointmentType<Pick<Student, 'photo' | 'name'>> & { from: 'PROFESSOR' }
+  | AppointmentType<Pick<Professor, 'photo' | 'name'>> & { from: 'STUDENT' }
 );
 
 const Appointment = (props:Props): React.JSX.Element => {

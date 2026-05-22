@@ -28,6 +28,7 @@ const NewUser = (props:Props): React.JSX.Element => {
   const { toast } = useToast();
 
   const [ newProfessorDisciplinesOptions, setNewProfessorDisciplinesOptions ] = useState<SelectOption[]>([]);
+  const [ loading, setLoading ] = useState<boolean>(false);
   const [newUserRole, setNewUserRole] = useState<UserRole>('STUDENT');
   const [newDiscipline, setNewDiscipline] = useState<{ inputShow: boolean, error: string, name: string }>({
     inputShow : false,
@@ -93,6 +94,8 @@ const NewUser = (props:Props): React.JSX.Element => {
   
   const handleNewUser = async(data: ManagerRegistersUserFormData): Promise<void> => {
     try {
+      setLoading(true);
+
       let response;
       
       switch (data.role) {
@@ -122,6 +125,8 @@ const NewUser = (props:Props): React.JSX.Element => {
       reset();
     } catch (error:unknown) {
       toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -287,8 +292,9 @@ const NewUser = (props:Props): React.JSX.Element => {
       }
 
       <Button.Default
-        label='Cadastrar'
-        disabled={Object.keys(errors).length > 0}
+        label={loading ? 'Cadastrando' : 'Cadastrar'}
+        loading={loading}
+        disabled={Object.keys(errors).length > 0 || loading}
         onClick={handleSubmit(handleNewUser)}
         Icon={() => <FaUserPlus />}
         customStyle={{ button: 'py-2 font-semibold' }}

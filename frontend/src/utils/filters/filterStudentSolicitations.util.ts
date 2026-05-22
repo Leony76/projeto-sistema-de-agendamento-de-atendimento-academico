@@ -1,23 +1,23 @@
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
 import { STUDENT_SOLICITATIONS_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
-import type { Solicitation } from "@shared/types/solicitation.type";
+import type { Appointment } from "@shared/types/appointment.type";
 import type { Professor } from "@shared/types/userBasicInfos.type";
 
 export const filterStudentSolicitations = (
-  studentSolicitationsData : Solicitation<Pick<Professor, 'name' | 'photo'>>[],
+  studentSolicitationsData : Appointment<Pick<Professor, 'name' | 'photo' | 'disciplines'>>[],
   searchValue              : string,
   filterValue              : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'],
-): Solicitation<Pick<Professor, 'name' | 'photo'>>[] => {
+): Appointment<Pick<Professor, 'name' | 'photo' | 'disciplines'>>[] => {
   return studentSolicitationsData.filter((solicitation) => {
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
       solicitation.user.name.toLowerCase().includes(search) 
       ||
-      formatTime(solicitation.appoitmentDateTime).toLowerCase().includes(search)
+      formatTime(solicitation.dateTime).toLowerCase().includes(search)
       ||
-      formatDate(solicitation.appoitmentDateTime).toLowerCase().includes(search)
+      formatDate(solicitation.dateTime).toLowerCase().includes(search)
 
     if (!filterValue) return matchesSearch;
 
@@ -46,10 +46,10 @@ export const filterStudentSolicitations = (
         return b.user.name.localeCompare(a.user.name);
 
       case 'mostRecent':
-        return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();
+        return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();
 
       case 'mostOld':
-        return new Date(a.appoitmentDateTime).getTime() - new Date(b.appoitmentDateTime).getTime();
+        return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
 
       default:
         return 0;

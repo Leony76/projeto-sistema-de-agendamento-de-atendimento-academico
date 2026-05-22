@@ -13,8 +13,12 @@ import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/fil
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
-import type { Solicitation } from '@shared/types/solicitation.type';
 import type { Professor, Student } from '@shared/types/userBasicInfos.type';
+import type { Appointment } from '@shared/types/appointment.type';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { ScheduleService } from '@frontend/services/schedule.service';
+import type { ProfessorAppointmentSolicitationResponse, StudentAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -24,8 +28,9 @@ type FilterValue = {
 const Requests = ():React.JSX.Element => {
 
   const { user } = useAuth();
-
   if (!user) return <Navigate to={'/'}/>;
+
+  const { toast } = useToast();
 
   const role = user.role === 'PROFESSOR'
     ? 'PROFESSOR'
@@ -38,18 +43,23 @@ const Requests = ():React.JSX.Element => {
     student   : 'none',
   });
 
-  const [studentSolicitations, setStudentSolicitations] = useState<Solicitation<Pick<Professor, 'name' | 'photo'>>[]>([]);
-  const [studentSolicitationsToProfessor, setStudentSolicitationsToProfessor] = useState<Solicitation<Pick<Student, 'name' | 'photo'>>[]>([]);
+  const [pendingAppointments, setPendingAppointments] = useState<{
+    fromStudent   : StudentAppointmentSolicitationResponse[],
+    fromProfessor : ProfessorAppointmentSolicitationResponse[],
+  }>({
+    fromProfessor : [],
+    fromStudent   : [],
+  });
 
   const filteredSolicitationsByRole = {
     STUDENT: filterStudentSolicitations(
-      studentSolicitations,
+      pendingAppointments.fromStudent,
       searchValue,
       filterValue.student
     ).map(rest => ({ ...rest, from: 'STUDENT' as const })), 
 
     PROFESSOR: filterStudentSolicitationsFromProfessorView(
-      studentSolicitationsToProfessor,
+      pendingAppointments.fromProfessor,
       searchValue,
       filterValue.professor
     ).map(rest => ({ ...rest, from: 'PROFESSOR' as const })), 
@@ -105,15 +115,15 @@ const Requests = ():React.JSX.Element => {
   useEffect(() => {
     (async() => {
       try {
-        // const [reponse1, response2] = [
-        //   STUDENT_SOLICITATIONS,
-        //   STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW,
-        // ];
-
-        // setStudentSolicitations(reponse1);
-        // setStudentSolicitationsFromProfessorView(response2);
+        switch (role) {
+          case 'STUDENT':
+            const studentSolicitations = await ScheduleService.getUserAppointmentSolicitations('STUDENT', user.id);
+            setPendingAppointments(prev => ({ ...prev, fromStudent: studentSolicitations }))
+          default:
+            const professorSolicitations = await ScheduleService.getUserAppointmentSolicitations('PROFESSOR', user.id);
+        }      
       } catch (error:unknown) {
-        if (error instanceof Error) console.error(error.message);
+        toast(apiError(error), 'error');
       }
     })();
   }, []);
@@ -158,7 +168,7 @@ const Requests = ():React.JSX.Element => {
                     {filteredSolicitationsByRole[role].map(( solicitation ) => (
                       <Card.Solicitation
                         key={solicitation.id}
-                        { ...solicitation  }
+                        { ...solicitation  }            
                       />
                     ))}                
                 </div>

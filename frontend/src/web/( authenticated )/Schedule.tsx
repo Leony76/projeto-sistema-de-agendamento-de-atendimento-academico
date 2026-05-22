@@ -21,8 +21,13 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { ScheduleService } from '@frontend/services/schedule.service';
 import { DAYS_BY_INDEX_MAP } from '@shared/utils/days.map';
+import { useAuth } from '@frontend/hooks/useAuth.hook';
+import { Navigate } from 'react-router-dom';
 
 const Schedule = (): React.JSX.Element => {
+
+  const { user } = useAuth();
+  if (!user) return <Navigate to={'/'}/>
 
   const {
     handleSubmit,
@@ -34,6 +39,8 @@ const Schedule = (): React.JSX.Element => {
   } = useForm<AppointmentSolicitationFormData>({
     resolver: zodResolver(appointmentSolicitationSchema),
     defaultValues: {
+      professorId     : undefined,
+      studentId       : undefined,
       appointmentDate : '',
       professorName   : '',
       reason          : '',
@@ -57,13 +64,24 @@ const Schedule = (): React.JSX.Element => {
     try {
       const appointmentDateTime: string = formatMergeDateWithTime(data.appointmentDate, data.hour);
       
-      toast('Solicitação enviada com sucesso!');
+      console.log(appointmentDateTime);
 
-      reset();
-      setShowToScheduleForm(false);
-      console.log(data, appointmentDateTime);
+      const response = await ScheduleService.makeAppointmentSolicitation({
+        studentId   : data.studentId,
+        professorId : data.professorId,
+        dateTime    : appointmentDateTime,
+        reason      : data.reason,
+      });
+
+      if (response.success) {
+        toast(response.message);
+
+        reset();
+        setShowToScheduleForm(false);
+        console.log(response.data);
+      }
     } catch (error:unknown) {
-
+      toast(apiError(error), 'error');
     }
   };
 
@@ -172,8 +190,10 @@ const Schedule = (): React.JSX.Element => {
                     onClick={{ toSchedule: () => {
                       reset();
                       setShowToScheduleForm(true);
-                      setSelectedProfessorData(professor)
+                      setSelectedProfessorData(professor);
                       setValue('professorName', professor.name);
+                      setValue('professorId', professor.id);
+                      setValue('studentId', user.id);
                     }}}
                   />
                 ))

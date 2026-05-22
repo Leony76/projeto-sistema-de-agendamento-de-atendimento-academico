@@ -1,21 +1,10 @@
 import type { StudentGeneralInfosResponse } from "@shared/types/dtos/userGeneralInfos.dto";
 import { userAppointmentMapper, type UserAppointment } from "./userAppointment.mapper";
-import { userSolicitationMapper, type UserSolicitation } from "./userSolicitation.mapper";
 
 type StudentAppointment = Omit<UserAppointment, 'entity'> & {
   professor : {
     user : {
       name  : string;
-      photo : string | null;
-    };
-  };
-};
-
-type StudentSolicitation = Omit<UserSolicitation, 'entity'> & {
-  professor : {
-    user : {
-      name  : string;
-      photo : string | null;
     };
   };
 };
@@ -30,7 +19,6 @@ type StudentGeneralInfos = {
     createdAt : Date;
   };
   appointments  : StudentAppointment[];
-  solicitations : StudentSolicitation[];
 };
 
 export const studentGeneralInfosMapper = (
@@ -50,14 +38,6 @@ export const studentGeneralInfosMapper = (
         userAppointmentMapper({
           ...appointment,
           entity: appointment.professor,
-      })
-    ),
-
-    solicitationsList:
-       student.solicitations.map((solicitation) =>
-        userSolicitationMapper({
-          ...solicitation,
-          entity: solicitation.professor,
       })
     ),
   };

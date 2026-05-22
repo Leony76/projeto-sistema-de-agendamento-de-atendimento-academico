@@ -36,7 +36,6 @@ model Student {
   user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   appointments  Appointment[]  
-  solicitations Solicitation[]  
 
   @@map("students")
 }
@@ -47,7 +46,6 @@ model Professor {
   
   disciplines   Discipline[]
   appointments  Appointment[]  
-  solicitations Solicitation[]  
   availability  ProfessorAvailability[]
 
   @@map("professors")
@@ -95,53 +93,31 @@ model ProfessorAvailability {
 
 model Appointment {
   id            Int       @id @default(autoincrement())
+
   reason        String
   dateTime      DateTime  @map("date_time")
 
   registeredAt  DateTime  @default(now()) @map("registered_at")
   updatedAt     DateTime  @updatedAt      @map("updated_at")
-  status        AppointmentStatus         @default(CONFIRMED)
   deletedAt     DateTime? @map("deleted_at")
 
-  roomId        Int       @map("room_id") 
-  room          Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  status        AppointmentStatus @default(PENDING)
+
+  roomId        Int?      @map("room_id")
+  room          Room?     @relation(fields: [roomId], references: [id], onDelete: SetNull)
 
   studentId     Int       @map("student_id")
-  student       Student   @relation(fields: [studentId], references: [userId], onDelete: Cascade) 
+  student       Student   @relation(fields: [studentId], references: [userId], onDelete: Cascade)
 
   professorId   Int       @map("professor_id")
-  professor     Professor @relation(fields: [professorId], references: [userId], onDelete: Cascade) 
-
-  solicitationId Int          @unique @map("solicitation_id")
-  solicitation   Solicitation @relation(fields: [solicitationId], references: [id], onDelete: Cascade)
+  professor     Professor @relation(fields: [professorId], references: [userId], onDelete: Cascade)
 
   history       History?
 
   @@unique([professorId, dateTime])
   @@unique([roomId, dateTime])
+
   @@map("appointments")
-}
-
-model Solicitation {
-  id            Int                 @id @default(autoincrement())
-  reason        String             
-  dateTime      DateTime            @map("date_time") 
-
-  registeredAt  DateTime            @default(now())   @map("registered_at")
-  updatedAt     DateTime            @updatedAt        @map("updated_at") 
-  deletedAt     DateTime?           @map("deleted_at")
-
-  status        SolicitationStatus  @default(PENDING)
-
-  studentId     Int                 @map("student_id")
-  student       Student             @relation(fields: [studentId], references: [userId], onDelete: Cascade) 
- 
-  professorId   Int                 @map("professor_id")
-  professor     Professor           @relation(fields: [professorId], references: [userId], onDelete: Cascade)   
-
-  appointment   Appointment?
-
-  @@map("solicitations")
 }
 
 model History {
@@ -183,17 +159,13 @@ enum Shift {
 }
 
 enum AppointmentStatus {
-  CANCELED
-  CONFIRMED
-  UNCONFIRMED
-  DONE
-  NO_SHOW
-}
-
-enum SolicitationStatus {
   PENDING
   ACCEPTED
   REJECTED
+  CONFIRMED
+  CANCELED
+  DONE
+  NO_SHOW
 }
 
 enum RoomStatus {

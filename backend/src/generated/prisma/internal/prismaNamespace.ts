@@ -391,7 +391,6 @@ export const ModelName = {
   Room: 'Room',
   ProfessorAvailability: 'ProfessorAvailability',
   Appointment: 'Appointment',
-  Solicitation: 'Solicitation',
   History: 'History',
   Discipline: 'Discipline'
 } as const
@@ -409,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "professor" | "manager" | "room" | "professorAvailability" | "appointment" | "solicitation" | "history" | "discipline"
+    modelProps: "user" | "student" | "professor" | "manager" | "room" | "professorAvailability" | "appointment" | "history" | "discipline"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -931,80 +930,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Solicitation: {
-      payload: Prisma.$SolicitationPayload<ExtArgs>
-      fields: Prisma.SolicitationFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.SolicitationFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.SolicitationFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>
-        }
-        findFirst: {
-          args: Prisma.SolicitationFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.SolicitationFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>
-        }
-        findMany: {
-          args: Prisma.SolicitationFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>[]
-        }
-        create: {
-          args: Prisma.SolicitationCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>
-        }
-        createMany: {
-          args: Prisma.SolicitationCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.SolicitationCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>[]
-        }
-        delete: {
-          args: Prisma.SolicitationDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>
-        }
-        update: {
-          args: Prisma.SolicitationUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>
-        }
-        deleteMany: {
-          args: Prisma.SolicitationDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.SolicitationUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.SolicitationUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>[]
-        }
-        upsert: {
-          args: Prisma.SolicitationUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitationPayload>
-        }
-        aggregate: {
-          args: Prisma.SolicitationAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSolicitation>
-        }
-        groupBy: {
-          args: Prisma.SolicitationGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SolicitationGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.SolicitationCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SolicitationCountAggregateOutputType> | number
-        }
-      }
-    }
     History: {
       payload: Prisma.$HistoryPayload<ExtArgs>
       fields: Prisma.HistoryFieldRefs
@@ -1263,30 +1188,14 @@ export const AppointmentScalarFieldEnum = {
   dateTime: 'dateTime',
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
-  status: 'status',
   deletedAt: 'deletedAt',
+  status: 'status',
   roomId: 'roomId',
-  studentId: 'studentId',
-  professorId: 'professorId',
-  solicitationId: 'solicitationId'
-} as const
-
-export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
-
-
-export const SolicitationScalarFieldEnum = {
-  id: 'id',
-  reason: 'reason',
-  dateTime: 'dateTime',
-  registeredAt: 'registeredAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt',
-  status: 'status',
   studentId: 'studentId',
   professorId: 'professorId'
 } as const
 
-export type SolicitationScalarFieldEnum = (typeof SolicitationScalarFieldEnum)[keyof typeof SolicitationScalarFieldEnum]
+export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
 
 
 export const HistoryScalarFieldEnum = {
@@ -1462,20 +1371,6 @@ export type ListEnumAppointmentStatusFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
- * Reference to a field of type 'SolicitationStatus'
- */
-export type EnumSolicitationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SolicitationStatus'>
-    
-
-
-/**
- * Reference to a field of type 'SolicitationStatus[]'
- */
-export type ListEnumSolicitationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SolicitationStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1605,7 +1500,6 @@ export type GlobalOmitConfig = {
   room?: Prisma.RoomOmit
   professorAvailability?: Prisma.ProfessorAvailabilityOmit
   appointment?: Prisma.AppointmentOmit
-  solicitation?: Prisma.SolicitationOmit
   history?: Prisma.HistoryOmit
   discipline?: Prisma.DisciplineOmit
 }
