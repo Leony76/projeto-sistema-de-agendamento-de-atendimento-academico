@@ -25,6 +25,7 @@ export const studentSolicitationsMapper = (
     dateTime : solicitation.dateTime.toISOString(),
     reason   : solicitation.reason,
     status   : solicitation.status,
+    from     : 'STUDENT', 
     professor : {
       disciplines : solicitation.professor.disciplines.map((discipline) => discipline.name),
       name        : solicitation.professor.user.name,

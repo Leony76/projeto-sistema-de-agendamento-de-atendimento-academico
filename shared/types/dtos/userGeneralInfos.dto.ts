@@ -1,17 +1,20 @@
-import { Appointment } from "../appointment.type";
+import { AppointmentStatus } from "@backend/generated/prisma/enums";
 import { Student, Professor, Manager } from "../userBasicInfos.type";
+import { ProfessorAppointmentResponse, StudentAppointmentResponse } from "./appointment.dto";
 
 export type StudentGeneralInfosResponse = Student & {
-  appointmentsList  : Appointment<Pick<Professor  , 'name'>>[];
+  appointmentsList  : StudentAppointmentResponse[];
   role : 'STUDENT';
 };
 
 export type ProfessorGeneralInfosResponse = Professor & {
-  appointmentsList  : Appointment<Pick<Student  , 'name'>>[];
+  appointmentsList  : ProfessorAppointmentResponse[];
   role : 'PROFESSOR';
 };
 
-export type ManagerGeneralInfosResponse = Manager & { role : 'MANAGER' };
+export type ManagerGeneralInfosResponse = Manager & { 
+  role : 'MANAGER' 
+};
 
 export type UserGeneralInfosResponse = 
 | StudentGeneralInfosResponse   

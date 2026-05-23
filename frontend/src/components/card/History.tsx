@@ -1,12 +1,14 @@
-import { DISCIPLINES_VALUE_MAP } from '@frontend/constants/maps/disciplines.map';
 import { useCloseModalOnMouseClickOutside } from '@frontend/hooks/useCloseModalOnMouseClickOutside.hook';
-import type { ProfessorAppointmentHistory, StudentAppointmentHistory } from '@shared/types/appointmentHistory.type';
+import type { ProfessorAppointmentHistoryResponse as ProfessorAppointmentHistory, StudentAppointmentHistoryResponse as StudentAppointmentHistory } from '@shared/types/dtos/appointmentHistory.dto';
 import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import { formatTime } from '@frontend/utils/formats/formatTime.util';
-import React, { useState } from 'react'
+import React, { useState, type JSX } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaCalendarCheck, FaTrashAlt } from 'react-icons/fa';
 import ExpansibleImage from '../misc/ExpansibleImage';
+import type { AppointmentStatus } from '@backend/generated/prisma/enums';
+import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
+import { FaPersonCircleQuestion } from 'react-icons/fa6';
 
 type Props = | StudentAppointmentHistory & {
   from: 'STUDENT';
@@ -21,7 +23,7 @@ const History = (props:Props): React.JSX.Element => {
 
   const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
   const disciplines = props.from === 'STUDENT' 
-    ? props.professor.disciplines.map(discipline => discipline.name) 
+    ? props.professor.disciplines.map(name => name) 
     : []
   ;
 
@@ -29,6 +31,11 @@ const History = (props:Props): React.JSX.Element => {
     ? props.professor
     : props.student
   ;
+
+  const statusTagStyle: Record<Exclude<AppointmentStatus, "PENDING" | "ACCEPTED" | "REJECTED" | "CONFIRMED" | "CANCELED">, { style: string, icon: JSX.Element }> = {
+    DONE      : { style: 'bg-green-50 text-green-500' , icon: <FaCalendarCheck size={17} />         },
+    NO_SHOW   : { style: 'bg-red-800 text-red-50'     , icon: <FaPersonCircleQuestion size={17} />  },
+  };
 
   return (
     <div className='relative px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>
@@ -53,7 +60,7 @@ const History = (props:Props): React.JSX.Element => {
       <ExpansibleImage
         image={{
           name : entity.name,
-          uri  : entity.photo,
+          uri  : entity.photo ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original',
           size : 'h-26 w-26'
         }}
       />
@@ -71,16 +78,27 @@ const History = (props:Props): React.JSX.Element => {
           }
 
           <label className='text-orange-400 font-semibold'>
-            Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.appoitmentDateTime) }</span>
+            Data: <span className='text-cyan-500 font-normal'>{ formatDate(props.dateTime) }</span>
           </label>
 
           <label className='text-orange-400 font-semibold'>
-            Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.appoitmentDateTime) }</span>
+            Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.dateTime) }</span>
           </label>
 
           <label className='text-orange-400 font-semibold'>
             Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
           </label>
+
+          <span className={`
+            border mb-1 mt-2 text-sm py-1 font-semibold items-center gap-2 flex justify-center w-fit px-3 rounded-lg
+            ${statusTagStyle[props.status as Exclude<AppointmentStatus, "PENDING" | "ACCEPTED" | "REJECTED" | "CONFIRMED" | "CANCELED">].style}
+          `}>
+            { statusTagStyle[props.status as Exclude<AppointmentStatus, "PENDING" | "ACCEPTED" | "REJECTED" | "CONFIRMED" | "CANCELED">].icon }
+
+            <span className='mb-px'>
+              { APPOINTMENT_STATUS_MAP[props.status] }
+            </span>
+          </span>
         </div>
       </div>  
     </div>

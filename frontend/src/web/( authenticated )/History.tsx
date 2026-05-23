@@ -14,8 +14,10 @@ import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, PROFESSOR_APPOINTMENTS_HISTO
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
-import type { Appointment } from '@shared/types/appointment.type';
-import type { Professor, Student } from '@shared/types/userBasicInfos.type';
+import type { ProfessorAppointmentHistoryResponse as ProfessorAppointmentHistory, StudentAppointmentHistoryResponse as StudentAppointmentHistory } from '@shared/types/dtos/appointmentHistory.dto';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { HistoryService } from '@frontend/services/history.service';
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -25,7 +27,6 @@ type FilterValue = {
 const History = ():React.JSX.Element => {
 
   const { user } = useAuth();
-
   if (!user) return <Navigate to={'/'}/>;
 
   const role = user.role === 'PROFESSOR' 
@@ -33,14 +34,16 @@ const History = ():React.JSX.Element => {
    : 'STUDENT'
   ;
 
+  const { toast } = useToast();
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<FilterValue>({
     professor : 'none',
     student   : 'none',
   });
 
-  const [studentAppointmentHistory, setStudentAppointmentHistory] = useState<Appointment<Pick<Professor, 'name' | 'photo'>>[]>([]);
-  const [professorAppointmentHistory, setProfessorAppointmentHistory] = useState<Appointment<Pick<Student, 'name' | 'photo'>>[]>([]);
+  const [studentAppointmentHistory, setStudentAppointmentHistory] = useState<StudentAppointmentHistory[]>([]);
+  const [professorAppointmentHistory, setProfessorAppointmentHistory] = useState<ProfessorAppointmentHistory[]>([]);
 
   const filteredAppointmentHistoryByRole = {
     STUDENT: filterStudentAppointmentsHistory(
@@ -103,10 +106,17 @@ const History = ():React.JSX.Element => {
   useEffect(() => {
     (async() => {
       try {
-        
+        switch (user.role) {
+          case 'STUDENT':
+            const studentHistory = await HistoryService.getUserAppointmentsHistory(user.id, 'STUDENT');
+            setStudentAppointmentHistory(studentHistory); break;
+          default: 
+            const professorHistory = await HistoryService.getUserAppointmentsHistory(user.id, 'PROFESSOR');
+            setProfessorAppointmentHistory(professorHistory); break;
+        }
       } catch (error:unknown) {
-        if (error instanceof Error) console.error(error.message);
-      }
+        toast(apiError(error), 'error');
+      } 
     })();
   },[]);
 

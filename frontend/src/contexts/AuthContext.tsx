@@ -9,6 +9,7 @@ type AuthContextType = {
   user            : AuthUserBasicInfos | null;
   isAuthenticated : boolean;
   loading         : boolean;
+  updateUser      : (user: AuthUserBasicInfos) => void;
   login  : ( token : string, user : AuthUserBasicInfos ) => void;
   logout : () => void;
 };
@@ -44,6 +45,16 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
 
     setToken(token);
     setUser(user);
+  };
+
+  const updateUser = (updatedUser: AuthUserBasicInfos): void => {
+
+    localStorage.setItem(
+      '@user',
+      JSON.stringify(updatedUser)
+    );
+
+    setUser(updatedUser);
   };
 
   const logout = (): void => {
@@ -89,6 +100,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     isAuthenticated: !!token && !!user,
     login,
     logout,
+    updateUser,
   }), [token, user, loading]);
 
   return (

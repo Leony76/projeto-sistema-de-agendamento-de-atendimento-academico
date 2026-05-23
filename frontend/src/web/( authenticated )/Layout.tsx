@@ -34,12 +34,12 @@ type Props = {
 
 const Layout = (props:Props): React.JSX.Element => {
 
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
+
   if (!user) return <Navigate to={'/'}/>
 
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors }
   } = useForm<NewPasswordFormData>({
@@ -62,9 +62,14 @@ const Layout = (props:Props): React.JSX.Element => {
 
       const response = await UserService.changeUserTemporaryPassword(user.id, data.newPassword);
 
-      if (response.success) toast(response.message);
-      setModal(null);
-    } catch(error:unknown) {
+      if (response.success) {
+        updateUser({ ...user, hasTemporaryPassword: false });
+
+        toast(response.message);
+
+        setModal(null);
+      };
+    } catch (error:unknown) {
       toast(apiError(error), 'error');
     } finally {
       setLoading(false);
@@ -131,9 +136,14 @@ const Layout = (props:Props): React.JSX.Element => {
     <div className='flex flex-col h-screen'>
 
       <Modal.ConfirmAction
+        loading={loading}
         title='Sair do sistema'
         message='Tem certeza em sair do sistema?'
-        onAccept={logout}
+        onAccept={() => {
+          setLoading(true);
+          logout();
+          setLoading(false);
+        }}
         onCloseRequest={() => setLogoutConfirm(false)}
         visible={logoutConfirm}
       />

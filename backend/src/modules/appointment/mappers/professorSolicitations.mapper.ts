@@ -22,6 +22,7 @@ export const professorSolicitationsMapper = (
     dateTime : solicitation.dateTime.toISOString(),
     reason   : solicitation.reason,
     status   : solicitation.status,
+    from     : 'PROFESSOR',
     student : {
       name        : solicitation.student.user.name,
       photo       : solicitation.student.user.photo,

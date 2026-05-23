@@ -6,7 +6,7 @@ import type { UserGeneralInfosResponse } from '@shared/types/dtos/userGeneralInf
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Select } from '../select';
 import { Input } from '../input';
-import { FaArrowCircleLeft, FaCalendarAlt, FaFilter, FaUserAltSlash } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaFilter, FaUserAltSlash } from 'react-icons/fa';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { Card } from '../card';
@@ -74,10 +74,10 @@ export const UserDetails = (): React.JSX.Element => {
 
   const userNotFoundByFilterByRoleMap = {
     STUDENT   : {
-      appointments  : STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.student.appointments],
+      appointments: STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.student.appointments],
     },
     PROFESSOR : {
-      appointments  : PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.professor.appointments],
+      appointments: PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.professor.appointments],
     }
   } as const;
 
@@ -204,7 +204,7 @@ export const UserDetails = (): React.JSX.Element => {
                 </li>
 
                 <li className='text-sm text-orange-400 font-semibold'>
-                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointmentsList.filter((appointment) => appointment.status === 'PENDING').length ?? 'Nenhuma' }</span>
+                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointmentsList.filter((appointment) => appointment.status === 'PENDING').length || 'Nenhuma' }</span>
                 </li>
               </>
             }
@@ -217,7 +217,7 @@ export const UserDetails = (): React.JSX.Element => {
 
             { user.role === 'PROFESSOR' &&
               <li className='text-sm text-orange-400 font-semibold'>
-                Diciplina(s): <span className='text-cyan-500 font-normal'>{ formatter.format(user.disciplines) }</span>
+                Diciplina(s): <span className='text-cyan-500 font-normal'>{ formatter.format(user.disciplines) || 'Nenhuma' }</span>
               </li>
             }
 
@@ -261,10 +261,51 @@ export const UserDetails = (): React.JSX.Element => {
                       smVersion
                       key={appointment.id}
                       { ...appointment }
-                      user={{
-                        photo : null,
-                        name  : appointment.user.name,
-                      }}
+                    />
+                  ))
+                ) : (
+                  <NoContent
+                    Icon={noAppointmentsContent?.Icon}
+                    message={noAppointmentsContent?.message ?? 'Indisponível'}
+                  />
+                )}
+              </div>
+            </div>     
+
+            <div className='flex flex-col items-center mt-2 gap-3'>
+              <h3 className='text-cyan-500 text-lg font-semibold flex items-center gap-1.5'>
+                <FaExclamation size={16}/>
+                Solicitações
+              </h3>
+
+              <div className='flex gap-2 w-full'>
+                <Input.Search
+                  onChange={(e) => setSearchValue(prev => ({ ...prev, appointment: e.target.value }))}
+                  onClear={() => setSearchValue(prev => ({ ...prev, appointment: '' }))}
+                  placeholder='Pesquisar...'
+                  value={searchValue.appointment}
+                  customStyle={{ input: 'flex-2' }}
+                />
+
+                <Select.Default
+                  Icon={() => <FaFilter size={13}/>}
+                  placeholder='Filtro'
+                  optionsSchema={filtersByRoleMap[user.role].appointments.schema}
+                  customStyle={{ container: '', options: { button: 'text-xs' } }}
+                  value={filtersByRoleMap[user.role].appointments.value}
+                  onSelect={(value) => filtersByRoleMap[user.role].appointments.setter(value as any)}
+                />
+              </div>
+
+              <div className='flex-1 min-h-0 max-h-74 flex w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
+                { appointmentsAndSolicitationsByRoleMap[user.role].appointments.length > 0 ? (
+                  appointmentsAndSolicitationsByRoleMap[user.role].appointments
+                  .filter((appointment) => appointment.status === 'PENDING' || appointment.status === 'ACCEPTED')
+                  .map(( appointment ) => (
+                    <Card.Solicitation
+                      smVersion
+                      key={appointment.id}
+                      { ...appointment }
                     />
                   ))
                 ) : (

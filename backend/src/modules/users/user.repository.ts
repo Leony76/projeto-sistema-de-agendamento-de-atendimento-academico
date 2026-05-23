@@ -189,7 +189,9 @@ export class UserRepository {
       prisma.appointment.count({
         where: {
           professorId : id,
-          status      : 'CONFIRMED',
+          status      : {
+            in: ['ACCEPTED', 'CONFIRMED']
+          },
         }
       }),
       
@@ -202,16 +204,14 @@ export class UserRepository {
 
       prisma.appointment.findFirst({
         where: {
-          professorId: id,
-          dateTime: { gte: new Date() },
-          status: 'CONFIRMED',
+          professorId : id,
+          dateTime    : { gte: new Date() },
+          status      : {
+            in: ['ACCEPTED', 'CONFIRMED']
+          },
         },
-        orderBy: {
-          dateTime: 'asc',
-        },
-        select: {
-          dateTime: true,
-        },
+        orderBy : { dateTime: 'asc' },
+        select  : { dateTime: true  },
       })
     ]);
 

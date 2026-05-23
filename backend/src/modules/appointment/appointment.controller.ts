@@ -4,6 +4,7 @@ import { ApiError } from "@backend/utils/apiError.util";
 import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import type { UserRole } from "@backend/generated/prisma/enums";
+import type { SolicitationDecision } from "@shared/types/solicitationDecision.type";
 
 export class AppointmentController {
 
@@ -46,6 +47,50 @@ export class AppointmentController {
     const { id, role } = req.params;
 
     const response = await AppointmentService.getUserSolicitations(role as UserRole, Number(id));
+
+    return res.status(200).json(response);
+  }
+
+  public static async acceptOrDenyAppointmentSolicitation(req: Request, res: Response) {
+
+    const { solicitationId, decision } = req.params;
+
+    const decisionDone = await AppointmentService.acceptOrDenyAppointmentSolicitation(
+      Number(solicitationId), 
+      decision as SolicitationDecision
+    );
+
+    const response: ApiResponse<{ decision: SolicitationDecision }> = {
+      data    : { decision: decisionDone.decision },
+      success : true,
+      message : decisionDone.decision === 'ACCEPTED'
+        ? 'Solicitação aceita com sucesso!'
+        : 'Solicitação rejeitada com sucesso!'
+    };
+
+    return res.status(200).json(response);
+  }
+
+  public static async getUserAppointments(req: Request, res: Response) {
+
+    const { id, role } = req.params;
+
+    const response = await AppointmentService.getUserAppointments(Number(id), role as UserRole);
+
+    return res.status(200).json(response);
+  }
+
+  public static async markAppointmentAsDone(req: Request, res: Response) {
+
+    const { appointmentId } = req.params;
+
+    const markAppointmentAsDone = await AppointmentService.markAppointmentAsDone(Number(appointmentId));
+
+    const response: ApiResponse<{appointmentId: number}> = { 
+      data    : { appointmentId: markAppointmentAsDone.appointmentId },
+      message : 'Atendimento marcado como concluído com sucesso!',
+      success : true, 
+    };
 
     return res.status(200).json(response);
   }

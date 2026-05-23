@@ -11,7 +11,7 @@ export class AuthService {
       ApiResponse<
         L.LoginResponse<
           R.StudentRegistersHimselfResponse>>>
-            ('auth/register/student', data);
+            ('/auth/register/student', data);
 
     return response.data;
   };
@@ -23,7 +23,7 @@ export class AuthService {
     const response = await api.post<
       ApiResponse<
         R.ManagersRegistersStudentResponse>>
-          ('auth/manager/register/student', data);
+          ('/auth/manager/register/student', data);
 
     return response.data;
   };
@@ -35,7 +35,7 @@ export class AuthService {
     const response = await api.post<
       ApiResponse<
         R.ManagerRegistersProfessorResponse>>
-          ('auth/manager/register/professor', data);
+          ('/auth/manager/register/professor', data);
 
     return response.data;
   };
@@ -47,7 +47,7 @@ export class AuthService {
     const response = await api.post<
       ApiResponse<
         R.ManagerRegistersManagerResponse>>
-          ('auth/manager/register/manager', data);
+          ('/auth/manager/register/manager', data);
 
     return response.data;
   };
@@ -60,7 +60,7 @@ export class AuthService {
       ApiResponse<
         L.LoginResponse<
           L.LoginAsStudentResponse>>>
-            ('auth/login/student', data);
+            ('/auth/login/student', data);
 
     return response.data;
   };
@@ -73,7 +73,7 @@ export class AuthService {
       ApiResponse<
         L.LoginResponse<
           L.LoginAsGenericResponse>>>
-            ('auth/login/generic', data);
+            ('/auth/login/generic', data);
 
     return response.data;
   };

@@ -13,12 +13,10 @@ import { filterStudentSolicitationsFromProfessorView } from '@frontend/utils/fil
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
-import type { Professor, Student } from '@shared/types/userBasicInfos.type';
-import type { Appointment } from '@shared/types/appointment.type';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { ScheduleService } from '@frontend/services/schedule.service';
-import type { ProfessorAppointmentSolicitationResponse, StudentAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+import type { ProfessorAppointmentSolicitationResponse as ProfessorAppointmentSolicitation, StudentAppointmentSolicitationResponse as StudentAppointmentSolicitation } from '@shared/types/dtos/appointmentSolicitation.dto';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -37,6 +35,8 @@ const Requests = ():React.JSX.Element => {
     : 'STUDENT'
   ;
 
+  const [refresh, setRefresh] = useState(0);
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<FilterValue>({
     professor : 'none',
@@ -44,8 +44,8 @@ const Requests = ():React.JSX.Element => {
   });
 
   const [pendingAppointments, setPendingAppointments] = useState<{
-    fromStudent   : StudentAppointmentSolicitationResponse[],
-    fromProfessor : ProfessorAppointmentSolicitationResponse[],
+    fromStudent   : StudentAppointmentSolicitation[],
+    fromProfessor : ProfessorAppointmentSolicitation[],
   }>({
     fromProfessor : [],
     fromStudent   : [],
@@ -119,14 +119,17 @@ const Requests = ():React.JSX.Element => {
           case 'STUDENT':
             const studentSolicitations = await ScheduleService.getUserAppointmentSolicitations('STUDENT', user.id);
             setPendingAppointments(prev => ({ ...prev, fromStudent: studentSolicitations }))
+            break;
           default:
             const professorSolicitations = await ScheduleService.getUserAppointmentSolicitations('PROFESSOR', user.id);
+            setPendingAppointments(prev => ({ ...prev, fromProfessor: professorSolicitations }))
+            break;
         }      
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
     })();
-  }, []);
+  }, [refresh]);
 
   return (
     <Layout 
@@ -167,6 +170,7 @@ const Requests = ():React.JSX.Element => {
                 `}>
                     {filteredSolicitationsByRole[role].map(( solicitation ) => (
                       <Card.Solicitation
+                        refresh={() => setRefresh(prev => prev + 1)}
                         key={solicitation.id}
                         { ...solicitation  }            
                       />

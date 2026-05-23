@@ -21,22 +21,28 @@ import type { StudentHomeBriefInfosResponse as StudentHomeBriefInfos } from '@sh
 import { UserService } from '@frontend/services/user.service';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
+import type { StudentAppointmentResponse as StudentAppointment } from '@shared/types/dtos/appointment.dto';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { ScheduleService } from '@frontend/services/schedule.service';
 
 const Student = (): React.JSX.Element => {
 
   const { user } = useAuth();
   if (!user) return <Navigate to={'/'}/>
 
+  const { toast } = useToast();
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
 
-  const [appointments, setAppointments] = useState<Appointment<Pick<Professor, 'name' | 'photo'>>[]>([]);
+  const [studentAppointments, setStudentAppointments] = useState<StudentAppointment[]>([]);
   const [briefInfos, setBriefInfos] = useState<StudentHomeBriefInfos | null>(null);
   const [lastAppointment, setLastAppointment] = useState<Appointment<Pick<Professor, 'name'>> | null>(null);
 
   const filteredStudentAppointmentsData = filterStudentAppointments(
-    appointments,
+    studentAppointments,
     searchValue,
     filterValue,
   );
@@ -61,13 +67,15 @@ const Student = (): React.JSX.Element => {
   useEffect(() => {
     (async(id: number): Promise<void> => {
       try {
-        const [ studentBriefInfos ] = await Promise.all([
+        const [ studentBriefInfos, appointments ] = await Promise.all([
           UserService.getStudentHomeBriefInfos(id),
+          ScheduleService.getUserAppointments('STUDENT', user.id),
         ]);
 
         setBriefInfos(studentBriefInfos);
-      } catch ( error:unknown ) {
-        if (error instanceof Error) console.error(error.message);
+        setStudentAppointments(appointments);
+      } catch (error:unknown) {
+        toast(apiError(error), 'error');
       }
     })(user.id);
   },[]);
@@ -128,9 +136,8 @@ const Student = (): React.JSX.Element => {
               { filteredStudentAppointmentsData.length > 0 ? (
                 filteredStudentAppointmentsData.map((appointment) => (
                  <Card.Appointment
-                  from='STUDENT'
-                   key={appointment.id}
-                   { ...appointment }
+                  key={appointment.id}
+                  { ...appointment }
                  />
                ))
               ) : (

@@ -1,4 +1,5 @@
 import { prisma } from "@backend/lib/prisma";
+import { ApiError } from "@backend/utils/apiError.util";
 import type { AppointmentSolicitationRequest } from "@shared/types/dtos/appointmentSolicitation.dto";
 
 export class AppointmentRepository {
@@ -84,7 +85,7 @@ export class AppointmentRepository {
       where: {
         studentId: id,
         status: {
-          in: ['PENDING', 'REJECTED', 'CONFIRMED']
+          in: ['PENDING', 'CONFIRMED', 'ACCEPTED', 'CANCELED', 'REJECTED']
         }
       },
       select: {
@@ -113,6 +114,9 @@ export class AppointmentRepository {
     return await prisma.appointment.findMany({
       where: {
         professorId: id,
+        status: {
+          in: ['PENDING', 'CONFIRMED', 'ACCEPTED', 'CANCELED', 'REJECTED']
+        }
       },
       select: {
         id       : true,
@@ -132,4 +136,145 @@ export class AppointmentRepository {
       }
     })
   }
+
+  public static async acceptAppointmentSolicitation(
+    solicitationId : number,
+  ) {
+
+    const appointment = await prisma.appointment.findUnique({
+      where: {
+        id: solicitationId,
+      },
+      select: {
+        id       : true,
+        dateTime : true,
+      }
+    });
+
+    if (!appointment) {
+      throw new ApiError('Agendamento não encontrado', 404);
+    }
+
+    const availableRooms = await prisma.room.findMany({
+      where: {
+        status: 'AVAILABLE',
+
+        appointments: {
+          none: {
+            dateTime: appointment.dateTime,
+          }
+        }
+      },
+
+      select: {
+        id: true,
+      }
+    });
+
+    if (availableRooms.length === 0) {
+      throw new ApiError('Nenhuma sala disponível', 404);
+    }
+
+    const randomIndex = Math.floor(
+      Math.random() * availableRooms.length
+    );
+
+    const selectedRoom = availableRooms[randomIndex];
+
+    if (!selectedRoom) throw new ApiError('Nenhuma sala disponível', 404);
+
+    return await prisma.appointment.update({
+      where: {
+        id: solicitationId,
+      },
+      data: {
+        status : 'ACCEPTED',
+        roomId : selectedRoom.id,
+      }
+    });
+  }
+
+  public static async rejectAppointmentSolicitation(solicitationId : number) {
+    return await prisma.appointment.update({
+      where: {
+        id: solicitationId,
+      },
+      data: {
+        status: 'REJECTED',
+      },
+      select: { status: true }
+    });
+  }
+
+  public static async getProfessorAppointments(id: number) {
+    return await prisma.appointment.findMany({
+      where: { 
+        professorId : id,
+        status      : {
+          in: ['ACCEPTED', 'CONFIRMED']
+        }
+      },
+      select: {
+        id       : true,
+        reason   : true,
+        dateTime : true,
+        room     : { select: { name: true }},
+        status   : true,
+        student : {
+          select : {
+            user : {
+              select: {
+                name  : true,
+                photo : true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  public static async getStudentAppointments(id: number) {
+    return await prisma.appointment.findMany({
+      where: { 
+        studentId : id,
+        status    : {
+          in: ['ACCEPTED', 'CONFIRMED']
+        } 
+      },
+      select: {
+        id        : true,
+        reason    : true,
+        dateTime  : true,
+        room      : { select: { name: true }},
+        status    : true,
+        professor : {
+          select : {
+            disciplines : { select: { name: true }},
+            user : {
+              select: {
+                name  : true,
+                photo : true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  public static async markAppointmentAsDone(id: number) {
+    return await prisma.appointment.update({
+      where: { id },
+      data: {
+        status  : 'DONE',
+        history : {
+          create : {}
+        }
+      },
+      select: {
+        id: true,
+      }
+    });
+  } 
 }

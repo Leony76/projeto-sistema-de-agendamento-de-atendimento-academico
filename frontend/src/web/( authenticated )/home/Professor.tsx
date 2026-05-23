@@ -17,14 +17,14 @@ import type { ProfessorAvailability } from '@shared/types/professorAvailability.
 import type { ProfessorHomeBriefInfosResponse as ProfessorHomeBriefInfos } from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { Section } from '@frontend/components/section';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
-import type { Appointment } from '@shared/types/appointment.type';
-import type { Student } from '@shared/types/userBasicInfos.type';
 import { UserService } from '@frontend/services/user.service';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
 import { ProfessorService } from '@frontend/services/professor.service';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
+import type { ProfessorAppointmentResponse as ProfessorAppointment } from '@shared/types/dtos/appointment.dto';
+import { ScheduleService } from '@frontend/services/schedule.service';
 
 const Professor = (): React.JSX.Element => {
 
@@ -40,7 +40,7 @@ const Professor = (): React.JSX.Element => {
   
   const [ availability, setAvailability ] = useState<ProfessorAvailability[]>([]);
   
-  const [ professorAppointments, setProfessorAppointments ] = useState<Appointment<Pick<Student, 'name' | 'photo'>>[]>([]);
+  const [ professorAppointments, setProfessorAppointments ] = useState<ProfessorAppointment[]>([]);
   const [ professorBriefInfos, setProfessorBriefInfos ] = useState<ProfessorHomeBriefInfos | null>(null);
 
   const BRIEF_RENDER = [
@@ -66,28 +66,24 @@ const Professor = (): React.JSX.Element => {
     },
   );
 
+  const handleRemoveAppointment = (appointmentId: number) => {
+    setProfessorAppointments(prev =>
+      prev.filter((appointment) => appointment.id !== appointmentId)
+    );
+  };
+  
   useEffect(() => {
     (async(id: number) => {
       try {
-        const [ professorBriefInfos, availability ] = await Promise.all([
-          UserService.getProfessorHomeBriefInfos(id),
+        const [ availability, appointments, professorBriefInfos ] = await Promise.all([
           ProfessorService.getAvailability(id),
-        ]);
-
+          ScheduleService.getUserAppointments('PROFESSOR', user.id),
+          UserService.getProfessorHomeBriefInfos(id),
+        ]); 
+        
+        setAvailability(availability);
         setProfessorBriefInfos(professorBriefInfos);
-        setAvailability(availability)
-      } catch (error:unknown) {
-        toast(apiError(error), 'error');
-      }
-    })(user.id);
-  },[]);
-
-  useEffect(() => {
-    (async(id: number) => {
-      try {
-        const availability = await ProfessorService.getAvailability(id);
-
-        setAvailability(availability)
+        setProfessorAppointments(appointments);
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
@@ -141,7 +137,7 @@ const Professor = (): React.JSX.Element => {
               { filteredStudentAppointmentsData.length > 0 ? (
                 filteredStudentAppointmentsData.map((appointment) => (
                   <Card.Appointment
-                    from='PROFESSOR'
+                    onDone={handleRemoveAppointment}
                     key={appointment.id}
                     { ...appointment }
                   />

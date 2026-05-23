@@ -1,4 +1,5 @@
 import { AppointmentStatus } from "@backend/generated/prisma/enums";
+import { SolicitationDecision } from "../solicitationDecision.type";
 
 export type AppointmentSolicitationRequest = {
   readonly studentId   : number;
@@ -17,6 +18,7 @@ export type StudentAppointmentSolicitationResponse = {
   reason    : string;
   dateTime  : string;
   status    : AppointmentStatus;
+  from      : 'STUDENT'
   professor : {
     name        : string;
     photo       : string | null;
@@ -29,6 +31,7 @@ export type ProfessorAppointmentSolicitationResponse = {
   reason   : string;
   dateTime : string;
   status   : AppointmentStatus;
+  from     : 'PROFESSOR'
   student  : {
     name  : string;
     photo : string | null;
@@ -36,6 +39,6 @@ export type ProfessorAppointmentSolicitationResponse = {
 };
 
 export type UserAppointmentSolicitationResponse =
-| StudentAppointmentSolicitationResponse
+| StudentAppointmentSolicitationResponse   
 | ProfessorAppointmentSolicitationResponse
 ;

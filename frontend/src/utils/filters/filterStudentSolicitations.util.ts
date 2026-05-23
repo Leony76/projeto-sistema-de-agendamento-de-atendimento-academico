@@ -1,19 +1,18 @@
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
 import { STUDENT_SOLICITATIONS_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
-import type { Appointment } from "@shared/types/appointment.type";
-import type { Professor } from "@shared/types/userBasicInfos.type";
+import type { StudentAppointmentSolicitationResponse as StudentAppointmentSolicitation } from "@shared/types/dtos/appointmentSolicitation.dto";
 
 export const filterStudentSolicitations = (
-  studentSolicitationsData : Appointment<Pick<Professor, 'name' | 'photo' | 'disciplines'>>[],
+  studentSolicitationsData : StudentAppointmentSolicitation[],
   searchValue              : string,
   filterValue              : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'],
-): Appointment<Pick<Professor, 'name' | 'photo' | 'disciplines'>>[] => {
+): StudentAppointmentSolicitation[] => {
   return studentSolicitationsData.filter((solicitation) => {
     const search = searchValue.toLowerCase();
 
     const matchesSearch =
-      solicitation.user.name.toLowerCase().includes(search) 
+      solicitation.professor.name.toLowerCase().includes(search) 
       ||
       formatTime(solicitation.dateTime).toLowerCase().includes(search)
       ||
@@ -40,10 +39,10 @@ export const filterStudentSolicitations = (
 
     switch (filterValue) {
       case 'AZProfessorName':
-        return a.user.name.localeCompare(b.user.name);
+        return a.professor.name.localeCompare(b.professor.name);
 
       case 'ZAProfessorName':
-        return b.user.name.localeCompare(a.user.name);
+        return b.professor.name.localeCompare(a.professor.name);
 
       case 'mostRecent':
         return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();

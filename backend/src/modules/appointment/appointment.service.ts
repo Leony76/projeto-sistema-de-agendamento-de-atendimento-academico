@@ -9,6 +9,10 @@ import type { AppointmentSolicitationRequest, AppointmentSolicitationResponse, U
 import type { UserRole } from '@backend/generated/prisma/enums';
 import { studentSolicitationsMapper } from './mappers/studentSolicitations.mapper';
 import { professorSolicitationsMapper } from './mappers/professorSolicitations.mapper';
+import type { SolicitationDecision } from '@shared/types/solicitationDecision.type';
+import type { UserAppointmentResponse } from '@shared/types/dtos/appointment.dto';
+import { studentAppointmentsMapper } from './mappers/studentAppointments.mapper';
+import { professorAppointmentsMapper } from './mappers/professorAppointments.mapper';
 
 export class AppointmentService {
 
@@ -65,6 +69,7 @@ export class AppointmentService {
   }
 
 
+
   public static async solicitateAppointment(
     data: AppointmentSolicitationRequest
   ): Promise<AppointmentSolicitationResponse> {
@@ -79,6 +84,7 @@ export class AppointmentService {
   }
 
 
+
   public static async getUserSolicitations(role: UserRole, id: number): Promise<UserAppointmentSolicitationResponse[]> {
     switch (role) {
       case 'PROFESSOR': 
@@ -88,5 +94,53 @@ export class AppointmentService {
         const studentSolicitations = await AppointmentRepository.getStudentSolicitations(id);
         return studentSolicitationsMapper(studentSolicitations);
     }
+  }
+
+
+
+  public static async acceptOrDenyAppointmentSolicitation(
+    solicitationId : number,
+    decision       : SolicitationDecision
+  ): Promise<{ decision: SolicitationDecision }> {
+    switch (decision) {
+      case 'ACCEPTED':
+        await AppointmentRepository.acceptAppointmentSolicitation(solicitationId);
+        break;
+      case 'REJECTED':
+        const response = await AppointmentRepository.rejectAppointmentSolicitation(solicitationId);
+        if (!response) throw new ApiError('Não foi possível rejeitar essa solicitação, pois ela não existe!', 404);
+        break;
+    }
+
+    return { decision };
+  }
+
+
+  
+  public static async getUserAppointments(
+    userId : number,
+    role   : UserRole
+  ): Promise<UserAppointmentResponse[]> {
+    const apiError = 'Não foi possível trazer sua agenda de encontros, pois ela não foi encontrada!';
+
+    switch (role) {
+      case 'PROFESSOR':
+        const professorAppointments = await AppointmentRepository.getProfessorAppointments(userId);
+        if (!professorAppointments)  throw new ApiError(apiError, 404);
+        return professorAppointmentsMapper(professorAppointments);
+      default:
+        const studentAppointments = await AppointmentRepository.getStudentAppointments(userId);
+        if (!studentAppointments) throw new ApiError(apiError, 404);
+        return studentAppointmentsMapper(studentAppointments);
+    }
+  }
+
+
+
+  public static async markAppointmentAsDone(appointmentId: number): Promise<{appointmentId: number}> {
+
+    const markAsDone = await AppointmentRepository.markAppointmentAsDone(appointmentId);
+    
+    return { appointmentId: markAsDone.id };
   }
 }

@@ -7,5 +7,5 @@ export const APPOINTMENT_STATUS_MAP: Record<AppointmentStatus, string> = {
   PENDING     : 'A confirmar',
   REJECTED    : 'Rejeitado',
   DONE        : 'Finalizado',
-  NO_SHOW     : 'Não realizado',
+  NO_SHOW     : 'Não comparecido',
 } as const;
