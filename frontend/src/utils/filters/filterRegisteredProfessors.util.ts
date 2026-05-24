@@ -1,5 +1,8 @@
 import type { REGISTERED_PROFESSORS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
 import type { ActiveProfessorsToManagerList } from "@shared/types/dtos/managerUsersList.dto";
+import { createFilter } from "./createFilter.util";
+import { formatDate } from "../formats/formatDate.util";
+import { formatTime } from "../formats/formatTime.util";
 
 export const filterRegisteredProfessors = (
   registeredProfessorsData : ActiveProfessorsToManagerList[],
@@ -7,49 +10,48 @@ export const filterRegisteredProfessors = (
   filterValue              : typeof REGISTERED_PROFESSORS_FILTER_MAP[number]['value'],
 ): ActiveProfessorsToManagerList[] => {
   
-  return registeredProfessorsData.filter(( professor ) => {
-    const search = searchValue.toLowerCase();
+  const getDisciplinesString = (disciplines: string[]) =>
+    disciplines.join(', ');
 
-    const matchesSearch =
-      professor.name.toLowerCase().includes(search) 
-      ||
-      professor.disciplines.some((discipline) => discipline.toLowerCase().includes(search))
-      ||
-      professor.id.toString().includes(search)
-      ||
-      professor.registeredAt.toLowerCase().includes(search)
-    ;
+  return createFilter(
+    registeredProfessorsData,
+    searchValue,
+    filterValue,
+    {
+      searchFields: [
+        (professor) => professor.email,
+        (professor) => professor.id.toString(),
+        (professor) => professor.disciplines.join(', '),
+        (professor) => professor.name,
+        (professor) => formatDate(professor.registeredAt),
+        (professor) => formatTime(professor.registeredAt),
+      ],
 
-    if (!filterValue) return matchesSearch;
+      sorts: {
+        mostRecent: (a, b) =>
+          new Date(b.registeredAt).getTime() -
+          new Date(a.registeredAt).getTime(),
 
-    return matchesSearch;
-  }).sort((a, b) => {
-    if (!filterValue) return 0;
+        mostOld: (a, b) =>
+          new Date(a.registeredAt).getTime() -
+          new Date(b.registeredAt).getTime(),
 
-    const getDisciplinesString = (professor: ActiveProfessorsToManagerList) =>
-      professor.disciplines.map(discipline => discipline).join(', ');
+        AZProfessorName: (a, b) => a.name.localeCompare(b.name),
 
-    switch (filterValue) {
-      case 'mostRecent':
-        return new Date(b.registeredAt).getTime() - new Date(a.registeredAt).getTime();
+        ZAProfessorName: (a, b) => b.name.localeCompare(a.name),
 
-      case 'mostOld':
-        return new Date(a.registeredAt).getTime() - new Date(b.registeredAt).getTime();
-    
-      case 'AZProfessorName':
-        return a.name.localeCompare(b.name);
+        AZDisciplines: (a, b) =>
+          getDisciplinesString(a.disciplines).localeCompare(
+            getDisciplinesString(b.disciplines)
+          ,
+        ),
 
-      case 'ZAProfessorName':
-        return b.name.localeCompare(a.name);
-
-      case 'AZDisciplineName':
-        return getDisciplinesString(a).localeCompare(getDisciplinesString(b));
-
-      case 'ZADisciplineName':
-        return getDisciplinesString(b).localeCompare(getDisciplinesString(a));
-
-      default:
-        return 0;
-    }
-  });
+        ZADisciplines: (a, b) =>
+          getDisciplinesString(b.disciplines).localeCompare(
+            getDisciplinesString(a.disciplines)
+          ,
+        ),
+      }
+    },
+  );
 }

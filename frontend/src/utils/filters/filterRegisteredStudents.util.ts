@@ -1,5 +1,8 @@
 import type { REGISTERED_STUDENTS_FILTER_MAP } from "@frontend/constants/maps/filters/registeredUsers.map.filter";
 import type { ActiveStudentsToManagerList } from "@shared/types/dtos/managerUsersList.dto";
+import { createFilter } from "./createFilter.util";
+import { formatDate } from "../formats/formatDate.util";
+import { formatTime } from "../formats/formatTime.util";
 
 export const filterRegisteredStudents = (
   registeredStudentsData : ActiveStudentsToManagerList[],
@@ -7,42 +10,33 @@ export const filterRegisteredStudents = (
   filterValue            : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'],
 ): ActiveStudentsToManagerList[] => {
   
-  return registeredStudentsData.filter((student) => {
-    const search = searchValue.toLowerCase();
+  return createFilter(
+    registeredStudentsData,
+    searchValue,
+    filterValue,
+    {
+      searchFields: [
+        (student) => student.email,
+        (student) => student.id.toString(),
+        (student) => student.name,
+        (student) => student.ra,
+        (student) => formatDate(student.registeredAt),
+        (student) => formatTime(student.registeredAt),
+      ],
 
-    const matchesSearch =
-      student.name.toLowerCase().includes(search) 
-      ||
-      student.email.toLowerCase().includes(search) 
-      ||
-      student.ra.includes(search) 
-      ||
-      student.id.toString().includes(search)
-      ||
-      student.registeredAt.toLowerCase().includes(search)
-    ;
+      sorts: {
+        mostRecent: (a, b) =>
+          new Date(b.registeredAt).getTime() -
+          new Date(a.registeredAt).getTime(),
 
-    if (!filterValue) return matchesSearch;
+        mostOld: (a, b) =>
+          new Date(a.registeredAt).getTime() -
+          new Date(b.registeredAt).getTime(),
 
-    return matchesSearch;
-  }).sort((a, b) => {
-    if (!filterValue) return 0;
-
-    switch (filterValue) {
-      case 'mostRecent':
-        return new Date(b.registeredAt).getTime() - new Date(a.registeredAt).getTime();
-
-      case 'mostOld':
-        return new Date(a.registeredAt).getTime() - new Date(b.registeredAt).getTime();
-
-      case 'AZStudentName':
-        return a.name.localeCompare(b.name);
-
-      case 'ZAStudentName':
-        return b.name.localeCompare(a.name);
-
-      default:
-        return 0;
+        AZStudentName: (a, b) => a.name.localeCompare(b.name),
+        
+        ZAStudentName: (a, b) => b.name.localeCompare(a.name),
+      },
     }
-  });
+  );
 }

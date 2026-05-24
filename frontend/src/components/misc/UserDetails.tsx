@@ -7,14 +7,14 @@ import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Select } from '../select';
 import { Input } from '../input';
 import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaFilter, FaUserAltSlash } from 'react-icons/fa';
-import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
+import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/userAppointments.map.filter';
 import { FaPersonCircleQuestion, FaClipboardQuestion } from 'react-icons/fa6';
 import { Card } from '../card';
 import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
 import { filterStudentAppointments } from '@frontend/utils/filters/filterStudentAppointments.util';
 import { Button } from '../button';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
-import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
+import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/userAppointments.map.filter';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { TiInfoLarge } from 'react-icons/ti';
 import { UserService } from '@frontend/services/user.service';
@@ -84,7 +84,7 @@ export const UserDetails = (): React.JSX.Element => {
   const filtersByRoleMap = {
     STUDENT: {
       appointments: {
-        schema  : 'STUDENT_APPOINTMENT_FILTER',
+        schema  : 'STUDENT_APPOINTMENTS_FILTER',
         value   : userDetailsFilter.student.appointments,
         setter : (value: FilterValue['student']['appointments']) => setUserDetailsFilter(prev => ({
           ...prev, student: { ...prev.student, appointments: value }
@@ -93,7 +93,7 @@ export const UserDetails = (): React.JSX.Element => {
     },
     PROFESSOR: {
       appointments: {
-        schema : 'PROFESSOR_APPOINTMENT_FILTER',
+        schema : 'PROFESSOR_APPOINTMENTS_FILTER',
         value  : userDetailsFilter.professor.appointments,
         setter : (value: FilterValue['professor']['appointments']) => setUserDetailsFilter(prev => ({
           ...prev, professor: { ...prev.professor, appointments: value }

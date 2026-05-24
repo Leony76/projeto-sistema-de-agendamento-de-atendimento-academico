@@ -12,7 +12,7 @@ import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPerso
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import { filterStudentAppointments } from '@frontend/utils/filters/filterStudentAppointments.util';
 import NoContent from '@frontend/components/misc/NoContent';
-import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/studentAppoitment.map.filter';
+import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/userAppointments.map.filter'; 
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import type { Appointment } from '@shared/types/appointment.type';
@@ -126,7 +126,7 @@ const Student = (): React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema='STUDENT_APPOINTMENT_FILTER'
+                optionsSchema='STUDENT_APPOINTMENTS_FILTER'
                 value={filterValue}
                 onSelect={(value) => setFilterValue(value as typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value'])}
               />

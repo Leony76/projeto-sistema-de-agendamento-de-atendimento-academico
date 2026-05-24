@@ -1,47 +1,42 @@
-import type { ProfessorAppointmentHistory } from "@shared/types/appointmentHistory.type";
+import type { ProfessorAppointmentHistoryResponse as ProfessorAppointmentHistory } from "@shared/types/dtos/appointmentHistory.dto";
 import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
-import type { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "@frontend/constants/maps/filters/professorAppointmentsHistory.map.filter";
+import type { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP } from "@frontend/constants/maps/filters/userAppointmentHistory.map.filter";
+import { createFilter } from "./createFilter.util";
 
 export const filterProfessorAppointmentsHistory = (
   studentAppointmentsHistoryData : ProfessorAppointmentHistory[],
   searchValue              : string,
   filterValue              : typeof PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'],
 ): ProfessorAppointmentHistory[] => {
-  return studentAppointmentsHistoryData.filter(( history ) => {
-    const search = searchValue.toLowerCase();
 
-    const matchesSearch =
-      history.student.name.toLowerCase().includes(search) 
-      ||
-      history.reason.toLowerCase().includes(search) 
-      ||
-      formatTime(history.appoitmentDateTime).toLowerCase().includes(search)
-      ||
-      formatDate(history.appoitmentDateTime).toLowerCase().includes(search)
-    ;
+  return createFilter(
+    studentAppointmentsHistoryData,
+    searchValue,
+    filterValue,
+    {
+      searchFields: [
+        (history) => history.student.name,
+        (history) => history.reason,
+        (history) => formatTime(history.dateTime),
+        (history) => formatDate(history.dateTime),
+      ],
 
-    if (!filterValue) return matchesSearch;
+      sorts: {
+        AZStudentName: (a, b) =>
+          a.student.name.localeCompare(b.student.name),
 
-    return matchesSearch;
-  }).sort((a, b) => {
-    if (!filterValue) return 0;
+        ZAStudentName: (a, b) =>
+          b.student.name.localeCompare(a.student.name),
 
-    switch (filterValue) {
-      case 'AZStudentName':
-        return a.student.name.localeCompare(b.student.name);
+        mostRecent: (a, b) =>
+          new Date(b.dateTime).getTime() -
+          new Date(a.dateTime).getTime(),
 
-      case 'ZAStudentName':
-        return b.student.name.localeCompare(a.student.name);
-
-      case 'mostRecent':
-        return new Date(b.appoitmentDateTime).getTime() - new Date(a.appoitmentDateTime).getTime();
-
-      case 'mostOld':
-        return new Date(a.appoitmentDateTime).getTime() - new Date(b.appoitmentDateTime).getTime();
-
-      default:
-        return 0;
-    }
-  });
+        mostOld: (a, b) =>
+          new Date(a.dateTime).getTime() -
+          new Date(b.dateTime).getTime(), 
+      }
+    },
+  );
 }

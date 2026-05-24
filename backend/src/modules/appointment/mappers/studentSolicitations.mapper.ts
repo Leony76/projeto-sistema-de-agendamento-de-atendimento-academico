@@ -6,6 +6,8 @@ type MapperRequest = {
   reason: string;
   dateTime: Date;
   status: AppointmentStatus;
+  registeredAt: Date;
+  updatedAt: Date;
   professor: {
     user: {
       name: string;
@@ -25,6 +27,8 @@ export const studentSolicitationsMapper = (
     dateTime : solicitation.dateTime.toISOString(),
     reason   : solicitation.reason,
     status   : solicitation.status,
+    createdAt: solicitation.registeredAt.toISOString(),
+    updatedAt: solicitation.updatedAt.toISOString(),
     from     : 'STUDENT', 
     professor : {
       disciplines : solicitation.professor.disciplines.map((discipline) => discipline.name),

@@ -93,6 +93,8 @@ export class AppointmentRepository {
         reason   : true,
         dateTime : true,
         status   : true,
+        registeredAt: true,
+        updatedAt: true,
         professor: {
           select: {
             user: {
@@ -123,6 +125,8 @@ export class AppointmentRepository {
         reason   : true,
         dateTime : true,
         status   : true,
+        registeredAt: true,
+        updatedAt: true,
         student: {
           select: {
             user: {
@@ -215,11 +219,13 @@ export class AppointmentRepository {
         }
       },
       select: {
-        id       : true,
-        reason   : true,
-        dateTime : true,
-        room     : { select: { name: true }},
-        status   : true,
+        id           : true,
+        reason       : true,
+        dateTime     : true,
+        room         : { select: { name: true }},
+        status       : true,
+        registeredAt : true,
+        updatedAt    : true,
         student : {
           select : {
             user : {
@@ -243,11 +249,13 @@ export class AppointmentRepository {
         } 
       },
       select: {
-        id        : true,
-        reason    : true,
-        dateTime  : true,
-        room      : { select: { name: true }},
-        status    : true,
+        id           : true,
+        reason       : true,
+        dateTime     : true,
+        room         : { select: { name: true }},
+        status       : true,
+        registeredAt : true,
+        updatedAt    : true,
         professor : {
           select : {
             disciplines : { select: { name: true }},

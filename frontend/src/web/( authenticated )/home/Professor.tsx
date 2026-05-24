@@ -8,7 +8,7 @@ import { Card } from '@frontend/components/card';
 import Calendar from 'react-calendar';
 import '@frontend/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
-import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/professorAppointments.map.filter';
+import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/userAppointments.map.filter';
 import NoContent from '@frontend/components/misc/NoContent';
 import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
@@ -127,7 +127,7 @@ const Professor = (): React.JSX.Element => {
               <Select.Default
                 Icon={() => <FaFilter size={13}/>}
                 placeholder='Filtro'
-                optionsSchema='PROFESSOR_APPOINTMENT_FILTER'
+                optionsSchema='PROFESSOR_APPOINTMENTS_FILTER'
                 value={filterValue}
                 onSelect={(value) => setFilterValue(value as typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'])}
               />

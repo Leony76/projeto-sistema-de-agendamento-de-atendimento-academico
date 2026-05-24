@@ -1,5 +1,6 @@
-import type { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "@frontend/constants/maps/filters/professorAppointments.map.filter";
+import type { PROFESSOR_APPOINTMENTS_FILTER_MAP } from "@frontend/constants/maps/filters/userAppointments.map.filter";
 import type { ProfessorAppointmentResponse as ProfessorAppointment } from "@shared/types/dtos/appointment.dto";
+import { createFilter } from "./createFilter.util";
 
 export const filterProfessorAppointments = (
   professorAppoitmentsData : ProfessorAppointment[],
@@ -7,57 +8,35 @@ export const filterProfessorAppointments = (
   filterValue              : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'],
 ): ProfessorAppointment[] => {
   
-  return professorAppoitmentsData.filter((appointment) => {
-    const search = searchValue.toLowerCase();
+  return createFilter(
+    professorAppoitmentsData,
+    searchValue,
+    filterValue,
+    {
+      searchFields: [
+        (appointment) => appointment.student.name,
+        (appointment) => appointment.reason,
+        (appointment) => appointment.room,
+        (appointment) => appointment.dateTime,
+      ],
 
-    const matchesSearch =
-      appointment.student.name.toLowerCase().includes(search) 
-      ||
-      appointment.reason.toLowerCase().includes(search)
-      ||
-      appointment.room?.toLowerCase().includes(search)
-      ||
-      appointment.dateTime.toLowerCase().includes(search)
-    ;
+      sorts: {
+        mostRecent: (a, b) =>
+          new Date(b.dateTime).getTime() 
+          -
+          new Date(a.dateTime).getTime(),
 
-    if (!filterValue) return matchesSearch;
+        mostOld: (a, b) =>
+          new Date(a.dateTime).getTime() 
+          -
+          new Date(b.dateTime).getTime(),
 
-    switch (filterValue) {
-      case 'nextOnes':
-        return (
-          matchesSearch 
-          &&
-          new Date(appointment.dateTime) > new Date()
-        );
+        AZStudentName: (a, b) =>
+          a.student.name.localeCompare(b.student.name),
 
-      case 'lastOnes':
-        return (
-          matchesSearch 
-          &&
-          new Date(appointment.dateTime) < new Date()
-        );
-
-      default:
-        return matchesSearch;
+        ZAStudentName: (a, b) =>
+          b.student.name.localeCompare(a.student.name),      
+      }
     }
-  }).sort((a, b) => {
-    if (!filterValue) return 0;
-
-    switch (filterValue) {
-      case 'mostRecent':
-        return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();
-
-      case 'mostOld':
-        return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
-
-      case 'AZStudentName':
-        return a.student.name.localeCompare(b.student.name);
-
-      case 'ZAStudentName':
-        return b.student.name.localeCompare(a.student.name);
-      
-      default:
-        return 0;
-    }
-  });
+  )
 }

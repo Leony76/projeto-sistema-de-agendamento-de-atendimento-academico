@@ -1,87 +1,63 @@
 import { AVAILABLE_DAYS_MAP } from "@shared/utils/days.map";
 import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@frontend/constants/maps/filters/toScheduleProfessors.map.filter";
 import type { AvailableProfessorToScheduleResponse } from "@shared/types/dtos/availableProfessorToSchedule";
+import { createFilter } from "./createFilter.util";
 
 export const filterToScheduleProfessors = (
-  professorsData : AvailableProfessorToScheduleResponse[],
-  searchValue    : string,
-  filterValue    : typeof TO_SCHEDULE_PROFESSORS_FILTER_MAP[number]['value'],
+  professorsData: AvailableProfessorToScheduleResponse[],
+  searchValue: string,
+  filterValue: typeof TO_SCHEDULE_PROFESSORS_FILTER_MAP[number]['value'],
 ): AvailableProfessorToScheduleResponse[] => {
 
-  return professorsData.filter((professor) => {
-    const search = searchValue.toLowerCase();
+  return createFilter(
+    professorsData,
+    searchValue,
+    filterValue,
+    {
+      searchFields: [
+        (professor) => professor.name,
+        (professor) => professor.disciplines.join(', '),
+        (professor) => professor.availableDays
+          .map((day) => AVAILABLE_DAYS_MAP[day])
+          .join(', ')
+        ,
+      ],
 
-    const daysPT = professor.availableDays.map((day) =>
-      AVAILABLE_DAYS_MAP[day].toLowerCase()
-    );
+      filters: {
+        includesMonday: (professor) =>
+          professor.availableDays.includes('MONDAY'),
 
-    const matchesSearch =
-      professor.name.toLowerCase().includes(search) ||
-      professor.disciplines.some((d) =>
-        d.toLowerCase().includes(search)
-      ) ||
-      daysPT.some((day) => day.includes(search))
+        includesTuesday: (professor) =>
+          professor.availableDays.includes('TUESDAY'),
 
-    if (!filterValue) return matchesSearch;
+        includesWednesday: (professor) =>
+          professor.availableDays.includes('WEDNESDAY'),
 
-    switch (filterValue) {
-      case 'includesMonday':
-        return (
-          matchesSearch &&
-          professor.availableDays.some((day) => day === 'MONDAY')
-        );
+        includesThursday: (professor) =>
+          professor.availableDays.includes('THURSDAY'),
 
-      case 'includesTuesday':
-        return (
-          matchesSearch &&
-          professor.availableDays.some((day) => day === 'TUESDAY')
-        );
+        includesFriday: (professor) =>
+          professor.availableDays.includes('FRIDAY'),
 
-      case 'includesWednesday':
-        return (
-          matchesSearch &&
-          professor.availableDays.some((day) => day === 'WEDNESDAY')
-        );
+        includesSaturday: (professor) =>
+          professor.availableDays.includes('SATURDAY'),
+      },
 
-      case 'includesThursday':
-        return (
-          matchesSearch &&
-          professor.availableDays.some((day) => day === 'THURSDAY')
-        );
+      sorts: {
+        AZProfessorName: (a, b) =>
+          a.name.localeCompare(b.name),
 
-      case 'includesFriday':
-        return (
-          matchesSearch &&
-          professor.availableDays.some((day) => day === 'FRIDAY')
-        );
+        ZAProfessorName: (a, b) =>
+          b.name.localeCompare(a.name),
 
-      case 'includesSaturday':
-        return (
-          matchesSearch &&
-          professor.availableDays.some((day) => day === 'SATURDAY')
-        );
+        AZDisciplines: (a, b) =>
+          a.disciplines.join(',')
+            .localeCompare(b.disciplines.join(',')),
 
-      default:
-        return matchesSearch;
-    }
-  }).sort((a, b) => {
-    if (!filterValue) return 0;
-
-    switch (filterValue) {
-      case 'AZProfessorName':
-        return a.name.localeCompare(b.name);
-
-      case 'ZAProfessorName':
-        return b.name.localeCompare(a.name);
-
-      case 'AZDisciplines':
-        return a.disciplines.join(',').localeCompare(b.disciplines.join(','));
-
-      case 'ZADisciplines':
-        return b.disciplines.join(',').localeCompare(a.disciplines.join(','));
-
-      default:
-        return 0;
-    }
-  });
+        ZADisciplines: (a, b) =>
+          b.disciplines.join(',')
+            .localeCompare(a.disciplines.join(',')),
+      },
+    },
+  );
 };

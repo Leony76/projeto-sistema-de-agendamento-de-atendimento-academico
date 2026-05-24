@@ -20,6 +20,8 @@ export class HistoryRepository {
             dateTime : true,
             room     : { select: { name: true }},
             status   : true,
+            registeredAt: true,
+            updatedAt: true,
             professor: {
               select: {
                 disciplines: { select: { name: true }},
@@ -55,6 +57,8 @@ export class HistoryRepository {
             dateTime : true,
             room     : { select: { name: true }},
             status   : true,
+            registeredAt: true,
+            updatedAt: true,
             student  : {
               select : {
                 user: {

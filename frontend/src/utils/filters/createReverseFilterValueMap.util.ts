@@ -1,0 +1,9 @@
+export const createReverseFilterValueMap = <
+  T extends Record<string, string>
+>(
+  obj: T,
+) => {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [value, key]),
+  ) as Record<T[keyof T], keyof T>;
+};

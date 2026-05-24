@@ -18,7 +18,9 @@ export type StudentAppointmentSolicitationResponse = {
   reason    : string;
   dateTime  : string;
   status    : AppointmentStatus;
-  from      : 'STUDENT'
+  from      : 'STUDENT';
+  updatedAt : string;
+  createdAt : string;
   professor : {
     name        : string;
     photo       : string | null;
@@ -31,7 +33,9 @@ export type ProfessorAppointmentSolicitationResponse = {
   reason   : string;
   dateTime : string;
   status   : AppointmentStatus;
-  from     : 'PROFESSOR'
+  from     : 'PROFESSOR';
+  updatedAt : string;
+  createdAt : string;
   student  : {
     name  : string;
     photo : string | null;

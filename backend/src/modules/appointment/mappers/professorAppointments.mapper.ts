@@ -6,6 +6,8 @@ type MapperRequestData = {
   reason   : string;
   dateTime : Date;
   status   : AppointmentStatus;
+  registeredAt: Date;
+  updatedAt: Date;
   student : {
     user : {
       name  : string;
@@ -25,6 +27,8 @@ export const professorAppointmentsMapper = (
     reason   : appointment.reason,
     status   : appointment.status,
     dateTime : appointment.dateTime.toISOString(),
+    createdAt: appointment.registeredAt.toISOString(),
+    updatedAt: appointment.updatedAt.toISOString(),
     room     : appointment.room?.name ?? '[ Sala não encontrada ]',
     from     : 'PROFESSOR',
     student : {

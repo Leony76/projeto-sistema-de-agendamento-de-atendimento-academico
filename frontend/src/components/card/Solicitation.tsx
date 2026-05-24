@@ -17,6 +17,7 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { ScheduleService } from '@frontend/services/schedule.service';
 import type { SolicitationDecision } from '@shared/types/solicitationDecision.type';
+import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 
 type Props = {
   smVersion? : boolean;
@@ -173,7 +174,31 @@ const Solicitation = (props:Props): React.JSX.Element => {
               </span>
             </span>
           </div>
-        </div>  
+        </div> 
+        
+        <div className='self-end space-y-1'>
+          <div className='flex flex-col'>
+            <span className='text-[10px] italic text-cyan-400'>
+              Solicitado em
+            </span>
+
+            <span className='text-xs text-orange-400'>
+              { formatDateTime(props.createdAt) }
+            </span>
+          </div> 
+          
+          { props.updatedAt !== props.createdAt &&
+            <div className='flex flex-col'>
+              <span className='text-[10px] italic text-cyan-400'>
+                Atualizado em
+              </span>
+
+              <span className='text-xs text-orange-400'>
+                { formatDateTime(props.updatedAt) }
+              </span>
+            </div> 
+          }
+        </div>
 
         { (props.status === 'PENDING' && props.from === 'PROFESSOR') &&
           <div className='flex gap-2 self-end'>

@@ -1,3 +1,5 @@
+import { createFilterValueMap } from "@frontend/utils/filters/createFilterValueMap.util";
+
 export const TO_SCHEDULE_PROFESSORS_FILTER_MAP = [
   { value: 'none'              , label: 'Nenhum'              },
   { value: 'AZProfessorName'   , label: 'Professor [A-Z]'     },
@@ -13,6 +15,4 @@ export const TO_SCHEDULE_PROFESSORS_FILTER_MAP = [
 ] as const;
 
 export const TO_SCHEDULE_PROFESSORS_FILTER_VALUE_MAP = 
-  Object.fromEntries(
-    TO_SCHEDULE_PROFESSORS_FILTER_MAP.map((item) => [item.value, item.label]),
-);
+  createFilterValueMap(TO_SCHEDULE_PROFESSORS_FILTER_MAP);

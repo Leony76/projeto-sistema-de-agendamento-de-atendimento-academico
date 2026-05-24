@@ -2,56 +2,63 @@ import { formatTime } from "../formats/formatTime.util";
 import { formatDate } from "../formats/formatDate.util";
 import { STUDENT_SOLICITATIONS_FILTER_MAP } from "@frontend/constants/maps/filters/studentSolicitations.map.filter";
 import type { StudentAppointmentSolicitationResponse as StudentAppointmentSolicitation } from "@shared/types/dtos/appointmentSolicitation.dto";
+import { createFilter } from "./createFilter.util";
 
 export const filterStudentSolicitations = (
-  studentSolicitationsData : StudentAppointmentSolicitation[],
-  searchValue              : string,
-  filterValue              : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'],
+  studentSolicitationsData: StudentAppointmentSolicitation[],
+  searchValue: string,
+  filterValue: typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'],
 ): StudentAppointmentSolicitation[] => {
-  return studentSolicitationsData.filter((solicitation) => {
-    const search = searchValue.toLowerCase();
 
-    const matchesSearch =
-      solicitation.professor.name.toLowerCase().includes(search) 
-      ||
-      formatTime(solicitation.dateTime).toLowerCase().includes(search)
-      ||
-      formatDate(solicitation.dateTime).toLowerCase().includes(search)
+  return createFilter(
+    studentSolicitationsData,
+    searchValue,
+    filterValue,
+    {
+      searchFields: [
+        (solicitation) => solicitation.professor.name,
 
-    if (!filterValue) return matchesSearch;
+        (solicitation) =>
+          formatTime(solicitation.dateTime),
 
-    switch (filterValue) {
-      case 'accepted':
-        return matchesSearch && solicitation.status === 'ACCEPTED';
+        (solicitation) =>
+          formatDate(solicitation.dateTime),
+      ],
 
-      case 'pending':
-        return matchesSearch && solicitation.status === 'PENDING';
+      filters: {
+        accepted: (solicitation) =>
+          solicitation.status === 'ACCEPTED',
 
-      case 'rejected':
-        return matchesSearch && solicitation.status === 'REJECTED';
+        pending: (solicitation) =>
+          solicitation.status === 'PENDING',
 
-      default:
-        return matchesSearch;
-    }
-  })
-  .sort((a, b) => {
-    if (!filterValue) return 0;
+        rejected: (solicitation) =>
+          solicitation.status === 'REJECTED',
+      },
 
-    switch (filterValue) {
-      case 'AZProfessorName':
-        return a.professor.name.localeCompare(b.professor.name);
+      sorts: {
+        AZProfessorName: (a, b) =>
+          a.professor.name.localeCompare(b.professor.name),
 
-      case 'ZAProfessorName':
-        return b.professor.name.localeCompare(a.professor.name);
+        ZAProfessorName: (a, b) =>
+          b.professor.name.localeCompare(a.professor.name),
 
-      case 'mostRecent':
-        return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();
+        mostRecent: (a, b) =>
+          new Date(b.createdAt).getTime() -
+          new Date(a.createdAt).getTime(),
 
-      case 'mostOld':
-        return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
+        mostOld: (a, b) =>
+          new Date(a.createdAt).getTime() -
+          new Date(b.createdAt).getTime(),
 
-      default:
-        return 0;
-    }
-  });
-}
+        nextOnes: (a, b) =>
+          new Date(b.dateTime).getTime() -
+          new Date(a.dateTime).getTime(),
+
+        lastOnes: (a, b) =>
+          new Date(a.dateTime).getTime() -
+          new Date(b.dateTime).getTime(),
+      },
+    },
+  );
+};
