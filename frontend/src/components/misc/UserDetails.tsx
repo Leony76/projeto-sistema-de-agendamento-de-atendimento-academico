@@ -58,14 +58,14 @@ export const UserDetails = (): React.JSX.Element => {
   const appointmentsAndSolicitationsByRoleMap = {
     PROFESSOR: {
       appointments: filterProfessorAppointments(
-        user?.role === 'PROFESSOR' ? user.appointmentsList : [],
+        user?.role === 'PROFESSOR' ? user.appointments : [],
         searchValue.appointment,
         userDetailsFilter.professor.appointments,
       ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
     },
     STUDENT: {
       appointments: filterStudentAppointments(
-        user?.role === 'STUDENT' ? user.appointmentsList : [],
+        user?.role === 'STUDENT' ? user.appointments : [],
         searchValue.appointment,
         userDetailsFilter.student.appointments,
       ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
@@ -200,11 +200,11 @@ export const UserDetails = (): React.JSX.Element => {
             { user.role !== 'MANAGER' &&
               <>
                 <li className='text-sm text-orange-400 font-semibold'>
-                  Agendamentos: <span className='text-cyan-500 font-normal'>{ user.appointmentsList.length ?? 'Nenhuma' }</span>
+                  Agendamentos: <span className='text-cyan-500 font-normal'>{ user.appointments.length ?? 'Nenhuma' }</span>
                 </li>
 
                 <li className='text-sm text-orange-400 font-semibold'>
-                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointmentsList.filter((appointment) => appointment.status === 'PENDING').length || 'Nenhuma' }</span>
+                  Solicitações: <span className='text-cyan-500 font-normal'>{ user.appointments.filter((appointment) => appointment.status === 'PENDING').length || 'Nenhuma' }</span>
                 </li>
               </>
             }

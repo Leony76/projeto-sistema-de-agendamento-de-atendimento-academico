@@ -3,8 +3,8 @@ import type { ProfessorAppointmentResponse as ProfessorAppointment } from "@shar
 
 export const filterProfessorAppointments = (
   professorAppoitmentsData : ProfessorAppointment[],
-  searchValue            : string,
-  filterValue            : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'],
+  searchValue              : string,
+  filterValue              : typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value'],
 ): ProfessorAppointment[] => {
   
   return professorAppoitmentsData.filter((appointment) => {
@@ -56,7 +56,6 @@ export const filterProfessorAppointments = (
       case 'ZAStudentName':
         return b.student.name.localeCompare(a.student.name);
       
-
       default:
         return 0;
     }

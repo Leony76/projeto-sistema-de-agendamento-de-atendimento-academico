@@ -92,7 +92,6 @@ export class UserRepository {
                 user: {
                   select: {
                     name  : true,
-                    photo : true,
                   },
                 },
               },
@@ -126,10 +125,10 @@ export class UserRepository {
             room     : { select : { name: true }},
             professor: {
               select: {
+                disciplines: { select: { name: true }},
                 user: {
                   select: {
                     name  : true,
-                    photo : true,
                   },
                 },
               },

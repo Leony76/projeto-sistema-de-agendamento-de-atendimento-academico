@@ -90,7 +90,10 @@ const Solicitation = (props:Props): React.JSX.Element => {
         }}
       />
 
-      <div className='relative self-start px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50'>
+      <div className={`
+        relative px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50
+        ${!props.smVersion && 'self-start'}
+      `}>
         { !props.smVersion && 
           <>
             <div 

@@ -1,24 +1,32 @@
+import type { AppointmentStatus } from "@backend/generated/prisma/enums";
 import type { StudentGeneralInfosResponse } from "@shared/types/dtos/userGeneralInfos.dto";
-import { userAppointmentMapper, type UserAppointment } from "./userAppointment.mapper";
-
-type StudentAppointment = Omit<UserAppointment, 'entity'> & {
-  professor : {
-    user : {
-      name  : string;
-    };
-  };
-};
 
 type StudentGeneralInfos = {
-  ra: string;
   user: {
-    id        : number;
-    name      : string;
-    email     : string;
-    photo     : string | null;
-    createdAt : Date;
+    name: string;
+    id: number;
+    email: string;
+    photo: string | null;
+    createdAt: Date;
   };
-  appointments  : StudentAppointment[];
+  ra: string;
+  appointments: {
+    id: number;
+    reason: string;
+    dateTime: Date;
+    status: AppointmentStatus;
+    room: {
+      name: string;
+    } | null;
+    professor: {
+      user: {
+        name: string;
+      };
+      disciplines: {
+        name: string;
+      }[];
+    };
+  }[];
 };
 
 export const studentGeneralInfosMapper = (
@@ -32,13 +40,18 @@ export const studentGeneralInfosMapper = (
     ra           : student.ra,
     role         : 'STUDENT',
     registeredAt : student.user.createdAt.toISOString(),
-
-    appointmentsList:
-      student.appointments.map((appointment) =>
-        userAppointmentMapper({
-          ...appointment,
-          entity: appointment.professor,
-      })
-    ),
+    appointments: student.appointments.map((appointment) => ({
+      dateTime: appointment.dateTime.toISOString(),
+      from: 'STUDENT',
+      id: appointment.id,
+      reason: appointment.reason,
+      room: appointment.room?.name ?? '[ Sala não encontrada]',
+      status: appointment.status,
+      professor: {
+        disciplines : appointment.professor.disciplines.map((discipline) => discipline.name),
+        name        : appointment.professor.user.name,
+        photo       : null,
+      }
+    }))
   };
 };

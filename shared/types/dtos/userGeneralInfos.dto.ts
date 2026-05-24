@@ -3,12 +3,12 @@ import { Student, Professor, Manager } from "../userBasicInfos.type";
 import { ProfessorAppointmentResponse, StudentAppointmentResponse } from "./appointment.dto";
 
 export type StudentGeneralInfosResponse = Student & {
-  appointmentsList  : StudentAppointmentResponse[];
+  appointments : StudentAppointmentResponse[];
   role : 'STUDENT';
 };
 
 export type ProfessorGeneralInfosResponse = Professor & {
-  appointmentsList  : ProfessorAppointmentResponse[];
+  appointments : ProfessorAppointmentResponse[];
   role : 'PROFESSOR';
 };
 
