@@ -177,7 +177,7 @@ const Manager = (): React.JSX.Element => {
           default: 
             throw new Error('Permissão de usuário inválido');
         }
-
+        // EDIÇÃO DE INFORMAÇÕES
         const [ systemReports, managerBriefInfos, rooms ] = await Promise.all([
           MiscService.getSystemReports(),
           UserService.getManagerHomeBriefInfos(),

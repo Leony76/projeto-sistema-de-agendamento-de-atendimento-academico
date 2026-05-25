@@ -63,6 +63,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
   };
 
   const appointments = selectedRoom?.appointments;
+  const selecteRoomStatus = Boolean(selectedRoom?.appointments?.length) ? 'RESERVED' : 'AVAILABLE';
 
   return (
     <div className='relative p-2  flex gap-2 flex-col items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -128,7 +129,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
 
             <ul className='space-y-1 mt-1 list-disc list-inside text-xs'>
               <li className='text-orange-400 font-semibold'>
-                Status: <span className='text-cyan-400 font-normal'>{ ROOM_STATUS_MAP[selectedRoom.status] }</span>
+                Status: <span className='text-cyan-400 font-normal'>{ ROOM_STATUS_MAP[selecteRoomStatus] }</span>
               </li>
 
               {appointments && appointments.length > 0 && (
@@ -169,14 +170,14 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
             {props.rooms.map((room) => (
               <Button.Default
                 label={room.name}   
-                selected={Boolean(room.appointments)}                     
+                selected={Boolean(room.appointments?.length)}                     
                 onClick={() => {
                   setSelectedRoom(room);
                   setOnDetails(true);
                 }}                   
                 customStyle={{ button: `
                   h-6 text-xs font-semibold bg-orange-50 text-orange-500 border-orange-500 
-                  ${ appointments && appointments.length > 0 
+                  ${ room.appointments && room.appointments.length > 0 
                     ? 'bg-orange-500 text-orange-100! border-orange-50' 
                     : 'bg-orange-50 text-orange-500 border-orange-500' 
                 }`}}
@@ -199,22 +200,22 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
           </>
         ) : (
           <div className="h-[85%] flex flex-col justify-center">
-              <div>
-                <NoContent 
-                  message="Nenhuma sala cadastrada no sistema"
-                  Icon={() => <MdOutlineNoMeetingRoom size={22}/>}
-                />
+            <div>
+              <NoContent 
+                message="Nenhuma sala cadastrada no sistema"
+                Icon={() => <MdOutlineNoMeetingRoom size={22}/>}
+              />
 
-                <Button.Default
-                  label={loading ? 'Adicionando' :'Adicionar'}
-                  loading={loading}
-                  disabled={loading}
-                  onClick={() => setNewRoom(true)}
-                  Icon={() => <MdMeetingRoom size={18}/>}
-                  customStyle={{ button: 'py-1 font-semibold' }}
-                />
-              </div>
+              <Button.Default
+                label={loading ? 'Adicionando' :'Adicionar'}
+                loading={loading}
+                disabled={loading}
+                onClick={() => setNewRoom(true)}
+                Icon={() => <MdMeetingRoom size={18}/>}
+                customStyle={{ button: 'py-1 font-semibold' }}
+              />
             </div>
+          </div>
         )}
       </div>
     </div>

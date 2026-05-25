@@ -276,6 +276,7 @@ export class AppointmentRepository {
       where: { id },
       data: {
         status  : 'DONE',
+        roomId  : null,
         history : {
           create : {}
         }

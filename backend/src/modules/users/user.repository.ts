@@ -172,7 +172,11 @@ export class UserRepository {
   public static async getManagerBriefInfos() {
     
     const [ appointments, solicitations, students, professors ] = await Promise.all([
-      prisma.appointment.count(),
+      prisma.appointment.count({
+        where: { 
+          status: { in: ['CONFIRMED', 'ACCEPTED'] }
+        }
+      }),
       prisma.appointment.count({ where: { status: 'PENDING' } }),
       prisma.student.count(),
       prisma.professor.count(),

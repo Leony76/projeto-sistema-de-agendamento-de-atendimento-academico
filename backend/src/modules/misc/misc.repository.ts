@@ -4,7 +4,13 @@ export class MiscRepository {
 
   public static async getAppointmentsMetrics() {
     const [ count, done, canceled, noShow ] = await Promise.all([
-      prisma.appointment.count(),
+      prisma.appointment.count({
+        where: {
+          status: {
+            in: ['ACCEPTED', 'CONFIRMED']
+          }
+        }
+      }),
 
       prisma.appointment.count({
         where: { 
