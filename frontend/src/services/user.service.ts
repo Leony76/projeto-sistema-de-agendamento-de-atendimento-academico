@@ -5,6 +5,7 @@ import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
 import type { ManagerGeneralInfosResponse, ProfessorGeneralInfosResponse, StudentGeneralInfosResponse } from '@shared/types/dtos/userGeneralInfos.dto';
 import type { AuthUserBasicInfos } from "@shared/types/authUserBasicInfos.type";
 import type { UserRole } from "@shared/types/userRole.type";
+import type { StudentLastAppointmentResponse } from "@shared/types/dtos/appointment.dto";
 
 export class UserService {
 
@@ -79,9 +80,9 @@ export class UserService {
 
   public static async excludeUsers(ids: number[]) {
 
-    const response = await api.post<
-      ApiResponse<number[]>>
-        ('/user/exclude', { ids });
+    const response = await api.post<ApiResponse<number[]>>(
+      '/user/exclude', { ids }
+    );
 
     return response.data;
   }
@@ -91,6 +92,15 @@ export class UserService {
     const response = await api.patch<
       ApiResponse<{success: boolean}>>
         (`/user/${userId}/change-temporary-password`, { newPassword });
+
+    return response.data;
+  }
+
+  public static async getStudentLastAppointment(id: number) {
+
+    const response = await api.get<StudentLastAppointmentResponse>(
+      `/user/student/${id}/last-appointment`
+    );
 
     return response.data;
   }

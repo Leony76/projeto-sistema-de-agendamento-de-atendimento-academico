@@ -14,12 +14,16 @@ export class UserController {
     res.status(200).json(response); 
   }
 
+
+
   public static async getActiveStudentsToManagerList(req: Request, res: Response) {
 
     const response = await UserService.getActiveStudentsToManagerList();
     
     res.status(200).json(response); 
   }
+
+
   
   public static async getActiveProfessorsToManagerList(req: Request, res: Response) {
 
@@ -27,6 +31,8 @@ export class UserController {
 
     res.status(200).json(response);
   }
+
+
   
   public static async getActiveManagersToManagerList(req: Request, res: Response) {
 
@@ -34,6 +40,8 @@ export class UserController {
 
     res.status(200).json(response);
   }
+
+
 
   public static async getStudentGeneralInfos(req: Request, res: Response) {
 
@@ -44,6 +52,8 @@ export class UserController {
     res.status(200).json(response);
   }
 
+
+
   public static async getProfessorGeneralInfos(req: Request, res: Response) {
 
     const { id } = req.params;
@@ -53,6 +63,8 @@ export class UserController {
     res.status(200).json(response);
   }
 
+
+
   public static async getManagerGeneralInfos(req: Request, res: Response) {
 
     const { id } = req.params;
@@ -61,6 +73,8 @@ export class UserController {
 
     res.status(200).json(response);
   }
+
+
 
   public static async excludeUsers(req: Request, res: Response) {
 
@@ -79,12 +93,16 @@ export class UserController {
     res.status(200).json(response);
   }
 
+
+
   public static async getManagerBriefInfos(req: Request, res: Response) {
     
     const response = await UserService.getManagerBriefInfos();
 
     return res.status(200).json(response);
   }
+
+
 
   public static async getProfessorBriefInfos(req: Request, res: Response) {
 
@@ -94,6 +112,8 @@ export class UserController {
     
     return res.status(200).json(response);
   }
+
+
   
   public static async getStudentBriefInfos(req: Request, res: Response) {
 
@@ -103,6 +123,8 @@ export class UserController {
 
     return res.status(200).json(response);
   }
+
+
 
   public static async changeUserTemporaryPassword(req: Request, res: Response) {
 
@@ -119,6 +141,15 @@ export class UserController {
       success : true,
       data    : passwordChanged,
     }
+
+    return res.status(200).json(response);
+  }
+
+  public static async getStudentLastAppointment(req: Request, res: Response) {
+
+    const { id } = req.params;
+
+    const response = await UserService.getStudentLastAppointment(Number(id));
 
     return res.status(200).json(response);
   }

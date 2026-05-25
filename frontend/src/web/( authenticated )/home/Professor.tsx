@@ -10,7 +10,7 @@ import '@frontend/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/userAppointments.map.filter';
 import NoContent from '@frontend/components/misc/NoContent';
-import { filterProfessorAppointments } from '@frontend/utils/filters/filterProfessorAppointments.util';
+import { filterProfessorAppointments } from '@frontend/utils/filters/filterUserAppointments.filter.util';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 import type { ProfessorAvailability } from '@shared/types/professorAvailability.type';

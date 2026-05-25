@@ -25,5 +25,6 @@ userRoutes.patch(
   validate(changePasswordSchema),
   UserController.changeUserTemporaryPassword
 );
+userRoutes.get('/student/:id/last-appointment' , UserController.getStudentLastAppointment );
 
 export default userRoutes;

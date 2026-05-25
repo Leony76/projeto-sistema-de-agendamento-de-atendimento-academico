@@ -14,6 +14,8 @@ import { managerBasicInfosMapper } from '../auth/mappers/managerBasicInfos.mappe
 import { studentGeneralInfosMapper } from './mappers/studentGeneralInfos.mapper';
 import { professorGeneralInfosMapper } from './mappers/professorGeneralInfos.mapper';
 import { managerGeneralInfosMapper } from './mappers/managerGeneralInfos.mapper';
+import type { StudentLastAppointmentResponse } from '@shared/types/dtos/appointment.dto';
+import { studentLastAppointmentMapper } from './mappers/studentLastAppointment.mapper';
 
 export class UserService {
 
@@ -171,6 +173,8 @@ export class UserService {
     };
   }
 
+
+
   public static async changeUserTemporaryPassword(userId: number, newPassword: string): Promise<{success: boolean}> {
 
     const userCurrentPassword = await UserRepository.getUserPasswordById(userId);
@@ -188,5 +192,16 @@ export class UserService {
     if (!result) throw new ApiError('Não foi possível trocar a sua senha. Tente novamente mais tarde');
     
     return { success: true };
+  }
+
+
+
+  public static async getStudentLastAppointment(id: number): Promise<StudentLastAppointmentResponse> {
+
+    const lastAppointment = await UserRepository.getStudentLastAppointment(id);
+
+    if (!lastAppointment) return null;
+
+    return studentLastAppointmentMapper(lastAppointment);
   }
 }

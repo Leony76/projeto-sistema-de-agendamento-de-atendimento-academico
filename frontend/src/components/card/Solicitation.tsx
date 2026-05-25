@@ -34,9 +34,9 @@ const Solicitation = (props:Props): React.JSX.Element => {
   const [acceptOrDenyAppointmentDecision, setAcceptOrDenyAppointmentDecision] = useState<SolicitationDecision | null>(null);
 
   const statusTagStyle: Record<Exclude<AppointmentStatus, 'DONE' | 'NO_SHOW'>, { style: string, icon: JSX.Element }> = {
-    REJECTED  : { style: 'bg-red-50 text-red-400'       , icon: <IoCloseCircleSharp size={20} /> },
     ACCEPTED  : { style: 'bg-green-50 text-green-400'   , icon: <FaCheckCircle size={17}/>       },
     PENDING   : { style: 'bg-yellow-50 text-yellow-500' , icon: <FaRegClock size={17}/>          },
+    REJECTED  : { style: 'bg-red-50 text-red-400'       , icon: <IoCloseCircleSharp size={20} /> },
     CANCELED  : { style: 'bg-red-50 text-red-400'       , icon: <BsFillCalendarXFill size={17}/> },
     CONFIRMED : { style: 'bg-green-50 text-green-400'   , icon: <FaCalendarCheck size={17} />    },
   };
@@ -91,10 +91,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
         }}
       />
 
-      <div className={`
-        relative px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50
-        ${!props.smVersion && 'self-start'}
-      `}>
+      <div className={`relative px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50`}>
         { !props.smVersion && 
           <>
             <div 

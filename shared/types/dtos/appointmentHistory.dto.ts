@@ -4,7 +4,7 @@ export type StudentAppointmentHistoryResponse = {
   readonly id        : number;
   reason    : string;
   dateTime  : string;
-  room      : string;
+  room      : string | null;
   status    : AppointmentStatus;
   from      : 'STUDENT';
   updatedAt : string;
@@ -21,7 +21,7 @@ export type ProfessorAppointmentHistoryResponse = {
   reason   : string;
   dateTime : string;
   status   : AppointmentStatus;
-  room     : string;
+  room     : string | null;
   from     : 'PROFESSOR';
   updatedAt : string;
   createdAt : string;

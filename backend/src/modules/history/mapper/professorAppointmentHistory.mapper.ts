@@ -31,7 +31,7 @@ export const professorAppointmentsHistoryMapper = (
     status   : appointment.status,
     createdAt : appointment.registeredAt.toISOString(),
     updatedAt : appointment.updatedAt.toISOString(),
-    room     : appointment.room?.name ?? '[ sala não encontrada ]',
+    room     : appointment.room?.name ?? null,
     from     : 'PROFESSOR',
     student  : {
       name  : appointment.student.user.name,

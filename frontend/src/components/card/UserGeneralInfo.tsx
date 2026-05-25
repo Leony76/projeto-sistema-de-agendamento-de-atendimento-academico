@@ -32,11 +32,13 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
   if (!user) return <Navigate to={'/'}/>
 
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [modal, setModal] = useState<'REMOVE_USER' | null>(null);
   
 
   const handleExcludeUser = async(id: number[]): Promise<void> => {
     try {
+      setLoading(true);
       const response = await UserService.excludeUsers(id);
 
       if (response.success) {
@@ -47,6 +49,8 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
       }
     } catch (error:unknown) {
       toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,6 +66,7 @@ const UserGeneralInfo = (props:Props): React.JSX.Element => {
     <>
       <Modal.ConfirmAction
         title='Excluir usuário'
+        loading={loading}
         message={`Tem certeza em excluir ${props.name.split(' ')[0]} ?`}
         visible={modal === 'REMOVE_USER'}
         onAccept={() => handleExcludeUser([props.id])}

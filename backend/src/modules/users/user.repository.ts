@@ -87,6 +87,8 @@ export class UserRepository {
             dateTime : true,
             status   : true,
             room: { select: { name: true }},
+            registeredAt: true,
+            updatedAt: true,
             student: {
               select: {
                 user: {
@@ -123,6 +125,8 @@ export class UserRepository {
             dateTime : true,
             status   : true,
             room     : { select : { name: true }},
+            registeredAt: true,
+            updatedAt: true,
             professor: {
               select: {
                 disciplines: { select: { name: true }},
@@ -240,9 +244,11 @@ export class UserRepository {
 
       prisma.appointment.findFirst({
         where: {
-          studentId: id,
-          dateTime: { gte: new Date() },
-          status: 'CONFIRMED',
+          studentId : id,
+          dateTime  : { gte: new Date() },
+          status    : {
+            in: ['ACCEPTED', 'CONFIRMED'],
+          },
         },
         orderBy: {
           dateTime: 'asc',
@@ -278,6 +284,32 @@ export class UserRepository {
         password             : newPassword,
         hasTemporaryPassword : false,
       },
+    });
+  }
+
+  public static async getStudentLastAppointment(id: number) {
+    return await prisma.appointment.findFirst({
+      where   : { 
+        studentId : id,
+        status    : 'DONE',
+      },
+      orderBy : { dateTime: 'desc' },
+      select: {
+        id       : true,
+        reason   : true,
+        dateTime : true,
+        status   : true,
+        professor: {
+          select: {
+            user: {
+              select: { name: true }
+            }
+          }
+        },
+        room: {
+          select: { name: true }
+        }
+      }
     });
   }
 }

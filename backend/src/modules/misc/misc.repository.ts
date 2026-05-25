@@ -7,7 +7,11 @@ export class MiscRepository {
       prisma.appointment.count(),
 
       prisma.appointment.count({
-        where: { status: 'DONE' }
+        where: { 
+          status: {
+           in: ['DONE']
+          }
+        }
       }),
 
       prisma.appointment.count({
@@ -35,7 +39,7 @@ export class MiscRepository {
       }),
 
       prisma.appointment.count({
-        where: { status: 'CONFIRMED' }
+        where: { status: 'ACCEPTED' }
       }), 
 
       prisma.appointment.count({

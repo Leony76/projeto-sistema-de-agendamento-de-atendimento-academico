@@ -178,6 +178,18 @@ const Appointment = (props:Props): React.JSX.Element => {
             />
           }
         </div>
+
+        <div className='self-end space-y-1'>
+          <div className='flex flex-col'>
+            <span className='text-[10px] italic text-cyan-400'>
+              Confirmado em
+            </span>
+
+            <span className='text-xs text-orange-400'>
+              { formatDateTime(props.updatedAt) }
+            </span>
+          </div> 
+        </div>
       </div>
     </>
   )

@@ -1,8 +1,10 @@
 import { createFilterValueMap } from "@frontend/utils/filters/createFilterValueMap.util";
 
 export const APPOINTMENT_HISTORY_FILTER_MAP = [
-  { value: 'mostRecent' , label: 'Mais recentes' },
-  { value: 'mostOld'    , label: 'Mais antigos'  },
+  { value: 'mostRecent' , label: 'Mais recentes'   },
+  { value: 'mostOld'    , label: 'Mais antigos'    },
+  { value: 'done'       , label: 'Finalizados'     },
+  { value: 'noShow'     , label: 'Não comparecidos'},
 ] as const;
 
 // -----> STUDENT

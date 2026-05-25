@@ -6,6 +6,8 @@ export const APPOINTMENTS_FILTER_MAP = [
   { value: 'lastOnes'   , label: 'Últimos'        },
   { value: 'mostRecent' , label: 'Mais recentes'  },
   { value: 'mostOld'    , label: 'Menos recentes' },
+  { value: 'AZrooms'    , label: 'Salas [A-Z]'    },
+  { value: 'ZArooms'    , label: 'Salas [Z-A]'    },
 ] as const;
 
 // -----> STUDENT
@@ -16,8 +18,6 @@ export const STUDENT_APPOINTMENTS_FILTER_MAP = [
   { value: 'ZAProfessorName' , label: 'Professor [Z-A]'   },
   { value: 'AZDisciplines'   , label: 'Disciplinas [A-Z]' },
   { value: 'ZADisciplines'   , label: 'Disciplinas [Z-A]' },
-  { value: 'AZrooms'         , label: 'Salas [A-Z]'       },
-  { value: 'ZArooms'         , label: 'Salas [Z-A]'       },
 ] as const;
 
 export const STUDENT_APPOINTMENTS_FILTER_VALUE_MAP = 

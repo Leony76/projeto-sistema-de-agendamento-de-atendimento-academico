@@ -14,6 +14,8 @@ type StudentGeneralInfos = {
     id: number;
     reason: string;
     dateTime: Date;
+    registeredAt: Date;
+    updatedAt: Date;
     status: AppointmentStatus;
     room: {
       name: string;
@@ -42,10 +44,12 @@ export const studentGeneralInfosMapper = (
     registeredAt : student.user.createdAt.toISOString(),
     appointments: student.appointments.map((appointment) => ({
       dateTime: appointment.dateTime.toISOString(),
+      createdAt: appointment.registeredAt.toISOString(),
+      updatedAt: appointment.updatedAt.toISOString(),
       from: 'STUDENT',
       id: appointment.id,
       reason: appointment.reason,
-      room: appointment.room?.name ?? '[ Sala não encontrada]',
+      room: appointment.room?.name ?? null,
       status: appointment.status,
       professor: {
         disciplines : appointment.professor.disciplines.map((discipline) => discipline.name),

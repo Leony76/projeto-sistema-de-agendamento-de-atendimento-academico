@@ -13,10 +13,8 @@ import type { UserRole } from '@shared/types/userRole.type';
 import { PiStudentBold } from 'react-icons/pi';
 import { USERS_LIST_BY_ROLE_FILTER_REVERSE_TYPE_VALUE_MAP, USERS_LIST_BY_ROLE_FILTER_TYPE_VALUE_MAP } from '@frontend/constants/maps/filters/usersListByRole.map.filter';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { filterRegisteredStudents } from '@frontend/utils/filters/filterRegisteredStudents.util';
+import { filterRegisteredStudents, filterRegisteredManagers, filterRegisteredProfessors } from '@frontend/utils/filters/filterRegisteredUser.filter.util';
 import { REGISTERED_MANAGERS_FILTER_VALUE_MAP, REGISTERED_PROFESSORS_FILTER_VALUE_MAP, REGISTERED_STUDENTS_FILTER_VALUE_MAP, type REGISTERED_MANAGERS_FILTER_MAP, type REGISTERED_PROFESSORS_FILTER_MAP, type REGISTERED_STUDENTS_FILTER_MAP } from '@frontend/constants/maps/filters/registeredUsers.map.filter';
-import { filterRegisteredProfessors } from '@frontend/utils/filters/filterRegisteredProfessors.util';
-import { filterRegisteredManagers } from '@frontend/utils/filters/filterRegisteredManagers.util';
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Form } from '@frontend/components/form';
 import { Section } from '@frontend/components/section';
@@ -32,6 +30,7 @@ import type { ManagerHomeBriefInfosResponse as ManagerHomeBriefInfos } from '@sh
 import { UserService } from '@frontend/services/user.service';
 import { MiscService } from '@frontend/services/misc.service';
 import { RoomService } from '@frontend/services/room.service';
+import type { SelectOptionsSchema } from '@shared/types/selectOptionsSchema.type';
 
 type FilterValue = {
   student   : typeof REGISTERED_STUDENTS_FILTER_MAP[number]['value'];
@@ -94,9 +93,13 @@ const Manager = (): React.JSX.Element => {
       searchValue,
       filterValue.manager,
     ).map((rest) => ({ ...rest, from: 'MANAGER' as const })),
-  }; 
+  } as const; 
 
-  const filtersByRoleMap = {
+  const filtersByRoleMap: Record<UserRole, {
+    schema : SelectOptionsSchema,
+    value  : string,
+    setter : (value: string) => void,
+  }> = {
     STUDENT: {
       schema  : 'REGISTERED_STUDENTS_FILTER',
       value   : filterValue.student,
@@ -120,7 +123,7 @@ const Manager = (): React.JSX.Element => {
         prev => ({ ...prev, manager: value
       })),
     }
-  } as const;
+  };
 
   const userNotFoundByFilterByRoleMap = {
     STUDENT   : REGISTERED_STUDENTS_FILTER_VALUE_MAP[filterValue.student],
@@ -250,7 +253,7 @@ const Manager = (): React.JSX.Element => {
               { filteredUsersListDataByRoleMap[userRoleList].length > 0 ? (
                 filteredUsersListDataByRoleMap[userRoleList].map(( user ) => (
                   <Card.UserGeneralInfo
-                    key={user.id}
+                    key={ user.id }
                     { ...user }
                     onClick={{
                       exclude     : () => setRefreshData(prev => prev + 1),

@@ -8,3 +8,9 @@ export type ActiveProfessorsToManagerListResponse = Professor;
 export type ActiveManagersToManagerList   = Manager;
 export type ActiveStudentsToManagerList   = Student;
 export type ActiveProfessorsToManagerList = Professor;
+
+export type ActiveUsersToManagerList =
+| ActiveManagersToManagerList
+| ActiveStudentsToManagerList
+| ActiveProfessorsToManagerList
+;

@@ -9,6 +9,7 @@ import ExpansibleImage from '../misc/ExpansibleImage';
 import type { AppointmentStatus } from '@backend/generated/prisma/enums';
 import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
 import { FaPersonCircleQuestion } from 'react-icons/fa6';
+import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 
 type Props = | StudentAppointmentHistory & {
   from: 'STUDENT';
@@ -86,6 +87,10 @@ const History = (props:Props): React.JSX.Element => {
           </label>
 
           <label className='text-orange-400 font-semibold'>
+            Sala: <span className='text-cyan-500 font-normal'>{ props.room }</span>
+          </label>
+
+          <label className='text-orange-400 font-semibold'>
             Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
           </label>
 
@@ -101,6 +106,16 @@ const History = (props:Props): React.JSX.Element => {
           </span>
         </div>
       </div>  
+
+      <div className='flex flex-col self-end'>
+        <span className='text-[10px] italic text-cyan-400'>
+          Registrado em
+        </span>
+
+        <span className='text-xs text-orange-400'>
+          { formatDateTime(props.updatedAt) }
+        </span>
+      </div> 
     </div>
   );
 }

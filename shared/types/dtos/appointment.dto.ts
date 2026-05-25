@@ -1,10 +1,12 @@
 import { AppointmentStatus } from "@backend/generated/prisma/enums";
+import { Appointment } from "../appointment.type";
+import { Professor } from "../userBasicInfos.type";
 
 export type StudentAppointmentResponse = {
   readonly id : number;
   reason    : string;
   dateTime  : string;
-  room      : string;
+  room      : string | null;
   status    : AppointmentStatus;
   from      : 'STUDENT';
   createdAt : string;
@@ -18,11 +20,11 @@ export type StudentAppointmentResponse = {
 
 export type ProfessorAppointmentResponse = {
   readonly id : number;
-  reason   : string;
-  dateTime : string;
-  room     : string;
-  status   : AppointmentStatus;
-  from     : 'PROFESSOR'
+  reason    : string;
+  dateTime  : string;
+  room      : string | null;
+  status    : AppointmentStatus;
+  from      : 'PROFESSOR'
   createdAt : string;
   updatedAt : string;
   student  : {
@@ -35,3 +37,6 @@ export type UserAppointmentResponse =
 | StudentAppointmentResponse   
 | ProfessorAppointmentResponse
 ;
+
+export type StudentLastAppointmentResponse = 
+  Appointment<Pick<Professor, 'name'>> | null;

@@ -10,7 +10,7 @@ import Calendar from 'react-calendar';
 import '@frontend/css/calendar.css';
 import { FaCircleChevronLeft, FaCircleChevronRight, FaClipboardQuestion, FaPersonCircleQuestion } from 'react-icons/fa6';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
-import { filterStudentAppointments } from '@frontend/utils/filters/filterStudentAppointments.util';
+import { filterStudentAppointments } from '@frontend/utils/filters/filterUserAppointments.filter.util';
 import NoContent from '@frontend/components/misc/NoContent';
 import { STUDENT_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_VALUE_MAP } from '@frontend/constants/maps/filters/userAppointments.map.filter'; 
 import HomeBrief from '@frontend/components/misc/HomeBrief';
@@ -67,13 +67,15 @@ const Student = (): React.JSX.Element => {
   useEffect(() => {
     (async(id: number): Promise<void> => {
       try {
-        const [ studentBriefInfos, appointments ] = await Promise.all([
+        const [ studentBriefInfos, appointments, lastAppointment ] = await Promise.all([
           UserService.getStudentHomeBriefInfos(id),
           ScheduleService.getUserAppointments('STUDENT', user.id),
+          UserService.getStudentLastAppointment(id),
         ]);
 
         setBriefInfos(studentBriefInfos);
         setStudentAppointments(appointments);
+        setLastAppointment(lastAppointment);
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }

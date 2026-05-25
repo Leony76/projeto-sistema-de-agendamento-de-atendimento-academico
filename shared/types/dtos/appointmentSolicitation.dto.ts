@@ -14,7 +14,7 @@ export type AppointmentSolicitationResponse = {
 }
 
 export type StudentAppointmentSolicitationResponse = {
-  id        : number;
+  readonly id        : number;
   reason    : string;
   dateTime  : string;
   status    : AppointmentStatus;
@@ -29,7 +29,7 @@ export type StudentAppointmentSolicitationResponse = {
 };
 
 export type ProfessorAppointmentSolicitationResponse = {
-  id       : number;
+  readonly id       : number;
   reason   : string;
   dateTime : string;
   status   : AppointmentStatus;

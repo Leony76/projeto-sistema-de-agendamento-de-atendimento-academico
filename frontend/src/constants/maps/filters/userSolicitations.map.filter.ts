@@ -8,6 +8,8 @@ export const DEFAULT_SOLICITATIONS_FILTER_VALUES_MAP = [
   { value: 'accepted'   , label: 'Aceitos'         },
   { value: 'pending'    , label: 'Pendentes'       },
   { value: 'rejected'   , label: 'Rejeitados'      },
+  { value: 'canceled'   , label: 'Cancelados'      },
+  { value: 'confirmed'  , label: 'Confirmados'     },
 ];
 
 // -----> STUDENT

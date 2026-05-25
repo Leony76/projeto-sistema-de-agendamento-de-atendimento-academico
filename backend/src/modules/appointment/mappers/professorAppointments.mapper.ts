@@ -29,7 +29,7 @@ export const professorAppointmentsMapper = (
     dateTime : appointment.dateTime.toISOString(),
     createdAt: appointment.registeredAt.toISOString(),
     updatedAt: appointment.updatedAt.toISOString(),
-    room     : appointment.room?.name ?? '[ Sala não encontrada ]',
+    room     : appointment.room?.name ?? null,
     from     : 'PROFESSOR',
     student : {
       name        : appointment.student.user.name,

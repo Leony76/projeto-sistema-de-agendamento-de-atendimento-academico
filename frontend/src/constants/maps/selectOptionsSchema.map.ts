@@ -1,4 +1,4 @@
-import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from "./filters/studentSolicitations.map.filter";
+import { STUDENT_SOLICITATIONS_FILTER_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from "./filters/userSolicitations.map.filter";
 import { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "./filters/toScheduleProfessors.map.filter";
 import { PROFESSOR_APPOINTMENTS_FILTER_MAP, STUDENT_APPOINTMENTS_FILTER_MAP } from "./filters/userAppointments.map.filter";
 import { PROFESSOR_APPOINTMENTS_HISTORY_FILTER_MAP, STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP,  } from "./filters/userAppointmentHistory.map.filter";

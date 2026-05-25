@@ -2,6 +2,8 @@ import { AVAILABLE_DAYS_MAP } from "@shared/utils/days.map";
 import type { TO_SCHEDULE_PROFESSORS_FILTER_MAP } from "@frontend/constants/maps/filters/toScheduleProfessors.map.filter";
 import type { AvailableProfessorToScheduleResponse } from "@shared/types/dtos/availableProfessorToSchedule";
 import { createFilter } from "./createFilter.util";
+import { formatDate } from "../formats/formatDate.util";
+import { formatTime } from "../formats/formatTime.util";
 
 export const filterToScheduleProfessors = (
   professorsData: AvailableProfessorToScheduleResponse[],
@@ -16,6 +18,10 @@ export const filterToScheduleProfessors = (
     {
       searchFields: [
         (professor) => professor.name,
+        (professor) => professor.email,
+        (professor) => professor.id.toString(),
+        (professor) => formatDate(professor.registeredAt),
+        (professor) => formatTime(professor.registeredAt),
         (professor) => professor.disciplines.join(', '),
         (professor) => professor.availableDays
           .map((day) => AVAILABLE_DAYS_MAP[day])
