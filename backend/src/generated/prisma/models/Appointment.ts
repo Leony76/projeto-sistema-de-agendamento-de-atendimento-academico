@@ -293,7 +293,6 @@ export type AppointmentOrderByWithRelationInput = {
 
 export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  professorId_dateTime?: Prisma.AppointmentProfessorIdDateTimeCompoundUniqueInput
   roomId_dateTime?: Prisma.AppointmentRoomIdDateTimeCompoundUniqueInput
   AND?: Prisma.AppointmentWhereInput | Prisma.AppointmentWhereInput[]
   OR?: Prisma.AppointmentWhereInput[]
@@ -311,7 +310,7 @@ export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   professor?: Prisma.XOR<Prisma.ProfessorScalarRelationFilter, Prisma.ProfessorWhereInput>
   history?: Prisma.XOR<Prisma.HistoryNullableScalarRelationFilter, Prisma.HistoryWhereInput> | null
-}, "id" | "professorId_dateTime" | "roomId_dateTime">
+}, "id" | "roomId_dateTime">
 
 export type AppointmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -444,11 +443,6 @@ export type AppointmentListRelationFilter = {
 
 export type AppointmentOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type AppointmentProfessorIdDateTimeCompoundUniqueInput = {
-  professorId: number
-  dateTime: Date | string
 }
 
 export type AppointmentRoomIdDateTimeCompoundUniqueInput = {

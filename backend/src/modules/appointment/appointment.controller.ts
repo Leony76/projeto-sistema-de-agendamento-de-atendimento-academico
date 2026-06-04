@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
 import { AppointmentService } from "./appointment.service";
 import { ApiError } from "@backend/utils/apiError.util";
-import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse, type EditAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import type { UserRole } from "@backend/generated/prisma/enums";
 import type { SolicitationDecision } from "@shared/types/solicitationDecision.type";
+import type { EditAppointmentSolicitationFormData } from "@backend/schemas/appointmentSolicitation.schema";
 
 export class AppointmentController {
 
@@ -14,6 +15,8 @@ export class AppointmentController {
 
     return res.status(200).json(response);
   }
+
+
 
   public static async getProfessorAvailableSlots(req: Request, res: Response) {
 
@@ -26,6 +29,8 @@ export class AppointmentController {
 
     return res.status(200).json(response);
   }
+
+
 
   public static async solicitateAppointment(req: Request, res: Response) {
 
@@ -42,6 +47,8 @@ export class AppointmentController {
     return res.status(200).json(response);
   }
 
+
+
   public static async getUserSolicitations(req: Request, res: Response) {
 
     const { id, role } = req.params;
@@ -50,6 +57,8 @@ export class AppointmentController {
 
     return res.status(200).json(response);
   }
+
+
 
   public static async acceptOrDenyAppointmentSolicitation(req: Request, res: Response) {
 
@@ -71,6 +80,8 @@ export class AppointmentController {
     return res.status(200).json(response);
   }
 
+
+
   public static async getUserAppointments(req: Request, res: Response) {
 
     const { id, role } = req.params;
@@ -79,6 +90,8 @@ export class AppointmentController {
 
     return res.status(200).json(response);
   }
+
+
 
   public static async markAppointmentAsDone(req: Request, res: Response) {
 
@@ -89,6 +102,40 @@ export class AppointmentController {
     const response: ApiResponse<{appointmentId: number}> = { 
       data    : { appointmentId: markAppointmentAsDone.appointmentId },
       message : 'Atendimento marcado como concluído com sucesso!',
+      success : true, 
+    };
+
+    return res.status(200).json(response);
+  }
+
+
+
+  public static async editSolicitation(req: Request, res: Response) {
+
+    const data = req.body as EditAppointmentSolicitationResponse;
+
+    const editedSolicitation = await AppointmentService.editSolicitation(data);
+
+    const response: ApiResponse<EditAppointmentSolicitationResponse> = { 
+      data    : editedSolicitation,
+      message : 'Solicitação editada com sucesso!',
+      success : true, 
+    };
+
+    return res.status(200).json(response);
+  }
+
+
+
+  public static async cancelSolicitation(req: Request, res: Response) {
+
+    const { appointmentId } = req.params;
+
+    const cancelSolicitation = await AppointmentService.cancelSolicitation(Number(appointmentId));
+
+    const response: ApiResponse<{ id: number }> = { 
+      data    : cancelSolicitation,
+      message : 'Solicitação cancelada com sucesso!',
       success : true, 
     };
 

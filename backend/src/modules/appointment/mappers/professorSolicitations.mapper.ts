@@ -10,6 +10,7 @@ type MapperRequest = {
   status: AppointmentStatus;
   student: {
     user: {
+      id: number;
       name: string;
       photo: string | null;
     };
@@ -28,8 +29,9 @@ export const professorSolicitationsMapper = (
     updatedAt: solicitation.updatedAt.toISOString(),
     from     : 'PROFESSOR',
     student : {
-      name        : solicitation.student.user.name,
-      photo       : solicitation.student.user.photo,
+      id    : solicitation.student.user.id,
+      name  : solicitation.student.user.name,
+      photo : solicitation.student.user.photo,
     },
   }))
 };

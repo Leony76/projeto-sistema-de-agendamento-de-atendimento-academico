@@ -5,7 +5,7 @@ import { DAYS_BY_INDEX_MAP } from '@backend/utils/days.map';
 import { generateTimeSlots } from '@backend/utils/generateTimeSlots.util';
 import { formatDateToHour } from '@backend/utils/formatDateToHour.util';
 import { ApiError } from '@backend/utils/apiError.util';
-import type { AppointmentSolicitationRequest, AppointmentSolicitationResponse, UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+import type { AppointmentSolicitationRequest, AppointmentSolicitationResponse, EditAppointmentSolicitationResponse, UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { UserRole } from '@backend/generated/prisma/enums';
 import { studentSolicitationsMapper } from './mappers/studentSolicitations.mapper';
 import { professorSolicitationsMapper } from './mappers/professorSolicitations.mapper';
@@ -142,5 +142,39 @@ export class AppointmentService {
     const markAsDone = await AppointmentRepository.markAppointmentAsDone(appointmentId);
     
     return { appointmentId: markAsDone.id };
+  }
+
+
+
+  public static async editSolicitation(
+    data: EditAppointmentSolicitationResponse
+  ): Promise<EditAppointmentSolicitationResponse> {
+
+    const exist = await AppointmentRepository.findAppointmentById(data.appointmentId);
+
+    if (!exist) 
+      throw new ApiError('Houve um erro ao editar a solicitação, pois a mesma não existe!', 404);
+
+    const edited = await AppointmentRepository.editSolicitation(data);
+    
+    return {
+      dateTime      : edited.dateTime.toISOString(),
+      reason        : edited.reason,
+      appointmentId : edited.id,
+    };
+  }
+
+
+
+  public static async cancelSolicitation(id: number): Promise<{id: number}> {
+
+    const exist = await AppointmentRepository.findAppointmentById(id);
+
+    if (!exist) 
+      throw new ApiError('Houve um erro ao cancelar a solicitação, pois a mesma não existe!', 404);
+
+    const canceled = await AppointmentRepository.cancelSolicitation(id);
+    
+    return { id: canceled.id };
   }
 }

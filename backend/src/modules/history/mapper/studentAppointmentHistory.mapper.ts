@@ -3,38 +3,38 @@ import type { StudentAppointmentHistoryResponse } from "@shared/types/dtos/appoi
 
 type MapperRequestData = {
   appointment: {
-    id       : number;
-    reason   : string;
-    dateTime : Date;
-    registeredAt: Date,
-    updatedAt: Date,
-    status   : AppointmentStatus;
-    room     : {
-      name: string;
-    } | null;
+    id: number;
+    reason: string;
+    status: AppointmentStatus;
+    dateTime: Date;
+    registeredAt: Date;
+    updatedAt: Date;
     professor: {
       user: {
-        name  : string;
-        photo : string | null;
+        name: string;
+        photo: string | null;
       };
       disciplines: {
-        name : string;
+        name: string;
       }[];
     };
+  };
+  room: {
+    name: string;
   };
 }
 
 export const studentAppointmentsHistoryMapper = (
   data: MapperRequestData[]
 ): StudentAppointmentHistoryResponse[] => {
-  return data.map(({ appointment }) => ({
+  return data.map(({ appointment, room }) => ({
     dateTime  : appointment.dateTime.toISOString(),
     id        : appointment.id,
     reason    : appointment.reason,
     status    : appointment.status,
     createdAt : appointment.registeredAt.toISOString(),
     updatedAt : appointment.updatedAt.toISOString(),
-    room      : appointment.room?.name ?? null,
+    room      : room?.name ?? null,
     from      : 'STUDENT',
     professor : {
       disciplines : appointment.professor.disciplines.map((discipline) => discipline.name),

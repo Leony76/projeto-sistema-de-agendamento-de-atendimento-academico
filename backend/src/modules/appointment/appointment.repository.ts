@@ -1,8 +1,17 @@
 import { prisma } from "@backend/lib/prisma";
+import type { EditAppointmentSolicitationFormData } from "@backend/schemas/appointmentSolicitation.schema";
 import { ApiError } from "@backend/utils/apiError.util";
-import type { AppointmentSolicitationRequest } from "@shared/types/dtos/appointmentSolicitation.dto";
+import type { AppointmentSolicitationRequest, EditAppointmentSolicitationResponse } from "@shared/types/dtos/appointmentSolicitation.dto";
 
 export class AppointmentRepository {
+
+  public static async findAppointmentById(id: number) {
+    return Boolean(await prisma.appointment.findUnique({
+      where: { id }
+    }));
+  }
+
+
 
   public static async getProfessorAvailabilityAndAppointments(
     professorId : number,
@@ -32,9 +41,9 @@ export class AppointmentRepository {
               gte: startOfDay,
               lte: endOfDay,
             },
-            status: {
-              not: 'CANCELED',
-            },
+             status: {
+              in: ['PENDING', 'ACCEPTED', 'CONFIRMED']
+            }
           },
           select: {
             dateTime: true,
@@ -64,19 +73,42 @@ export class AppointmentRepository {
   }
 
   public static async solicitateAppointment(data: AppointmentSolicitationRequest) {
+
+    const existingAppointment = await prisma.appointment.findFirst({
+      where: {
+        professorId: data.professorId,
+        dateTime: data.dateTime,
+        status: {
+          in: ['PENDING', 'ACCEPTED', 'CONFIRMED']
+        }
+      }
+    });
+
+    if (existingAppointment) {
+      throw new ApiError('Já existe um agendamento para este horário.', 409);
+    }
+
     return await prisma.appointment.create({
       data: {
-        dateTime    : data.dateTime,
-        reason      : data.reason,
-        studentId   : data.studentId,
-        professorId : data.professorId,
-        status      : 'PENDING',
+        dateTime: data.dateTime,
+        reason: data.reason,
+        studentId: data.studentId,
+        professorId: data.professorId,
+        status: 'PENDING',
       },
       select: {
-        dateTime  : true,
-        reason    : true,
-        professor : { select: { user: { select: { name: true }}}}
-      }
+        dateTime: true,
+        reason: true,
+        professor: {
+          select: {
+            user: {
+              select: {
+                name: true
+              },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -97,10 +129,16 @@ export class AppointmentRepository {
         updatedAt: true,
         professor: {
           select: {
+            availability: {
+              select: {
+                dayOfWeek: true,
+              }
+            },
             user: {
               select: {
-                name: true,
-                photo: true,
+                id    : true,
+                name  : true,       
+                photo : true,
               }
             },
             disciplines: {
@@ -131,8 +169,9 @@ export class AppointmentRepository {
           select: {
             user: {
               select: {
-                name: true,
-                photo: true,
+                id    : true,
+                name  : true,
+                photo : true,
               }
             },
           }
@@ -272,18 +311,63 @@ export class AppointmentRepository {
   }
 
   public static async markAppointmentAsDone(id: number) {
-    return await prisma.appointment.update({
-      where: { id },
-      data: {
-        status  : 'DONE',
-        roomId  : null,
-        history : {
-          create : {}
+    return await prisma.$transaction(async(tx) => {
+      const appointment = await tx.appointment.findUnique({
+        where  : { id },
+        select : { 
+          roomId: true,
+          status: true,
         }
+      });
+
+      if (!appointment?.roomId)
+        throw new ApiError('Não foi possível marcar o atendimento como concluído. Tente novamente mais tarde!', 500);
+
+      if (appointment.status === 'DONE')
+         throw new ApiError('Atendimento já foi concluído.', 400);
+      
+      return await tx.appointment.update({
+        where: { id },
+        data: {
+          status  : 'DONE',
+          roomId  : null,
+          history : {
+            create : {
+              roomId: appointment.roomId
+            }
+          }
+        },
+        select: {
+          id: true,
+        }
+      });
+    })
+  } 
+
+
+
+  public static async editSolicitation(data: EditAppointmentSolicitationResponse) {
+    return await prisma.appointment.update({
+      where : { id: data.appointmentId },
+      data : {
+        dateTime : data.dateTime,
+        reason   : data.reason,
       },
       select: {
-        id: true,
+        dateTime : true,
+        id       : true,
+        reason   : true,
       }
     });
-  } 
+  }
+
+
+
+  public static async cancelSolicitation(id: number) {
+    return await prisma.appointment.update({
+      where  : { id },
+      data   : { status: 'CANCELED' },
+      select : { id: true }
+    });
+  }
 }

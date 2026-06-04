@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaExclamation, FaFilter } from 'react-icons/fa';
+import { FaEdit, FaExclamation, FaFilter } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -15,7 +15,25 @@ import { Navigate } from 'react-router-dom';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { ScheduleService } from '@frontend/services/schedule.service';
-import type { ProfessorAppointmentSolicitationResponse as ProfessorAppointmentSolicitation, StudentAppointmentSolicitationResponse as StudentAppointmentSolicitation } from '@shared/types/dtos/appointmentSolicitation.dto';
+import type { EditAppointmentSolicitationResponse, ProfessorAppointmentSolicitationResponse as ProfessorAppointmentSolicitation, StudentAppointmentSolicitationResponse as StudentAppointmentSolicitation } from '@shared/types/dtos/appointmentSolicitation.dto';
+import type { SolicitationDecision } from '@shared/types/solicitationDecision.type';
+import { Modal } from '@frontend/components/modal';
+import { useForm } from 'react-hook-form';
+import { editAppointmentSolicitationSchema, type EditAppointmentSolicitationFormData } from '@shared/schemas/appointmentSolicitation.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@frontend/components/button';
+import Warning from '@frontend/components/misc/Warning';
+import { DAYS_BY_INDEX_MAP } from '@shared/utils/days.map';
+import { formatTime } from '@frontend/utils/formats/formatTime.util';
+import { formatMergeDateWithTime } from '@frontend/utils/formats/formatMergeDateWithTime.util';
+
+type ConfirmModals =
+| 'CONFIRM_EDIT' 
+| 'CONFIRM_PROFESSOR_DECISION' 
+| 'CONFIRM_CANCEL'
+;
+
+type Modals = ConfirmModals | 'EDIT';
 
 type FilterValue = {
   student   : typeof STUDENT_SOLICITATIONS_FILTER_MAP[number]['value'];
@@ -28,6 +46,22 @@ const Requests = ():React.JSX.Element => {
   if (!user) return <Navigate to={'/'}/>;
 
   const { toast } = useToast();
+  
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    reset,
+    watch,
+    formState: { errors }
+  } = useForm<EditAppointmentSolicitationFormData>({
+    resolver: zodResolver(editAppointmentSolicitationSchema),
+    defaultValues: {
+      appointmentDate : '',
+      hour            : '',
+      reason          : '',
+    }
+  });
 
   const role = user.role === 'PROFESSOR'
     ? 'PROFESSOR'
@@ -42,6 +76,16 @@ const Requests = ():React.JSX.Element => {
     student   : 'none',
   });
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [modal, setModal] = useState<Modals | null>(null);
+
+  const [professorAvailabilitySlots, setProfessorAvailabilitySlots] = useState<string[]>([]);
+  const [acceptOrDenyAppointmentDecision, setAcceptOrDenyAppointmentDecision] = useState<SolicitationDecision | null>(null);
+
+  const [acceptOrDenyAppointmentId, setAcceptOrDenyAppointmentId] = useState<number | null>(null);
+  const [editSolicitation, setEditSolicitation] = useState<StudentAppointmentSolicitation | null>(null);
+  const [cancelSolicitationId, setCancelSolicitationId] = useState<number | null>(null);
+  
   const [pendingAppointments, setPendingAppointments] = useState<{
     fromStudent   : StudentAppointmentSolicitation[],
     fromProfessor : ProfessorAppointmentSolicitation[],
@@ -111,6 +155,146 @@ const Requests = ():React.JSX.Element => {
     },
   );
 
+  const handleAcceptOrDenyAppointmentRequest = async(decision: SolicitationDecision, appointmentId: number): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const response = await ScheduleService.acceptOrDenyAppointmentSolicitation(appointmentId, decision);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        
+        setRefresh(prev => prev + 1);
+        setModal(null);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleEditAppointmentSolicitation = async(data: EditAppointmentSolicitationFormData): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const dateTime = formatMergeDateWithTime(data.appointmentDate, data.hour);
+
+      const payload: EditAppointmentSolicitationResponse = {
+        appointmentId : data.appointmentId,
+        reason        : data.reason,
+        dateTime,
+      };
+
+      const response = await ScheduleService.editSolicitation(payload);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        setModal(null); 
+
+        setRefresh(prev => prev + 1);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleCancelAppointmentSolicitation = async(solicitationId: number): Promise<void> => {
+    try {
+      setLoading(false);
+
+      const response = await ScheduleService.cancelSolicitation(solicitationId);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        setModal(null); 
+
+        setRefresh(prev => prev + 1);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getProfessorAvailableSlotsToSchedule = async (
+    professorId : number,
+    dateTime    : string,
+  ): Promise<void> => {
+    try {
+
+      const slots = await ScheduleService.getProfessorAvailableSlotsToSchedule(
+        professorId,
+        new Date(dateTime),
+      );
+
+      setProfessorAvailabilitySlots(slots);
+
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    }
+  };
+
+  
+  const MODAL_CONFIRM_MAP: Record<ConfirmModals, {
+    message        : string,
+    visible        : boolean,
+    onCloseRequest : () => void,
+    onAccept       : () => void,
+  }> = {
+    CONFIRM_PROFESSOR_DECISION: {
+      visible        : modal === 'CONFIRM_PROFESSOR_DECISION',
+      onAccept       : () => {
+        if (!acceptOrDenyAppointmentId) return;
+        handleAcceptOrDenyAppointmentRequest(acceptOrDenyAppointmentDecision as SolicitationDecision, acceptOrDenyAppointmentId)
+      },
+      onCloseRequest : () => {
+        setAcceptOrDenyAppointmentDecision(null);
+        setModal(null);
+      },
+      message : acceptOrDenyAppointmentDecision === 'ACCEPTED'
+        ? 'Tem certeza em aceitar essa solicitação ?'
+        : 'Tem certeza em rejeitar essa solicitação ?'       
+    },
+
+    CONFIRM_CANCEL: {
+      visible        : modal === 'CONFIRM_CANCEL',
+      message        : 'Tem certeza em cancelar essa solicitação?',
+      onAccept       : () => {
+        if (!cancelSolicitationId) return;
+        handleCancelAppointmentSolicitation(cancelSolicitationId);
+      },
+      onCloseRequest : () => {
+        setCancelSolicitationId(null);
+        setModal(null);
+      },
+    },
+
+    CONFIRM_EDIT: {
+      visible        : modal === 'CONFIRM_EDIT',
+      message        : 'Tem certeza em editar essa solicitação?',
+      onAccept       : handleSubmit(handleEditAppointmentSolicitation),
+      onCloseRequest : () => setModal('EDIT'),
+    },
+  };
+
+  useEffect(() => {
+    if ( modal !== 'EDIT' || !editSolicitation || !watch('appointmentDate')) {
+      return;
+    }
+
+    getProfessorAvailableSlotsToSchedule(
+      editSolicitation.professor.id,
+      watch('appointmentDate')
+    );
+  }, [watch('appointmentDate'), modal, editSolicitation]);
+
   useEffect(() => {
     (async() => {
       try {
@@ -135,6 +319,106 @@ const Requests = ():React.JSX.Element => {
     selectedTab='REQUESTS'
     from={user.role}
     >
+      {modal && modal !== 'EDIT' &&
+        <Modal.ConfirmAction
+          title='Confirmar ação'
+          loading={loading}
+          visible={MODAL_CONFIRM_MAP[modal as ConfirmModals].visible}
+          message={MODAL_CONFIRM_MAP[modal as ConfirmModals].message}
+          onAccept={MODAL_CONFIRM_MAP[modal as ConfirmModals].onAccept}
+          onCloseRequest={MODAL_CONFIRM_MAP[modal as ConfirmModals].onCloseRequest}
+        />
+      }
+
+      <Modal.Default
+      title='Editar solicitação'
+      visible={modal === 'EDIT'}
+      containerMaxWidth='max-w-76'
+      containerPadding='p-3'
+      onCloseRequest={() => {
+        setEditSolicitation(null);
+        setModal(null);
+      }}
+      >
+        <Select.DatePicker
+          placeholder='Selecione uma data'
+          label='Data do agendamento'
+          customStyle={{ input: 'py-1.25!' }}
+          value={watch('appointmentDate')}
+          onChange={(date) => setValue('appointmentDate', date as string, { shouldValidate: true })}
+          error={errors.appointmentDate?.message}
+          disabledDate={(date) => {
+            if (!editSolicitation) return true;
+            if (editSolicitation.professor.availableDays.length === 0) return true;
+
+            const day = DAYS_BY_INDEX_MAP[date.getDay()];
+
+            return !editSolicitation.professor.availableDays.includes(day);
+          }}
+        />
+
+        <div className='space-y-1'>
+          <div>
+            <h4 className={`
+              text-sm font-semibold text-orange-500 
+              ${ watch('appointmentDate') ? 'mb-1' : '-mb-1' }
+            `}>
+              Horários disponíveis
+            </h4>
+
+            { watch('appointmentDate') ? (
+              <>
+                <p className='text-xs text-gray-400'>
+                  Escolha um horário disponível do professor:
+                </p>
+
+                <div className='flex flex-wrap gap-2 mt-2'>
+                  {professorAvailabilitySlots.length > 0 ? (
+                    professorAvailabilitySlots.map((hour) => (
+                      <Button.Default
+                        key={hour}
+                        label={hour}
+                        selected={hour === watch('hour')}
+                        onClick={() => setValue('hour', hour, { shouldValidate: true })}
+                        customStyle={{
+                          button: 'w-fit! py-1 px-4! rounded-lg! text-xs font-bold',
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <span className='text-xs text-gray-400'>
+                      Nenhum horário disponível para este dia
+                    </span>
+                  )}
+
+                  {errors.hour?.message && <Warning error={errors.hour.message}/>}
+                </div>
+              </>
+            ) : (
+              <span className='text-xs text-gray-400'>
+                Selecione a data do agendamento
+              </span>
+            )}
+          </div>
+
+          <Input.TextArea
+            label='Motivo'
+            maxLength={50}
+            { ...register('reason') }
+            value={watch('reason')}
+            error={errors.reason?.message}
+          />
+
+          <Button.Default
+            label='Editar'
+            disabled={Object.keys(errors).length > 0}
+            onClick={() => setModal('CONFIRM_EDIT')}
+            Icon={() => <FaEdit />}
+            customStyle={{ button: 'py-1.5! font-semibold' }}
+          />
+        </div>
+      </Modal.Default>
+
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -169,9 +453,44 @@ const Requests = ():React.JSX.Element => {
                 `}>
                     {filteredSolicitationsByRole[role].map(( solicitation ) => (
                       <Card.Solicitation
-                        refresh={() => setRefresh(prev => prev + 1)}
                         key={solicitation.id}
                         { ...solicitation  }            
+                        onClick={{
+                          cancel: (appointmentId) => {
+                            setModal('CONFIRM_CANCEL');
+                            setCancelSolicitationId(appointmentId);
+                          },
+                          edit: (appointmentId) => {
+                            const solicitation = pendingAppointments.fromStudent.find(
+                              solicitation => solicitation.id === appointmentId
+                            );
+
+                            if (!solicitation) return;
+
+                            setEditSolicitation(solicitation);
+
+                            reset({
+                              appointmentId   : solicitation.id,
+                              appointmentDate : solicitation.dateTime,
+                              reason          : solicitation.reason,
+                              hour            : formatTime(solicitation.dateTime),
+                            });
+
+                            setModal('EDIT');
+                          },
+                          professorDecision: {
+                            accept: (appointmentId) => {
+                              setModal('CONFIRM_PROFESSOR_DECISION');
+                              setAcceptOrDenyAppointmentDecision('ACCEPTED');
+                              setAcceptOrDenyAppointmentId(appointmentId);
+                            },
+                            reject: (appointmentId) => {
+                              setModal('CONFIRM_PROFESSOR_DECISION');
+                              setAcceptOrDenyAppointmentDecision('REJECTED');
+                              setAcceptOrDenyAppointmentId(appointmentId);
+                            }
+                          }
+                        }}
                       />
                     ))}                
                 </div>

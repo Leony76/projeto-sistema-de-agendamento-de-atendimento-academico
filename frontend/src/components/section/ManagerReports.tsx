@@ -5,13 +5,20 @@ import { FaArrowCircleLeft, FaCalendarAlt, FaExclamation, FaHouseUser, FaPercent
 import { MdMeetingRoom } from 'react-icons/md';
 import NoContent from '../misc/NoContent';
 import { FaClipboardQuestion } from 'react-icons/fa6';
+import { useEffect, useState } from 'react';
+import { apiError } from '@frontend/utils/misc/apiError.util';
+import { useToast } from '@frontend/contexts/ToastContext';
+import { MiscService } from '@frontend/services/misc.service';
 
 type Props = {
-  reports: SystemReports | null,
   onBack: () => void;
 };
 
 const ManagerReports = (props:Props): React.JSX.Element => {
+
+  const { toast } = useToast();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [systemReports, setSystemReports] = useState<SystemReports | null>(null);
 
   const ListItem = (props: {label: string, value: string | number}):React.JSX.Element => {
     return (
@@ -24,7 +31,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
     );
   };
 
-  if (!props.reports) return (
+  if (!loading && !systemReports) return (
     <div className='relative flex flex-col gap-2 items-center p-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
       <button 
       onClick={props.onBack}
@@ -47,32 +54,46 @@ const ManagerReports = (props:Props): React.JSX.Element => {
 
   const reportsRenderMap = {
     appointments: [
-      { label: 'Totais'      , value: props.reports.appointments.count     },
-      { label: 'Feitos'      , value: props.reports.appointments.done      },
-      { label: 'Cancelados  ', value: props.reports.appointments.canceled  },
+      { label: 'Totais'      , value: systemReports?.appointments.count     },
+      { label: 'Feitos'      , value: systemReports?.appointments.done      },
+      { label: 'Cancelados  ', value: systemReports?.appointments.canceled  },
     ],
     solicitations: [
-      { label: 'Totais'      , value: props.reports.solicitations.count    },
-      { label: 'Aceitos'     , value: props.reports.solicitations.accepted },
-      { label: 'Rejeitados  ', value: props.reports.solicitations.rejected },
+      { label: 'Totais'      , value: systemReports?.solicitations.count    },
+      { label: 'Aceitos'     , value: systemReports?.solicitations.accepted },
+      { label: 'Rejeitados  ', value: systemReports?.solicitations.rejected },
     ],
     rooms: [
-      { label: 'Reservados'  , value: props.reports.rooms.reserved  },
-      { label: 'Disponíveis' , value: props.reports.rooms.available },
+      { label: 'Reservados'  , value: systemReports?.rooms.reserved  },
+      { label: 'Disponíveis' , value: systemReports?.rooms.available },
     ],
     registered: [
-      { label: 'Alunos'      , value: props.reports.registered.students   },
-      { label: 'Professores' , value: props.reports.registered.professors },
-      { label: 'Gestores'    , value: props.reports.registered.managers   },
+      { label: 'Alunos'      , value: systemReports?.registered.students   },
+      { label: 'Professores' , value: systemReports?.registered.professors },
+      { label: 'Gestores'    , value: systemReports?.registered.managers   },
     ],
     rate: [
-      { label: 'Cancelamento de atendimentos'      , value: props.reports.rate.appointments.cancellation },
-      { label: 'Desistência de agendamento'        , value: props.reports.rate.appointments.withdrawal   },
-      { label: 'Comparecimento a agendamento'      , value: props.reports.rate.appointments.attendance   },
-      { label: 'Aceitação a solicitação de alunos' , value: props.reports.rate.solicitations.acceptance  },
-      { label: 'Rejeição a solicitação de alunos'  , value: props.reports.rate.solicitations.rejection   },
+      { label: 'Cancelamento de atendimentos'      , value: systemReports?.rate.appointments.cancellation },
+      { label: 'Desistência de agendamento'        , value: systemReports?.rate.appointments.withdrawal   },
+      { label: 'Comparecimento a agendamento'      , value: systemReports?.rate.appointments.attendance   },
+      { label: 'Aceitação a solicitação de alunos' , value: systemReports?.rate.solicitations.acceptance  },
+      { label: 'Rejeição a solicitação de alunos'  , value: systemReports?.rate.solicitations.rejection   },
     ],
   } as const;
+
+  useEffect(() => {
+    (async() => {
+      try {
+        const reports = await MiscService.getSystemReports();
+
+        setSystemReports(reports);
+      } catch (error:unknown) {
+        toast(apiError(error), 'error');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <div className='relative flex flex-col gap-2 items-center p-2 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -96,7 +117,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
           { reportsRenderMap.appointments.map(( item ) => (
             <ListItem 
               label={ item.label }
-              value={ item.value } 
+              value={ item.value ?? '?' } 
             />
           ))}
         </ul>
@@ -110,7 +131,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
           { reportsRenderMap.solicitations.map(( item ) => (
             <ListItem 
               label={ item.label }
-              value={ item.value } 
+              value={ item.value ?? '?' }
             />
           ))}
         </ul>
@@ -124,7 +145,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
           { reportsRenderMap.rooms.map(( item ) => (
             <ListItem 
               label={ item.label }
-              value={ item.value } 
+              value={ item.value ?? '?' }
             />
           ))}
         </ul>
@@ -138,7 +159,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
           { reportsRenderMap.registered.map(( item ) => (
             <ListItem 
               label={ item.label }
-              value={ item.value } 
+              value={ item.value ?? '?' } 
             />
           ))}
         </ul>
@@ -152,7 +173,7 @@ const ManagerReports = (props:Props): React.JSX.Element => {
           { reportsRenderMap.rate.map(( item ) => (
             <ListItem 
               label={ item.label }
-              value={ formatPercentage(item.value) } 
+              value={ formatPercentage(item.value ?? 0) } 
             />
           ))}
         </ul>

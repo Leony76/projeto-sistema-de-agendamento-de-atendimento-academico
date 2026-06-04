@@ -2,7 +2,7 @@ import { formatDate } from '@frontend/utils/formats/formatDate.util';
 import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import React, { useState, type JSX } from 'react'
 import { BsFillCalendarXFill, BsThreeDotsVertical } from 'react-icons/bs';
-import { FaCalendarCheck, FaCheck, FaCheckCircle, FaRegClock } from 'react-icons/fa';
+import { FaCalendarCheck, FaCheck, FaCheckCircle, FaRegClock, FaTrashAlt } from 'react-icons/fa';
 import { IoCloseCircleSharp, IoCloseSharp } from 'react-icons/io5';
 import { Button } from '../button';
 import { MdEdit } from 'react-icons/md';
@@ -12,27 +12,25 @@ import ExpansibleImage from '../misc/ExpansibleImage';
 import type { AppointmentStatus } from '@backend/generated/prisma/enums';
 import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStatus.map';
 import type { UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
-import { Modal } from '../modal';
-import { useToast } from '@frontend/contexts/ToastContext';
-import { apiError } from '@frontend/utils/misc/apiError.util';
-import { ScheduleService } from '@frontend/services/schedule.service';
-import type { SolicitationDecision } from '@shared/types/solicitationDecision.type';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 
 type Props = {
   smVersion? : boolean;
   refresh?   : () => void;
+  onClick: {
+    edit   : (appointmentId: number) => void;
+    cancel : (appointmentId: number) => void;
+    professorDecision: {
+      accept : (appointmentId: number) => void;
+      reject : (appointmentId: number) => void;
+    }, 
+  }
 } & UserAppointmentSolicitationResponse;
 
 const Solicitation = (props:Props): React.JSX.Element => {
 
-  const { toast } = useToast();
-
   const [moreOptions, setMoreOptions] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [confirmDecison, setConfirmDecision] = useState<boolean>(false);
-  const [acceptOrDenyAppointmentDecision, setAcceptOrDenyAppointmentDecision] = useState<SolicitationDecision | null>(null);
-
+  
   const statusTagStyle: Record<Exclude<AppointmentStatus, 'DONE' | 'NO_SHOW'>, { style: string, icon: JSX.Element }> = {
     ACCEPTED  : { style: 'bg-green-50 text-green-400'   , icon: <FaCheckCircle size={17}/>       },
     PENDING   : { style: 'bg-yellow-50 text-yellow-500' , icon: <FaRegClock size={17}/>          },
@@ -48,56 +46,22 @@ const Solicitation = (props:Props): React.JSX.Element => {
     ? props.professor.disciplines.map(name => name) 
     : []
   ;
-
+  
   const user = props.from === 'PROFESSOR'
     ? props.student
     : props.professor
   ;
 
-  const handleAcceptOrDenyAppointmentRequest = async(decision: SolicitationDecision): Promise<void> => {
-    try {
-      setLoading(true);
-
-      const response = await ScheduleService.acceptOrDenyAppointmentSolicitation(props.id, decision);
-
-      if (response.success) {
-        toast(response.message);
-        console.log(response.data);
-
-        props.refresh && props.refresh();
-        setConfirmDecision(false);
-      }
-    } catch (error:unknown) {
-      toast(apiError(error), 'error');
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <>
-      <Modal.ConfirmAction
-        title='Confirmar ação'
-        loading={loading}
-        visible={confirmDecison}
-        onAccept={() => handleAcceptOrDenyAppointmentRequest(acceptOrDenyAppointmentDecision as SolicitationDecision)}
-        message={acceptOrDenyAppointmentDecision === 'ACCEPTED'
-          ? 'Tem certeza em aceitar essa solicitação ?'
-          : 'Tem certeza em rejeitar essa solicitação ?'
-        }
-        onCloseRequest={() => {
-          setAcceptOrDenyAppointmentDecision(null);
-          setConfirmDecision(false);
-        }}
-      />
-
       <div className={`relative px-3 py-2 border flex items-center gap-4 rounded-lg border-orange-300 bg-amber-50/50`}>
         { !props.smVersion && 
           <>
             <div 
             ref={containerRef}
             className={`absolute top-2 right-2 flex gap-1 flex-col`}>
-              { props.from === 'STUDENT' &&
+              { props.from === 'STUDENT' && 
                 <button 
                 onClick={() => setMoreOptions(prev => !prev)}
                 className='text-orange-400 self-end mt-px text-xl cursor-pointer rounded-full hover:bg-amber-100 active:bg-amber-200 p-1'
@@ -106,22 +70,43 @@ const Solicitation = (props:Props): React.JSX.Element => {
                 </button>
               }
 
-              { moreOptions &&
-                <div className='flex flex-col rounded-b-xl rounded-tl-xl'>
-                  <button className='bg-yellow-50 border border-yellow-500 text-yellow-600 flex items-center gap-1 rounded-tl-lg px-5 p-1 justify-center cursor-pointer text-sm hover:brightness-95 active:brightness-90'>
-                    <MdEdit />
-                    Editar
-                  </button>
+              {moreOptions && (
+                props.status === 'ACCEPTED' || props.status === 'PENDING' ? (
+                  <div className='flex flex-col rounded-b-xl rounded-tl-xl'>
+                    <button 
+                    onClick={() => props.onClick.edit(props.id)}
+                    className='bg-yellow-50 border border-yellow-500 text-yellow-600 flex items-center gap-1 rounded-tl-lg px-5 p-1 justify-center cursor-pointer text-sm hover:brightness-95 active:brightness-90'
+                    >
+                      <MdEdit />
+                      Editar
+                    </button>
 
-                  <button className={`
-                    bg-red-50 border border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90
-                    ${props.from === 'STUDENT' ? 'rounded-b-lg' : 'rounded-lg'}
-                  `}>
-                    <TbCancel className='scale-[1.2]'/>
-                    Cancelar
-                  </button>
-                </div>
-              }  
+                    <button 
+                    onClick={() => props.onClick.cancel(props.id)}
+                    className={`
+                      bg-red-50 border border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90
+                      ${props.from === 'STUDENT' ? 'rounded-b-lg' : 'rounded-lg'}
+                    `}
+                    >
+                      <TbCancel className='scale-[1.2]'/>
+                      Cancelar
+                    </button>
+                  </div>
+                ) : (
+                  <div className='flex flex-col rounded-b-xl rounded-tl-xl'>              
+                    <button 
+                    onClick={() => props.onClick.cancel(props.id)}
+                    className={`
+                      bg-red-50 border border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90
+                      ${props.from === 'STUDENT' ? 'rounded-b-lg rounded-tl-lg' : 'rounded-lg'}
+                    `}
+                    >
+                      <FaTrashAlt />
+                      Apagar
+                    </button>
+                  </div>
+                ) 
+              )}
             </div>
             
             <ExpansibleImage
@@ -154,11 +139,9 @@ const Solicitation = (props:Props): React.JSX.Element => {
               Horário: <span className='text-cyan-500 font-normal'>{ formatTime(props.dateTime) }</span>
             </label>
 
-            { props.from === 'PROFESSOR' &&
-              <label className='text-orange-400 font-semibold'>
-                Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
-              </label>
-            }
+            <label className='text-orange-400 font-semibold'>
+              Motivo: <span className='text-gray-400 font-normal'>{ props.reason }</span>
+            </label>
 
             <span className={`
               border mb-1 mt-2 text-sm py-1 font-semibold items-center gap-2 flex justify-center w-fit px-3 rounded-lg
@@ -202,20 +185,14 @@ const Solicitation = (props:Props): React.JSX.Element => {
             <Button.Default
               label='Aceitar'
               Icon={() => <FaCheck />}
-              onClick={() => {
-                setAcceptOrDenyAppointmentDecision('ACCEPTED');
-                setConfirmDecision(true);
-              }}
+              onClick={() => props.onClick.professorDecision.accept(props.id)}
               customStyle={{ button: '!w-fit py-1 text-sm mt-2 mb-1 bg-green-50 text-green-500 border-green-500'}}
               />
 
             <Button.Default
               label='Recusar'
               Icon={() => <IoCloseSharp className='scale-[1.5]'/>}
-              onClick={() => {
-                setAcceptOrDenyAppointmentDecision('REJECTED');
-                setConfirmDecision(true);
-              }}
+              onClick={() => props.onClick.professorDecision.reject(props.id)}
               customStyle={{ button: '!w-fit py-1 text-sm mt-2 mb-1 bg-red-50 text-red-500 border-red-500'}}
             />
           </div>

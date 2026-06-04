@@ -292,26 +292,30 @@ export class UserRepository {
   }
 
   public static async getStudentLastAppointment(id: number) {
-    return await prisma.appointment.findFirst({
-      where   : { 
-        studentId : id,
-        status    : 'DONE',
+    return await prisma.history.findFirst({
+      where: {
+        appointment: {
+          studentId : id,
+          status    : 'DONE'
+        }
       },
-      orderBy : { dateTime: 'desc' },
+      orderBy: { registeredAt: 'desc' },
       select: {
-        id       : true,
-        reason   : true,
-        dateTime : true,
-        status   : true,
-        professor: {
+        room: { select: { name: true }},
+        appointment: {
           select: {
-            user: {
-              select: { name: true }
-            }
+            id       : true,
+            reason   : true,
+            dateTime : true,
+            status   : true,
+            professor: {
+              select: {
+                user: {
+                  select: { name: true }
+                }
+              }
+            },
           }
-        },
-        room: {
-          select: { name: true }
         }
       }
     });

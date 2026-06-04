@@ -21,4 +21,20 @@ export const appointmentSolicitationSchema = z.object({
     .max(50 , 'O motivo deve ter até 50 caracteres')
 });
 
-export type AppointmentSolicitationFormData = z.infer<typeof appointmentSolicitationSchema>;
+export const editAppointmentSolicitationSchema = z.object({
+  appointmentId: z
+    .number(),
+  appointmentDate: z
+    .string()
+    .min(1  , 'A data do agendamento deve ser fornecido'),
+  hour: z
+    .string()
+    .min(1  , 'A hora do agendamento deve ser fornecida'),
+  reason: z
+  .string()
+    .min(3  , 'O motivo deve ter ao menos 3 caracteres')
+    .max(50 , 'O motivo deve ter até 50 caracteres')
+});
+  
+  export type AppointmentSolicitationFormData = z.infer<typeof appointmentSolicitationSchema>;
+  export type EditAppointmentSolicitationFormData = z.infer<typeof editAppointmentSolicitationSchema>;

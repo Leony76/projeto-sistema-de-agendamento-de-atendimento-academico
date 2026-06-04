@@ -18,18 +18,14 @@ import { REGISTERED_MANAGERS_FILTER_VALUE_MAP, REGISTERED_PROFESSORS_FILTER_VALU
 import { USER_ROLES } from '@frontend/constants/maps/userRoles.map';
 import { Form } from '@frontend/components/form';
 import { Section } from '@frontend/components/section';
-import type { SystemReports } from '@shared/types/reports.type';
 import type { ManagerGeneralActions } from '@shared/types/managerGeneralActions.type';
 import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
-import type { Room } from '@shared/types/room.type';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
 import type { ManagerHomeBriefInfosResponse as ManagerHomeBriefInfos } from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserService } from '@frontend/services/user.service';
-import { MiscService } from '@frontend/services/misc.service';
-import { RoomService } from '@frontend/services/room.service';
 import type { SelectOptionsSchema } from '@shared/types/selectOptionsSchema.type';
 
 type FilterValue = {
@@ -53,7 +49,6 @@ const Manager = (): React.JSX.Element => {
     manager   : 'none',
   });
   
-  const [systemReports, setSystemReports] = useState<SystemReports | null>(null);
   const [refreshData, setRefreshData] = useState(0);
 
   const [ systemGeneralMetrics, setSystemGeneralMetrics ] = useState<ManagerHomeBriefInfos | null>(null);
@@ -62,7 +57,6 @@ const Manager = (): React.JSX.Element => {
   const [ activeStudents,   setActiveStudents ] = useState<ActiveStudentsToManagerList[]>([]);
   const [ activeManagers,   setActiveManagers ] = useState<ActiveManagersToManagerList[]>([]);
 
-  const [rooms, setRooms] = useState<Room[]>([]);
   
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   const [generalActions, setGeneralActions] = useState<ManagerGeneralActions | null>(null);
@@ -177,16 +171,10 @@ const Manager = (): React.JSX.Element => {
           default: 
             throw new Error('Permissão de usuário inválido');
         }
-        // EDIÇÃO DE INFORMAÇÕES
-        const [ systemReports, managerBriefInfos, rooms ] = await Promise.all([
-          MiscService.getSystemReports(),
-          UserService.getManagerHomeBriefInfos(),
-          RoomService.getRooms(),
-        ]);
 
-        setSystemReports(systemReports);
+        const managerBriefInfos  = await UserService.getManagerHomeBriefInfos();
+
         setSystemGeneralMetrics(managerBriefInfos);
-        setRooms(rooms);
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
@@ -287,7 +275,6 @@ const Manager = (): React.JSX.Element => {
             />
           ) : generalActions === 'REPORTS' ? (
             <Section.ManagerReports
-              reports={systemReports}
               onBack={() => setGeneralActions(null)}
             />
           ) : generalActions === 'DELETE_USERS' ? (
@@ -303,8 +290,6 @@ const Manager = (): React.JSX.Element => {
             <>
               { generalActions === 'ROOMS' ? (     
                 <Section.RoomsDetails
-                  rooms={rooms}
-                  refresh={() => setRefreshData(prev => prev + 1)}
                   onBack={() => setGeneralActions(null)}
                 />         
               ) : (

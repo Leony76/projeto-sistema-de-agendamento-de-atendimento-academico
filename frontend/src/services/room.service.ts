@@ -17,4 +17,11 @@ export class RoomService {
 
     return response.data;
   }
+
+  public static async getReservedRoomIds() {
+
+    const response = await api.get<RoomResponse[]>('/room/get-all');
+
+    return response.data;
+  }
 }

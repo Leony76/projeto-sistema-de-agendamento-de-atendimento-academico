@@ -1,4 +1,4 @@
-import type { AppointmentStatus } from "@backend/generated/prisma/enums";
+import type { AppointmentStatus, AvailableDay } from "@backend/generated/prisma/enums";
 import type { StudentAppointmentSolicitationResponse } from "@shared/types/dtos/appointmentSolicitation.dto";
 
 type MapperRequest = {
@@ -10,11 +10,15 @@ type MapperRequest = {
   updatedAt: Date;
   professor: {
     user: {
+      id: number;
       name: string;
       photo: string | null;
     };
     disciplines: {
-      name: string;
+        name: string;
+    }[];
+    availability: {
+      dayOfWeek: AvailableDay;
     }[];
   };
 }
@@ -31,9 +35,11 @@ export const studentSolicitationsMapper = (
     updatedAt: solicitation.updatedAt.toISOString(),
     from     : 'STUDENT', 
     professor : {
-      disciplines : solicitation.professor.disciplines.map((discipline) => discipline.name),
-      name        : solicitation.professor.user.name,
-      photo       : solicitation.professor.user.photo,
+      id            : solicitation.professor.user.id,
+      availableDays : solicitation.professor.availability.map((available) => available.dayOfWeek),
+      disciplines   : solicitation.professor.disciplines.map((discipline) => discipline.name),
+      name          : solicitation.professor.user.name,
+      photo         : solicitation.professor.user.photo,
     },
   }))
 };

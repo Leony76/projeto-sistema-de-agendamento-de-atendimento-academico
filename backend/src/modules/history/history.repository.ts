@@ -13,12 +13,14 @@ export class HistoryRepository {
         },
       },
       select: {
+        room: {
+          select: { name: true }
+        },
         appointment: {
           select: {
             id       : true,
             reason   : true,
             dateTime : true,
-            room     : { select: { name: true }},
             status   : true,
             registeredAt: true,
             updatedAt: true,
@@ -36,6 +38,7 @@ export class HistoryRepository {
           },
         },
       },
+      orderBy: { registeredAt: 'desc' },
     });
   }
 
@@ -50,12 +53,12 @@ export class HistoryRepository {
         },
       },
       select: {
+        room : { select: { name: true }},
         appointment: {
           select: {
             id       : true,
             reason   : true,
-            dateTime : true,
-            room     : { select: { name: true }},
+            dateTime : true,           
             status   : true,
             registeredAt: true,
             updatedAt: true,
@@ -72,6 +75,7 @@ export class HistoryRepository {
           },
         },
       },
+      orderBy: { registeredAt: 'desc' },
     });
   }
 }

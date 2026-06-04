@@ -1203,6 +1203,7 @@ export const HistoryScalarFieldEnum = {
   registeredAt: 'registeredAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
+  roomId: 'roomId',
   appointmentId: 'appointmentId'
 } as const
 

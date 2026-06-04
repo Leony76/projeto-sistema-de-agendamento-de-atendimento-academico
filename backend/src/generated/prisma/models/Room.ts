@@ -225,6 +225,7 @@ export type RoomWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Room"> | Date | string | null
   appointments?: Prisma.AppointmentListRelationFilter
+  history?: Prisma.HistoryListRelationFilter
 }
 
 export type RoomOrderByWithRelationInput = {
@@ -235,6 +236,7 @@ export type RoomOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
+  history?: Prisma.HistoryOrderByRelationAggregateInput
 }
 
 export type RoomWhereUniqueInput = Prisma.AtLeast<{
@@ -248,6 +250,7 @@ export type RoomWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Room"> | Date | string | null
   appointments?: Prisma.AppointmentListRelationFilter
+  history?: Prisma.HistoryListRelationFilter
 }, "id">
 
 export type RoomOrderByWithAggregationInput = {
@@ -283,6 +286,7 @@ export type RoomCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   appointments?: Prisma.AppointmentCreateNestedManyWithoutRoomInput
+  history?: Prisma.HistoryCreateNestedManyWithoutRoomInput
 }
 
 export type RoomUncheckedCreateInput = {
@@ -293,6 +297,7 @@ export type RoomUncheckedCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutRoomInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutRoomInput
 }
 
 export type RoomUpdateInput = {
@@ -302,6 +307,7 @@ export type RoomUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointments?: Prisma.AppointmentUpdateManyWithoutRoomNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutRoomNestedInput
 }
 
 export type RoomUncheckedUpdateInput = {
@@ -312,6 +318,7 @@ export type RoomUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutRoomNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutRoomNestedInput
 }
 
 export type RoomCreateManyInput = {
@@ -380,6 +387,11 @@ export type RoomNullableScalarRelationFilter = {
   isNot?: Prisma.RoomWhereInput | null
 }
 
+export type RoomScalarRelationFilter = {
+  is?: Prisma.RoomWhereInput
+  isNot?: Prisma.RoomWhereInput
+}
+
 export type EnumRoomStatusFieldUpdateOperationsInput = {
   set?: $Enums.RoomStatus
 }
@@ -400,12 +412,27 @@ export type RoomUpdateOneWithoutAppointmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.RoomUpdateWithoutAppointmentsInput>, Prisma.RoomUncheckedUpdateWithoutAppointmentsInput>
 }
 
+export type RoomCreateNestedOneWithoutHistoryInput = {
+  create?: Prisma.XOR<Prisma.RoomCreateWithoutHistoryInput, Prisma.RoomUncheckedCreateWithoutHistoryInput>
+  connectOrCreate?: Prisma.RoomCreateOrConnectWithoutHistoryInput
+  connect?: Prisma.RoomWhereUniqueInput
+}
+
+export type RoomUpdateOneRequiredWithoutHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.RoomCreateWithoutHistoryInput, Prisma.RoomUncheckedCreateWithoutHistoryInput>
+  connectOrCreate?: Prisma.RoomCreateOrConnectWithoutHistoryInput
+  upsert?: Prisma.RoomUpsertWithoutHistoryInput
+  connect?: Prisma.RoomWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutHistoryInput, Prisma.RoomUpdateWithoutHistoryInput>, Prisma.RoomUncheckedUpdateWithoutHistoryInput>
+}
+
 export type RoomCreateWithoutAppointmentsInput = {
   name: string
   status: $Enums.RoomStatus
   registeredAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  history?: Prisma.HistoryCreateNestedManyWithoutRoomInput
 }
 
 export type RoomUncheckedCreateWithoutAppointmentsInput = {
@@ -415,6 +442,7 @@ export type RoomUncheckedCreateWithoutAppointmentsInput = {
   registeredAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutRoomInput
 }
 
 export type RoomCreateOrConnectWithoutAppointmentsInput = {
@@ -439,6 +467,7 @@ export type RoomUpdateWithoutAppointmentsInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  history?: Prisma.HistoryUpdateManyWithoutRoomNestedInput
 }
 
 export type RoomUncheckedUpdateWithoutAppointmentsInput = {
@@ -448,6 +477,61 @@ export type RoomUncheckedUpdateWithoutAppointmentsInput = {
   registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutRoomNestedInput
+}
+
+export type RoomCreateWithoutHistoryInput = {
+  name: string
+  status: $Enums.RoomStatus
+  registeredAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutRoomInput
+}
+
+export type RoomUncheckedCreateWithoutHistoryInput = {
+  id?: number
+  name: string
+  status: $Enums.RoomStatus
+  registeredAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutRoomInput
+}
+
+export type RoomCreateOrConnectWithoutHistoryInput = {
+  where: Prisma.RoomWhereUniqueInput
+  create: Prisma.XOR<Prisma.RoomCreateWithoutHistoryInput, Prisma.RoomUncheckedCreateWithoutHistoryInput>
+}
+
+export type RoomUpsertWithoutHistoryInput = {
+  update: Prisma.XOR<Prisma.RoomUpdateWithoutHistoryInput, Prisma.RoomUncheckedUpdateWithoutHistoryInput>
+  create: Prisma.XOR<Prisma.RoomCreateWithoutHistoryInput, Prisma.RoomUncheckedCreateWithoutHistoryInput>
+  where?: Prisma.RoomWhereInput
+}
+
+export type RoomUpdateToOneWithWhereWithoutHistoryInput = {
+  where?: Prisma.RoomWhereInput
+  data: Prisma.XOR<Prisma.RoomUpdateWithoutHistoryInput, Prisma.RoomUncheckedUpdateWithoutHistoryInput>
+}
+
+export type RoomUpdateWithoutHistoryInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  appointments?: Prisma.AppointmentUpdateManyWithoutRoomNestedInput
+}
+
+export type RoomUncheckedUpdateWithoutHistoryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutRoomNestedInput
 }
 
 
@@ -457,10 +541,12 @@ export type RoomUncheckedUpdateWithoutAppointmentsInput = {
 
 export type RoomCountOutputType = {
   appointments: number
+  history: number
 }
 
 export type RoomCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   appointments?: boolean | RoomCountOutputTypeCountAppointmentsArgs
+  history?: boolean | RoomCountOutputTypeCountHistoryArgs
 }
 
 /**
@@ -480,6 +566,13 @@ export type RoomCountOutputTypeCountAppointmentsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.AppointmentWhereInput
 }
 
+/**
+ * RoomCountOutputType without action
+ */
+export type RoomCountOutputTypeCountHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HistoryWhereInput
+}
+
 
 export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -489,6 +582,7 @@ export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   deletedAt?: boolean
   appointments?: boolean | Prisma.Room$appointmentsArgs<ExtArgs>
+  history?: boolean | Prisma.Room$historyArgs<ExtArgs>
   _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["room"]>
 
@@ -522,6 +616,7 @@ export type RoomSelectScalar = {
 export type RoomOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "status" | "registeredAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["room"]>
 export type RoomInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   appointments?: boolean | Prisma.Room$appointmentsArgs<ExtArgs>
+  history?: boolean | Prisma.Room$historyArgs<ExtArgs>
   _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RoomIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -531,6 +626,7 @@ export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Room"
   objects: {
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
+    history: Prisma.$HistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -934,6 +1030,7 @@ readonly fields: RoomFieldRefs;
 export interface Prisma__RoomClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   appointments<T extends Prisma.Room$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  history<T extends Prisma.Room$historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1383,6 +1480,30 @@ export type Room$appointmentsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.AppointmentScalarFieldEnum | Prisma.AppointmentScalarFieldEnum[]
+}
+
+/**
+ * Room.history
+ */
+export type Room$historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the History
+   */
+  select?: Prisma.HistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the History
+   */
+  omit?: Prisma.HistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HistoryInclude<ExtArgs> | null
+  where?: Prisma.HistoryWhereInput
+  orderBy?: Prisma.HistoryOrderByWithRelationInput | Prisma.HistoryOrderByWithRelationInput[]
+  cursor?: Prisma.HistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HistoryScalarFieldEnum | Prisma.HistoryScalarFieldEnum[]
 }
 
 /**

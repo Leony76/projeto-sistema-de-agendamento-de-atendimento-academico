@@ -7,11 +7,18 @@ export type AppointmentSolicitationRequest = {
   reason    : string;
   dateTime  : string;
 }
+
 export type AppointmentSolicitationResponse = {
   reason        : string;
   dateTime      : string;
   professorName : string;
 }
+
+export type EditAppointmentSolicitationResponse = {
+  readonly appointmentId : number;
+  reason                 : string;
+  dateTime               : string;
+};
 
 export type StudentAppointmentSolicitationResponse = {
   readonly id        : number;
@@ -22,9 +29,11 @@ export type StudentAppointmentSolicitationResponse = {
   updatedAt : string;
   createdAt : string;
   professor : {
-    name        : string;
-    photo       : string | null;
-    disciplines : string[];
+    readonly id   : number;
+    name          : string;
+    photo         : string | null;
+    availableDays : string[];
+    disciplines   : string[];
   };
 };
 
@@ -37,8 +46,9 @@ export type ProfessorAppointmentSolicitationResponse = {
   updatedAt : string;
   createdAt : string;
   student  : {
-    name  : string;
-    photo : string | null;
+    readonly id : number;
+    name        : string;
+    photo       : string | null;
   };
 };
 

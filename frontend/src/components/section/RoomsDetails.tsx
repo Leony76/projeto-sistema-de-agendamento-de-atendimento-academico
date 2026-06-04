@@ -4,8 +4,7 @@ import { FaArrowCircleLeft, FaPlus } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdMeetingRoom, MdOutlineNoMeetingRoom } from "react-icons/md";
 import { Button } from "../button";
-import { ROOM_STATUS_MAP } from "@frontend/constants/maps/roomStatus.map";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NoContent from "../misc/NoContent";
 import { useForm } from "react-hook-form";
 import { newRoomSchema, type NewRoomFormData } from "@shared/schemas/newRoom.schema";
@@ -15,11 +14,10 @@ import { TiInfoLarge } from "react-icons/ti";
 import { useToast } from "@frontend/contexts/ToastContext";
 import { apiError } from "@frontend/utils/misc/apiError.util";
 import { RoomService } from "@frontend/services/room.service";
+import { ROOM_STATUS_MAP } from "@frontend/constants/maps/roomStatus.map";
 
 type Props = {
   onBack  : () => void;
-  refresh : () => void;
-  rooms   : Room[];
 };
 
 const RoomsDetails = (props:Props): React.JSX.Element => {
@@ -41,6 +39,8 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
   const [ loading, setLoading ] = useState<boolean>(false);
   const [ onDetails, setOnDetails ] = useState<boolean>(false);
 
+  const [rooms, setRooms] = useState<Room[]>([]);
+
   const handleNewRoom = async({ name }: NewRoomFormData): Promise<void> => {
     try {
       setLoading(true);
@@ -52,8 +52,8 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
         console.log(response.data);
 
         reset();
-        props.refresh();
         setNewRoom(false);
+        loadRooms();
       }
     } catch(error:unknown) {
       toast(apiError(error), 'error');
@@ -64,6 +64,21 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
 
   const appointments = selectedRoom?.appointments;
   const selecteRoomStatus = Boolean(selectedRoom?.appointments?.length) ? 'RESERVED' : 'AVAILABLE';
+
+
+  const loadRooms = async(): Promise<void> => {
+    try {
+      const rooms = await RoomService.getRooms();
+
+      setRooms(rooms);
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    }
+  };
+
+  useEffect(() => {
+    loadRooms();
+  }, []);
 
   return (
     <div className='relative p-2  flex gap-2 flex-col items-center border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -90,7 +105,7 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
         flex-1 min-h-0 w-full border gap-2 overflow-auto bg-white p-2 rounded-xl border-cyan-300
         ${ onDetails 
           ? 'flex flex-col' 
-          : (props.rooms.length > 0 && !newRoom) 
+          : (rooms.length > 0 && !newRoom) 
             ? 'grid grid-cols-3 content-start' 
             : ''
         }
@@ -165,9 +180,9 @@ const RoomsDetails = (props:Props): React.JSX.Element => {
               )}
             </ul>
           </div>
-        ) : props.rooms.length > 0 ? (
+        ) : rooms.length > 0 ? (
           <>
-            {props.rooms.map((room) => (
+            {rooms.map((room) => (
               <Button.Default
                 label={room.name}   
                 selected={Boolean(room.appointments?.length)}                     

@@ -1,10 +1,11 @@
 import { api } from "./api.service";
 import { type AvailableProfessorToScheduleResponse } from '@shared/types/dtos/availableProfessorToSchedule';
-import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse, type ProfessorAppointmentSolicitationResponse, type StudentAppointmentSolicitationResponse, type UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse, type EditAppointmentSolicitationResponse, type ProfessorAppointmentSolicitationResponse, type StudentAppointmentSolicitationResponse, type UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import type { UserRole } from "@backend/generated/prisma/enums";
 import type { SolicitationDecision } from "@shared/types/solicitationDecision.type";
 import type { ProfessorAppointmentResponse, StudentAppointmentResponse } from "@shared/types/dtos/appointment.dto";
+import type { EditAppointmentSolicitationFormData } from "@shared/schemas/appointmentSolicitation.schema";
 
 export class ScheduleService {
 
@@ -17,6 +18,8 @@ export class ScheduleService {
     return response.data;
   }
 
+
+
   public static async getProfessorAvailableSlotsToSchedule(id: number, date: Date) {
 
      const response = await api.get<string[]>(
@@ -26,6 +29,8 @@ export class ScheduleService {
 
     return response.data;
   }
+
+
 
   public static async makeAppointmentSolicitation(data: AppointmentSolicitationRequest) {
 
@@ -37,6 +42,7 @@ export class ScheduleService {
   }
 
   
+
   public static async getUserAppointmentSolicitations<T extends UserRole>(
     role : T, 
     id   : number
@@ -53,6 +59,8 @@ export class ScheduleService {
     return response.data;
   }
 
+
+
   public static async acceptOrDenyAppointmentSolicitation(
     solicitationId : number, 
     decision       : SolicitationDecision
@@ -64,6 +72,8 @@ export class ScheduleService {
 
     return response.data;
   }
+
+
 
   public static async getUserAppointments<T extends UserRole>(
     role   : T, 
@@ -79,10 +89,35 @@ export class ScheduleService {
     return response.data;
   }
 
+
+
   public static async markAppointmentAsDone(appointmentId: number) {
 
     const response = await api.patch<ApiResponse<{appointmentId: number}>>(
       `/appointment/${appointmentId}/mark-as-done`
+    );
+
+    return response.data;
+  }
+
+
+
+  public static async editSolicitation(data: EditAppointmentSolicitationResponse) {
+
+    const response = await api.patch<ApiResponse<EditAppointmentSolicitationResponse>>(
+      `/appointment/solicitation/${data.appointmentId}/edit`,
+      data,
+    );
+
+    return response.data;
+  }
+
+
+
+  public static async cancelSolicitation(id: number) {
+
+    const response = await api.patch<ApiResponse<{id: number}>>(
+      `/appointment/solicitation/${id}/cancel`,
     );
 
     return response.data;
