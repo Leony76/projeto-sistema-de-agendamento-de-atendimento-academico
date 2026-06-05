@@ -73,12 +73,12 @@ const Professor = (): React.JSX.Element => {
   };
   
   useEffect(() => {
-    (async(id: number) => {
+    (async() => {
       try {
         const [ availability, appointments, professorBriefInfos ] = await Promise.all([
-          ProfessorService.getAvailability(id),
-          ScheduleService.getUserAppointments('PROFESSOR', user.id),
-          UserService.getProfessorHomeBriefInfos(id),
+          ProfessorService.getAvailability(),
+          ScheduleService.getUserAppointments<'PROFESSOR'>(),
+          UserService.getUserHomeBriefInfos<'PROFESSOR'>(),
         ]); 
         
         setAvailability(availability);
@@ -87,7 +87,7 @@ const Professor = (): React.JSX.Element => {
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
-    })(user.id);
+    })();
   },[refresh.availability]);
 
   return (

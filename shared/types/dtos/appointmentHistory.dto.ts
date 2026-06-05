@@ -1,7 +1,8 @@
 import { AppointmentStatus } from "@backend/generated/prisma/enums";
 
 export type StudentAppointmentHistoryResponse = {
-  readonly id        : number;
+  readonly historyId     : number;
+  readonly appointmentId : number;
   reason    : string;
   dateTime  : string;
   room      : string | null;
@@ -17,7 +18,8 @@ export type StudentAppointmentHistoryResponse = {
 };
 
 export type ProfessorAppointmentHistoryResponse = {
-  readonly id       : number;
+  readonly historyId     : number;
+  readonly appointmentId : number;
   reason   : string;
   dateTime : string;
   status   : AppointmentStatus;

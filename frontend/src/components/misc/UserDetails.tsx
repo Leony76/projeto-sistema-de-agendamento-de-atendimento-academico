@@ -175,15 +175,15 @@ export const UserDetails = (): React.JSX.Element => {
 
     (async(id: number):Promise<void> => {
       try {
-        let response: UserGeneralInfosResponse | null;
+        const userRole = role.toLocaleUpperCase() as UserRole;
 
-        switch (role.toLocaleUpperCase() as UserRole) {
-          case 'STUDENT'   : response = await UserService.getStudentGeneralInfosById(id);   break;
-          case 'MANAGER'   : response = await UserService.getManagerGeneralInfosById(id);   break;
-          case 'PROFESSOR' : response = await UserService.getProfessorGeneralInfosById(id); break;
-          default: throw new Error('Permissão de usuário inválido');
-        }
-        
+        const response = await UserService.getUserGeneralInfosById(
+          userRole === 'MANAGER'     ? 'manager'
+          : userRole === 'PROFESSOR' ? 'professor'
+          : 'student', 
+          id
+        );
+         
         setUser(response);
       } catch (error:unknown) {
         toast(apiError(error), 'error');

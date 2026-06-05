@@ -1,9 +1,5 @@
+import { verifyToken } from '@backend/lib/jwt';
 import type { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-
-type TokenPayload = {
-  sub: string;
-};
 
 const JWT_SECRET = process.env["JWT_SECRET"];
 
@@ -35,14 +31,11 @@ export async function authMiddleware(
   };
   
   try {
-    const decoded = jwt.verify(
-      token,
-      JWT_SECRET
-    ) as TokenPayload;
+    const decoded = verifyToken(token);
 
     req.user = decoded;
 
-    next();
+    return next();
   } catch {
     return res.status(401).json({
       error: 'Token inválido'

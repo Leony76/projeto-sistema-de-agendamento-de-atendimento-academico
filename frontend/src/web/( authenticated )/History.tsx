@@ -17,6 +17,14 @@ import type { ProfessorAppointmentHistoryResponse as ProfessorAppointmentHistory
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { HistoryService } from '@frontend/services/history.service';
+import { Modal } from '@frontend/components/modal';
+import type { UserRole } from '@backend/generated/prisma/enums';
+
+type ConfirmModals = 
+| 'CONFIRM_REMOVE'
+;
+
+type Modals = ConfirmModals;
 
 type FilterValue = {
   student   : typeof STUDENT_APPOINTMENTS_HISTORY_FILTER_MAP[number]['value'];
@@ -35,6 +43,13 @@ const History = ():React.JSX.Element => {
 
   const { toast } = useToast();
 
+  const [modal, setModal] = useState<Modals | null>(null);
+
+  const [removeHistoryId, setRemoveHistoryId] = useState<number | null>(null);
+
+  const [refresh, setRefresh] = useState(0);
+
+  const [loading, setLoading] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<FilterValue>({
     professor : 'none',
@@ -102,6 +117,26 @@ const History = ():React.JSX.Element => {
     },
   );
 
+  const handleRemoveAppointmentHistory = async(historyId: number): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      const response = await HistoryService.removeAppointmentHistory(historyId);
+      
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        
+        setModal(null);
+        setRefresh(prev => prev + 1);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     (async() => {
       try {
@@ -117,13 +152,28 @@ const History = ():React.JSX.Element => {
         toast(apiError(error), 'error');
       } 
     })();
-  },[]);
+  },[refresh]);
 
   return (
     <Layout 
     selectedTab='HISTORY'
     from={user.role}
     >
+      <Modal.ConfirmAction
+        title='Confirmar ação'
+        message='Tem certeza em apagar esse registro de atendimento do histórico ?'
+        loading={loading}
+        visible={modal === 'CONFIRM_REMOVE'}
+        onAccept={() => {
+          if (!removeHistoryId) return;
+          handleRemoveAppointmentHistory(removeHistoryId);
+        }}
+        onCloseRequest={() => {
+          setRemoveHistoryId(null);
+          setModal(null);
+        }}
+      />
+
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
           <div className='flex flex-col gap-3 py-2 px-10 h-full min-h-0 border border-cyan-400 rounded-lg bg-cyan-100/20'>
@@ -155,7 +205,13 @@ const History = ():React.JSX.Element => {
                 <div className='grid gap-2 auto-rows-min grid-cols-1 md:grid-cols-2'>
                   { filteredAppointmentHistoryByRole[role].map(( history ) => (
                     <Card.History
-                      key={ history.id }
+                      onClick={{
+                        remove: (historyId) => {
+                          setModal('CONFIRM_REMOVE');
+                          setRemoveHistoryId(historyId);
+                        }
+                      }}
+                      key={ history.historyId }
                       { ...history  }
                     />
                   ))}

@@ -5,7 +5,6 @@ import { type AppointmentSolicitationRequest, type AppointmentSolicitationRespon
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import type { UserRole } from "@backend/generated/prisma/enums";
 import type { SolicitationDecision } from "@shared/types/solicitationDecision.type";
-import type { EditAppointmentSolicitationFormData } from "@backend/schemas/appointmentSolicitation.schema";
 
 export class AppointmentController {
 
@@ -35,8 +34,9 @@ export class AppointmentController {
   public static async solicitateAppointment(req: Request, res: Response) {
 
     const params = req.body as AppointmentSolicitationRequest;
+    const studentId = req.user.sub;
 
-    const solicitate = await AppointmentService.solicitateAppointment(params);
+    const solicitate = await AppointmentService.solicitateAppointment(params, studentId);
 
     const response: ApiResponse<AppointmentSolicitationResponse> = {
       data    : solicitate,
@@ -84,9 +84,10 @@ export class AppointmentController {
 
   public static async getUserAppointments(req: Request, res: Response) {
 
-    const { id, role } = req.params;
+    const userId = req.user.sub;
+    const role = req.user.role;
 
-    const response = await AppointmentService.getUserAppointments(Number(id), role as UserRole);
+    const response = await AppointmentService.getUserAppointments(userId, role);
 
     return res.status(200).json(response);
   }
@@ -136,6 +137,23 @@ export class AppointmentController {
     const response: ApiResponse<{ id: number }> = { 
       data    : cancelSolicitation,
       message : 'Solicitação cancelada com sucesso!',
+      success : true, 
+    };
+
+    return res.status(200).json(response);
+  }
+
+
+
+  public static async removeSolicitation(req: Request, res: Response) {
+
+    const { appointmentId } = req.params;
+
+    const removedSolicitation = await AppointmentService.removeSolicitation(Number(appointmentId));
+
+    const response: ApiResponse<{ id: number }> = { 
+      data    : removedSolicitation,
+      message : 'Solicitação removida com sucesso!',
       success : true, 
     };
 

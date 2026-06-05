@@ -2,7 +2,6 @@ import { AppointmentStatus } from "@backend/generated/prisma/enums";
 import { SolicitationDecision } from "../solicitationDecision.type";
 
 export type AppointmentSolicitationRequest = {
-  readonly studentId   : number;
   readonly professorId : number
   reason    : string;
   dateTime  : string;

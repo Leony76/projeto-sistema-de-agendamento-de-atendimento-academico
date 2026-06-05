@@ -23,7 +23,7 @@ import HomeBrief from '@frontend/components/misc/HomeBrief';
 import { noContentFound } from '@frontend/utils/misc/noContentFound.util';
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
-import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList } from '@shared/types/dtos/managerUsersList.dto';
+import type { ActiveStudentsToManagerList, ActiveManagersToManagerList, ActiveProfessorsToManagerList, ActiveManagersToManagerListResponse, ActiveProfessorsToManagerListResponse, ActiveStudentsToManagerListResponse } from '@shared/types/dtos/managerUsersList.dto';
 import type { ManagerHomeBriefInfosResponse as ManagerHomeBriefInfos } from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserService } from '@frontend/services/user.service';
 import type { SelectOptionsSchema } from '@shared/types/selectOptionsSchema.type';
@@ -157,22 +157,19 @@ const Manager = (): React.JSX.Element => {
       try {
         switch (userRoleList) {
           case 'STUDENT':
-            const students: ActiveStudentsToManagerList[] = await UserService.getActiveStudentsToManagerList();
-            setActiveStudents(students);
-            break;
+            const students: ActiveStudentsToManagerListResponse[] = await UserService.getActiveUsersToManagerList('student');
+            setActiveStudents(students); break;
           case 'PROFESSOR':
-            const professors: ActiveProfessorsToManagerList[] = await UserService.getActiveProfessorsToManagerList();
-            setActiveProfessors(professors);
-            break;
+            const professors: ActiveProfessorsToManagerListResponse[] = await UserService.getActiveUsersToManagerList('professor');
+            setActiveProfessors(professors); break;
           case 'MANAGER':
-            const managers: ActiveManagersToManagerList[] = await UserService.getActiveManagersToManagerList();
-            setActiveManagers(managers);
-            break;
+            const managers: ActiveManagersToManagerListResponse[] = await UserService.getActiveUsersToManagerList('manager');
+            setActiveManagers(managers); break;
           default: 
             throw new Error('Permissão de usuário inválido');
         }
 
-        const managerBriefInfos  = await UserService.getManagerHomeBriefInfos();
+        const managerBriefInfos  = await UserService.getUserHomeBriefInfos<'MANAGER'>();
 
         setSystemGeneralMetrics(managerBriefInfos);
       } catch (error:unknown) {

@@ -21,11 +21,13 @@ export class ProfessorController {
     return res.status(200).json(response);
   }
 
+
+  
   public static async getAvailability(req: Request, res: Response) {
 
-    const { id } = req.params;
+    const userId = req.user.sub;
 
-    const response = await ProfessorService.getAvailability(Number(id));
+    const response = await ProfessorService.getAvailability(userId);
 
     return res.status(200).json(response);
   }

@@ -24,4 +24,32 @@ export class HistoryService {
         return professorAppointmentsHistoryMapper(professorAppointmentsHistory);
     }
   }
+
+
+
+  public static async removeAppointmentHistory(
+    id     : number, 
+    userId : number,
+    role   : Exclude<UserRole, 'MANAGER'>
+  ): Promise<{id: number}> {
+    
+    const [exists, alreadyRemoved] = await Promise.all([
+      HistoryRepository.findAppointmentHistoryById(id),
+      HistoryRepository.isAppointmentHistoryAlreadyRemoved(id, role),
+    ]); 
+
+    if (!exists)
+      throw new ApiError('Houve um erro ao remover o histórico do atendimento, pois ele não existe!', 404);
+    if (alreadyRemoved)
+      throw new ApiError('Houve um erro ao remover o histórico do atendimento, pois ele já está removido!', 409);
+    if (role === 'STUDENT' && exists.appointment.studentId !== userId) 
+      throw new ApiError('Você não tem permissão para remover este histórico.', 403);
+    if (role === 'PROFESSOR' && exists.appointment.professorId !== userId) 
+      throw new ApiError('Você não tem permissão para remover este histórico.', 403);
+     
+
+    const response = await HistoryRepository.removeAppointmentHistory(id, role); 
+
+    return { id: response.id };
+  }
 }

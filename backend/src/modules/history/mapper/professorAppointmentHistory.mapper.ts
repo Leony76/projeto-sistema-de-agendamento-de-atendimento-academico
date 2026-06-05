@@ -2,6 +2,7 @@ import type { AppointmentStatus } from "@backend/generated/prisma/enums";
 import type { ProfessorAppointmentHistoryResponse } from "@shared/types/dtos/appointmentHistory.dto";
 
 type MapperRequestData = {
+  id: number;
   appointment: {
     id: number;
     reason: string;
@@ -24,9 +25,10 @@ type MapperRequestData = {
 export const professorAppointmentsHistoryMapper = (
   data: MapperRequestData[]
 ): ProfessorAppointmentHistoryResponse[] => {
-  return data.map(({ appointment, room }) => ({
+  return data.map(({ appointment, room, id }) => ({
+    appointmentId : appointment.id,
+    historyId     : id,
     dateTime : appointment.dateTime.toISOString(),
-    id       : appointment.id,
     reason   : appointment.reason,
     status   : appointment.status,
     createdAt : appointment.registeredAt.toISOString(),

@@ -1,6 +1,6 @@
 import type * as U from '@shared/types/dtos/managerUsersList.dto'; 
 import type * as G from '@shared/types/dtos/userGeneralInfos.dto'; 
-import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
+import type { UserHomeBriefInfosResponse } from '@shared/types/dtos/userHomeBriefInfos.dto';
 import { UserRepository } from './user.repository';
 import { ApiError } from '@backend/utils/apiError.util';
 import bcrypt from 'bcrypt';
@@ -134,43 +134,47 @@ export class UserService {
 
 
 
-  public static async getManagerBriefInfos(): Promise<Brief.ManagerHomeBriefInfosResponse> {
+  public static async getUserBriefInfos(
+    userId : number,
+    role   : UserRole,
+  ): Promise<UserHomeBriefInfosResponse> {
 
-    const brief = await UserRepository.getManagerBriefInfos();
+    const apiError: string = 'Não foi possível trazer o resumo das suas métricas, pois não foram encontradas!';
 
-    if (!brief) throw new ApiError('Não foi possível trazer o resumo das métricas do sistema');
-    
-    return brief;
-  }
+    switch (role) {
+      case 'STUDENT': {
 
+        const brief = await UserRepository.getStudentBriefInfos(userId);
 
+        if (!brief) throw new ApiError(apiError, 404);
+        
+        return {
+          appointmentsMade        : brief.appointmentsMade,
+          pendingSolicitations    : brief.pendingSolicitations,
+          nextAppointmentDateTime : brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
+        };
 
-  public static async getProfessorBriefInfos(id: number): Promise<Brief.ProfessorHomeBriefInfosResponse> {
+      } case 'PROFESSOR': {
 
-    const brief = await UserRepository.getProfessorBriefInfos(id);
+        const brief = await UserRepository.getProfessorBriefInfos(userId);
 
-    if (!brief) throw new ApiError('Não foi possível trazer o resumo das suas métricas');
-    
-    return {
-      appointmentsConfirmed   : brief.appointmentsConfirmed,
-      pendingSolicitations    : brief.pendingSolicitations,
-      nextAppointmentDateTime : brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
-    };
-  }
+        if (!brief) throw new ApiError(apiError, 404);
+        
+        return {
+          appointmentsConfirmed   : brief.appointmentsConfirmed,
+          pendingSolicitations    : brief.pendingSolicitations,
+          nextAppointmentDateTime : brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
+        };
 
+      } case 'MANAGER': {
 
+        const brief = await UserRepository.getManagerBriefInfos();
 
-  public static async getStudentBriefInfos(id: number): Promise<Brief.StudentHomeBriefInfosResponse> {
-
-    const brief = await UserRepository.getStudentBriefInfos(id);
-
-    if (!brief) throw new ApiError('Não foi possível trazer o resumo das suas métricas');
-    
-    return {
-      appointmentsMade        : brief.appointmentsMade,
-      pendingSolicitations    : brief.pendingSolicitations,
-      nextAppointmentDateTime : brief.nextAppointmentDateTime?.dateTime.toISOString() ?? '',
-    };
+        if (!brief) throw new ApiError(apiError, 404);
+        
+        return brief;
+      }
+    }
   }
 
 

@@ -19,6 +19,8 @@ export class RoomController {
     return res.status(201).json(response);
   }
 
+
+  
   public static async getAll(req: Request, res: Response) {
 
     const response = await RoomService.getAll();

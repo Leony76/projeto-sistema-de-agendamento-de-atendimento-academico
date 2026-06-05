@@ -67,7 +67,6 @@ const Schedule = (): React.JSX.Element => {
       console.log(appointmentDateTime);
 
       const response = await ScheduleService.makeAppointmentSolicitation({
-        studentId   : data.studentId,
         professorId : data.professorId,
         dateTime    : appointmentDateTime,
         reason      : data.reason,

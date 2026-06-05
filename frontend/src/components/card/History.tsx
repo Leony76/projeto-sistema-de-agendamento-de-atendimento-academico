@@ -11,11 +11,14 @@ import { APPOINTMENT_STATUS_MAP } from '@frontend/constants/maps/appointmentStat
 import { FaPersonCircleQuestion } from 'react-icons/fa6';
 import { formatDateTime } from '@frontend/utils/formats/formatDateTime.util';
 
-type Props = | StudentAppointmentHistory & {
-  from: 'STUDENT';
-} | ProfessorAppointmentHistory & {
-  from: 'PROFESSOR';
-};
+type Props = {
+  onClick: {
+    remove: (historyId: number) => void;
+  };
+} & (
+  | StudentAppointmentHistory   & { from: 'STUDENT'   } 
+  | ProfessorAppointmentHistory & { from: 'PROFESSOR' }
+);
 
 const History = (props:Props): React.JSX.Element => {
 
@@ -51,7 +54,10 @@ const History = (props:Props): React.JSX.Element => {
         </button>
 
         { moreOptions &&
-          <button className={`bg-red-50 border rounded-lg border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90`}>
+          <button 
+          className={`bg-red-50 border rounded-lg border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90`}
+          onClick={() => props.onClick.remove(props.historyId)}
+          >
             <FaTrashAlt />
             Apagar
           </button>

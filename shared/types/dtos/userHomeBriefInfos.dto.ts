@@ -15,4 +15,10 @@ export type ManagerHomeBriefInfosResponse = {
   professors    : number;
   appointments  : number;
   solicitations : number;
-};;
+};
+
+export type UserHomeBriefInfosResponse = 
+| StudentHomeBriefInfosResponse
+| ProfessorHomeBriefInfosResponse
+| ManagerHomeBriefInfosResponse
+;

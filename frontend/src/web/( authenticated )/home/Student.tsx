@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../Layout'
 import { GrSchedule } from 'react-icons/gr';
-import { FaCalendarAlt, FaFilter, FaHistory, FaRegClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaFilter, FaRegClock } from 'react-icons/fa';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
@@ -25,6 +25,7 @@ import type { StudentAppointmentResponse as StudentAppointment } from '@shared/t
 import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { ScheduleService } from '@frontend/services/schedule.service';
+import { Section } from '@frontend/components/section';
 
 const Student = (): React.JSX.Element => {
 
@@ -65,12 +66,12 @@ const Student = (): React.JSX.Element => {
   );
 
   useEffect(() => {
-    (async(id: number): Promise<void> => {
+    (async(): Promise<void> => {
       try {
         const [ studentBriefInfos, appointments, lastAppointment ] = await Promise.all([
-          UserService.getStudentHomeBriefInfos(id),
-          ScheduleService.getUserAppointments('STUDENT', user.id),
-          UserService.getStudentLastAppointment(id),
+          UserService.getUserHomeBriefInfos<'STUDENT'>(),
+          ScheduleService.getUserAppointments<'STUDENT'>(),
+          UserService.getStudentLastAppointment(),
         ]);
 
         setBriefInfos(studentBriefInfos);
@@ -79,7 +80,7 @@ const Student = (): React.JSX.Element => {
       } catch (error:unknown) {
         toast(apiError(error), 'error');
       }
-    })(user.id);
+    })();
   },[]);
 
   return (
@@ -165,40 +166,9 @@ const Student = (): React.JSX.Element => {
             />
           </div>
 
-          <div className='flex flex-col gap-2 border border-cyan-400 p-2 rounded-lg bg-cyan-100/20 min-h-0'>
-            <h2 className='text-cyan-500 font-semibold self-center'>
-              Último agendamento
-            </h2>
-            
-            { lastAppointment ? (
-              <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
-                <h3 className='font-bold text-orange-400 text-sm'>
-                  { formatDateTime(lastAppointment.dateTime) }
-                </h3>        
-                
-                <div className='flex flex-col'>
-                  <label className=' text-orange-400 font-semibold text-xs'>
-                    Professor: <span className='text-cyan-500 font-normal'> { lastAppointment.user.name } </span>
-                  </label>
-
-                  <label className=' text-orange-400 font-semibold text-xs'>
-                    Sala: <span className='text-cyan-500 font-normal'> { lastAppointment.room } </span>
-                  </label>
-            
-                  <label className=' text-orange-400 font-semibold text-xs'>
-                    Motivo: <span className='text-gray-400 font-normal'> { lastAppointment.reason } </span>
-                  </label>
-                </div>
-              </div>
-            ) : (
-              <div className='flex flex-col flex-1 px-3 min-h-0 overflow-auto justify-center bg-white border rounded-lg border-cyan-300'>
-                <NoContent 
-                  Icon={() => <FaHistory />}
-                  message='Nenhum agendamento realizado!'
-                />
-              </div>
-            )}
-          </div>
+          <Section.StudentLastAppointment 
+            lastAppointment={lastAppointment}
+          />
         </div>
       </div>
     </Layout>

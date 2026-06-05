@@ -20,6 +20,7 @@ type Props = {
   onClick: {
     edit   : (appointmentId: number) => void;
     cancel : (appointmentId: number) => void;
+    remove : (appointmentId: number) => void;
     professorDecision: {
       accept : (appointmentId: number) => void;
       reject : (appointmentId: number) => void;
@@ -95,7 +96,7 @@ const Solicitation = (props:Props): React.JSX.Element => {
                 ) : (
                   <div className='flex flex-col rounded-b-xl rounded-tl-xl'>              
                     <button 
-                    onClick={() => props.onClick.cancel(props.id)}
+                    onClick={() => props.onClick.remove(props.id)}
                     className={`
                       bg-red-50 border border-red-300 text-red-500 flex items-center gap-1 px-5 p-1 cursor-pointer text-sm hover:brightness-95 active:brightness-90
                       ${props.from === 'STUDENT' ? 'rounded-b-lg rounded-tl-lg' : 'rounded-lg'}

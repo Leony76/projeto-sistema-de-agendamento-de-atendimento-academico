@@ -31,6 +31,7 @@ type ConfirmModals =
 | 'CONFIRM_EDIT' 
 | 'CONFIRM_PROFESSOR_DECISION' 
 | 'CONFIRM_CANCEL'
+| 'CONFIRM_REMOVE'
 ;
 
 type Modals = ConfirmModals | 'EDIT';
@@ -85,6 +86,7 @@ const Requests = ():React.JSX.Element => {
   const [acceptOrDenyAppointmentId, setAcceptOrDenyAppointmentId] = useState<number | null>(null);
   const [editSolicitation, setEditSolicitation] = useState<StudentAppointmentSolicitation | null>(null);
   const [cancelSolicitationId, setCancelSolicitationId] = useState<number | null>(null);
+  const [removeSolicitationId, setRemoveSolicitationId] = useState<number | null>(null);
   
   const [pendingAppointments, setPendingAppointments] = useState<{
     fromStudent   : StudentAppointmentSolicitation[],
@@ -160,6 +162,26 @@ const Requests = ():React.JSX.Element => {
       setLoading(true);
 
       const response = await ScheduleService.acceptOrDenyAppointmentSolicitation(appointmentId, decision);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        
+        setRefresh(prev => prev + 1);
+        setModal(null);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleRemoveAppointmentSolicitation = async(appointmentId: number): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const response = await ScheduleService.removeSolicitation(appointmentId);
 
       if (response.success) {
         toast(response.message);
@@ -281,6 +303,19 @@ const Requests = ():React.JSX.Element => {
       message        : 'Tem certeza em editar essa solicitação?',
       onAccept       : handleSubmit(handleEditAppointmentSolicitation),
       onCloseRequest : () => setModal('EDIT'),
+    },
+
+    CONFIRM_REMOVE: {
+      visible        : modal === 'CONFIRM_REMOVE',
+      message        : 'Tem certeza em apagar essa solicitação?',
+      onAccept       : () => {
+        if (!removeSolicitationId) return;
+        handleRemoveAppointmentSolicitation(removeSolicitationId);
+      },
+      onCloseRequest : () => {
+        setRemoveSolicitationId(null);
+        setModal(null);
+      },
     },
   };
 
@@ -456,6 +491,10 @@ const Requests = ():React.JSX.Element => {
                         key={solicitation.id}
                         { ...solicitation  }            
                         onClick={{
+                          remove: (appointmentId) => {
+                            setModal('CONFIRM_REMOVE');
+                            setRemoveSolicitationId(appointmentId);
+                          },
                           cancel: (appointmentId) => {
                             setModal('CONFIRM_CANCEL');
                             setCancelSolicitationId(appointmentId);

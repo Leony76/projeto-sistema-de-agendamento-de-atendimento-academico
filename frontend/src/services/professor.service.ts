@@ -16,9 +16,9 @@ export class ProfessorService {
     return response.data;
   }
 
-  public static async getAvailability(professorId: number) {
+  public static async getAvailability() {
 
-    const response = await api.get<ProfessorAvailabilityResponse[]>(`/professor/${professorId}/availability`);
+    const response = await api.get<ProfessorAvailabilityResponse[]>(`/professor/availability`);
 
     return response.data;
   }

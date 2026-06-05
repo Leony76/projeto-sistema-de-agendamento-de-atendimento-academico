@@ -76,7 +76,7 @@ export class AuthService {
     if (!registeredStudent.student) 
       throw new ApiError('Houve um erro no seu cadastro. Tente novamente mais tarde!', 500);
 
-    const token = generateToken(registeredStudent.id);
+    const token = generateToken(registeredStudent.id, registeredStudent.role);
     
     return {
       token,
@@ -199,7 +199,7 @@ export class AuthService {
 
     await this.validatePassword(data.password, student.user.password);
 
-    const token = generateToken(student.user.id);
+    const token = generateToken(student.user.id, student.user.role);
 
     return {
       token,
@@ -220,7 +220,7 @@ export class AuthService {
 
     await this.validatePassword(data.password, user.password);
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, user.role);
 
     switch (user.role) {
       case 'PROFESSOR':

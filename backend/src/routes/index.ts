@@ -7,10 +7,14 @@ import professorRoutes from '@backend/modules/users/professor/professor.route';
 import appointmentRoutes from '@backend/modules/appointment/appointment.route';
 import roomRoutes from '@backend/modules/room/room.route';
 import historyRoutes from '@backend/modules/history/history.route';
+import { authMiddleware } from '@backend/middleware/auth.middleware';
 
 const routes = Router();
 
-routes.use('/auth'        , authRoutes        );
+routes.use('/auth' , authRoutes );
+
+routes.use(authMiddleware);
+
 routes.use('/discipline'  , disciplineRoutes  );
 routes.use('/user'        , userRoutes        );
 routes.use('/professor'   , professorRoutes   );

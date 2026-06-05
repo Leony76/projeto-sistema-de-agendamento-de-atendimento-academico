@@ -7,7 +7,32 @@ export class AppointmentRepository {
 
   public static async findAppointmentById(id: number) {
     return Boolean(await prisma.appointment.findUnique({
-      where: { id }
+      where  : { id },
+      select : { id: true, }
+    }));
+  }
+
+
+
+  public static async isSolicitationAlreadyCanceled(id: number) {
+    return Boolean(await prisma.appointment.findFirst({
+      where: { 
+        id,
+        status: 'CANCELED',
+      },
+      select: { id: true },
+    }));
+  }
+
+
+
+  public static async isSolicitationAlreadyRemoved(id: number) {
+    return Boolean(await prisma.appointment.findFirst({
+      where: { 
+        id,
+        deletedAt: { not: null },
+      },
+      select: { id: true },
     }));
   }
 
@@ -72,7 +97,12 @@ export class AppointmentRepository {
     });
   }
 
-  public static async solicitateAppointment(data: AppointmentSolicitationRequest) {
+
+  
+  public static async solicitateAppointment(
+    data      : AppointmentSolicitationRequest,
+    studentId : number,
+  ) {
 
     const existingAppointment = await prisma.appointment.findFirst({
       where: {
@@ -92,7 +122,7 @@ export class AppointmentRepository {
       data: {
         dateTime: data.dateTime,
         reason: data.reason,
-        studentId: data.studentId,
+        studentId,
         professorId: data.professorId,
         status: 'PENDING',
       },
@@ -112,10 +142,13 @@ export class AppointmentRepository {
     });
   }
 
+
+
   public static async getStudentSolicitations(id: number) {
     return await prisma.appointment.findMany({
       where: {
         studentId: id,
+        deletedAt: null,
         status: {
           in: ['PENDING', 'CONFIRMED', 'ACCEPTED', 'CANCELED', 'REJECTED']
         }
@@ -154,6 +187,7 @@ export class AppointmentRepository {
     return await prisma.appointment.findMany({
       where: {
         professorId: id,
+        deletedAt: null,
         status: {
           in: ['PENDING', 'CONFIRMED', 'ACCEPTED', 'CANCELED', 'REJECTED']
         }
@@ -367,6 +401,19 @@ export class AppointmentRepository {
     return await prisma.appointment.update({
       where  : { id },
       data   : { status: 'CANCELED' },
+      select : { id: true }
+    });
+  }
+
+
+
+  public static async removeSolicitation(id: number) {
+    return await prisma.appointment.update({
+      where  : { id },
+      data   : { 
+        status    : 'CANCELED',
+        deletedAt : new Date(),
+      },
       select : { id: true }
     });
   }

@@ -8,9 +8,10 @@ appointmentRoutes.get('/schedule/available-professors'          , AppointmentCon
 appointmentRoutes.post('/schedule/solicitate'                   , AppointmentController.solicitateAppointment);
 appointmentRoutes.get('/:role/:id/solicitations'                , AppointmentController.getUserSolicitations);
 appointmentRoutes.patch('/schedule/solicitation-request/:solicitationId/:decision', AppointmentController.acceptOrDenyAppointmentSolicitation);
-appointmentRoutes.get('/:role/:id'                              , AppointmentController.getUserAppointments);
+appointmentRoutes.get('/'                                       , AppointmentController.getUserAppointments);
 appointmentRoutes.patch('/:appointmentId/mark-as-done'          , AppointmentController.markAppointmentAsDone);
 appointmentRoutes.patch('/solicitation/:appointmentId/edit'     , AppointmentController.editSolicitation);
 appointmentRoutes.patch('/solicitation/:appointmentId/cancel'   , AppointmentController.cancelSolicitation);
+appointmentRoutes.patch('/solicitation/:appointmentId/remove'   , AppointmentController.removeSolicitation);
 
 export default appointmentRoutes;

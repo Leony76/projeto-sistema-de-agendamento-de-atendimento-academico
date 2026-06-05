@@ -3,6 +3,7 @@ import EditProfessorAvailability from "./EditProfessorAvailability";
 import ManagerGeneralActions from "./ManagerGeneralActions";
 import ManagerReports from "./ManagerReports";
 import RoomsDetails from "./RoomsDetails";
+import StudentLastAppointment from "./StudentLastAppointment";
 
 export const Section = {
   ManagerReports,
@@ -10,4 +11,5 @@ export const Section = {
   DeleteUsers,
   ManagerGeneralActions,
   EditProfessorAvailability,
+  StudentLastAppointment,
 };

@@ -1,6 +1,6 @@
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import { api } from "./api.service";
-import type * as U from '@shared/types/dtos/managerUsersList.dto'; 
+import type { ActiveManagersToManagerListResponse, ActiveProfessorsToManagerListResponse, ActiveStudentsToManagerListResponse } from '@shared/types/dtos/managerUsersList.dto'; 
 import type * as Brief from '@shared/types/dtos/userHomeBriefInfos.dto';
 import type { ManagerGeneralInfosResponse, ProfessorGeneralInfosResponse, StudentGeneralInfosResponse } from '@shared/types/dtos/userGeneralInfos.dto';
 import type { AuthUserBasicInfos } from "@shared/types/authUserBasicInfos.type";
@@ -9,75 +9,66 @@ import type { StudentLastAppointmentResponse } from "@shared/types/dtos/appointm
 
 export class UserService {
 
-  private static async getActiveUsersToManagerList<T>(role: 'professors' | 'students' | 'managers') {
+  
+  public static async me() {
 
-    const response = await api.get<T>(`/user/manager-list/active-${role}`);
+    const response = await api.get<AuthUserBasicInfos>(`/user/me`);
 
     return response.data;
   }
 
-  private static async getUserGeneralInfosById<T>(role: 'professor' | 'student' | 'manager', id: number) {
 
-    const response = await api.get<T>(`/user/${role}/${id}/general-infos`);
 
-    return response.data;
-  }
+  public static async getActiveUsersToManagerList<
+    T extends Lowercase<UserRole>
+  >( role: T ) {
 
-  private static async getUserHomeBriefInfos<T>(role: 'professor' | 'student' | 'manager', id?: number) {
-    let response;
-
-    if (role === 'manager') {
-      response = await api.get<T>(`/user/${role}-brief-infos`);
-      return response.data;
-    }
-
-    response = await api.get<T>(`/user/${role}-brief-infos/${id}`);
-    return response.data;
-  }
-
-  public static async me(id: number, role: UserRole) {
-
-    const response = await api.get<AuthUserBasicInfos>(`/user/${role}/${id}/me`);
+    const response = await api.get<
+      T extends 'student'
+        ? ActiveStudentsToManagerListResponse[]
+      : T extends 'professor'
+        ?  ActiveProfessorsToManagerListResponse[]
+        : ActiveManagersToManagerListResponse[]
+    >(`/user/manager-list/active-${role}`);
 
     return response.data;
   }
 
-  public static async getActiveProfessorsToManagerList() {
-    return this.getActiveUsersToManagerList<U.ActiveProfessorsToManagerListResponse[]>('professors');
-  }
-  
-  public static async getActiveStudentsToManagerList() {
-    return this.getActiveUsersToManagerList<U.ActiveStudentsToManagerListResponse[]>('students');
-  }
-  
-  public static async getActiveManagersToManagerList() {
-    return this.getActiveUsersToManagerList<U.ActiveManagersToManagerListResponse[]>('managers');
+
+
+  public static async getUserHomeBriefInfos<T extends UserRole>() {
+
+    const response = await api.get<
+      T extends 'STUDENT'
+        ? Brief.StudentHomeBriefInfosResponse
+      : T extends 'PROFESSOR'
+        ? Brief.ProfessorHomeBriefInfosResponse
+        : Brief.ManagerHomeBriefInfosResponse
+    >(`/user/user-brief-infos`);
+
+    return response.data;
   }
 
-  public static async getStudentGeneralInfosById(id: number) {
-    return this.getUserGeneralInfosById<StudentGeneralInfosResponse>('student', id);
-  }
-  
-  public static async getProfessorGeneralInfosById(id: number) {
-    return this.getUserGeneralInfosById<ProfessorGeneralInfosResponse>('professor', id);
-  }
-  
-  public static async getManagerGeneralInfosById(id: number) {
-    return this.getUserGeneralInfosById<ManagerGeneralInfosResponse>('manager', id);
+
+
+  public static async getUserGeneralInfosById<T extends Lowercase<UserRole>> (
+    role : T, 
+    id   : number
+  ) {
+
+    const response = await api.get<
+      T extends 'student'
+        ? StudentGeneralInfosResponse
+      : T extends 'professor'
+        ? ProfessorGeneralInfosResponse
+        : ManagerGeneralInfosResponse
+    >(`/user/${role}/${id}/general-infos`);
+
+    return response.data;
   }
 
-  public static async getManagerHomeBriefInfos() {
-    return this.getUserHomeBriefInfos<Brief.ManagerHomeBriefInfosResponse>('manager');
-  }
-  
-  public static async getProfessorHomeBriefInfos(id: number) {
-    return this.getUserHomeBriefInfos<Brief.ProfessorHomeBriefInfosResponse>('professor', id);
-  }
-  
-  public static async getStudentHomeBriefInfos(id: number) {
-    return this.getUserHomeBriefInfos<Brief.StudentHomeBriefInfosResponse>('student', id);
-  }
 
+  
   public static async excludeUsers(ids: number[]) {
 
     const response = await api.post<ApiResponse<number[]>>(
@@ -87,19 +78,23 @@ export class UserService {
     return response.data;
   }
 
-  public static async changeUserTemporaryPassword(userId: number, newPassword: string) {
 
-    const response = await api.patch<
-      ApiResponse<{success: boolean}>>
-        (`/user/${userId}/change-temporary-password`, { newPassword });
+
+  public static async changeUserTemporaryPassword(newPassword: string) {
+
+    const response = await api.patch<ApiResponse<{success: boolean}>>(
+      `/user/change-temporary-password`, { newPassword }
+    );
 
     return response.data;
   }
 
-  public static async getStudentLastAppointment(id: number) {
+
+
+  public static async getStudentLastAppointment() {
 
     const response = await api.get<StudentLastAppointmentResponse>(
-      `/user/student/${id}/last-appointment`
+      `/user/student/last-appointment`
     );
 
     return response.data;

@@ -1,19 +1,18 @@
 import { api } from "./api.service";
 import { type AvailableProfessorToScheduleResponse } from '@shared/types/dtos/availableProfessorToSchedule';
-import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse, type EditAppointmentSolicitationResponse, type ProfessorAppointmentSolicitationResponse, type StudentAppointmentSolicitationResponse, type UserAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse, type EditAppointmentSolicitationResponse, type ProfessorAppointmentSolicitationResponse, type StudentAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { ApiResponse } from "@shared/types/apiResponse.type";
 import type { UserRole } from "@backend/generated/prisma/enums";
 import type { SolicitationDecision } from "@shared/types/solicitationDecision.type";
 import type { ProfessorAppointmentResponse, StudentAppointmentResponse } from "@shared/types/dtos/appointment.dto";
-import type { EditAppointmentSolicitationFormData } from "@shared/schemas/appointmentSolicitation.schema";
 
 export class ScheduleService {
 
   public static async getAvailableProfessorsToSchedule() {
 
-    const response = await api.get<
-      AvailableProfessorToScheduleResponse[]>
-        ('/appointment/schedule/available-professors');
+    const response = await api.get<AvailableProfessorToScheduleResponse[]>(
+      '/appointment/schedule/available-professors'
+    );
 
     return response.data;
   }
@@ -24,7 +23,9 @@ export class ScheduleService {
 
      const response = await api.get<string[]>(
       `/appointment/schedule/professor/${id}/available-slots`,
-      { params: { date: date.toISOString()}},
+      { params : { 
+        date : date.toISOString()}
+      },
     );
 
     return response.data;
@@ -75,16 +76,13 @@ export class ScheduleService {
 
 
 
-  public static async getUserAppointments<T extends UserRole>(
-    role   : T, 
-    userId : number
-  ) {
+  public static async getUserAppointments<T extends UserRole>() {
 
     const response = await api.get<
       T extends 'STUDENT'
         ? StudentAppointmentResponse[]
         : ProfessorAppointmentResponse[]
-    >(`/appointment/${role}/${userId}`);
+    >(`/appointment/`);
 
     return response.data;
   }
@@ -118,6 +116,17 @@ export class ScheduleService {
 
     const response = await api.patch<ApiResponse<{id: number}>>(
       `/appointment/solicitation/${id}/cancel`,
+    );
+
+    return response.data;
+  }
+
+
+
+  public static async removeSolicitation(id: number) {
+
+    const response = await api.patch<ApiResponse<{id: number}>>(
+      `/appointment/solicitation/${id}/remove`,
     );
 
     return response.data;

@@ -71,10 +71,11 @@ export class AppointmentService {
 
 
   public static async solicitateAppointment(
-    data: AppointmentSolicitationRequest
+    data      : AppointmentSolicitationRequest,
+    studentId : number,
   ): Promise<AppointmentSolicitationResponse> {
 
-    const solicitate = await AppointmentRepository.solicitateAppointment(data);  
+    const solicitate = await AppointmentRepository.solicitateAppointment(data, studentId);  
 
     return {
       dateTime      : solicitate.dateTime.toISOString(),
@@ -168,13 +169,37 @@ export class AppointmentService {
 
   public static async cancelSolicitation(id: number): Promise<{id: number}> {
 
-    const exist = await AppointmentRepository.findAppointmentById(id);
+    const [exist, alreadyCanceled] = await Promise.all([
+      AppointmentRepository.findAppointmentById(id),
+      AppointmentRepository.isSolicitationAlreadyCanceled(id),
+    ]); 
 
     if (!exist) 
       throw new ApiError('Houve um erro ao cancelar a solicitação, pois a mesma não existe!', 404);
+    if (alreadyCanceled) 
+      throw new ApiError('Houve um erro ao cancelar a solicitação, pois a mesma já estava!', 409);
 
     const canceled = await AppointmentRepository.cancelSolicitation(id);
     
     return { id: canceled.id };
+  }
+
+
+
+  public static async removeSolicitation(id: number): Promise<{id: number}> {
+
+    const [exist, alreadyRemoved] = await Promise.all([
+      AppointmentRepository.findAppointmentById(id),
+      AppointmentRepository.isSolicitationAlreadyRemoved(id),
+    ]); 
+
+    if (!exist) 
+      throw new ApiError('Houve um erro ao remover a solicitação, pois a mesma não existe!', 404);
+    if (alreadyRemoved) 
+      throw new ApiError('Houve um erro ao remover a solicitação, pois a mesma já está!', 409);
+
+    const removed = await AppointmentRepository.removeSolicitation(id);
+    
+    return { id: removed.id };
   }
 }
