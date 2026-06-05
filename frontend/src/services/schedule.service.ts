@@ -97,10 +97,10 @@ export class ScheduleService {
 
 
 
-  public static async editSolicitation(data: EditAppointmentSolicitationResponse) {
+  public static async editAppointment(data: EditAppointmentSolicitationResponse) {
 
     const response = await api.patch<ApiResponse<EditAppointmentSolicitationResponse>>(
-      `/appointment/solicitation/${data.appointmentId}/edit`,
+      `/appointment/${data.appointmentId}/edit`,
       data,
     );
 
@@ -109,10 +109,10 @@ export class ScheduleService {
 
 
 
-  public static async cancelSolicitation(id: number) {
+  public static async cancelAppointment(id: number) {
 
     const response = await api.patch<ApiResponse<{id: number}>>(
-      `/appointment/solicitation/${id}/cancel`,
+      `/appointment/${id}/cancel`,
     );
 
     return response.data;

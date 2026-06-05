@@ -26,6 +26,19 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { ScheduleService } from '@frontend/services/schedule.service';
 import { Section } from '@frontend/components/section';
+import { type EditAppointmentSolicitationFormData as EditAppointmentFormData } from '@shared/schemas/appointmentSolicitation.schema';
+
+import { Modal } from '@frontend/components/modal';
+import { formatTime } from '@frontend/utils/formats/formatTime.util';
+import { formatMergeDateWithTime } from '@frontend/utils/formats/formatMergeDateWithTime.util';
+import type { EditAppointmentSolicitationResponse as EditAppointmentResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
+
+type ConfirmModals =
+| 'CONFIRM_EDIT' 
+| 'CONFIRM_CANCEL'
+;
+
+type Modals = ConfirmModals | 'EDIT';
 
 const Student = (): React.JSX.Element => {
 
@@ -37,8 +50,18 @@ const Student = (): React.JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<typeof STUDENT_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
-
+  
+  const [loading, setLoading] = useState<boolean>(false);
+  const [modal, setModal] = useState<Modals | null>(null);
+  
+  const [refresh, setRefresh] = useState(0);
+  
   const [studentAppointments, setStudentAppointments] = useState<StudentAppointment[]>([]);
+
+  const [cancelAppointmentId, setCancelAppointmentId] = useState<number | null>(null);
+  const [editStudentAppointment, setEditStudentAppointment] = useState<StudentAppointment | null>(null);
+  const [editedStudentAppointmentData, setEditedStudentAppointmentData] = useState<EditAppointmentFormData | null>(null);
+
   const [briefInfos, setBriefInfos] = useState<StudentHomeBriefInfos | null>(null);
   const [lastAppointment, setLastAppointment] = useState<Appointment<Pick<Professor, 'name'>> | null>(null);
 
@@ -65,6 +88,87 @@ const Student = (): React.JSX.Element => {
     },
   );
 
+  const MODAL_CONFIRM_ACTION_CONFIG: Record<ConfirmModals, {
+    message  : string,
+    onAccept : () => void,
+    onReject : () => void,
+    visible  : boolean,
+  }> = {
+    CONFIRM_CANCEL: {
+      message  : 'Tem certeza em cancelar esse agendamento confirmado?',
+      visible  :  modal === 'CONFIRM_CANCEL',
+      onAccept : () => {
+        if (!cancelAppointmentId) return;
+        handleCancelAppointment(cancelAppointmentId);
+      },
+      onReject : () => {
+        setCancelAppointmentId(null);
+        setModal(null);
+      },
+    },
+
+    CONFIRM_EDIT: {
+      message  : 'Tem certeza em fazer essa edição nesse agendamento confirmado?',
+      visible  :  modal === 'CONFIRM_EDIT',
+      onAccept : () => {
+        if (!editedStudentAppointmentData) return;
+        handleEditAppointment(editedStudentAppointmentData);
+      },
+      onReject : () => {
+        setEditedStudentAppointmentData(null);
+        setModal('EDIT');
+      },
+    },
+  };
+
+  const handleEditAppointment = async(data: EditAppointmentFormData): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const dateTime = formatMergeDateWithTime(data.appointmentDate, data.hour);
+
+      const payload: EditAppointmentResponse = {
+        appointmentId : data.appointmentId,
+        reason        : data.reason,
+        dateTime,
+      };
+
+      const response = await ScheduleService.editAppointment(payload);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        setModal(null); 
+
+        setRefresh(prev => prev + 1);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleCancelAppointment = async(solicitationId: number): Promise<void> => {
+    try {
+      setLoading(false);
+
+      const response = await ScheduleService.cancelAppointment(solicitationId);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        setModal(null); 
+
+        setRefresh(prev => prev + 1);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     (async(): Promise<void> => {
       try {
@@ -81,13 +185,49 @@ const Student = (): React.JSX.Element => {
         toast(apiError(error), 'error');
       }
     })();
-  },[]);
+  }, [refresh]);
 
   return (
     <Layout 
     selectedTab='HOME'
     from='STUDENT'
     >
+      { modal && modal !== 'EDIT' &&
+        <Modal.ConfirmAction
+          title='Confirmar ação'
+          loading={loading}
+          message={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].message}
+          visible={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].visible}
+          onAccept={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].onAccept}
+          onCloseRequest={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].onReject}
+        />
+      }
+
+      { editStudentAppointment &&  
+        <Modal.EditAppointment
+          title="Editar agendamento"
+          visible={modal === 'EDIT'}
+          initialData={{
+            appointmentId   : editStudentAppointment.id,
+            appointmentDate : editStudentAppointment.dateTime,
+            reason          : editStudentAppointment.reason,
+            hour            : formatTime(editStudentAppointment.dateTime),
+          }}
+          professor={{
+            id            : editStudentAppointment.professor.id,
+            availableDays : editStudentAppointment.professor.availableDays,
+          }}
+          onRequestClose={() => {
+            setEditStudentAppointment(null);
+            setModal(null);
+          }}
+          onEdit={(data) => {
+            setEditedStudentAppointmentData({...data, appointmentId: editStudentAppointment.id });
+            setModal('CONFIRM_EDIT');
+          }}
+        />
+      }
+
       <div className='grid grid-cols-[1fr_300px] gap-x-3 h-full min-h-0'>
         <div className='grid gap-y-3 grid-rows-[60px_1fr] min-h-0'>
           <div className='flex gap-5 max-w-200 mx-auto w-full'>
@@ -138,9 +278,19 @@ const Student = (): React.JSX.Element => {
             <div className='flex-1 min-h-0 flex flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
               { filteredStudentAppointmentsData.length > 0 ? (
                 filteredStudentAppointmentsData.map((appointment) => (
-                 <Card.Appointment
+                  <Card.Appointment
                   key={appointment.id}
                   { ...appointment }
+                  onClick={{
+                    edit : (appointment) => {
+                      setEditStudentAppointment(appointment);
+                      setModal('EDIT');
+                    }, 
+                    cancel : (appointmentId) => {
+                      setCancelAppointmentId(appointmentId);
+                      setModal('CONFIRM_CANCEL');
+                    },
+                  }}
                  />
                ))
               ) : (

@@ -331,9 +331,11 @@ export class AppointmentRepository {
         updatedAt    : true,
         professor : {
           select : {
-            disciplines : { select: { name: true }},
+            availability : { select: { dayOfWeek: true }},
+            disciplines  : { select: { name: true }},
             user : {
               select: {
+                id    : true,
                 name  : true,
                 photo : true,
               },
@@ -380,7 +382,7 @@ export class AppointmentRepository {
 
 
 
-  public static async editSolicitation(data: EditAppointmentSolicitationResponse) {
+  public static async editAppointment(data: EditAppointmentSolicitationResponse) {
     return await prisma.appointment.update({
       where : { id: data.appointmentId },
       data : {
@@ -397,7 +399,7 @@ export class AppointmentRepository {
 
 
 
-  public static async cancelSolicitation(id: number) {
+  public static async cancelAppointment(id: number) {
     return await prisma.appointment.update({
       where  : { id },
       data   : { status: 'CANCELED' },

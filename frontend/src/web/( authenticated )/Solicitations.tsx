@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaEdit, FaExclamation, FaFilter } from 'react-icons/fa';
+import { FaExclamation, FaFilter } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -18,12 +18,7 @@ import { ScheduleService } from '@frontend/services/schedule.service';
 import type { EditAppointmentSolicitationResponse, ProfessorAppointmentSolicitationResponse as ProfessorAppointmentSolicitation, StudentAppointmentSolicitationResponse as StudentAppointmentSolicitation } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { SolicitationDecision } from '@shared/types/solicitationDecision.type';
 import { Modal } from '@frontend/components/modal';
-import { useForm } from 'react-hook-form';
-import { editAppointmentSolicitationSchema, type EditAppointmentSolicitationFormData } from '@shared/schemas/appointmentSolicitation.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@frontend/components/button';
-import Warning from '@frontend/components/misc/Warning';
-import { DAYS_BY_INDEX_MAP } from '@shared/utils/days.map';
+import { type EditAppointmentSolicitationFormData } from '@shared/schemas/appointmentSolicitation.schema';
 import { formatTime } from '@frontend/utils/formats/formatTime.util';
 import { formatMergeDateWithTime } from '@frontend/utils/formats/formatMergeDateWithTime.util';
 
@@ -47,22 +42,6 @@ const Requests = ():React.JSX.Element => {
   if (!user) return <Navigate to={'/'}/>;
 
   const { toast } = useToast();
-  
-  const {
-    handleSubmit,
-    register,
-    setValue,
-    reset,
-    watch,
-    formState: { errors }
-  } = useForm<EditAppointmentSolicitationFormData>({
-    resolver: zodResolver(editAppointmentSolicitationSchema),
-    defaultValues: {
-      appointmentDate : '',
-      hour            : '',
-      reason          : '',
-    }
-  });
 
   const role = user.role === 'PROFESSOR'
     ? 'PROFESSOR'
@@ -80,11 +59,11 @@ const Requests = ():React.JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modal, setModal] = useState<Modals | null>(null);
 
-  const [professorAvailabilitySlots, setProfessorAvailabilitySlots] = useState<string[]>([]);
   const [acceptOrDenyAppointmentDecision, setAcceptOrDenyAppointmentDecision] = useState<SolicitationDecision | null>(null);
 
   const [acceptOrDenyAppointmentId, setAcceptOrDenyAppointmentId] = useState<number | null>(null);
   const [editSolicitation, setEditSolicitation] = useState<StudentAppointmentSolicitation | null>(null);
+  const [editedSolicitationData, setEditedSolicitationData] = useState<EditAppointmentSolicitationFormData | null>(null);
   const [cancelSolicitationId, setCancelSolicitationId] = useState<number | null>(null);
   const [removeSolicitationId, setRemoveSolicitationId] = useState<number | null>(null);
   
@@ -209,7 +188,7 @@ const Requests = ():React.JSX.Element => {
         dateTime,
       };
 
-      const response = await ScheduleService.editSolicitation(payload);
+      const response = await ScheduleService.editAppointment(payload);
 
       if (response.success) {
         toast(response.message);
@@ -229,7 +208,7 @@ const Requests = ():React.JSX.Element => {
     try {
       setLoading(false);
 
-      const response = await ScheduleService.cancelSolicitation(solicitationId);
+      const response = await ScheduleService.cancelAppointment(solicitationId);
 
       if (response.success) {
         toast(response.message);
@@ -245,25 +224,6 @@ const Requests = ():React.JSX.Element => {
     }
   }
 
-  const getProfessorAvailableSlotsToSchedule = async (
-    professorId : number,
-    dateTime    : string,
-  ): Promise<void> => {
-    try {
-
-      const slots = await ScheduleService.getProfessorAvailableSlotsToSchedule(
-        professorId,
-        new Date(dateTime),
-      );
-
-      setProfessorAvailabilitySlots(slots);
-
-    } catch (error:unknown) {
-      toast(apiError(error), 'error');
-    }
-  };
-
-  
   const MODAL_CONFIRM_MAP: Record<ConfirmModals, {
     message        : string,
     visible        : boolean,
@@ -301,8 +261,14 @@ const Requests = ():React.JSX.Element => {
     CONFIRM_EDIT: {
       visible        : modal === 'CONFIRM_EDIT',
       message        : 'Tem certeza em editar essa solicitação?',
-      onAccept       : handleSubmit(handleEditAppointmentSolicitation),
-      onCloseRequest : () => setModal('EDIT'),
+      onAccept: () => {
+        if (!editedSolicitationData) return;
+        handleEditAppointmentSolicitation(editedSolicitationData);
+      },
+      onCloseRequest : () => {
+        setEditedSolicitationData(null);
+        setModal('EDIT');
+      },
     },
 
     CONFIRM_REMOVE: {
@@ -319,16 +285,6 @@ const Requests = ():React.JSX.Element => {
     },
   };
 
-  useEffect(() => {
-    if ( modal !== 'EDIT' || !editSolicitation || !watch('appointmentDate')) {
-      return;
-    }
-
-    getProfessorAvailableSlotsToSchedule(
-      editSolicitation.professor.id,
-      watch('appointmentDate')
-    );
-  }, [watch('appointmentDate'), modal, editSolicitation]);
 
   useEffect(() => {
     (async() => {
@@ -365,94 +321,30 @@ const Requests = ():React.JSX.Element => {
         />
       }
 
-      <Modal.Default
-      title='Editar solicitação'
-      visible={modal === 'EDIT'}
-      containerMaxWidth='max-w-76'
-      containerPadding='p-3'
-      onCloseRequest={() => {
-        setEditSolicitation(null);
-        setModal(null);
-      }}
-      >
-        <Select.DatePicker
-          placeholder='Selecione uma data'
-          label='Data do agendamento'
-          customStyle={{ input: 'py-1.25!' }}
-          value={watch('appointmentDate')}
-          onChange={(date) => setValue('appointmentDate', date as string, { shouldValidate: true })}
-          error={errors.appointmentDate?.message}
-          disabledDate={(date) => {
-            if (!editSolicitation) return true;
-            if (editSolicitation.professor.availableDays.length === 0) return true;
-
-            const day = DAYS_BY_INDEX_MAP[date.getDay()];
-
-            return !editSolicitation.professor.availableDays.includes(day);
+      { editSolicitation &&  
+        <Modal.EditAppointment
+          title="Editar solicitação"
+          visible={modal === 'EDIT'}
+          initialData={{
+            appointmentId   : editSolicitation.id,
+            appointmentDate : editSolicitation.dateTime,
+            hour            : formatTime(editSolicitation.dateTime),
+            reason          : editSolicitation.reason,
+          }}
+          professor={{
+            id            : editSolicitation.professor.id,
+            availableDays : editSolicitation.professor.availableDays,
+          }}
+          onRequestClose={() => {
+            setEditSolicitation(null);
+            setModal(null);
+          }}
+          onEdit={(data) => {
+            setEditedSolicitationData({...data, appointmentId: editSolicitation.id });
+            setModal('CONFIRM_EDIT');
           }}
         />
-
-        <div className='space-y-1'>
-          <div>
-            <h4 className={`
-              text-sm font-semibold text-orange-500 
-              ${ watch('appointmentDate') ? 'mb-1' : '-mb-1' }
-            `}>
-              Horários disponíveis
-            </h4>
-
-            { watch('appointmentDate') ? (
-              <>
-                <p className='text-xs text-gray-400'>
-                  Escolha um horário disponível do professor:
-                </p>
-
-                <div className='flex flex-wrap gap-2 mt-2'>
-                  {professorAvailabilitySlots.length > 0 ? (
-                    professorAvailabilitySlots.map((hour) => (
-                      <Button.Default
-                        key={hour}
-                        label={hour}
-                        selected={hour === watch('hour')}
-                        onClick={() => setValue('hour', hour, { shouldValidate: true })}
-                        customStyle={{
-                          button: 'w-fit! py-1 px-4! rounded-lg! text-xs font-bold',
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <span className='text-xs text-gray-400'>
-                      Nenhum horário disponível para este dia
-                    </span>
-                  )}
-
-                  {errors.hour?.message && <Warning error={errors.hour.message}/>}
-                </div>
-              </>
-            ) : (
-              <span className='text-xs text-gray-400'>
-                Selecione a data do agendamento
-              </span>
-            )}
-          </div>
-
-          <Input.TextArea
-            label='Motivo'
-            maxLength={50}
-            { ...register('reason') }
-            value={watch('reason')}
-            error={errors.reason?.message}
-          />
-
-          <Button.Default
-            label='Editar'
-            disabled={Object.keys(errors).length > 0}
-            onClick={() => setModal('CONFIRM_EDIT')}
-            Icon={() => <FaEdit />}
-            customStyle={{ button: 'py-1.5! font-semibold' }}
-          />
-        </div>
-      </Modal.Default>
+      }
 
       <div className={`grid gap-x-3 h-full min-h-0 grid-cols-1 mx-15`}>
         <div className='grid gap-y-3 grid-rows-1 min-h-0'>
@@ -507,13 +399,6 @@ const Requests = ():React.JSX.Element => {
                             if (!solicitation) return;
 
                             setEditSolicitation(solicitation);
-
-                            reset({
-                              appointmentId   : solicitation.id,
-                              appointmentDate : solicitation.dateTime,
-                              reason          : solicitation.reason,
-                              hour            : formatTime(solicitation.dateTime),
-                            });
 
                             setModal('EDIT');
                           },

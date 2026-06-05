@@ -147,7 +147,7 @@ export class AppointmentService {
 
 
 
-  public static async editSolicitation(
+  public static async editAppointment(
     data: EditAppointmentSolicitationResponse
   ): Promise<EditAppointmentSolicitationResponse> {
 
@@ -156,7 +156,7 @@ export class AppointmentService {
     if (!exist) 
       throw new ApiError('Houve um erro ao editar a solicitação, pois a mesma não existe!', 404);
 
-    const edited = await AppointmentRepository.editSolicitation(data);
+    const edited = await AppointmentRepository.editAppointment(data);
     
     return {
       dateTime      : edited.dateTime.toISOString(),
@@ -167,7 +167,7 @@ export class AppointmentService {
 
 
 
-  public static async cancelSolicitation(id: number): Promise<{id: number}> {
+  public static async cancelAppointment(id: number): Promise<{id: number}> {
 
     const [exist, alreadyCanceled] = await Promise.all([
       AppointmentRepository.findAppointmentById(id),
@@ -179,7 +179,7 @@ export class AppointmentService {
     if (alreadyCanceled) 
       throw new ApiError('Houve um erro ao cancelar a solicitação, pois a mesma já estava!', 409);
 
-    const canceled = await AppointmentRepository.cancelSolicitation(id);
+    const canceled = await AppointmentRepository.cancelAppointment(id);
     
     return { id: canceled.id };
   }

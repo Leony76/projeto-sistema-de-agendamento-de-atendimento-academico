@@ -3,7 +3,6 @@ import { AppointmentService } from "./appointment.service";
 import { ApiError } from "@backend/utils/apiError.util";
 import { type AppointmentSolicitationRequest, type AppointmentSolicitationResponse, type EditAppointmentSolicitationResponse } from '@shared/types/dtos/appointmentSolicitation.dto';
 import type { ApiResponse } from "@shared/types/apiResponse.type";
-import type { UserRole } from "@backend/generated/prisma/enums";
 import type { SolicitationDecision } from "@shared/types/solicitationDecision.type";
 
 export class AppointmentController {
@@ -112,15 +111,15 @@ export class AppointmentController {
 
 
 
-  public static async editSolicitation(req: Request, res: Response) {
+  public static async editAppointment(req: Request, res: Response) {
 
     const data = req.body as EditAppointmentSolicitationResponse;
 
-    const editedSolicitation = await AppointmentService.editSolicitation(data);
+    const editedSolicitation = await AppointmentService.editAppointment(data);
 
     const response: ApiResponse<EditAppointmentSolicitationResponse> = { 
       data    : editedSolicitation,
-      message : 'Solicitação editada com sucesso!',
+      message : 'Agendamento editado com sucesso!',
       success : true, 
     };
 
@@ -129,15 +128,15 @@ export class AppointmentController {
 
 
 
-  public static async cancelSolicitation(req: Request, res: Response) {
+  public static async cancelAppointment(req: Request, res: Response) {
 
     const { appointmentId } = req.params;
 
-    const cancelSolicitation = await AppointmentService.cancelSolicitation(Number(appointmentId));
+    const cancelSolicitation = await AppointmentService.cancelAppointment(Number(appointmentId));
 
     const response: ApiResponse<{ id: number }> = { 
       data    : cancelSolicitation,
-      message : 'Solicitação cancelada com sucesso!',
+      message : 'Agendamento cancelado com sucesso!',
       success : true, 
     };
 

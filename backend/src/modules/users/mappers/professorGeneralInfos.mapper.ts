@@ -15,7 +15,8 @@ type ProfessorGeneralInfos = {
   appointments: {
     student: {
       user: {
-        name: string;
+        id   : number;
+        name : string;
       };
     };
     id: number;
@@ -34,6 +35,14 @@ export const professorGeneralInfosMapper = (
   professor: ProfessorGeneralInfos
 ): ProfessorGeneralInfosResponse => {
 
+  const statusToBeSolicitation: AppointmentStatus[] = [
+    'PENDING', 'CONFIRMED', 'ACCEPTED', 'CANCELED', 'REJECTED'
+  ];
+
+  const statusToBeAppointment: AppointmentStatus[] = [
+    'ACCEPTED', 'CONFIRMED'
+  ];
+
   return {
     id           : professor.user.id,
     name         : professor.user.name,
@@ -42,18 +51,39 @@ export const professorGeneralInfosMapper = (
     role         : 'PROFESSOR',
     registeredAt : professor.user.createdAt.toISOString(),
     disciplines  : professor.disciplines.map((discipline) => discipline.name),
-    appointments : professor.appointments.map((appointment) => ({
+
+    appointments : professor.appointments.filter(
+      (appointment) => statusToBeAppointment.includes(appointment.status)
+    ).map((appointment) => ({
       dateTime  : appointment.dateTime.toISOString(),
       createdAt : appointment.registeredAt.toISOString(),
       updatedAt : appointment.updatedAt.toISOString(),
-      from: 'PROFESSOR',
-      id: appointment.id,
-      reason: appointment.reason,
-      room: appointment.room?.name ?? null,
-      status: appointment.status,
-      student: {
-        name: appointment.student.user.name,
-        photo: null,
+      from      : 'PROFESSOR',
+      id        : appointment.id,
+      reason    : appointment.reason,
+      room      : appointment.room?.name ?? null,
+      status    : appointment.status,
+      student : {
+        name  : appointment.student.user.name,
+        photo : null,
+      }
+    })), 
+
+    solicitations : professor.appointments.filter(
+      (appointment) => statusToBeSolicitation.includes(appointment.status)
+    ).map((appointment) => ({
+      dateTime  : appointment.dateTime.toISOString(),
+      createdAt : appointment.registeredAt.toISOString(),
+      updatedAt : appointment.updatedAt.toISOString(),
+      from      : 'PROFESSOR',
+      id        : appointment.id,
+      reason    : appointment.reason,
+      room      : appointment.room?.name ?? null,
+      status    : appointment.status,
+      student : {
+        id    : appointment.student.user.id,
+        name  : appointment.student.user.name,
+        photo : null,
       }
     })), 
   };

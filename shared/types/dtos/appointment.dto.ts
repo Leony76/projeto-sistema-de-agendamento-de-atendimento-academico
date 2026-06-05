@@ -12,9 +12,11 @@ export type StudentAppointmentResponse = {
   createdAt : string;
   updatedAt : string;
   professor : {
-    name        : string;
-    photo       : string | null;
-    disciplines : string[];
+    readonly id: number;
+    name: string;
+    photo: string | null;
+    availableDays: string[];
+    disciplines: string[];
   };
 };
 

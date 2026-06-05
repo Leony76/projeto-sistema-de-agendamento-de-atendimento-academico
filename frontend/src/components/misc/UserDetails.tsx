@@ -23,7 +23,6 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { STUDENT_SOLICITATIONS_FILTER_VALUE_MAP, STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP, type STUDENT_SOLICITATIONS_FILTER_MAP, type STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_MAP } from '@frontend/constants/maps/filters/userSolicitations.map.filter';
 import { filterStudentSolicitations, filterStudentSolicitationsFromProfessorView } from '@frontend/utils/filters/filterUserSolicitations.filter.util';
 import type { SelectOptionsSchema } from '@shared/types/selectOptionsSchema.type';
-import type { AppointmentStatus } from '@backend/generated/prisma/enums';
 
 type SearchValue = {
   appointment   : string;
@@ -71,14 +70,6 @@ export const UserDetails = (): React.JSX.Element => {
 
   const formatter = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' });
 
-  const STATUS_TO_BE_A_SOLICITATION: AppointmentStatus[] = [
-    'ACCEPTED', 
-    'CONFIRMED', 
-    'PENDING', 
-    'REJECTED', 
-    'CANCELED'
-  ];
-
   const [searchValue, setSearchValue] = useState<SearchValue>({
     appointment   : '',
     solicitation  : '',
@@ -89,20 +80,18 @@ export const UserDetails = (): React.JSX.Element => {
     professor : { appointments: 'none', solicitations: 'none' },
   });
 
-  const appointmentsAndSolicitationsByRoleMap: UserAppointmentsAndSolicitations<any[]> = {
+  const APPOINTMENTS_AND_SOLICITATIONS_BY_ROLE_MAP: UserAppointmentsAndSolicitations<any[]> = {
     STUDENT: {
       appointments: filterStudentAppointments(
         user?.role === 'STUDENT' ? user.appointments : [],
         searchValue.appointment,
         userDetailsFilter.student.appointments,
-      ).filter((appointment) => appointment.room 
       ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
 
       solicitations: filterStudentSolicitations(
-        user?.role === 'STUDENT' ? user.appointments : [],
+        user?.role === 'STUDENT' ? user.solicitations : [],
         searchValue.solicitation,
         userDetailsFilter.student.solicitations,
-      ).filter((appointment) => STATUS_TO_BE_A_SOLICITATION.includes(appointment.status)
       ).map((rest) => ({ ...rest, from: 'STUDENT' as const })),
     },
 
@@ -111,30 +100,29 @@ export const UserDetails = (): React.JSX.Element => {
         user?.role === 'PROFESSOR' ? user.appointments : [],
         searchValue.appointment,
         userDetailsFilter.professor.appointments,
-      ).filter((appointment) => appointment.room
       ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
 
       solicitations: filterStudentSolicitationsFromProfessorView(
-        user?.role === 'PROFESSOR' ? user.appointments : [],
+        user?.role === 'PROFESSOR' ? user.solicitations : [],
         searchValue.solicitation,
         userDetailsFilter.professor.solicitations,
-      ).filter((appointment) => STATUS_TO_BE_A_SOLICITATION.includes(appointment.status)
       ).map((rest) => ({ ...rest, from: 'PROFESSOR' as const })),
     },
   };
 
-  const userNotFoundByFilterByRoleMap: UserAppointmentsAndSolicitations<string> = {
+  const USER_NOT_FOUND_BY_FILTER_BY_ROLE_MAP: UserAppointmentsAndSolicitations<string> = {
     STUDENT   : {
-      appointments: STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.student.appointments],
-      solicitations: STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[userDetailsFilter.student.solicitations],
+      appointments  : STUDENT_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.student.appointments],
+      solicitations : STUDENT_SOLICITATIONS_FILTER_VALUE_MAP[userDetailsFilter.student.solicitations],
     },
+
     PROFESSOR : {
-      appointments: PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.professor.appointments],
-      solicitations: STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[userDetailsFilter.professor.solicitations],
+      appointments  : PROFESSOR_APPOINTMENTS_FILTER_VALUE_MAP[userDetailsFilter.professor.appointments],
+      solicitations : STUDENT_SOLICITATIONS_FROM_PROFESSOR_VIEW_FILTER_VALUE_MAP[userDetailsFilter.professor.solicitations],
     }
   };
 
-  const filtersByRoleMap: FiltersByRole = {
+  const FILTERS_BY_ROLE_MAP: FiltersByRole = {
     STUDENT: {
       appointments: {
         schema : 'STUDENT_APPOINTMENTS_FILTER',
@@ -143,6 +131,7 @@ export const UserDetails = (): React.JSX.Element => {
           ...prev, student: { ...prev.student, appointments: value }
         })),
       },
+      
       solicitations: {
         schema : 'STUDENT_SOLICITATIONS_FILTER',
         value  : userDetailsFilter.student.solicitations,
@@ -196,7 +185,7 @@ export const UserDetails = (): React.JSX.Element => {
   if (user?.role && user.role !== 'MANAGER') {
     noAppointmentsContent = noContentFound(
       `Nenhum agendamento disponível no momento para esse(a) ${USER_ROLES[user.role].toLocaleLowerCase()}!`,
-      userNotFoundByFilterByRoleMap[user.role].appointments,
+      USER_NOT_FOUND_BY_FILTER_BY_ROLE_MAP[user.role].appointments,
       searchValue.appointment,
       (
         userDetailsFilter.student.appointments !== 'none'   ||
@@ -315,16 +304,16 @@ export const UserDetails = (): React.JSX.Element => {
                 <Select.Default
                   Icon={() => <FaFilter size={13}/>}
                   placeholder='Filtro'
-                  optionsSchema={filtersByRoleMap[user.role].appointments.schema}
+                  optionsSchema={FILTERS_BY_ROLE_MAP[user.role].appointments.schema}
                   customStyle={{ options: { button: 'text-xs' } }}
-                  value={filtersByRoleMap[user.role].appointments.value}
-                  onSelect={(value) => filtersByRoleMap[user.role].appointments.setter(value as any)}
+                  value={FILTERS_BY_ROLE_MAP[user.role].appointments.value}
+                  onSelect={(value) => FILTERS_BY_ROLE_MAP[user.role].appointments.setter(value as any)}
                 />
               </div>
 
               <div className='flex-1 min-h-0 max-h-74 flex w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-                { appointmentsAndSolicitationsByRoleMap[user.role].appointments.length > 0 ? (
-                  appointmentsAndSolicitationsByRoleMap[user.role].appointments.map(( appointment ) => (
+                { APPOINTMENTS_AND_SOLICITATIONS_BY_ROLE_MAP[user.role].appointments.length > 0 ? (
+                  APPOINTMENTS_AND_SOLICITATIONS_BY_ROLE_MAP[user.role].appointments.map(( appointment ) => (
                     <Card.Appointment
                       smVersion
                       key={appointment.id}
@@ -358,16 +347,16 @@ export const UserDetails = (): React.JSX.Element => {
                 <Select.Default
                   Icon={() => <FaFilter size={13}/>}
                   placeholder='Filtro'
-                  optionsSchema={filtersByRoleMap[user.role].solicitations.schema}
+                  optionsSchema={FILTERS_BY_ROLE_MAP[user.role].solicitations.schema}
                   customStyle={{ options: { button: 'text-xs' } }}
-                  value={filtersByRoleMap[user.role].solicitations.value}
-                  onSelect={(value) => filtersByRoleMap[user.role].solicitations.setter(value as any)}
+                  value={FILTERS_BY_ROLE_MAP[user.role].solicitations.value}
+                  onSelect={(value) => FILTERS_BY_ROLE_MAP[user.role].solicitations.setter(value as any)}
                 />
               </div>
 
               <div className='flex-1 min-h-0 max-h-74 flex w-full flex-col gap-2 overflow-auto bg-white p-2 rounded-xl border border-cyan-300'>
-                { appointmentsAndSolicitationsByRoleMap[user.role].solicitations.length > 0 ? (
-                  appointmentsAndSolicitationsByRoleMap[user.role].solicitations.map(( solicitation ) => (
+                { APPOINTMENTS_AND_SOLICITATIONS_BY_ROLE_MAP[user.role].solicitations.length > 0 ? (
+                  APPOINTMENTS_AND_SOLICITATIONS_BY_ROLE_MAP[user.role].solicitations.map(( solicitation ) => (
                     <Card.Solicitation
                       smVersion
                       key={solicitation.id}

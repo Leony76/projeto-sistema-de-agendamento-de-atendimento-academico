@@ -1,39 +1,52 @@
-import type { AppointmentStatus } from "@backend/generated/prisma/enums";
+import type { AppointmentStatus, AvailableDay } from "@backend/generated/prisma/enums";
 import type { StudentGeneralInfosResponse } from "@shared/types/dtos/userGeneralInfos.dto";
 
 type StudentGeneralInfos = {
+  ra: string;
   user: {
-    name: string;
     id: number;
+    name: string;
     email: string;
     photo: string | null;
     createdAt: Date;
   };
-  ra: string;
   appointments: {
     id: number;
-    reason: string;
-    dateTime: Date;
-    registeredAt: Date;
     updatedAt: Date;
-    status: AppointmentStatus;
-    room: {
-      name: string;
-    } | null;
     professor: {
       user: {
-        name: string;
+        name : string;
+        id   : number;
       };
       disciplines: {
         name: string;
       }[];
+      availability: {
+        dayOfWeek: AvailableDay;
+      }[];
     };
+    reason: string;
+    dateTime: Date;
+    registeredAt: Date;
+    status: AppointmentStatus;
+    room: {
+      name: string;
+    } | null;
   }[];
 };
 
 export const studentGeneralInfosMapper = (
   student: StudentGeneralInfos
 ): StudentGeneralInfosResponse => {
+
+  const statusToBeSolicitation: AppointmentStatus[] = [
+    'PENDING', 'CONFIRMED', 'ACCEPTED', 'CANCELED', 'REJECTED'
+  ];
+
+  const statusToBeAppointment: AppointmentStatus[] = [
+    'ACCEPTED', 'CONFIRMED'
+  ];
+
   return {
     id           : student.user.id,
     name         : student.user.name,
@@ -42,20 +55,43 @@ export const studentGeneralInfosMapper = (
     ra           : student.ra,
     role         : 'STUDENT',
     registeredAt : student.user.createdAt.toISOString(),
-    appointments: student.appointments.map((appointment) => ({
-      dateTime: appointment.dateTime.toISOString(),
-      createdAt: appointment.registeredAt.toISOString(),
-      updatedAt: appointment.updatedAt.toISOString(),
-      from: 'STUDENT',
-      id: appointment.id,
-      reason: appointment.reason,
-      room: appointment.room?.name ?? null,
-      status: appointment.status,
-      professor: {
+    
+    solicitations : student.appointments.filter(
+      appointment => statusToBeSolicitation.includes(appointment.status)
+    ).map((appointment) => ({
+      dateTime  : appointment.dateTime.toISOString(),
+      createdAt : appointment.registeredAt.toISOString(),
+      updatedAt : appointment.updatedAt.toISOString(),
+      from      : 'STUDENT',
+      id        : appointment.id,
+      reason    : appointment.reason,
+      room      : appointment.room?.name ?? null,
+      status    : appointment.status,
+      professor : {
+        id            : appointment.professor.user.id,
+        availableDays : appointment.professor.availability.map((available) => available.dayOfWeek),
+        disciplines   : appointment.professor.disciplines.map((discipline) => discipline.name),
+        name          : appointment.professor.user.name,
+        photo         : null,
+      }
+    })),
+
+    appointments  : student.appointments.filter(
+      appointment => statusToBeAppointment.includes(appointment.status)
+    ).map((appointment) => ({
+      dateTime  : appointment.dateTime.toISOString(),
+      createdAt : appointment.registeredAt.toISOString(),
+      updatedAt : appointment.updatedAt.toISOString(),
+      from      : 'STUDENT',
+      id        : appointment.id,
+      reason    : appointment.reason,
+      room      : appointment.room?.name ?? null,
+      status    : appointment.status,
+      professor : {
         disciplines : appointment.professor.disciplines.map((discipline) => discipline.name),
         name        : appointment.professor.user.name,
         photo       : null,
       }
-    }))
+    })),
   };
 };

@@ -25,6 +25,15 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import type { ProfessorAppointmentResponse as ProfessorAppointment } from '@shared/types/dtos/appointment.dto';
 import { ScheduleService } from '@frontend/services/schedule.service';
+import { Modal } from '@frontend/components/modal';
+
+type ConfirmModals =
+| 'CONFIRM_MARK_AS_DONE' 
+| 'CONFIRM_MARK_AS_NO_SHOW' 
+| 'CONFIRM_CANCEL'
+;
+
+type Modals = ConfirmModals;
 
 const Professor = (): React.JSX.Element => {
 
@@ -33,11 +42,20 @@ const Professor = (): React.JSX.Element => {
 
   const { toast } = useToast();
 
+  const [modal, setModal] = useState<Modals | null>(null);
+  
+
+  const [loading, setLoading] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');
-  const [refresh , setRefresh] = useState({ availability: 0 });
+  const [refresh , setRefresh] = useState(0);
   const [filterValue, setFilterValue] = useState<typeof PROFESSOR_APPOINTMENTS_FILTER_MAP[number]['value']>('none');
   const [dateSelected, setDateSelected] = useState<Date | null>(new Date());
   
+  const [markAppointmentAsNoShowId, setMarkAppointmentAsNoShowId] = useState<number | null>(null);
+  const [markAppointmentAsDoneId, setMarkAppointmentAsDoneId] = useState<number | null>(null);
+  const [cancelAppointmentId, setCancelAppointmentId] = useState<number | null>(null);
+  
+
   const [ availability, setAvailability ] = useState<ProfessorAvailability[]>([]);
   
   const [ professorAppointments, setProfessorAppointments ] = useState<ProfessorAppointment[]>([]);
@@ -66,10 +84,112 @@ const Professor = (): React.JSX.Element => {
     },
   );
 
-  const handleRemoveAppointment = (appointmentId: number) => {
-    setProfessorAppointments(prev =>
-      prev.filter((appointment) => appointment.id !== appointmentId)
-    );
+  const MODAL_CONFIRM_ACTION_CONFIG: Record<ConfirmModals, {
+    message  : string,
+    onAccept : () => void,
+    onReject : () => void,
+    visible  : boolean,
+  }> = {
+    CONFIRM_CANCEL: {
+      message  : 'Tem certeza em cancelar esse agendamento confirmado?',
+      visible  :  modal === 'CONFIRM_CANCEL',
+      onAccept : () => {
+        if (!cancelAppointmentId) return;
+        handleCancelAppointment(cancelAppointmentId);
+      },
+      onReject : () => {
+        setCancelAppointmentId(null);
+        setModal(null);
+      },
+    },
+
+    CONFIRM_MARK_AS_DONE: {
+      message  : 'Tem certeza em marcar esse atendimento como concluído?',
+      visible  :  modal === 'CONFIRM_MARK_AS_DONE',
+      onAccept : () => {
+        if (!markAppointmentAsDoneId) return;
+        handleMarkAppointmentAsDone(markAppointmentAsDoneId);
+      },
+      onReject : () => {
+        setMarkAppointmentAsDoneId(null);
+        setModal(null);
+      },
+    },
+    
+    CONFIRM_MARK_AS_NO_SHOW: {
+      message  : 'Tem certeza em marcar esse atendimento como não realizado por falta do aluno?',
+      visible  :  modal === 'CONFIRM_MARK_AS_NO_SHOW',
+      onAccept : () => {
+        if (!markAppointmentAsNoShowId) return;
+        handleMarkAppointmentAsNoShow(markAppointmentAsNoShowId);
+      },
+      onReject : () => {
+        setModal(null);
+      },
+    }
+  };
+
+
+  const handleCancelAppointment = async(solicitationId: number): Promise<void> => {
+    try {
+      setLoading(false);
+
+      const response = await ScheduleService.cancelAppointment(solicitationId);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+        setModal(null); 
+
+        setRefresh(prev => prev + 1);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleMarkAppointmentAsNoShow = async(appointmentId: number): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const response = await ScheduleService.markAppointmentAsDone(appointmentId);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+
+        setModal(null);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMarkAppointmentAsDone = async(appointmentId: number): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const response = await ScheduleService.markAppointmentAsDone(appointmentId);
+
+      if (response.success) {
+        toast(response.message);
+        console.log(response.data);
+
+        setProfessorAppointments(prev =>
+          prev.filter((appointment) => appointment.id !== appointmentId)
+        );
+        
+        setModal(null);
+      }
+    } catch (error:unknown) {
+      toast(apiError(error), 'error');
+    } finally {
+      setLoading(false);
+    }
   };
   
   useEffect(() => {
@@ -88,13 +208,24 @@ const Professor = (): React.JSX.Element => {
         toast(apiError(error), 'error');
       }
     })();
-  },[refresh.availability]);
+  },[refresh]);
 
   return (
     <Layout 
     selectedTab='HOME'
     from='PROFESSOR'
     >
+      { modal && 
+        <Modal.ConfirmAction
+          title='Confirmar ação'
+          loading={loading}
+          message={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].message}
+          visible={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].visible}
+          onAccept={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].onAccept}
+          onCloseRequest={MODAL_CONFIRM_ACTION_CONFIG[modal as ConfirmModals].onReject}
+        />
+      }
+
       <div className='grid grid-cols-[1fr_300px] gap-x-3 h-full min-h-0'>
         <div className='grid gap-y-3 grid-rows-[60px_1fr] min-h-0'>
           <div className='flex gap-5 max-w-200 mx-auto w-full justify-center'>
@@ -137,9 +268,18 @@ const Professor = (): React.JSX.Element => {
               { filteredStudentAppointmentsData.length > 0 ? (
                 filteredStudentAppointmentsData.map((appointment) => (
                   <Card.Appointment
-                    onDone={handleRemoveAppointment}
                     key={appointment.id}
                     { ...appointment }
+                    onClick={{
+                      markAsDone   : (appointmentId) => {
+                        setModal('CONFIRM_MARK_AS_DONE');
+                        setMarkAppointmentAsDoneId(appointmentId);
+                      },
+                      markAsNoShow : (appointmentId) => {
+                        setModal('CONFIRM_MARK_AS_NO_SHOW');
+                        setMarkAppointmentAsNoShowId(appointmentId);
+                      }
+                    }}
                   />
                 ))
               ) : (
@@ -168,7 +308,7 @@ const Professor = (): React.JSX.Element => {
           <div className='relative flex self-start flex-col gap-1 border border-cyan-400 p-2 pt-1 rounded-lg bg-cyan-100/20 min-h-0'>
             <Section.EditProfessorAvailability
               availability={availability}
-              refresh={() => setRefresh(prev => ({ ...prev, availability: prev.availability + 1 })) }
+              refresh={() => setRefresh(prev => prev + 1) }
             />
           </div>
         </div>

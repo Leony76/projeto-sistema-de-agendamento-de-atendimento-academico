@@ -93,7 +93,8 @@ export class UserRepository {
               select: {
                 user: {
                   select: {
-                    name  : true,
+                    id   : true,
+                    name : true,
                   },
                 },
               },
@@ -129,9 +130,11 @@ export class UserRepository {
             updatedAt: true,
             professor: {
               select: {
-                disciplines: { select: { name: true }},
+                availability : { select: { dayOfWeek: true }},
+                disciplines  : { select: { name: true }},
                 user: {
                   select: {
+                    id    : true,
                     name  : true,
                   },
                 },
