@@ -335,11 +335,11 @@ const Requests = ():React.JSX.Element => {
       try {
         switch (role) {
           case 'STUDENT':
-            const studentSolicitations = await ScheduleService.getUserAppointmentSolicitations('STUDENT', user.id);
+            const studentSolicitations = await ScheduleService.getUserAppointmentSolicitations<'STUDENT'>();
             setPendingAppointments(prev => ({ ...prev, fromStudent: studentSolicitations }))
             break;
           default:
-            const professorSolicitations = await ScheduleService.getUserAppointmentSolicitations('PROFESSOR', user.id);
+            const professorSolicitations = await ScheduleService.getUserAppointmentSolicitations<'PROFESSOR'>();
             setPendingAppointments(prev => ({ ...prev, fromProfessor: professorSolicitations }))
             break;
         }      

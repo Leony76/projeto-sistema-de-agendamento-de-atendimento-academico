@@ -65,22 +65,14 @@ const Login = (): React.JSX.Element => {
     try {
       setLoading(true);
 
-      let response;
+      const loginAs: Lowercase<LoginAs> = data.role === 'STUDENT'
+        ? 'student'
+        : 'generic'
+      ;
 
-      switch (data.role) {
-        case 'STUDENT': {
-          response = await AuthService.loginAsStudent(data);
-          break;
-        } default: {
-          response = await AuthService.loginAsGeneric(data);
-          break;
-        }
-      }
+      const response = await AuthService.login(loginAs, data);
 
-      login( 
-        response.data.token, 
-        response.data.user, 
-      );
+      login(response.data.token, response.data.user);
           
       navigate('/home', {
         state: {

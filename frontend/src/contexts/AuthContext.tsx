@@ -78,10 +78,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
 
         const parsedUser: AuthUserBasicInfos = JSON.parse(localStorageUser);
 
-        const response = await UserService.me(
-          parsedUser.id,
-          parsedUser.role,
-        );
+        const response = await UserService.me();
 
         setUser(response ?? parsedUser);
       } catch (error: unknown) {

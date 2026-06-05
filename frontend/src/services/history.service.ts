@@ -5,16 +5,13 @@ import type { ApiResponse } from "@shared/types/apiResponse.type";
 
 export class HistoryService {
   
-  public static async getUserAppointmentsHistory<T extends UserRole>(
-    userId : number,
-    role   : T
-  ) {
+  public static async getUserAppointmentsHistory<T extends Exclude<UserRole, 'MANAGER'>>() {
     const response = await api.get<
       T extends 'STUDENT'
         ? StudentAppointmentHistoryResponse[]
         : ProfessorAppointmentHistoryResponse[]
     >(
-      `/history/${role}/${userId}/appointment`
+      `/history/appointment`
     );
 
     return response.data;

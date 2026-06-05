@@ -5,6 +5,8 @@ export type LoginAsStudentRequest   = LoginAsStudentFormData;
 export type LoginAsProfessorRequest = LoginAsProfessorFormData;
 export type LoginAsManagerRequest   = LoginAsManagerFormData;
 
+export type LoginRequest = LoginAsGenericRequest | LoginAsStudentRequest;
+
 export type LoginAsGenericResponse = (LoginAsProfessorResponse | LoginAsManagerResponse);
 export type LoginAsGenericRequest  = {
   email    : string;

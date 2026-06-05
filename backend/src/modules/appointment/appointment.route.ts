@@ -6,7 +6,7 @@ const appointmentRoutes = Router();
 appointmentRoutes.get('/schedule/professor/:id/available-slots' , AppointmentController.getProfessorAvailableSlots );
 appointmentRoutes.get('/schedule/available-professors'          , AppointmentController.getAvailableProfessorsToSchedule);
 appointmentRoutes.post('/schedule/solicitate'                   , AppointmentController.solicitateAppointment);
-appointmentRoutes.get('/:role/:id/solicitations'                , AppointmentController.getUserSolicitations);
+appointmentRoutes.get('/solicitations'                          , AppointmentController.getUserSolicitations);
 appointmentRoutes.patch('/schedule/solicitation-request/:solicitationId/:decision', AppointmentController.acceptOrDenyAppointmentSolicitation);
 appointmentRoutes.get('/'                                       , AppointmentController.getUserAppointments);
 appointmentRoutes.patch('/:appointmentId/mark-as-done'          , AppointmentController.markAppointmentAsDone);

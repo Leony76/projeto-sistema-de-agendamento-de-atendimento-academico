@@ -18,7 +18,6 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { HistoryService } from '@frontend/services/history.service';
 import { Modal } from '@frontend/components/modal';
-import type { UserRole } from '@backend/generated/prisma/enums';
 
 type ConfirmModals = 
 | 'CONFIRM_REMOVE'
@@ -142,10 +141,10 @@ const History = ():React.JSX.Element => {
       try {
         switch (user.role) {
           case 'STUDENT':
-            const studentHistory = await HistoryService.getUserAppointmentsHistory(user.id, 'STUDENT');
+            const studentHistory = await HistoryService.getUserAppointmentsHistory<'STUDENT'>();
             setStudentAppointmentHistory(studentHistory); break;
           default: 
-            const professorHistory = await HistoryService.getUserAppointmentsHistory(user.id, 'PROFESSOR');
+            const professorHistory = await HistoryService.getUserAppointmentsHistory<'PROFESSOR'>();
             setProfessorAppointmentHistory(professorHistory); break;
         }
       } catch (error:unknown) {

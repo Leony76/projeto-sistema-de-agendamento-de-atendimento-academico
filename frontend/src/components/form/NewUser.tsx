@@ -96,13 +96,17 @@ const NewUser = (props:Props): React.JSX.Element => {
     try {
       setLoading(true);
 
-      let response;
-      
-      switch (data.role) {
-        case 'STUDENT'  : response = await AuthService.registerStudent(data);   break;
-        case 'PROFESSOR': response = await AuthService.registerProfessor(data); break;
-        case 'MANAGER'  : response = await AuthService.registerManager(data);   break;
-      }
+      const userToBeRegisteredRole: Lowercase<UserRole> = data.role === 'STUDENT'
+        ? 'student'
+        : data.role === 'PROFESSOR'
+        ? 'professor'
+        : 'manager'
+      ;
+
+      const response = await AuthService.managerRegisterUser(
+        userToBeRegisteredRole,
+        data,
+      );
       
       if (!response.success) {
         throw new Error(`Houve um erro ao cadastrar o(a) ${USER_ROLES[data.role]}!`);

@@ -31,21 +31,16 @@ export const studentBasicInfosMapper = (student: LoginAsStudentRequest): LoginAs
 
 
 type SelfRegistredStudentRequest = {
-  student: {
-    userId: number;
-    ra: string;
-  } | null;
-} & {
-  role: UserRole;
-  id: number;
   name: string;
   email: string;
-  password: string;
   hasTemporaryPassword: boolean;
   photo: string | null;
   createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  role: UserRole;
+  student: {
+    ra: string;
+  } | null;
+  id: number;
 }
 
 export const studentBasicInfosFromRegistrationMapper = (user: SelfRegistredStudentRequest): StudentRegistersHimselfResponse => {
@@ -55,6 +50,7 @@ export const studentBasicInfosFromRegistrationMapper = (user: SelfRegistredStude
     name                 : user.name,
     photo                : user.photo ?? '',
     ra                   : user.student?.ra!,
+    hasTemporaryPassword : user.hasTemporaryPassword,
     registeredAt         : user.createdAt.toISOString(),
     role                 : 'STUDENT',
   };

@@ -1,13 +1,20 @@
 import { ManagerRegistersManagerFormData, ManagerRegistersProfessorFormData, ManagerRegistersStudentFormData } from "@shared/schemas/newUser.schema";
 import { Student, Professor, Manager } from "../userBasicInfos.type";
 import { StudentRegistersHimselfFormData } from "@shared/schemas/studentRegistersHimself.schema";
+import { LoginAsStudentResponse } from "./login.type.dto";
 
 export type StudentRegistersHimselfRequest = Omit<StudentRegistersHimselfFormData, 'repeatPassword'>;
-export type StudentRegistersHimselfResponse = Student & { role: 'STUDENT' };
+export type StudentRegistersHimselfResponse = LoginAsStudentResponse;
 
 export type ManagerRegistersStudentRequest   = Omit<ManagerRegistersStudentFormData, 'role'>;
 export type ManagerRegistersProfessorRequest = Omit<ManagerRegistersProfessorFormData, 'role'>;
 export type ManagerRegistersManagerRequest   = Omit<ManagerRegistersManagerFormData, 'role'>;
+
+export type ManagerRegisterUserRequest =
+| ManagerRegistersStudentRequest
+| ManagerRegistersProfessorRequest
+| ManagerRegistersManagerRequest
+;
 
 export type ManagersRegistersStudentResponse  = Pick<Student, 'name'   | 'ra' | 'email'>;
 export type ManagerRegistersManagerResponse   = Pick<Manager, 'name'   | 'email'>;

@@ -44,17 +44,14 @@ export class ScheduleService {
 
   
 
-  public static async getUserAppointmentSolicitations<T extends UserRole>(
-    role : T, 
-    id   : number
-  ) {
+  public static async getUserAppointmentSolicitations<T extends Exclude<UserRole, 'MANAGER'>>() {
     
     const response = await api.get<
       T extends 'STUDENT'
         ? StudentAppointmentSolicitationResponse[]
         : ProfessorAppointmentSolicitationResponse[]
     >(
-      `/appointment/${role}/${id}/solicitations`,
+      `/appointment/solicitations`,
     );
     
     return response.data;

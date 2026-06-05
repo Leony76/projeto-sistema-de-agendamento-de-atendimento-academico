@@ -7,10 +7,10 @@ export class ProfessorController {
 
   public static async defineNewAvailability(req: Request, res: Response) {
     
-    const { id } = req.params;
+    const professorId = req.user.sub;
     const data: NewProfessorAvailabilityRequest = req.body;
 
-    const newAvailability = await ProfessorService.defineNewAvailability(Number(id), data);
+    const newAvailability = await ProfessorService.defineNewAvailability(professorId, data);
 
     const response: ApiResponse<NewProfessorAvailabilityResponse['dayOfWeek'][]> = {
       message : 'Nova disponibilidade salva com sucesso!',

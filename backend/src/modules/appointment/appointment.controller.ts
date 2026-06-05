@@ -51,9 +51,10 @@ export class AppointmentController {
 
   public static async getUserSolicitations(req: Request, res: Response) {
 
-    const { id, role } = req.params;
+    const userId = req.user.sub;
+    const role = req.user.role;
 
-    const response = await AppointmentService.getUserSolicitations(role as UserRole, Number(id));
+    const response = await AppointmentService.getUserSolicitations(role, userId);
 
     return res.status(200).json(response);
   }

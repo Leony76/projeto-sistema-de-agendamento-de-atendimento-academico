@@ -29,9 +29,9 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
   const [ defineAvailability, setDefineAvailability ] = useState<boolean>(false);
   const [ newAvailability, setNewAvailability ] = useState<ProfessorAvailability | null>(null);
 
-  const handleNewAvailability = async(professorId: number, data: ProfessorAvailability): Promise<void> => {
+  const handleNewAvailability = async(data: ProfessorAvailability): Promise<void> => {
     try {  
-      const response = await ProfessorService.defineNewAvailability(professorId, data);
+      const response = await ProfessorService.defineNewAvailability(data);
       
       if (response.success) {
         toast(response.message);
@@ -197,7 +197,7 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
                   onClick={() => {
                     setShiftEditing((prev) => {
                       if (prev === shift) {
-                        handleNewAvailability(user.id, newAvailability);
+                        handleNewAvailability(newAvailability);
                         return null;
                       }
 
@@ -252,7 +252,7 @@ const EditProfessorAvailability = (props:Props): React.JSX.Element => {
                 onClick={() => {
                   setShiftEditing((prev) => {
                     if (prev === shift) {
-                      handleNewAvailability(user.id, newAvailability);
+                      handleNewAvailability(newAvailability);
                       return null;
                     }
 

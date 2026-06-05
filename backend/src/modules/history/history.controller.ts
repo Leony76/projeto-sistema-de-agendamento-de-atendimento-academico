@@ -1,4 +1,3 @@
-import type { UserRole } from "@backend/generated/prisma/enums";
 import type { Request, Response } from "express";
 import { HistoryService } from "./history.service";
 import type { ApiResponse } from "@shared/types/apiResponse.type";
@@ -8,9 +7,10 @@ export class HistoryController {
 
   public static async getUserAppointmentsHistory(req: Request, res: Response) {
 
-    const { role, id } = req.params;
+    const userId = req.user.sub;
+    const role = req.user.role;
 
-    const response = await HistoryService.getUserAppointmentsHistory(role as UserRole, Number(id));
+    const response = await HistoryService.getUserAppointmentsHistory(role, userId);
 
     return res.status(200).json(response);
   }

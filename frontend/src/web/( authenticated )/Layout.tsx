@@ -60,7 +60,7 @@ const Layout = (props:Props): React.JSX.Element => {
     try {
       setLoading(true);
 
-      const response = await UserService.changeUserTemporaryPassword(user.id, data.newPassword);
+      const response = await UserService.changeUserTemporaryPassword(data.newPassword);
 
       if (response.success) {
         updateUser({ ...user, hasTemporaryPassword: false });

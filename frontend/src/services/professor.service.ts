@@ -5,16 +5,16 @@ import type { ApiResponse } from '@shared/types/apiResponse.type';
 export class ProfessorService {
 
   public static async defineNewAvailability(
-    professorId : number,
-    data        : NewProfessorAvailabilityRequest,
+    data : NewProfessorAvailabilityRequest,
   ) {
-    const response = await api.post<
-      ApiResponse<
-        NewProfessorAvailabilityResponse>>
-          (`/professor/${professorId}/new-availability`, data); 
+    const response = await api.post< ApiResponse<NewProfessorAvailabilityResponse>>(
+      `/professor/new-availability`, data
+    ); 
     
     return response.data;
   }
+
+
 
   public static async getAvailability() {
 

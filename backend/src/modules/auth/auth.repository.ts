@@ -164,9 +164,16 @@ export class AuthRepository {
           },
         },
       },
-      include: {
-        student: true,
-      },
+      select: {
+        role: true,
+        id: true,
+        name: true,
+        email: true,
+        hasTemporaryPassword: true,
+        photo: true,
+        createdAt: true,
+        student: {  select: { ra: true }}
+      }
     });
   }
 }
