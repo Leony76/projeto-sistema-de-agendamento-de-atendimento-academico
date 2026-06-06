@@ -360,7 +360,7 @@ const Requests = ():React.JSX.Element => {
                 onClear={() => setSearchValue('')}
                 placeholder={labelsByRoleMap[role].searchBarMessage}
                 value={searchValue}
-                customStyle={{ input: 'flex-4' }}
+                customStyle={{ input: 'flex-1' }}
               />
 
               <Select.Default

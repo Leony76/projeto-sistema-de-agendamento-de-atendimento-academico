@@ -140,11 +140,36 @@ export class AppointmentService {
 
   public static async markAppointmentAsDone(appointmentId: number): Promise<{appointmentId: number}> {
 
-    const markAsDone = await AppointmentRepository.markAppointmentAsDone(appointmentId);
+    const appointment = await AppointmentRepository.getAppointmentStatusAndRoomIdById(appointmentId);
+
+    if (!appointment?.roomId)
+        throw new ApiError('Não foi possível marcar o atendimento como concluído. Tente novamente mais tarde!', 500);
+
+    if (appointment.status === 'DONE')
+        throw new ApiError('Atendimento já foi concluído.', 409);
+
+    const markAsDone = await AppointmentRepository.markAppointmentAsDone(appointmentId, appointment.roomId);
     
     return { appointmentId: markAsDone.id };
   }
 
+
+
+  public static async markAppointmentAsNoShow(appointmentId: number): Promise<{appointmentId: number}> {
+
+    const appointment = await AppointmentRepository.getAppointmentStatusAndRoomIdById(appointmentId);
+
+    if (!appointment?.roomId)
+        throw new ApiError('Não foi possível marcar o atendimento como aluno não comparecido. Tente novamente mais tarde!', 500);
+
+    if (appointment.status === 'NO_SHOW')
+        throw new ApiError('Atendimento já foi marcado como aluno não comparecido', 409);
+
+    const markAsNoShow = await AppointmentRepository.markAppointmentAsNoShow(appointmentId, appointment.roomId);
+    
+    return { appointmentId: markAsNoShow.id };
+  }
+  
 
 
   public static async editAppointment(

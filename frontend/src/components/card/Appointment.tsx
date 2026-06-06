@@ -10,6 +10,7 @@ import ExpansibleImage from '../misc/ExpansibleImage';
 import type { StudentAppointmentResponse, UserAppointmentResponse } from '@shared/types/dtos/appointment.dto';
 import { useAuth } from '@frontend/hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
+import { FaPersonCircleQuestion } from 'react-icons/fa6';
 
 
 
@@ -140,14 +141,29 @@ const Appointment = (props:Props): React.JSX.Element => {
             }</span>
           </label>
         </div>
-
+            
         { user.role === 'PROFESSOR' &&
-          <Button.Default
-            label='Marcar como concluído'
-            Icon={() => <FaCheck />}
-            onClick={() => props.onClick?.markAsDone?.(props.id)}
-            customStyle={{ button: '!w-fit py-1 text-sm mt-2 mb-1 bg-green-100 text-green-500 border-green-500'}}
-          />
+          <>
+            <p className='text-sm text-gray-400 -mb-1'>
+              Marcar como
+            </p>
+
+            <div className='flex gap-2'>
+              <Button.Default
+                label='Concluído'
+                Icon={() => <FaCheck />}
+                onClick={() => props.onClick?.markAsDone?.(props.id)}
+                customStyle={{ button: '!w-fit py-1 text-sm mt-2 mb-1 bg-green-100 text-green-500 border-green-500'}}
+              />
+    
+              <Button.Default
+                label='Não comparecido'
+                Icon={() => <FaPersonCircleQuestion size={17} />}
+                onClick={() => props.onClick?.markAsNoShow?.(props.id)}
+                customStyle={{ button: '!w-fit py-1 text-sm mt-2 mb-1 bg-red-50 text-red-500 border-red-500'}}
+              />
+            </div>
+          </>
         }
       </div>
 

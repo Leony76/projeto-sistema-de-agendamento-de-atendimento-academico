@@ -97,6 +97,17 @@ export class ScheduleService {
 
 
 
+  public static async markAppointmentAsNoShow(appointmentId: number) {
+
+    const response = await api.patch<ApiResponse<{appointmentId: number}>>(
+      `/appointment/${appointmentId}/mark-as-no-show`
+    );
+
+    return response.data;
+  }
+
+
+
   public static async editAppointment(data: EditAppointmentSolicitationResponse) {
 
     const response = await api.patch<ApiResponse<EditAppointmentSolicitationResponse>>(

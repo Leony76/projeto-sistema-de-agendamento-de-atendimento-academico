@@ -14,6 +14,18 @@ export class AppointmentRepository {
 
 
 
+  public static async getAppointmentStatusAndRoomIdById(id: number) {
+    return await prisma.appointment.findUnique({
+      where  : { id },
+      select : { 
+        roomId: true,
+        status: true,
+      }
+    });
+  }
+
+
+
   public static async isSolicitationAlreadyCanceled(id: number) {
     return Boolean(await prisma.appointment.findFirst({
       where: { 
@@ -346,38 +358,30 @@ export class AppointmentRepository {
     });
   }
 
-  public static async markAppointmentAsDone(id: number) {
-    return await prisma.$transaction(async(tx) => {
-      const appointment = await tx.appointment.findUnique({
-        where  : { id },
-        select : { 
-          roomId: true,
-          status: true,
-        }
-      });
+  public static async markAppointmentAsDone(id: number, roomId: number) {
+    return await prisma.appointment.update({
+      where : { id },
+      data  : {
+        status   : 'DONE',
+        roomId   : null,
+        history  : { create : { roomId }}
+      },
+      select: { id: true }
+    });
+  } 
 
-      if (!appointment?.roomId)
-        throw new ApiError('Não foi possível marcar o atendimento como concluído. Tente novamente mais tarde!', 500);
 
-      if (appointment.status === 'DONE')
-         throw new ApiError('Atendimento já foi concluído.', 400);
-      
-      return await tx.appointment.update({
-        where: { id },
-        data: {
-          status  : 'DONE',
-          roomId  : null,
-          history : {
-            create : {
-              roomId: appointment.roomId
-            }
-          }
-        },
-        select: {
-          id: true,
-        }
-      });
-    })
+
+  public static async markAppointmentAsNoShow(id: number, roomId: number) {
+    return await prisma.appointment.update({
+      where : { id },
+      data  : {
+        status   : 'NO_SHOW',
+        roomId   : null,
+        history  : { create : { roomId }}
+      },
+      select: { id: true }
+    });
   } 
 
 

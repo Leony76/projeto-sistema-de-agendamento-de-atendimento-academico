@@ -154,11 +154,15 @@ const Professor = (): React.JSX.Element => {
     try {
       setLoading(true);
 
-      const response = await ScheduleService.markAppointmentAsDone(appointmentId);
+      const response = await ScheduleService.markAppointmentAsNoShow(appointmentId);
 
       if (response.success) {
         toast(response.message);
         console.log(response.data);
+
+        setProfessorAppointments(prev =>
+          prev.filter((appointment) => appointment.id !== appointmentId)
+        );
 
         setModal(null);
       }
@@ -252,7 +256,7 @@ const Professor = (): React.JSX.Element => {
                 onClear={() => setSearchValue('')}
                 placeholder='Pesquisar por data, aluno, sala ou motivo'
                 value={searchValue}
-                customStyle={{ input: 'flex-4' }}
+                customStyle={{ input: 'flex-1' }}
               />
 
               <Select.Default
@@ -271,6 +275,10 @@ const Professor = (): React.JSX.Element => {
                     key={appointment.id}
                     { ...appointment }
                     onClick={{
+                      cancel: (appointmentId) => {
+                        setModal('CONFIRM_CANCEL');
+                        setCancelAppointmentId(appointmentId);
+                      },
                       markAsDone   : (appointmentId) => {
                         setModal('CONFIRM_MARK_AS_DONE');
                         setMarkAppointmentAsDoneId(appointmentId);

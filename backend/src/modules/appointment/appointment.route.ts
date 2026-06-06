@@ -10,6 +10,7 @@ appointmentRoutes.get('/solicitations'                          , AppointmentCon
 appointmentRoutes.patch('/schedule/solicitation-request/:solicitationId/:decision', AppointmentController.acceptOrDenyAppointmentSolicitation);
 appointmentRoutes.get('/'                                       , AppointmentController.getUserAppointments);
 appointmentRoutes.patch('/:appointmentId/mark-as-done'          , AppointmentController.markAppointmentAsDone);
+appointmentRoutes.patch('/:appointmentId/mark-as-no-show'       , AppointmentController.markAppointmentAsNoShow);
 appointmentRoutes.patch('/:appointmentId/edit'                  , AppointmentController.editAppointment);
 appointmentRoutes.patch('/:appointmentId/cancel'                , AppointmentController.cancelAppointment);
 appointmentRoutes.patch('/solicitation/:appointmentId/remove'   , AppointmentController.removeSolicitation);

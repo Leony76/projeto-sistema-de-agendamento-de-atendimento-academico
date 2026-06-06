@@ -111,6 +111,23 @@ export class AppointmentController {
 
 
 
+  public static async markAppointmentAsNoShow(req: Request, res: Response) {
+
+    const { appointmentId } = req.params;
+
+    const markAppointmentAsNoShow = await AppointmentService.markAppointmentAsNoShow(Number(appointmentId));
+
+    const response: ApiResponse<{appointmentId: number}> = { 
+      data    : { appointmentId: markAppointmentAsNoShow.appointmentId },
+      message : 'Atendimento marcado como não concluído por falta do discente com sucesso!',
+      success : true, 
+    };
+
+    return res.status(200).json(response);
+  }
+
+
+
   public static async editAppointment(req: Request, res: Response) {
 
     const data = req.body as EditAppointmentSolicitationResponse;

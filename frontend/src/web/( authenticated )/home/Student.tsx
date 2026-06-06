@@ -263,7 +263,7 @@ const Student = (): React.JSX.Element => {
                 onClear={() => setSearchValue('')}
                 placeholder='Pesquisar por data, professor, sala ou motivo'
                 value={searchValue}
-                customStyle={{ input: 'flex-4' }}
+                customStyle={{ input: 'flex-1' }}
               />
 
               <Select.Default

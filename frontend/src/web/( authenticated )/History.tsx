@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { FaFilter, FaHistory } from 'react-icons/fa';
+import { FaFilter, FaHistory, FaTrashAlt } from 'react-icons/fa';
 import { Input } from '@frontend/components/input';
 import { Select } from '@frontend/components/select';
 import { Card } from '@frontend/components/card';
@@ -18,6 +18,7 @@ import { useToast } from '@frontend/contexts/ToastContext';
 import { apiError } from '@frontend/utils/misc/apiError.util';
 import { HistoryService } from '@frontend/services/history.service';
 import { Modal } from '@frontend/components/modal';
+import { Button } from '@frontend/components/button';
 
 type ConfirmModals = 
 | 'CONFIRM_REMOVE'
@@ -187,7 +188,7 @@ const History = ():React.JSX.Element => {
                 onClear={() => setSearchValue('')}
                 placeholder={labelsByRoleMap[role].searchBarMessage}
                 value={searchValue}
-                customStyle={{ input: 'flex-4' }}
+                customStyle={{ input: 'flex-1' }}
               />
 
               <Select.Default
@@ -196,6 +197,13 @@ const History = ():React.JSX.Element => {
                 optionsSchema={filterByRoleMap[role].schema}
                 value={filterByRoleMap[role].value}
                 onSelect={(value) => filterByRoleMap[role].setter(value as any)}
+              />
+
+              <Button.Default
+                label=''
+                onClick={() => {}}
+                customStyle={{ button: 'py-0' }}
+                Icon={() => <FaTrashAlt size={14}/>}
               />
             </div>
               

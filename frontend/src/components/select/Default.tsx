@@ -30,8 +30,8 @@ type Props<T> = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect'> & {
 
 const Default = forwardRef(
   <T extends string>(
-    props: Props<T>, 
-    ref: React.Ref<HTMLButtonElement>
+    props : Props<T>, 
+    ref   : React.Ref<HTMLButtonElement>
   ) => {
     const { 
       label,
@@ -57,7 +57,7 @@ const Default = forwardRef(
     const { containerRef } = useCloseModalOnMouseClickOutside(setShowOptions);
     
     return (
-      <div className={`flex-1 flex flex-col gap-1 w-full ${customStyle?.container ?? ''}`}>
+      <div className={`flex flex-col gap-1 ${customStyle?.container ?? ''}`}>
         {label && (
           <label className={`text-orange-500 text-sm font-semibold ${customStyle?.label ?? ''}`}>
             { label }
@@ -75,7 +75,7 @@ const Default = forwardRef(
           ref={ref}
           onClick={() => setShowOptions(prev => !prev)}
           className={`
-            px-2 flex-1 py-1 text-orange-400 text-sm flex cursor-pointer gap-2 justify-center items-center hover:bg-amber-100/30 active:brightness-90
+            flex-1 px-10 py-1 text-orange-400 text-sm flex cursor-pointer gap-2 justify-center items-center hover:bg-amber-100/30 active:brightness-90
             ${customStyle?.input ?? ''}
             ${showOptions ? 'border-b' : ''}
           `}>
@@ -94,7 +94,7 @@ const Default = forwardRef(
           
           {showOptions && (
             <div className={`
-              absolute top-full max-h-50 overflow-auto left-0 w-full z-10 bg-[#F8FBF1] border border-t-0 rounded-b-xl border-orange-300
+              absolute top-full max-h-50 overflow-y-auto left-0 w-full z-10 bg-[#F8FBF1] border border-t-0 rounded-b-xl border-orange-300
               ${ props.customStyle?.options?.container ?? '' }
               ${optionsSchema.length > 0 && props.gridConfig 
                 ? `grid ${props.gridConfig}` 

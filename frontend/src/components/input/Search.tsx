@@ -21,7 +21,7 @@ const Search = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
   return (
     <div className={`
-      px-2 flex items-center rounded-xl border bg-amber-100/25 transition-colors border-orange-300 flex-1
+      px-2 flex items-center rounded-xl border bg-amber-100/25 transition-colors border-orange-300
       ${customStyle?.input ?? ''}
     `}>
       <IoSearch className='text-orange-300 mx-1 mr-2'/>

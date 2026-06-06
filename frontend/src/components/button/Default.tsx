@@ -24,7 +24,7 @@ const Default = (props:Props): React.JSX.Element => {
     disabled={props.disabled}
     onClick={props.onClick}
     className={`
-      flex items-center justify-center gap-1.5 hover:brightness-97 active:brightness-90 hover:cursor-pointer w-full p-3 rounded-xl border 
+      flex items-center justify-center gap-1.5 hover:brightness-97 active:brightness-90 hover:cursor-pointer p-3 rounded-xl border 
       ${ props.customStyle?.button ?? '' }
       ${ props.disabled ? 'opacity-50 pointer-events-none' : '' }
       ${ props.selected 
